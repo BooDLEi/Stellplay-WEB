@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- 안드로이드 & iOS 독립 앱(Standalone) 구동 메타태그 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="StellPlay">
+    <meta name="theme-color" content="#090a10">
+    <title>StellPlay Mobile - 스텔라이브 뮤직</title>
+    
+    <!-- 매니페스트 및 파비콘/앱 아이콘 연결 -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+    <link rel="stylesheet" href="./assets/css/mobile.css?v=3.0">
+    <!-- 안드로이드 백그라운드 및 화면 잠금 시 유튜브 플레이어 자동 일시정지 방지 -->
+    <script>
+        try {
+            Object.defineProperty(document, 'hidden', {
+                get: function() { return false; },
+                configurable: true
+            });
+            Object.defineProperty(document, 'visibilityState', {
+                get: function() { return 'visible'; },
+                configurable: true
+            });
+            window.addEventListener('visibilitychange', function(e) {
+                e.stopImmediatePropagation();
+            }, true);
+        } catch (e) {}
+    </script>
+</head>
+<body>
+    <div id="app-container">
+        <!-- 상단 고정 헤더 -->
+        <header class="mobile-header">
+            <div class="header-top">
+                <div class="logo-group">
+                    <div class="logo-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </div>
+                    <span class="logo-title">StellPlay</span>
+                </div>
+                <button class="header-sabi-btn" id="m-header-sabi-btn" title="사비 메들리 모드 온/오프">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    <span id="m-header-sabi-text">사비 OFF</span>
+                </button>
+            </div>
+
+            <!-- 검색창 -->
+            <div class="search-bar-wrap">
+                <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="m-search-input" class="search-input" placeholder="곡 제목, 아티스트 검색...">
+                <button id="m-search-clear" class="search-clear-btn">✕</button>
+            </div>
+
+            <!-- 2단 계층형 멤버 필터 바 -->
+            <div class="members-hierarchy-container" id="m-members-filter-container">
+                <!-- 1열 (대분류): 곡 전체, 스텔라이브, 1기생, 2기생, 3기생 -->
+                <div class="member-major-row" id="m-members-major-row">
+                    <button class="member-major-btn btn-white active" data-major="all">곡 전체</button>
+                    <button class="member-major-btn btn-gradient-stellive" data-major="group">스텔라이브</button>
+                    <button class="member-major-btn btn-white" data-major="g1">1기생</button>
+                    <button class="member-major-btn btn-white" data-major="g2">2기생</button>
+                    <button class="member-major-btn btn-white" data-major="g3">3기생</button>
+                </div>
+                <!-- 2열 (동적 소분류): 1열 선택에 따라 JavaScript로 렌더링 -->
+                <div class="member-sub-row" id="m-members-sub-row"></div>
+            </div>
+        </header>
+
+        <!-- 메인 뷰 컨테이너 -->
+        <main>
+            <!-- 1. 홈 뷰 (전체 곡 탐색) -->
+            <section class="view-section active" id="view-home">
+                <div class="m-home-quick-actions">
+                    <button class="m-home-action-btn m-btn-queue-shortcut" id="btn-open-queue-home" title="현재 대기열">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                            <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                        </svg>
+                        <span id="btn-queue-home-text">대기열 (0)</span>
+                    </button>
+                    <button class="m-home-action-btn" id="btn-toggle-multiselect-home" title="곡 복수 선택">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                        <span>곡 선택</span>
+                    </button>
+                    <button class="m-home-action-btn" id="btn-sync-songs-home" title="신곡 탐색">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        <span>신곡 탐색</span>
+                    </button>
+                    <button class="m-home-action-btn m-btn-accent" id="btn-open-add-song-home" title="신곡 추가">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span>곡 추가</span>
+                    </button>
+                </div>
+
+                <div class="m-multiselect-floating-bar" id="m-multiselect-bar" style="display:none;">
+                    <div class="multiselect-bar-info">
+                        <span id="m-multiselect-count">0곡 선택됨</span>
+                        <button class="btn-select-all-toggle" id="btn-multiselect-all">전체 선택</button>
+                    </div>
+                    <div class="multiselect-bar-actions">
+                        <button class="btn-ms-action btn-ms-play" id="btn-multiselect-play">선택 곡 재생</button>
+                        <button class="btn-ms-action btn-ms-add-pl" id="btn-multiselect-add-playlist">재생목록으로 저장</button>
+                        <button class="btn-ms-action btn-ms-cancel" id="btn-multiselect-cancel">취소</button>
+                    </div>
+                </div>
+
+                <!-- 분위기 (무드 / 바이브) 추천 섹션 -->
+                <div class="mood-shelf-container" id="m-mood-shelf">
+                    <div class="mood-shelf-header">
+                        <span class="mood-shelf-title">✨ 분위기 & 바이브 추천</span>
+                    </div>
+                    <div class="mood-cards-scroll" id="m-mood-cards-list">
+                        <div class="mood-chip-card" data-mood="upbeat" style="--mood-grad: linear-gradient(135deg, #ff416c, #ff4b2b);">
+                            <span class="mood-chip-icon">🔥</span>
+                            <span class="mood-chip-name">파워풀</span>
+                        </div>
+                        <div class="mood-chip-card" data-mood="chill" style="--mood-grad: linear-gradient(135deg, #654ea3, #eaafc8);">
+                            <span class="mood-chip-icon">🌙</span>
+                            <span class="mood-chip-name">감성힐링</span>
+                        </div>
+                        <div class="mood-chip-card" data-mood="bright" style="--mood-grad: linear-gradient(135deg, #00b09b, #96c93d);">
+                            <span class="mood-chip-icon">☀️</span>
+                            <span class="mood-chip-name">청량상쾌</span>
+                        </div>
+                        <div class="mood-chip-card" data-mood="groovy" style="--mood-grad: linear-gradient(135deg, #8a2387, #e94057, #f27121);">
+                            <span class="mood-chip-icon">🎧</span>
+                            <span class="mood-chip-name">그루비</span>
+                        </div>
+                        <div class="mood-chip-card" data-mood="cute" style="--mood-grad: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <span class="mood-chip-icon">💖</span>
+                            <span class="mood-chip-name">큐트</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="type-pills-row">
+                    <button class="type-pill active" data-type="all">전체</button>
+                    <button class="type-pill" data-type="original">오리지널</button>
+                    <button class="type-pill" data-type="cover">커버곡</button>
+                    <button class="type-pill" data-type="featuring">피처링 & OST</button>
+                </div>
+                <div class="section-info-row">
+                    <div class="section-info-left">
+                        <span class="section-title">스텔라이브 음원</span>
+                        <span class="section-count" id="m-track-count">총 0곡</span>
+                    </div>
+                    <div class="section-info-actions">
+                        <select id="m-sort-select" class="sort-select" title="곡 정렬">
+                            <option value="latest" selected>최신 발매순</option>
+                            <option value="oldest">오래된순</option>
+                            <option value="title">가나다순</option>
+                        </select>
+                        <button class="btn-random-play-home" id="btn-random-play-filtered" title="현재 필터링된 곡 랜덤 재생">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                            <span>랜덤 재생</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mobile-track-list" id="m-track-list-home"></div>
+            </section>
+
+
+            <!-- 4. 재생목록 뷰 -->
+            <section class="view-section" id="view-playlists">
+                <!-- 재생목록 메인 목록 화면 -->
+                <div id="m-playlists-list-container">
+                    <div class="playlists-header-row">
+                        <div>
+                            <div class="section-title" style="font-size:1.1rem; font-weight:800;">내 재생목록</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">원하는 곡들을 나만의 목록으로 관리하세요</div>
+                        </div>
+                        <button class="btn-create-playlist-top" id="btn-create-playlist">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>새 목록</span>
+                        </button>
+                    </div>
+
+                    <div class="section-info-row" style="margin-top:6px;">
+                        <span class="section-title" style="font-size:0.88rem;">내 재생목록</span>
+                        <span class="section-count" id="playlists-custom-count">0개</span>
+                    </div>
+                    <div class="playlists-grid" id="m-playlists-grid"></div>
+                </div>
+
+                <!-- 재생목록 상세 보기 화면 (특정 플레이리스트 클릭 시) -->
+                <div id="m-playlist-detail-container" style="display:none;">
+                    <div class="playlist-detail-header">
+                        <button class="btn-playlist-back" id="btn-playlist-detail-back">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+                            <span>목록으로</span>
+                        </button>
+                        <div class="playlist-detail-actions">
+                            <button class="btn-playlist-action-danger" id="btn-playlist-detail-delete" title="재생목록 삭제">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>삭제</span>
+                            </button>
+                            <button class="btn-playlist-action-danger" id="btn-playlist-detail-clear-history" title="감상 기록 비우기" style="display:none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>기록 비우기</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="playlist-detail-hero">
+                        <div class="playlist-detail-icon" id="detail-playlist-icon">🎵</div>
+                        <div class="playlist-detail-meta">
+                            <h2 class="playlist-detail-title" id="detail-playlist-title">재생목록 이름</h2>
+                            <div class="playlist-detail-sub" id="detail-playlist-count">0곡 수록됨</div>
+                        </div>
+                    </div>
+
+                    <div class="playlist-detail-btn-row">
+                        <button class="btn-playlist-play-all" id="btn-playlist-detail-play-all">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                            <span>전곡 재생</span>
+                        </button>
+                        <button class="btn-playlist-add-tracks" id="btn-playlist-detail-add-tracks">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>+ 곡 추가</span>
+                        </button>
+                    </div>
+
+                    <div class="mobile-track-list" id="m-playlist-detail-tracks"></div>
+                </div>
+            </section>
+
+            <!-- 5. 설정 뷰 -->
+            <section class="view-section" id="view-settings">
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                        <div style="font-weight:700; font-size:0.9rem;">라이브러리 동기화 및 관리</div>
+                        <button id="btn-sync-songs-settings" style="width:100%; height:38px; border-radius:8px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); color:#38bdf8; font-weight:700; font-size:0.82rem; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                            공식 신곡 자동 탐색
+                        </button>
+                        <button id="btn-restore-hidden-settings" style="width:100%; height:38px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); color:var(--text-secondary); font-weight:600; font-size:0.82rem; cursor:pointer;">
+                            숨겨진 곡 모두 다시 복원
+                        </button>
+                    </div>
+
+                    <!-- 화면 테마 설정 (라이트 / 다크 모드) -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">🎨 화면 테마 모드</div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+                                    다크 모드 또는 화사한 라이트 모드를 선택합니다.
+                                </div>
+                            </div>
+                            <div class="m-theme-toggle" id="m-theme-toggle" style="display:flex; background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); border-radius:20px; padding:3px; gap:2px;">
+                                <button type="button" class="m-theme-btn active" id="m-btn-theme-dark" data-theme="dark" style="border:none; background:transparent; color:var(--text-secondary); padding:5px 12px; border-radius:16px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                                    <span>🌙 다크</span>
+                                </button>
+                                <button type="button" class="m-theme-btn" id="m-btn-theme-light" data-theme="light" style="border:none; background:transparent; color:var(--text-secondary); padding:5px 12px; border-radius:16px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                                    <span>☀️ 라이트</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 재생 옵션 (크로스페이드 설정) -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div style="font-weight:700; font-size:0.9rem;">🔀 곡 전환 크로스페이드</div>
+                                <span id="m-crossfade-current-badge" style="font-size:0.75rem; padding:2px 8px; border-radius:10px; background:rgba(16,185,129,0.15); color:var(--color-green); font-weight:700;">10초</span>
+                            </div>
+                            <label style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer; margin:0;">
+                                <input type="checkbox" id="m-crossfade-toggle" checked style="opacity:0; width:0; height:0;">
+                                <span id="m-crossfade-toggle-switch" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:var(--theme-color); transition:0.3s; border-radius:24px;"></span>
+                                <span id="m-crossfade-toggle-knob" style="position:absolute; height:18px; width:18px; left:3px; bottom:3px; background-color:white; transition:0.3s; border-radius:50%; transform:translateX(20px); pointer-events:none;"></span>
+                            </label>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+                            노래가 끝날 때 다음 곡이 서서히 겹치며 볼륨이 교차됩니다 (5초 ~ 15초, 1초 단위 조절).
+                        </div>
+                        <div id="m-crossfade-slider-wrap" style="display:flex; flex-direction:column; gap:6px; padding:4px 0; transition:opacity 0.2s;">
+                            <input type="range" id="m-crossfade-slider" min="5" max="15" step="1" value="10" style="width:100%; accent-color:var(--theme-color); cursor:pointer; height:6px;">
+                            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted);">
+                                <span>5초</span>
+                                <span style="color:var(--theme-color); font-weight:700;">10초(기본값)</span>
+                                <span>15초</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 하단 고정 미니 플레이어 -->
+        <footer class="mobile-mini-player" id="m-mini-player">
+            <div class="mini-progress-track">
+                <div class="mini-progress-fill" id="mini-progress-fill"></div>
+            </div>
+            <div class="mini-left-content" id="mini-left-content">
+                <div class="mini-thumb-wrap">
+                    <img id="mini-thumb-img" class="mini-thumb-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%236c5ce7'><rect width='24' height='24' fill='%231e202e'/></svg>" alt="">
+                </div>
+                <div class="mini-info-wrap">
+                    <span class="mini-title-text" id="mini-title">선택된 곡 없음</span>
+                    <span class="mini-artist-text" id="mini-artist">스텔라이브</span>
+                </div>
+            </div>
+            <div class="mini-ctrl-group">
+                <button class="m-btn-action" id="mini-queue-btn" title="재생목록">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                        <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button class="mini-play-btn" id="mini-play-btn">
+                    <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="6 4 20 12 6 20 6 4"/>
+                    </svg>
+                </button>
+                <button class="m-btn-action" id="mini-next-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
+                    </svg>
+                </button>
+            </div>
+        </footer>
+
+        <!-- 하단 네비게이션 탭바 -->
+        <nav class="mobile-bottom-tabs">
+            <button class="tab-btn active" data-view="view-home">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="tab-label">홈</span>
+            </button>
+            <button class="tab-btn" data-view="view-playlists">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                    <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                </svg>
+                <span class="tab-label">재생목록</span>
+            </button>
+            <button class="tab-btn" data-view="view-settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span class="tab-label">설정</span>
+            </button>
+        </nav>
+
+        <!-- 전체화면 플레이어 슬라이드 시트 -->
+        <div class="fullscreen-sheet" id="m-fullscreen-sheet">
+            <div class="sheet-topbar">
+                <button class="sheet-close-btn" id="sheet-close-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+                <span class="sheet-title-badge" id="sheet-mode-badge">NOW PLAYING</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <button class="sheet-ctrl-btn" id="sheet-queue-btn" title="재생목록 보기">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                            <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button class="sheet-ctrl-btn" id="sheet-menu-btn" title="곡 옵션 더보기">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                            <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+                            <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="vinyl-album-container">
+                <div class="vinyl-disc" id="sheet-vinyl-disc">
+                    <div class="vinyl-center-art">
+                        <img class="vinyl-img" id="sheet-album-img" src="" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sheet-meta-wrap">
+                <div class="sheet-song-title" id="sheet-song-title">선택된 곡 없음</div>
+                <div class="sheet-song-artist" id="sheet-song-artist">스텔라이브</div>
+            </div>
+
+            <div class="sheet-seek-wrap">
+                <input type="range" class="sheet-seek-slider" id="sheet-seek-slider" min="0" max="100" value="0">
+                <div class="sheet-time-row">
+                    <span id="sheet-current-time">00:00</span>
+                    <span id="sheet-total-duration">00:00</span>
+                </div>
+            </div>
+
+            <div class="sheet-controls-row">
+                <button class="sheet-ctrl-btn" id="sheet-shuffle-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>
+                    </svg>
+                </button>
+                <button class="sheet-ctrl-btn" id="sheet-prev-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>
+                    </svg>
+                </button>
+                <button class="sheet-main-play-btn" id="sheet-play-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="6 4 20 12 6 20 6 4"/>
+                    </svg>
+                </button>
+                <button class="sheet-ctrl-btn" id="sheet-next-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
+                    </svg>
+                </button>
+                <button class="sheet-ctrl-btn" id="sheet-sabi-btn" title="사비 메들리 모드">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 모바일 재생목록 (대기열) 슬라이드 시트 -->
+        <div class="queue-sheet" id="m-queue-sheet">
+            <div class="queue-sheet-backdrop" id="m-queue-backdrop"></div>
+            <div class="queue-sheet-content">
+                <!-- 상단 드래그 다운 영역 (헤더/핸들/힌트 어디서나 아래로 드래그 시 닫힘) -->
+                <div class="queue-sheet-top-zone" id="m-queue-top-zone" title="아래로 드래그하여 닫기">
+                    <div class="queue-sheet-handle" id="m-queue-sheet-handle"></div>
+                    <div class="queue-sheet-header">
+                        <div class="queue-sheet-title-row">
+                            <span class="queue-sheet-title">현재 재생목록</span>
+                            <span class="queue-sheet-badge" id="m-queue-count">0곡</span>
+                        </div>
+                        <div class="queue-sheet-actions">
+                            <button class="queue-sheet-action-btn" id="m-btn-save-queue-playlist" title="현재 대기열을 새 재생목록으로 저장">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                <span>목록 저장</span>
+                            </button>
+                            <button class="queue-sheet-action-btn" id="m-btn-clear-queue">비우기</button>
+                            <button class="queue-sheet-close-btn" id="m-btn-close-queue">✕</button>
+                        </div>
+                    </div>
+                    <div class="queue-drag-hint">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><polyline points="7 14 12 9 17 14"/></svg>
+                        <span>목록 우측 핸들(☰)을 드래그하여 순서를 재배치할 수 있습니다.</span>
+                    </div>
+                </div>
+                <div class="queue-sheet-list" id="m-queue-list"></div>
+            </div>
+        </div>
+
+        <!-- 트랙 옵션 메뉴 (⋮) 바텀시트 -->
+        <div class="actions-sheet" id="m-sheet-track-actions">
+            <div class="actions-backdrop" id="m-actions-backdrop"></div>
+            <div class="actions-sheet-content">
+                <div class="actions-handle"></div>
+                <div class="actions-track-preview">
+                    <img class="actions-track-thumb" id="m-action-track-thumb" src="" alt="">
+                    <div class="actions-track-info">
+                        <div class="actions-track-title" id="m-action-track-title">곡 제목</div>
+                        <div class="actions-track-artist" id="m-action-track-artist">가수</div>
+                    </div>
+                    <button class="actions-close-btn" id="m-btn-close-actions">✕</button>
+                </div>
+                <div class="actions-list">
+                    <button class="actions-item" id="m-act-edit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        <span>곡 정보 직접 수정</span>
+                    </button>
+                    <button class="actions-item" id="m-act-playlist">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                            <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                        </svg>
+                        <span id="m-act-playlist-text">재생목록에 저장</span>
+                    </button>
+                    <button class="actions-item" id="m-act-sabi">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        <span>사비(하이라이트) 구간 설정</span>
+                    </button>
+                    <button class="actions-item danger" id="m-act-delete">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        <span id="m-act-delete-text">라이브러리에서 숨기기</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 신곡 추가 모달 -->
+        <div class="mobile-modal" id="m-modal-add-song">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">✨ 신곡 직접 추가</span>
+                    <button class="modal-close-btn" id="m-btn-close-add-modal">✕</button>
+                </div>
+                <form id="m-form-add-song" class="modal-form">
+                    <div class="form-group">
+                        <label>유튜브 영상 링크 또는 ID</label>
+                        <div style="display:flex; gap:6px;">
+                            <input type="text" id="m-add-youtube" class="form-input" placeholder="https://youtu.be/... 또는 11자리 ID" required>
+                            <button type="button" class="btn-fetch-info" id="m-btn-auto-fetch-add">분석</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>곡 제목</label>
+                        <input type="text" id="m-add-title" class="form-input" placeholder="예: 악마의 춤는 법 (Devil's Manner)" required>
+                    </div>
+                    <div class="form-group">
+                        <label>가수 / 멤버</label>
+                        <input type="text" id="m-add-artist" class="form-input" placeholder="예: 아야츠노 유니" required>
+                    </div>
+                    <div class="form-group">
+                        <label>분류</label>
+                        <select id="m-add-type" class="form-select">
+                            <option value="cover">커버곡</option>
+                            <option value="original">오리지널</option>
+                            <option value="featuring">피처링 & OST</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <label style="margin:0;">참여 멤버 (다중 선택 가능)</label>
+                            <button type="button" class="btn-text-detect" id="m-btn-detect-add-members">⚡ 자동 감지</button>
+                        </div>
+                        <div class="member-chips-multiselect" id="m-add-member-chips">
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="group"><span>단체</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="kanna"><span>칸나</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="yuni"><span>유니</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="huya"><span>후야</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="hina"><span>히나</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="mashiro"><span>마시로</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="lize"><span>리제</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="tabi"><span>타비</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="shibuki"><span>시부키</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="rin"><span>린</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="nana"><span>나나</span></label>
+                            <label class="member-chip-select"><input type="checkbox" name="add_members" value="riko"><span>리코</span></label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex:1;">
+                            <label>사비 시작 (초)</label>
+                            <input type="number" id="m-add-sabi-start" class="form-input" value="45" min="0">
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>사비 종료 (초)</label>
+                            <input type="number" id="m-add-sabi-end" class="form-input" value="75" min="0">
+                        </div>
+                    </div>
+                    <div class="modal-btn-row">
+                        <button type="button" class="btn-cancel" id="m-btn-cancel-add">취소</button>
+                        <button type="submit" class="btn-submit">곡 등록</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 곡 정보 수정 모달 -->
+        <div class="mobile-modal" id="m-modal-edit-song">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">✏️ 곡 정보 수정</span>
+                    <button class="modal-close-btn" id="m-btn-close-edit-modal">✕</button>
+                </div>
+                <form id="m-form-edit-song" class="modal-form">
+                    <input type="hidden" id="m-edit-song-id">
+                    <div class="form-group">
+                        <label>곡 제목</label>
+                        <input type="text" id="m-edit-title" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>가수 (표시 아티스트)</label>
+                        <input type="text" id="m-edit-artist" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>원곡자 (Original Artist)</label>
+                        <input type="text" id="m-edit-original-artist" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>분류</label>
+                        <select id="m-edit-type" class="form-select">
+                            <option value="cover">커버곡</option>
+                            <option value="original">오리지널</option>
+                            <option value="featuring">피처링 & OST</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>발매일 (유튜브 업로드 일자)</label>
+                        <input type="date" id="m-edit-published-at" class="form-input" title="발매일 (정렬 기준)">
+                    </div>
+                    <div class="form-group member-picker-container">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <label style="margin:0;">참여 멤버 설정 *</label>
+                            <button type="button" class="btn-text-detect" id="m-btn-detect-edit-members">⚡ 자동 감지</button>
+                        </div>
+                        <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브(단체) -->
+                        <div class="member-scope-selector" id="m-edit-member-scope-selector">
+                            <label class="member-scope-btn active">
+                                <input type="radio" name="m-edit-member-scope" value="individual" checked>
+                                <span>개인 / 듀엣 / 유닛</span>
+                            </label>
+                            <label class="member-scope-btn">
+                                <input type="radio" name="m-edit-member-scope" value="stellive">
+                                <span>스텔라이브 (단체)</span>
+                            </label>
+                        </div>
+                        <!-- 2분류: 유닛 및 멤버별 체크박스 -->
+                        <div class="member-selection-sub" id="m-edit-member-selection-sub">
+                            <div class="member-unit-group">
+                                <span class="member-picker-sublabel">유닛</span>
+                                <div class="member-chips-container unit-chips">
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
+                                </div>
+                            </div>
+                            <div class="member-individual-group">
+                                <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
+                                <div class="member-chips-container member-chips" id="m-edit-member-chips">
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex:1;">
+                            <label>사비 시작 (초)</label>
+                            <input type="number" id="m-edit-sabi-start" class="form-input" min="0">
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>사비 종료 (초)</label>
+                            <input type="number" id="m-edit-sabi-end" class="form-input" min="0">
+                        </div>
+                    </div>
+                    <div class="modal-btn-row">
+                        <button type="button" class="btn-reset" id="m-btn-reset-song-edit">기본값 복원</button>
+                        <button type="button" class="btn-cancel" id="m-btn-cancel-edit">취소</button>
+                        <button type="submit" class="btn-submit">수정 완료</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 분위기 (무드 / 바이브) 상세 큐레이션 모달 -->
+        <div class="mobile-modal" id="m-modal-mood-detail">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content" style="max-height:85vh; display:flex; flex-direction:column;">
+                <div class="modal-header">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="m-mood-modal-icon" style="font-size:1.4rem;">🔥</span>
+                        <div>
+                            <div class="modal-title" id="m-mood-modal-title">분위기 추천</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);" id="m-mood-modal-sub">스텔라이브 큐레이션 컬렉션</div>
+                        </div>
+                    </div>
+                    <button class="modal-close-btn" id="m-btn-close-mood-modal">✕</button>
+                </div>
+                <div class="mood-modal-actions">
+                    <button class="btn-mood-action btn-mood-play-all" id="btn-mood-play-all">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        <span>랜덤 재생</span>
+                    </button>
+                    <button class="btn-mood-action btn-mood-refresh" id="btn-mood-refresh" style="background:rgba(255,255,255,0.08); color:#ffffff; border:1px solid rgba(255,255,255,0.15);">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                        <span>새로고침</span>
+                    </button>
+                    <button class="btn-mood-action btn-mood-save-playlist" id="btn-mood-save-playlist">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <span>목록 저장</span>
+                    </button>
+                </div>
+                <div class="mobile-track-list" id="m-mood-track-list" style="overflow-y:auto; flex:1; max-height:380px;"></div>
+            </div>
+        </div>
+
+        <!-- 재생목록 선택 및 추가 모달 -->
+        <div class="mobile-modal" id="m-modal-select-playlist">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content" style="max-height:82vh; display:flex; flex-direction:column;">
+                <div class="modal-header">
+                    <span class="modal-title">📑 재생목록에 추가</span>
+                    <button class="modal-close-btn" id="m-btn-close-select-playlist">✕</button>
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;" id="m-select-playlist-target-text">
+                    선택한 곡을 추가할 재생목록을 선택해주세요.
+                </div>
+                <div class="modal-playlist-list" id="m-modal-playlist-list" style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:8px; margin-bottom:14px; max-height:260px;">
+                    <!-- 동적 렌더링 -->
+                </div>
+                <div style="border-top:1px solid var(--border-glass); padding-top:12px;">
+                    <div style="font-size:0.8rem; font-weight:700; margin-bottom:8px;">+ 새 재생목록 만들고 추가</div>
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="m-input-new-playlist-quick" placeholder="새 재생목록 이름" class="form-input" style="flex:1;">
+                        <button type="button" class="btn-submit" id="m-btn-create-and-add-playlist" style="width:auto; padding:0 14px; white-space:nowrap;">추가</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 새 재생목록 단독 생성 모달 -->
+        <div class="mobile-modal" id="m-modal-create-playlist">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">✨ 새 재생목록 만들기</span>
+                    <button class="modal-close-btn" id="m-btn-close-create-playlist">✕</button>
+                </div>
+                <form id="m-form-create-playlist" class="modal-form">
+                    <div class="form-group">
+                        <label>재생목록 이름</label>
+                        <input type="text" id="m-input-create-playlist-name" class="form-input" placeholder="예: 스텔라이브 노동요, 드라이브 추천곡" required>
+                    </div>
+                    <div class="modal-btn-row">
+                        <button type="button" class="btn-cancel" id="m-btn-cancel-create-playlist">취소</button>
+                        <button type="submit" class="btn-submit">생성</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 재생목록 내 곡 추가 브라우저 모달 (Mobile) -->
+        <div class="mobile-modal" id="m-modal-playlist-add-tracks">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content" style="max-height:88vh; height:88vh; display:flex; flex-direction:column; padding:16px 14px 14px;">
+                <div class="modal-header" style="flex-shrink:0; margin-bottom:10px;">
+                    <div>
+                        <span class="modal-title" id="m-pl-add-title">➕ 재생목록에 곡 추가</span>
+                        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;" id="m-pl-add-subtitle">곡을 선택하여 재생목록에 담으세요</div>
+                    </div>
+                    <button class="modal-close-btn" id="m-btn-close-pl-add">✕</button>
+                </div>
+
+                <!-- 검색창 -->
+                <div style="position:relative; flex-shrink:0; margin-bottom:8px;">
+                    <input type="text" id="m-pl-add-search-input" class="form-input" placeholder="곡명, 가수, 원곡자 검색..." style="width:100%; padding-right:32px; font-size:0.85rem; height:38px;">
+                    <button id="m-pl-add-search-clear" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); font-size:0.9rem; cursor:pointer; display:none;">✕</button>
+                </div>
+
+                <!-- 곡 분류 칩 가로 스크롤 -->
+                <div class="m-pl-filter-scroll" id="m-pl-add-type-filters" style="display:flex; gap:6px; overflow-x:auto; flex-shrink:0; margin-bottom:6px; padding-bottom:4px; scrollbar-width:none;">
+                    <button type="button" class="m-filter-chip active" data-type="all">전체</button>
+                    <button type="button" class="m-filter-chip" data-type="original">오리지널</button>
+                    <button type="button" class="m-filter-chip" data-type="cover">커버곡</button>
+                    <button type="button" class="m-filter-chip" data-type="featuring">피처링 & OST</button>
+                    <button type="button" class="m-filter-chip" data-type="stream">노래방송</button>
+                </div>
+
+                <!-- 멤버/기수 칩 가로 스크롤 -->
+                <div class="m-pl-filter-scroll" id="m-pl-add-member-filters" style="display:flex; gap:6px; overflow-x:auto; flex-shrink:0; margin-bottom:10px; padding-bottom:4px; scrollbar-width:none;">
+                    <button type="button" class="m-filter-chip active" data-member="all">전체 멤버</button>
+                    <button type="button" class="m-filter-chip" data-member="gen-g1">1기 Everlys</button>
+                    <button type="button" class="m-filter-chip" data-member="gen-g2">2기 Universe</button>
+                    <button type="button" class="m-filter-chip" data-member="gen-g3">3기 Cliché</button>
+                    <button type="button" class="m-filter-chip" data-member="kanna">칸나</button>
+                    <button type="button" class="m-filter-chip" data-member="yuni">유니</button>
+                    <button type="button" class="m-filter-chip" data-member="hina">히나</button>
+                    <button type="button" class="m-filter-chip" data-member="mashiro">마시로</button>
+                    <button type="button" class="m-filter-chip" data-member="lize">리제</button>
+                    <button type="button" class="m-filter-chip" data-member="tabi">타비</button>
+                    <button type="button" class="m-filter-chip" data-member="shibuki">시부키</button>
+                    <button type="button" class="m-filter-chip" data-member="rin">린</button>
+                    <button type="button" class="m-filter-chip" data-member="nana">나나</button>
+                    <button type="button" class="m-filter-chip" data-member="riko">리코</button>
+                </div>
+
+                <!-- 선택 상태 바 & 전체 선택/해제 -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-shrink:0; margin-bottom:8px; padding:0 2px;">
+                    <div style="display:flex; align-items:center; gap:6px; font-size:0.78rem;">
+                        <span style="color:var(--text-muted);">선택:</span>
+                        <span id="m-pl-add-selected-badge" style="background:rgba(124,92,252,0.2); color:var(--theme-color); font-weight:700; padding:1px 7px; border-radius:10px;">0곡</span>
+                        <span id="m-pl-add-filtered-count" style="color:var(--text-muted); font-size:0.72rem;">(0곡)</span>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button type="button" id="m-btn-pl-add-select-all" style="background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); color:var(--text-secondary); padding:3px 8px; border-radius:6px; font-size:0.72rem; cursor:pointer;">전체 선택</button>
+                        <button type="button" id="m-btn-pl-add-deselect-all" style="background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); color:var(--text-secondary); padding:3px 8px; border-radius:6px; font-size:0.72rem; cursor:pointer;">선택 해제</button>
+                    </div>
+                </div>
+
+                <!-- 곡 목록 컨테이너 -->
+                <div class="mobile-track-list" id="m-pl-add-tracks-list" style="overflow-y:auto; flex:1; min-height:180px;"></div>
+
+                <!-- 하단 액션 버튼 바 -->
+                <div class="modal-btn-row" style="margin-top:10px; flex-shrink:0;">
+                    <button type="button" class="btn-cancel" id="m-btn-cancel-pl-add">취소</button>
+                    <button type="button" class="btn-submit" id="m-btn-confirm-pl-add" disabled style="opacity:0.5; pointer-events:none;">
+                        <span id="m-btn-confirm-pl-add-text">선택한 곡 추가</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 대화형 사비(하이라이트) 구간 설정 모달 -->
+        <div class="mobile-modal" id="m-modal-sabi-editor">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content" style="max-height:86vh; display:flex; flex-direction:column;">
+                <div class="modal-header">
+                    <span class="modal-title">⚡ 사비(하이라이트) 구간 설정</span>
+                    <button class="modal-close-btn" id="m-btn-close-sabi-editor">✕</button>
+                </div>
+                <div class="sabi-editor-body" style="overflow-y:auto; flex:1; padding:4px 0 10px;">
+                    <div class="sabi-track-info" style="display:flex; align-items:center; gap:10px; margin-bottom:14px; padding:10px; background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid var(--border-glass);">
+                        <img id="m-sabi-thumb" src="" alt="" style="width:48px; height:48px; border-radius:8px; object-fit:cover;">
+                        <div style="flex:1; min-width:0;">
+                            <div id="m-sabi-title" style="font-weight:700; font-size:0.92rem; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">곡 제목</div>
+                            <div id="m-sabi-artist" style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">가수명</div>
+                        </div>
+                    </div>
+
+                    <!-- 타임라인 비주얼 바 -->
+                    <div class="sabi-timeline-card" style="background:rgba(0,0,0,0.35); border-radius:12px; padding:14px; border:1px solid var(--border-glass); margin-bottom:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <span style="font-size:0.8rem; font-weight:700; color:var(--theme-color);">구간 타임라인</span>
+                            <span id="m-sabi-duration-badge" style="font-size:0.75rem; background:rgba(124,92,252,0.22); color:#c4b5fd; padding:2px 8px; border-radius:6px; font-weight:700;">총 30초</span>
+                        </div>
+                        <div class="sabi-visual-track" style="position:relative; width:100%; height:26px; background:rgba(255,255,255,0.08); border-radius:13px; overflow:hidden; margin-bottom:6px;">
+                            <div id="m-sabi-highlight-bar" style="position:absolute; top:0; bottom:0; left:20%; width:30%; background:linear-gradient(90deg, #7c5cfc, #3b82f6); border-radius:6px; opacity:0.85;"></div>
+                            <div id="m-sabi-playhead" style="position:absolute; top:0; bottom:0; left:20%; width:3px; background:#ffffff; box-shadow:0 0 6px rgba(255,255,255,0.9); display:none;"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted);">
+                            <span id="m-sabi-time-min">0:00</span>
+                            <span id="m-sabi-time-max">3:30</span>
+                        </div>
+                    </div>
+
+                    <!-- 시작 지점 조작 -->
+                    <div class="sabi-control-group" style="margin-bottom:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary);">시작 지점: <span id="m-sabi-start-label" style="color:var(--theme-color);">0:45 (45초)</span></label>
+                            <div style="display:flex; gap:4px;">
+                                <button type="button" class="sabi-step-btn" id="btn-sabi-start-sub1">-1초</button>
+                                <button type="button" class="sabi-step-btn" id="btn-sabi-start-add1">+1초</button>
+                                <button type="button" class="sabi-step-btn" id="btn-sabi-start-add5">+5초</button>
+                            </div>
+                        </div>
+                        <input type="range" id="m-sabi-start-slider" class="sheet-seek-slider" min="0" max="200" value="45" style="width:100%;">
+                    </div>
+
+                    <!-- 종료 지점 조작 -->
+                    <div class="sabi-control-group" style="margin-bottom:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary);">종료 지점: <span id="m-sabi-end-label" style="color:#38bdf8;">1:15 (75초)</span></label>
+                            <div style="display:flex; gap:4px;">
+                                <button type="button" class="sabi-step-btn" id="btn-sabi-end-sub5">-5초</button>
+                                <button type="button" class="sabi-step-btn" id="btn-sabi-end-sub1">-1초</button>
+                                <button type="button" class="sabi-step-btn" id="btn-sabi-end-add1">+1초</button>
+                            </div>
+                        </div>
+                        <input type="range" id="m-sabi-end-slider" class="sheet-seek-slider" min="0" max="200" value="75" style="width:100%;">
+                    </div>
+
+                    <!-- 실시간 미리듣기 플레이 버튼 -->
+                    <div style="display:flex; justify-content:center; margin:10px 0 4px;">
+                        <button type="button" id="btn-sabi-preview-toggle" class="btn-sabi-preview" style="display:inline-flex; align-items:center; gap:8px; padding:10px 24px; border-radius:24px; background:rgba(124,92,252,0.18); border:1px solid rgba(124,92,252,0.4); color:#c4b5fd; font-weight:700; font-size:0.88rem; cursor:pointer;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="6 4 20 12 6 20 6 4"/>
+                            </svg>
+                            <span id="btn-sabi-preview-text">구간 미리듣기</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-btn-row" style="margin-top:10px;">
+                    <button type="button" class="btn-cancel" id="m-btn-cancel-sabi-editor">취소</button>
+                    <button type="button" class="btn-submit" id="m-btn-save-sabi-editor">사비 구간 저장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 독립형 유튜브 플레이어 (모바일 브라우저 쓰로틀링 방지 뷰포트 내 배치) -->
+        <div id="m-youtube-player-wrap" style="position:fixed; bottom:0; right:0; width:200px; height:200px; z-index:-10; opacity:0.05; pointer-events:none; overflow:hidden;">
+            <div id="m-youtube-hidden-player"></div>
+        </div>
+
+        <!-- 토스트 컨테이너 -->
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- 스크립트 로드 순서 -->
+    <script src="./assets/js/storage.js?v=2.4"></script>
+    <script src="./assets/js/songs.js?v=2.4"></script>
+    <script src="./assets/js/mobile-player.js?v=2.4"></script>
+    <script src="./assets/js/mobile-app.js?v=2.4"></script>
+
+    <!-- [핵심] PWA Service Worker 등록 스크립트 -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((reg) => console.log('PWA Service Worker 활성화 완료:', reg.scope))
+            .catch((err) => console.error('PWA Service Worker 등록 실패:', err));
+        });
+      }
+    </script>
+</body>
+</html>
