@@ -478,6 +478,8 @@ const StorageManager = {
     },
 
     async saveToServer() {
+        const isWeb = (window.location.port !== '8888');
+        if (isWeb) return;
         try {
             const payload = {
                 favorites: this.getFavorites(),
@@ -501,6 +503,8 @@ const StorageManager = {
     },
 
     async syncWithServer() {
+        const isWeb = (window.location.port !== '8888');
+        if (isWeb) return;
         try {
             const resp = await fetch('/api/user-data');
             if (!resp.ok) return;

@@ -10,6 +10,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 플레이어 인스턴스 초기화
     const player = new MusicPlayer();
+    window.player = player;
     window.playerInstance = player;
 
     // UI 상태
@@ -2027,9 +2028,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnAutoFetch.disabled = true;
                 btnAutoFetch.textContent = '분석 중...';
                 try {
-                    const resp = await fetch(`/api/info?url=${encodeURIComponent(url)}`);
-                    if (!resp.ok) throw new Error('정보 조회 실패');
-                    const data = await resp.json();
+                    let data = null;
+                    const isWeb = (window.location.port !== '8888');
+
+                    if (!isWeb) {
+                        try {
+                            const resp = await fetch(`/api/info?url=${encodeURIComponent(url)}`);
+                            if (resp.ok) {
+                                data = await resp.json();
+                            }
+                        } catch (e) {}
+                    }
+
+                    if (!data) {
+                        // 웹 환경 폴백: YouTube oEmbed API 직접 조회
+                        let vid = url;
+                        if (vid.includes('v=')) {
+                            vid = vid.split('v=')[1].split('&')[0];
+                        } else if (vid.includes('youtu.be/')) {
+                            vid = vid.split('youtu.be/')[1].split('?')[0];
+                        }
+                        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}&format=json`;
+                        const oembedResp = await fetch(oembedUrl);
+                        if (!oembedResp.ok) throw new Error('YouTube oEmbed 조회 실패');
+                        const oembedData = await oembedResp.json();
+                        data = {
+                            title: oembedData.title,
+                            artist: oembedData.author_name,
+                            uploader: oembedData.author_name,
+                            duration: 200
+                        };
+                    }
                     if (data.title) document.getElementById('input-song-title').value = cleanAndKoreanizeTitle(data.title);
                     if (data.artist) document.getElementById('input-song-artist').value = cleanAndKoreanizeTitle(data.artist);
                     if (data.duration) {
@@ -3721,9 +3750,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const res = await fetch('/api/sync-new-songs');
-            if (!res.ok) throw new Error('신곡 동기화 서버 응답 실패');
-            const data = await res.json();
+            let data = null;
+            const isWeb = (window.location.port !== '8888');
+
+            if (isWeb) {
+                // 웹(GitHub Pages) 정적 호스팅 환경: GitHub 동기화 파일(songs-latest.json) 조회
+                const res = await fetch(`./songs-latest.json?t=${Date.now()}`);
+                if (!res.ok) throw new Error(`웹 신곡 데이터 로드 실패 (${res.status})`);
+                data = await res.json();
+            } else {
+                // 로컬 PC 앱 환경: 파이썬 백엔드 API 호출
+                const res = await fetch('/api/sync-new-songs');
+                if (!res.ok) throw new Error('신곡 동기화 서버 응답 실패');
+                data = await res.json();
+            }
 
             if (data.success && Array.isArray(data.tracks)) {
                 const currentSongs = window.getAllSongs();

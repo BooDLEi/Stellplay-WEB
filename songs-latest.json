@@ -1,0 +1,613 @@
+{
+  "success": true,
+  "count": 50,
+  "updatedAt": "2026-09-17T02:13:00.728995Z",
+  "tracks": [
+    {
+      "id": "blFr5w6o2jQ",
+      "title": "My Sea (아이와 나의 바다) [IU] / Yuzuha Riko",
+      "rawTitle": "My Sea (아이와 나의 바다) [IU] / Yuzuha Riko cover",
+      "duration": 318,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "Zetk77I6_s8",
+      "title": "Otsukare Summer [おつかれsummer/HALCALI] / Hanako Nana, Sakihane Fuya",
+      "rawTitle": "Otsukare Summer [おつかれsummer/HALCALI] / Hanako Nana, Sakihane Fuya COVER",
+      "duration": 240,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "group",
+      "members": [
+        "huya",
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "uBtFoUXR9Qc",
+      "title": "Arahashi Tabi",
+      "rawTitle": "Plover [Yorushika - Chidori] | Arahashi Tabi Cover",
+      "duration": 255,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "zQp6ZZAT6ew",
+      "title": "mosi mosi? (楽音 / 사사네)  / 텐코 시부키(Tenko Shibuki)",
+      "rawTitle": "mosi mosi? (楽音 / 사사네)  / 텐코 시부키(Tenko Shibuki) cover",
+      "duration": 164,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "yuxa6o1_scc",
+      "title": "Lilac - Mrs. GREEN APPLE / Yuzuha Riko",
+      "rawTitle": "Lilac - Mrs. GREEN APPLE / Yuzuha Riko cover",
+      "duration": 294,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "ekINzN4PQmo",
+      "title": "Shirayuki Hina",
+      "rawTitle": "Atlantis Princess | Shirayuki Hina Cover",
+      "duration": 212,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "SiBzI2htX2o",
+      "title": "구르는 바위, 네게 아침이 내린다 [결속밴드 / 転がる岩、君に朝が降る] - 네네코 마시로",
+      "rawTitle": "구르는 바위, 네게 아침이 내린다 [결속밴드 / 転がる岩、君に朝が降る] - 네네코 마시로 Cover",
+      "duration": 274,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "group",
+      "members": [
+        "mashiro",
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "nwqIoe_3zbE",
+      "title": "Arahashi Tabi",
+      "rawTitle": "High Hopes - Panic! At The Disco | Arahashi Tabi Cover",
+      "duration": 192,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "8shKFjkHabo",
+      "title": "푸른 산호초(青い珊瑚礁) - 松田 聖子 l 사키하네 후야(Sakihane Huya)",
+      "rawTitle": "푸른 산호초(青い珊瑚礁) - 松田 聖子 l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 220,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "2qEGFmXROQ4",
+      "title": "네네코 마시로 x 텐코 시부키",
+      "rawTitle": "콧치노 켄토 - 네, 기꺼이 [はいよろこんで / こっちのけんと]ㅣ네네코 마시로 x 텐코 시부키 Cover",
+      "duration": 164,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "group",
+      "members": [
+        "mashiro",
+        "shibuki"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "YXIz7U42pgk",
+      "title": "논브레스 오블리주 [ノンブレス・オブリージュ / ピノキオピー ] / 하나코 나나",
+      "rawTitle": "논브레스 오블리주 [ノンブレス・オブリージュ / ピノキオピー ] / 하나코 나나 COVER",
+      "duration": 212,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "9S3if_u5n_Q",
+      "title": "소녀레이 [みきとP 『 少女レイ』] / 아오쿠모 린(Aokumo Rin)",
+      "rawTitle": "소녀레이 [みきとP 『 少女レイ』] / 아오쿠모 린(Aokumo Rin) Cover",
+      "duration": 290,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "wu2a0AeQOCc",
+      "title": "아카네 리제(Akane Lize)",
+      "rawTitle": "「명일방주: 엔드필드」 리노 EP - 미랫빛 라이더 Mirairo Riderㅣ아카네 리제(Akane Lize) 【COVER】",
+      "duration": 236,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "gkmnG2pWzys",
+      "title": "희극 (Comedy) [喜劇 / 호시노 겐] / 하나코 나나",
+      "rawTitle": "희극 (Comedy) [喜劇 / 호시노 겐] / 하나코 나나 COVER",
+      "duration": 232,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "MhdJaaEhiHc",
+      "title": "We! The Waste Sorting Squad (Warera! Gomi Bunbetsudan) - Aokumo Rin x Yuzuha Riko",
+      "rawTitle": "We! The Waste Sorting Squad (Warera! Gomi Bunbetsudan) - Aokumo Rin x Yuzuha Riko Cover",
+      "duration": 138,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "group",
+      "members": [
+        "rin",
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "dhudKbeIMJg",
+      "title": "서머타임레코드 [サマータイムレコード / じん] / 유즈하 리코 (Yuzuha Riko)",
+      "rawTitle": "서머타임레코드 [サマータイムレコード / じん] / 유즈하 리코 (Yuzuha Riko) cover",
+      "duration": 276,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "VITNdv2ZywY",
+      "title": "Booo! - TOKOTOKO l 사키하네 후야(Sakihane Huya)",
+      "rawTitle": "Booo! - TOKOTOKO l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 176,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "3Y7Ek6YSGPE",
+      "title": "Akane Lize",
+      "rawTitle": "Blue-Green [Blue Rock] - it's | Akane Lize 【COVER】",
+      "duration": 207,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "X7pjwim9NHE",
+      "title": "Hanroro, Choi Yu-ree, Vaundy, Sondia, Wee...",
+      "rawTitle": "Playlist: Late Night Songs to Soothe Your Weary Heart | Hanroro, Choi Yu-ree, Vaundy, Sondia, Wee...",
+      "duration": 2374,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "AH8sMk7otKU",
+      "title": "Dear Boy (拝啓、少年よ / Hump Back) / Tenko Shibuki",
+      "rawTitle": "Dear Boy (拝啓、少年よ / Hump Back) / Tenko Shibuki cover",
+      "duration": 189,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "y1nUYj_D1Es",
+      "title": "물떼새(ヨルシカ - 千鳥) / 아오쿠모 린(Aokumo Rin)",
+      "rawTitle": "물떼새(ヨルシカ - 千鳥) / 아오쿠모 린(Aokumo Rin) Cover",
+      "duration": 252,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "_pTBkDP1TE0",
+      "title": "Loveit? - biz×ZERA / 하나코 나나",
+      "rawTitle": "Loveit? - biz×ZERA(feat.LOLUET) / 하나코 나나 COVER",
+      "duration": 147,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "39_zaFVluAw",
+      "title": "아라하시 타비",
+      "rawTitle": "밤새도록 널 생각해[夜もすがら君想ふ] - TOKOTOKOㅣ아라하시 타비 Cover",
+      "duration": 241,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "4nVjnxK4j0c",
+      "title": "Allahashi Tabi",
+      "rawTitle": "Wish Me Luck [A journey] - WONPIL(DAY6) | Allahashi Tabi Cover",
+      "duration": 211,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "_t4OxKtCHrg",
+      "title": "Akane Lize",
+      "rawTitle": "Standing on the Stage - YOASOBI | Akane Lize 【COVER】",
+      "duration": 211,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "VTTQJNcmlD0",
+      "title": "시라유키 히나",
+      "rawTitle": "내일 또 보자(またあした) - ふわりP | 시라유키 히나 Cover",
+      "duration": 333,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
+      "members": [
+        "hina"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "f7uaxrWNIdE",
+      "title": "Nenko Mashiro",
+      "rawTitle": "Delusional Aspartame | Nenko Mashiro Cover",
+      "duration": 150,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "xKA5wKYMFhM",
+      "title": "악마가 아닌걸 [DECO*27 x ピノキオピー] / 유즈하 리코 Yuzuha Riko x 네네코 마시로 Neneko Mashiro",
+      "rawTitle": "악마가 아닌걸 [DECO*27 x ピノキオピー] / 유즈하 리코 Yuzuha Riko x 네네코 마시로 Neneko Mashiro Cover",
+      "duration": 164,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "group",
+      "members": [
+        "mashiro",
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "yRKJ5-vcMUI",
+      "title": "시라유키 히나",
+      "rawTitle": "Mrs. GREEN APPLE - 춘수(春愁) | 시라유키 히나 Cover",
+      "duration": 186,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
+      "members": [
+        "hina"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "SUJm8SX87DY",
+      "title": "drivers license - Olivia Rodrigo / Hanako Nana",
+      "rawTitle": "drivers license - Olivia Rodrigo / Hanako Nana COVER",
+      "duration": 245,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "ZYSQLv_L26Y",
+      "title": "Maid My Way",
+      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
+      "duration": 200,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "jvZRK7W7S9Y",
+      "title": "Hush Trap",
+      "rawTitle": "Hanako Nana | 'Hush Trap'",
+      "duration": 201,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "nsZmnwC9ukE",
+      "title": "Berry Verry Strawberry",
+      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
+      "duration": 186,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "P_oxx3_VpIY",
+      "title": "Villain Alert",
+      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
+      "duration": 187,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "yiprl7-dU04",
+      "title": "마음악보",
+      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
+      "duration": 225,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "XR81lQrRceg",
+      "title": "유성우",
+      "rawTitle": "스텔라이브 (StelLive) Cliché | '유성우'",
+      "duration": 210,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "tD9N1BhSrCI",
+      "title": "To You, My Light",
+      "rawTitle": "To You, My Light",
+      "duration": 221,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "v094-E3Pmtk",
+      "title": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
+      "rawTitle": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
+      "duration": 236,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "m-rIYEw5uAs",
+      "title": "I Want to Be a Heroine",
+      "rawTitle": "StelLive | 'I Want to Be a Heroine'",
+      "duration": 197,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "he2W_4xY5Zo",
+      "title": "Twinkle",
+      "rawTitle": "스텔라이브 (StelLive) | Twinkle",
+      "duration": 230,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "TDn37k6Ccw0",
+      "title": "CHEWING LUV",
+      "rawTitle": "CHEWING LUV",
+      "duration": 180,
+      "uploader": "Ayatsuno Yuni - Topic",
+      "defaultMember": "yuni",
+      "members": [
+        "yuni"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "IQbeBUIVmdw",
+      "title": "삐질게 (BBiJilGe)",
+      "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘삐질게 (BBiJilGe)’ Music Video",
+      "duration": 144,
+      "uploader": "아야츠노 유니 AYATSUNO YUNI",
+      "defaultMember": "yuni",
+      "members": [
+        "yuni"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "G5tTozKJRD4",
+      "title": "여로",
+      "rawTitle": "아라하시 타비 (Arahashi Tabi) | '여로'",
+      "duration": 205,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "_8uoathMY0A",
+      "title": "봄꿈",
+      "rawTitle": "네네코 마시로(Neneko Mashiro) | ‘봄꿈’",
+      "duration": 196,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "3_0Ut2tlxLM",
+      "title": "Festa!",
+      "rawTitle": "아카네 리제(Akane Lize) | ‘Festa!’",
+      "duration": 215,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "rQaluJS-Tc0",
+      "title": "하나(夏拏)",
+      "rawTitle": "시라유키 히나(Shirayuki Hina) | ‘하나(夏拏)’",
+      "duration": 255,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
+      "members": [
+        "hina"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "GN-rdF8tEpU",
+      "title": "Our Tales",
+      "rawTitle": "스텔라이브 (StelLive) Cliché | ‘Our Tales’",
+      "duration": 225,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "gq3gzxPBOK0",
+      "title": "青い宝石と竜の子",
+      "rawTitle": "藍璃かんな(Airi Kanna) | ‘青い宝石と竜の子’",
+      "duration": 236,
+      "uploader": "Airi Kanna",
+      "defaultMember": "kanna",
+      "members": [
+        "kanna"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "R_RAWjqdgTs",
+      "title": "SUPADOPA",
+      "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘SUPADOPA’ Music Video",
+      "duration": 155,
+      "uploader": "아야츠노 유니 AYATSUNO YUNI",
+      "defaultMember": "yuni",
+      "members": [
+        "yuni"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "Jt6UCd7JhAA",
+      "title": "Stars Align",
+      "rawTitle": "스텔라이브 (StelLive) Universe | ‘Stars Align’",
+      "duration": 283,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    }
+  ]
+}

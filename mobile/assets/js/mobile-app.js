@@ -289,6 +289,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/"/g, '&quot;');
     }
 
+    // 화면 테마 설정 (라이트 / 다크 모드)
+    function applyMobileTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        if (dom.btnThemeDark) dom.btnThemeDark.classList.toggle('active', theme === 'dark');
+        if (dom.btnThemeLight) dom.btnThemeLight.classList.toggle('active', theme === 'light');
+        if (window.StorageManager && typeof window.StorageManager.setSetting === 'function') {
+            window.StorageManager.setSetting('theme', theme);
+        } else {
+            localStorage.setItem('stellplay_theme', theme);
+        }
+    }
+
     // ===================================================================
     // 1. 초기화 (Init)
     // ===================================================================
@@ -2310,11 +2322,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 2. PC 서버 또는 웹 API를 통한 신곡 탐색 (브라우저/PWA 환경 폴백)
         try {
             const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+            const isWeb = (window.location.port !== '8888');
             const endpoints = [];
             if (pcServer) {
                 endpoints.push(`${pcServer}/api/sync-new-songs`);
             }
-            endpoints.push('/api/sync-new-songs');
+            if (isWeb) {
+                endpoints.push(`./songs-latest.json?t=${Date.now()}`);
+                endpoints.push(`../songs-latest.json?t=${Date.now()}`);
+            } else {
+                endpoints.push('/api/sync-new-songs');
+            }
 
             let data = null;
             for (const ep of endpoints) {
@@ -3096,17 +3114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
 
-        // 화면 테마 설정 (라이트 / 다크 모드)
-        function applyMobileTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            if (dom.btnThemeDark) dom.btnThemeDark.classList.toggle('active', theme === 'dark');
-            if (dom.btnThemeLight) dom.btnThemeLight.classList.toggle('active', theme === 'light');
-            if (window.StorageManager && typeof window.StorageManager.setSetting === 'function') {
-                window.StorageManager.setSetting('theme', theme);
-            } else {
-                localStorage.setItem('stellplay_theme', theme);
-            }
-        }
+        // 화면 테마 이벤트 등록
 
         if (dom.btnThemeDark) {
             dom.btnThemeDark.addEventListener('click', () => {

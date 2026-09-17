@@ -32,18 +32,11 @@ class MusicPlayer {
         this.repeatMode = settings.repeatMode ?? 'all';
         this.isShuffle = settings.isShuffle ?? false;
         this.sabiMode = settings.sabiMode ?? false;
-        this.isWeb = !window.location.port || window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+        this.isWeb = (window.location.port !== '8888');
         this.engineMode = this.isWeb ? 'video' : (settings.engineMode ?? 'audio');
         this.sabiDuration = settings.sabiDuration ?? 35;
         this.crossfade = settings.crossfade ?? 0;
         this.isCrossfading = false;
-
-        // 듀얼 데크 상태 (무광고 & 실시간 크로스페이드 전용)
-        this.activeDeck = 'A';
-        this.ytDeckA = null;
-        this.ytDeckB = null;
-        this.isDeckAReady = false;
-        this.isDeckBReady = false;
 
         // 1. 네이티브 오디오 엘리먼트 초기화 (Zero-Ad 모드)
         this.audioElement = new Audio();
@@ -84,14 +77,6 @@ class MusicPlayer {
         });
     }
 
-    getActiveDeckPlayer() {
-        return (this.activeDeck === 'A' ? this.ytDeckA : this.ytDeckB) || this.ytPlayer;
-    }
-
-    getInactiveDeckPlayer() {
-        return (this.activeDeck === 'A' ? this.ytDeckB : this.ytDeckA);
-    }
-
     getNextTrackIndex() {
         if (this.queue.length === 0) return 0;
         if (this.repeatMode === 'one') return this.currentIndex;
@@ -125,28 +110,9 @@ class MusicPlayer {
                 playerVars.origin = window.location.origin;
             }
 
-            const createDeck = (elementId, deckName) => {
-                const el = document.getElementById(elementId);
-                if (!el) return null;
-                return new YT.Player(elementId, {
-                    host: 'https://www.youtube-nocookie.com',
-                    height: '100%',
-                    width: '100%',
-                    playerVars: playerVars,
-                    events: {
-                        onReady: (e) => this.onDeckReady(deckName, e),
-                        onStateChange: (e) => this.onDeckStateChange(deckName, e),
-                        onError: (e) => this.onDeckError(deckName, e)
-                    }
-                });
-            };
-
-            this.ytDeckA = createDeck('youtube-player-deck-a', 'A');
-            this.ytDeckB = createDeck('youtube-player-deck-b', 'B');
-
-            if (!this.ytDeckA) {
+            const embedEl = document.getElementById('youtube-player-embed');
+            if (embedEl) {
                 this.ytPlayer = new YT.Player('youtube-player-embed', {
-                    host: 'https://www.youtube-nocookie.com',
                     height: '100%',
                     width: '100%',
                     playerVars: playerVars,
@@ -158,71 +124,6 @@ class MusicPlayer {
                 });
             }
         };
-    }
-
-    onDeckReady(deck, event) {
-        if (deck === 'A') this.isDeckAReady = true;
-        if (deck === 'B') this.isDeckBReady = true;
-
-        this.isYtReady = this.isDeckAReady;
-        this.ytPlayer = this.getActiveDeckPlayer();
-
-        try {
-            event.target.setVolume(deck === this.activeDeck ? this.volume : 0);
-        } catch (e) {}
-
-        if (deck === 'A') {
-            window.dispatchEvent(new CustomEvent('stellplay:ready'));
-
-            if (this.pendingVideoPlay) {
-                this.switchToVideoEngine(this.currentSong, this.pendingVideoPlay.autoPlay);
-                this.pendingVideoPlay = null;
-            }
-
-            if (this.queue.length === 0 && window.getAllSongs) {
-                const allSongs = window.getAllSongs();
-                this.setQueue(allSongs, 0, false);
-            }
-        }
-    }
-
-    onDeckStateChange(deck, event) {
-        if (deck !== this.activeDeck && !this.isCrossfading) return;
-        if (this.engineMode !== 'video') return;
-        const state = event.data;
-
-        if (state === YT.PlayerState.PLAYING) {
-            if (deck === this.activeDeck) {
-                this.isPlaying = true;
-                this.startTimeUpdater();
-                window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', { detail: { isPlaying: true } }));
-            }
-        } else if (state === YT.PlayerState.PAUSED) {
-            if (deck === this.activeDeck && !this.isCrossfading) {
-                this.isPlaying = false;
-                this.stopTimeUpdater();
-                window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', { detail: { isPlaying: false } }));
-            }
-        } else if (state === YT.PlayerState.ENDED) {
-            if (deck === this.activeDeck) {
-                this.handleTrackEnded();
-            }
-        } else if (state === YT.PlayerState.BUFFERING) {
-            if (deck === this.activeDeck) {
-                window.dispatchEvent(new CustomEvent('stellplay:buffering'));
-            }
-        }
-    }
-
-    onDeckError(deck, event) {
-        if (deck !== this.activeDeck) return;
-        if (this.engineMode !== 'video') return;
-        console.warn(`YouTube Player Deck ${deck} Error code:`, event.data);
-        setTimeout(() => {
-            if (this.queue.length > 1) {
-                this.playNext(true);
-            }
-        }, 1500);
     }
 
     onPlayerReady(event) {
@@ -336,30 +237,27 @@ class MusicPlayer {
         }
         if (this.audioElement) this.audioElement.pause();
         const startSec = this.getInitialStartSeconds(song);
-        const player = this.getActiveDeckPlayer();
 
-        const deckAEl = document.getElementById('youtube-player-deck-a');
-        const deckBEl = document.getElementById('youtube-player-deck-b');
-        if (deckAEl && deckBEl) {
-            deckAEl.style.display = this.activeDeck === 'A' ? 'block' : 'none';
-            deckAEl.style.opacity = '1';
-            deckBEl.style.display = this.activeDeck === 'B' ? 'block' : 'none';
-            deckBEl.style.opacity = '1';
-        }
-
-        if (player && this.isYtReady) {
-            player.loadVideoById({
-                videoId: song.youtubeId,
-                startSeconds: startSec
-            });
-            player.setVolume(this.isMuted ? 0 : this.volume);
-            if (autoPlay) {
-                try { player.playVideo(); } catch (e) {}
+        if (this.isYtReady && this.ytPlayer && typeof this.ytPlayer.loadVideoById === 'function') {
+            try {
+                this.ytPlayer.loadVideoById({
+                    videoId: song.youtubeId,
+                    startSeconds: startSec
+                });
+                this.ytPlayer.setVolume(this.isMuted ? 0 : this.volume);
+                if (autoPlay) {
+                    this.ytPlayer.playVideo();
+                    this.isPlaying = true;
+                } else {
+                    this.ytPlayer.pauseVideo();
+                    this.isPlaying = false;
+                }
+            } catch (e) {
+                console.error('Failed to play video', e);
             }
-            this.isPlaying = autoPlay;
         } else {
             this.pendingVideoPlay = {
-                videoId: song.youtubeId,
+                videoId: song ? song.youtubeId : null,
                 startSeconds: startSec,
                 autoPlay: autoPlay
             };
@@ -532,7 +430,7 @@ class MusicPlayer {
         }
     }
 
-    playSong(song, index = null) {
+    playSong(song, index = null, autoPlay = true) {
         if (!song) return;
         if (index !== null) {
             this.currentIndex = index;
@@ -559,9 +457,8 @@ class MusicPlayer {
 
         // 1. Zero-Ad 네이티브 오디오 엔진 재생 (로컬 백엔드가 있는 PC 앱 환경만)
         if (this.engineMode === 'audio' && !this.isWeb) {
-            const player = this.getActiveDeckPlayer();
-            if (player && this.isYtReady && typeof player.pauseVideo === 'function') {
-                player.pauseVideo();
+            if (this.ytPlayer && this.isYtReady && typeof this.ytPlayer.pauseVideo === 'function') {
+                this.ytPlayer.pauseVideo();
             }
 
             const streamUrl = `/api/audio?id=${song.youtubeId}`;
@@ -598,7 +495,7 @@ class MusicPlayer {
                     this.switchToVideoEngine(song, true);
                 });
             }
-            this.isPlaying = true;
+            this.isPlaying = autoPlay;
         }
         // 2. YouTube IFrame MV 비디오 엔진 재생 (웹 정적 호스팅 및 MV 모드)
         else {
@@ -608,7 +505,7 @@ class MusicPlayer {
         this.updateMediaSession(song);
 
         window.dispatchEvent(new CustomEvent('stellplay:trackChanged', {
-            detail: { song: this.currentSong, index: this.currentIndex, isPlaying: true, sabiMode: this.sabiMode, engineMode: this.engineMode }
+            detail: { song: this.currentSong, index: this.currentIndex, isPlaying: autoPlay, sabiMode: this.sabiMode, engineMode: this.engineMode }
         }));
     }
 
@@ -969,110 +866,12 @@ class MusicPlayer {
 
     triggerCrossfade() {
         if (this.isCrossfading || this.queue.length <= 1) return;
-
-        const nextIndex = this.getNextTrackIndex();
-        const nextSong = this.queue[nextIndex];
-        if (!nextSong) return;
-
-        const activePlayer = this.getActiveDeckPlayer();
-        const inactivePlayer = this.getInactiveDeckPlayer();
-
-        // 듀얼 데크(YouTube) 동시 교차 크로스페이드 처리
-        if (inactivePlayer && typeof inactivePlayer.loadVideoById === 'function') {
-            this.isCrossfading = true;
-            const targetVol = this.isMuted ? 0 : this.volume;
-            const fadeSec = Math.max(3, Math.min(15, this.crossfade || 8));
-            const steps = 20;
-            const intervalTime = Math.floor((fadeSec * 1000) / steps);
-            let currentStep = 0;
-
-            const nextDeckName = this.activeDeck === 'A' ? 'B' : 'A';
-            const curDeckEl = document.getElementById(`youtube-player-deck-${this.activeDeck.toLowerCase()}`);
-            const nextDeckEl = document.getElementById(`youtube-player-deck-${nextDeckName.toLowerCase()}`);
-
-            // 다음 곡을 비활성 데크에 볼륨 0으로 미리 로드 후 동시 재생 시작
-            const nextStart = this.getInitialStartSeconds(nextSong);
-            try {
-                inactivePlayer.setVolume(0);
-                inactivePlayer.loadVideoById({
-                    videoId: nextSong.youtubeId,
-                    startSeconds: nextStart
-                });
-                inactivePlayer.playVideo();
-            } catch (e) {
-                console.warn('[Crossfade Deck Preload Error]', e);
-            }
-
-            if (nextDeckEl) {
-                nextDeckEl.style.display = 'block';
-                nextDeckEl.style.opacity = '0';
-            }
-
-            const crossfadeTimer = setInterval(() => {
-                currentStep++;
-                const factor = currentStep / steps; // 0 to 1
-
-                try {
-                    // 현재 재생 중인 데크 페이드아웃
-                    if (activePlayer && typeof activePlayer.setVolume === 'function') {
-                        activePlayer.setVolume(Math.round(targetVol * (1 - factor)));
-                    }
-                    // 새로 시작한 데크 페이드인
-                    if (inactivePlayer && typeof inactivePlayer.setVolume === 'function') {
-                        inactivePlayer.setVolume(Math.round(targetVol * factor));
-                    }
-                } catch (e) {}
-
-                if (nextDeckEl) nextDeckEl.style.opacity = factor.toFixed(2);
-                if (curDeckEl) curDeckEl.style.opacity = (1 - factor).toFixed(2);
-
-                if (currentStep >= steps) {
-                    clearInterval(crossfadeTimer);
-                    try {
-                        if (activePlayer && typeof activePlayer.stopVideo === 'function') {
-                            activePlayer.stopVideo();
-                        }
-                    } catch (e) {}
-
-                    if (curDeckEl) curDeckEl.style.display = 'none';
-                    if (nextDeckEl) {
-                        nextDeckEl.style.opacity = '1';
-                        nextDeckEl.style.display = 'block';
-                    }
-
-                    // 활성 데크 전환
-                    this.activeDeck = nextDeckName;
-                    this.ytPlayer = inactivePlayer;
-                    try { inactivePlayer.setVolume(targetVol); } catch (e) {}
-
-                    this.currentIndex = nextIndex;
-                    this.currentSong = nextSong;
-                    this.isCrossfading = false;
-                    this.parseLyrics(nextSong.lyrics);
-
-                    if (window.StorageManager && nextSong.id) {
-                        window.StorageManager.addToHistory(nextSong.id);
-                    }
-
-                    this.updateMediaSession(nextSong);
-
-                    window.dispatchEvent(new CustomEvent('stellplay:trackChanged', {
-                        detail: { song: nextSong, index: this.currentIndex }
-                    }));
-                    window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', {
-                        detail: { isPlaying: true }
-                    }));
-                }
-            }, intervalTime);
-            return;
-        }
-
-        // 단일 오디오 엘리먼트 폴백 (로컬 PC 서버 모드)
         this.isCrossfading = true;
-        const targetVol = this.isMuted ? 0 : this.volume / 100;
-        const fadeMs = Math.max(500, this.crossfade * 1000);
+
+        const targetVol = this.isMuted ? 0 : this.volume;
+        const fadeSec = Math.max(1, Math.min(4, this.crossfade || 2));
         const steps = 15;
-        const intervalTime = Math.max(30, Math.floor(fadeMs / steps));
+        const intervalTime = Math.max(30, Math.floor((fadeSec * 1000) / steps));
         let currentStep = steps;
 
         const fadeOutTimer = setInterval(() => {
@@ -1084,7 +883,11 @@ class MusicPlayer {
             } else {
                 const volFactor = currentStep / steps;
                 if (this.engineMode === 'audio') {
-                    this.audioElement.volume = targetVol * volFactor;
+                    this.audioElement.volume = (targetVol / 100) * volFactor;
+                } else if (this.ytPlayer && typeof this.ytPlayer.setVolume === 'function') {
+                    try {
+                        this.ytPlayer.setVolume(Math.round(targetVol * volFactor));
+                    } catch (e) {}
                 }
             }
         }, intervalTime);
