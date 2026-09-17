@@ -85,6 +85,8 @@ class MobilePlayer {
         this._setupAudioListeners();
         this._setupMediaSession();
         this._initYouTubeAPI();
+        this.isAdShieldActive = false;
+        this._initAdShield();
 
         window.addEventListener('visibilitychange', () => {
             if (!document.hidden) this.syncFromNative();
@@ -186,6 +188,7 @@ class MobilePlayer {
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
                         width: '100%',
+                        host: 'https://www.youtube-nocookie.com',
                         playerVars: {
                             autoplay: 1,
                             controls: 0,
@@ -194,6 +197,7 @@ class MobilePlayer {
                             rel: 0,
                             playsinline: 1,
                             enablejsapi: 1,
+                            iv_load_policy: 3,
                             origin: appOrigin
                         },
                         events: {
@@ -257,10 +261,105 @@ class MobilePlayer {
         }
     }
 
+    // --- 무광고 스마트 쉴드 엔진 (Mobile Zero-Ad Smart Shield) ---
+    _initAdShield() {
+        window.addEventListener('message', (event) => {
+            if (this.activeEngine !== 'youtube' || !this.ytPlayer) return;
+            try {
+                let data = event.data;
+                if (typeof data === 'string') {
+                    try { data = JSON.parse(data); } catch (e) { return; }
+                }
+                if (!data || (data.event !== 'infoDelivery' && !data.info)) return;
+
+                const info = data.info || {};
+                const isAdState = info.adState === 1 || info.adState === 2;
+                const isAdFlag = info.isAd === true;
+                const isAdVideoData = info.videoData && (
+                    info.videoData.isAd === true ||
+                    (info.videoData.video_id && this.currentSong && info.videoData.video_id !== this.currentSong.youtubeId)
+                );
+
+                if (isAdState || isAdFlag || isAdVideoData) {
+                    this._handleAdDetected(info.duration || 0);
+                } else if (info.adState === 0 || (info.videoData && this.currentSong && info.videoData.video_id === this.currentSong.youtubeId)) {
+                    if (this.isAdShieldActive) {
+                        this._handleAdFinished();
+                    }
+                }
+            } catch (e) {}
+        });
+    }
+
+    _handleAdDetected(adDuration = 0) {
+        if (!this.isAdShieldActive) {
+            this.isAdShieldActive = true;
+            // 1. 광고 사운드 즉각 100% 무음화
+            if (this.ytPlayer && typeof this.ytPlayer.mute === 'function') {
+                try { this.ytPlayer.mute(); } catch (e) {}
+            }
+        }
+
+        // 2. 최대 재생 배속 가속 (광고 초고속 통과)
+        if (this.ytPlayer && typeof this.ytPlayer.setPlaybackRate === 'function') {
+            try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
+        }
+
+        // 3. 광고 끝 지점 강제 탐색으로 즉시 스킵 유도
+        if (this.ytPlayer && typeof this.ytPlayer.seekTo === 'function') {
+            try {
+                const targetTime = adDuration > 0 ? adDuration + 1 : 9999;
+                this.ytPlayer.seekTo(targetTime, true);
+            } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+    }
+
+    _handleAdFinished() {
+        if (!this.isAdShieldActive) return;
+        this.isAdShieldActive = false;
+
+        // 1. 음소거 해제 및 정배속 복구
+        if (this.ytPlayer) {
+            try {
+                if (typeof this.ytPlayer.unMute === 'function') {
+                    this.ytPlayer.unMute();
+                }
+                if (typeof this.ytPlayer.setPlaybackRate === 'function') {
+                    this.ytPlayer.setPlaybackRate(1);
+                }
+            } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
+    }
+
     _startYtTimer() {
         this._stopYtTimer();
         this.ytUpdateTimer = setInterval(() => {
             if (this.activeEngine !== 'youtube' || !this.ytPlayer || !this.ytPlayer.getCurrentTime) return;
+
+            // [Mobile Zero-Ad Smart Shield] 실시간 쉴드 폴링 체크
+            if (this.currentSong) {
+                try {
+                    const vData = typeof this.ytPlayer.getVideoData === 'function' ? this.ytPlayer.getVideoData() : null;
+                    const curDur = typeof this.ytPlayer.getDuration === 'function' ? this.ytPlayer.getDuration() : 0;
+                    const isAdByData = vData && (
+                        vData.isAd === true ||
+                        (vData.video_id && vData.video_id !== this.currentSong.youtubeId)
+                    );
+                    const isAdByDur = (curDur > 0 && curDur <= 35 && this.currentSong.duration > 60);
+
+                    if (isAdByData || isAdByDur) {
+                        this._handleAdDetected(curDur);
+                        return; // 광고 스킵 진행 중에는 일반 타이머 대기
+                    } else if (this.isAdShieldActive && vData && vData.video_id === this.currentSong.youtubeId) {
+                        this._handleAdFinished();
+                    }
+                } catch (e) {}
+            }
+
             try {
                 const cur = this.ytPlayer.getCurrentTime() || 0;
                 const dur = this.ytPlayer.getDuration() || this.currentSong?.duration || 0;
@@ -307,6 +406,7 @@ class MobilePlayer {
         this.audio.pause();
         this.audio.src = '';
         this.isOfflinePlayback = false;
+        this.isAdShieldActive = false;
 
         const startSec = (this.sabiMode && song.sabi && typeof song.sabi.start === 'number') ? song.sabi.start : 0;
 
