@@ -49,8 +49,10 @@
 }
 
 [data-theme="light"] .mobile-header {
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 [data-theme="light"] .logo-icon {
@@ -61,10 +63,18 @@
     fill: #ffffff !important;
 }
 
+[data-theme="light"] .logo-title {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    color: #0f172a !important;
+}
+
 [data-theme="light"] .logo-text {
-    background: linear-gradient(135deg, #0f172a 40%, var(--theme-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    color: #0f172a !important;
 }
 
 [data-theme="light"] .mobile-search-wrap {
@@ -287,6 +297,45 @@ body::before {
     background: rgba(124, 92, 252, 0.18);
     color: var(--theme-color);
     border: 1px solid var(--border-active);
+}
+
+/* 상단 PC 모드 전환 버튼 */
+.m-header-pc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.12));
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary, #cbd5e1);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.m-header-pc-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+}
+
+.m-header-pc-btn:active {
+    transform: scale(0.95);
+}
+
+[data-theme="light"] .m-header-pc-btn {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #334155;
+}
+
+[data-theme="light"] .m-header-pc-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #0f172a;
 }
 
 /* 상단 사비 모드 토글 버튼 */
@@ -1739,6 +1788,13 @@ body::before {
     text-align: center;
     backdrop-filter: blur(15px);
     transition: all 0.3s ease;
+}
+
+[data-theme="light"] .toast {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    color: #0f172a !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* ===================================================================

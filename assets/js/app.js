@@ -379,24 +379,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectTheme = document.getElementById('setting-theme-select');
         if (selectTheme) selectTheme.value = theme;
 
-        // 사이드바 테마 전환 버튼 UI 동기화
+        // 사이드바 테마 전환 스위치 UI 동기화
         const btnToggle = document.getElementById('btn-theme-toggle');
         if (btnToggle) {
-            const iconSpan = btnToggle.querySelector('.theme-toggle-icon');
-            const textSpan = btnToggle.querySelector('.theme-toggle-text');
-            if (isLight) {
-                if (iconSpan) {
-                    iconSpan.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-                }
-                if (textSpan) textSpan.textContent = '다크 모드로 전환';
-                btnToggle.setAttribute('title', '어두운 다크 모드로 전환');
-            } else {
-                if (iconSpan) {
-                    iconSpan.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-                }
-                if (textSpan) textSpan.textContent = '라이트 모드로 전환';
-                btnToggle.setAttribute('title', '밝은 라이트 모드로 전환');
-            }
+            btnToggle.setAttribute('title', isLight ? '다크 모드로 전환' : '라이트 모드로 전환');
+            btnToggle.setAttribute('aria-checked', isLight ? 'true' : 'false');
         }
 
         const currentMember = state.currentFilterMember !== 'all' ? state.currentFilterMember : (state.selectedMajor !== 'all' ? state.selectedMajor : 'all');
@@ -2400,9 +2387,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.openFullPlayerBtn.title = '전체화면 플레이어';
             dom.openFullPlayerBtn.classList.remove('active');
         }
-        if (state.fullPlayerViewMode === 'video') {
-            switchFullPlayerView('art');
-        }
         if (dom.btnToggleQueueDrawer) {
             dom.btnToggleQueueDrawer.classList.toggle('active', dom.queueDrawer && dom.queueDrawer.classList.contains('open'));
         }
@@ -2425,11 +2409,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'video') {
             if (artBox) artBox.style.display = 'none';
             dom.fullVideoContainer.classList.add('active');
-            player.setEngineMode('video');
+            if (!player.isWeb) {
+                player.setEngineMode('video');
+            }
         } else {
             dom.fullVideoContainer.classList.remove('active');
             if (artBox) artBox.style.display = 'flex';
-            player.setEngineMode('audio');
+            if (!player.isWeb) {
+                player.setEngineMode('audio');
+            }
         }
     }
 
@@ -3519,7 +3507,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.StorageManager) {
                 window.StorageManager.setSetting('theme', newTheme);
             }
-            showToast(newTheme === 'light' ? '화사한 라이트 모드가 적용되었습니다.' : '눈이 편안한 다크 모드가 적용되었습니다.');
         });
     }
 
@@ -3871,6 +3858,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
+    window.showToast = showToast;
 
     // 초기 실행
     initApp();

@@ -8,7 +8,8 @@
         (function() {
             var ua = navigator.userAgent || navigator.vendor || window.opera;
             var isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua) || (window.innerWidth <= 768 && window.innerHeight > window.innerWidth);
-            if (isMobile && !location.search.includes('force=pc')) {
+            var forcePc = location.search.includes('force=pc') || localStorage.getItem('stellplay_force_pc') === 'true';
+            if (isMobile && !forcePc) {
                 var currentPath = location.pathname;
                 var targetPath = currentPath.endsWith('/') 
                     ? currentPath + 'mobile/' 
@@ -35,8 +36,8 @@
         <aside class="sidebar">
             <a href="#" class="brand-logo">
                 <div class="brand-icon-wrapper">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#ffffff" style="color: #ffffff;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#ffffff"/>
                     </svg>
                 </div>
                 <div style="display: flex; align-items: baseline; gap: 6px;">
@@ -96,14 +97,50 @@
 
             <!-- 사이드바 하단 테마 전환 및 신곡 등록 버튼 -->
             <div class="sidebar-footer">
-                <button class="btn-theme-toggle" id="btn-theme-toggle" title="밝은 라이트 모드로 전환">
-                    <span class="theme-toggle-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                        </svg>
-                    </span>
-                    <span class="theme-toggle-text">라이트 모드로 전환</span>
-                </button>
+                <div class="theme-switch-wrapper">
+                    <button class="theme-toggle-switch" id="btn-theme-toggle" type="button" role="switch" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환">
+                        <div class="theme-switch-track">
+                            <span class="track-icon track-sun" aria-hidden="true">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                </svg>
+                            </span>
+                            <span class="track-icon track-moon" aria-hidden="true">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                            </span>
+                            <div class="theme-switch-thumb">
+                                <span class="thumb-icon icon-sun">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="5"></circle>
+                                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                    </svg>
+                                </span>
+                                <span class="thumb-icon icon-moon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    </button>
+                </div>
                 <button class="btn-add-song" id="btn-add-song">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
@@ -718,7 +755,6 @@
                             <option value="original">오리지널곡</option>
                             <option value="cover" selected>커버곡</option>
                             <option value="featuring">피처링 / 컬래버 / OST</option>
-                            <option value="stream">노래방송 라이브 (세트리스트)</option>
                         </select>
                     </div>
                 </div>
@@ -838,7 +874,6 @@
                                 <option value="original">오리지널곡</option>
                                 <option value="cover">커버곡</option>
                                 <option value="featuring">피처링 / 컬래버 / OST</option>
-                                <option value="stream">노래방송 라이브</option>
                             </select>
                         </div>
                     </div>

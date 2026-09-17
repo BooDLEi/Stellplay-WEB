@@ -47,12 +47,22 @@
                     </div>
                     <span class="logo-title">StellPlay</span>
                 </div>
-                <button class="header-sabi-btn" id="m-header-sabi-btn" title="사비 메들리 모드 온/오프">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                    </svg>
-                    <span id="m-header-sabi-text">사비 OFF</span>
-                </button>
+                <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+                    <button class="m-header-pc-btn" id="m-btn-switch-pc" title="PC 모드로 보기">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                        <span>PC 모드</span>
+                    </button>
+                    <button class="header-sabi-btn" id="m-header-sabi-btn" title="사비 메들리 모드 온/오프">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        <span id="m-header-sabi-text">사비 OFF</span>
+                    </button>
+                </div>
             </div>
 
             <!-- 검색창 -->

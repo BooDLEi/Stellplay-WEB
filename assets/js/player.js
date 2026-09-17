@@ -184,6 +184,10 @@ class MusicPlayer {
     }
 
     setEngineMode(mode) {
+        if (this.isWeb) {
+            this.engineMode = 'video';
+            return;
+        }
         if (this.engineMode === mode) return;
         const prevCurrentTime = this.getCurrentTime();
         this.engineMode = mode;

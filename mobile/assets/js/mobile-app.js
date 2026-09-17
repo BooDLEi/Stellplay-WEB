@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         networkBadge: document.getElementById('network-badge'),
         headerSabiBtn: document.getElementById('m-header-sabi-btn'),
         headerSabiText: document.getElementById('m-header-sabi-text'),
+        btnSwitchPc: document.getElementById('m-btn-switch-pc'),
         sortSelect: document.getElementById('m-sort-select'),
         btnRandomPlayFiltered: document.getElementById('btn-random-play-filtered'),
 
@@ -3826,6 +3827,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (dom.sheetSabiBtn) dom.sheetSabiBtn.addEventListener('click', handleToggleSabi);
         if (dom.headerSabiBtn) dom.headerSabiBtn.addEventListener('click', handleToggleSabi);
+        if (dom.btnSwitchPc) {
+            dom.btnSwitchPc.addEventListener('click', () => {
+                localStorage.setItem('stellplay_force_pc', 'true');
+                window.location.href = '../index.html?force=pc';
+            });
+        }
 
         // 셔플 토글
         dom.sheetShuffleBtn.addEventListener('click', () => {
