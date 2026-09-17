@@ -3184,4 +3184,67 @@ body.offline-select-active .m-track-select-box {
     flex-shrink: 0;
 }
 
+/* ===================================================================
+   모바일 앨범 커버 vs 유튜브 영상 뷰 모드 및 플레이어 도킹 스타일
+=================================================================== */
+.m-view-mode-toggle {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-glass);
+    border-radius: 20px;
+    padding: 2px;
+    gap: 2px;
+}
+
+.m-view-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.m-view-btn.active {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .m-view-mode-toggle {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .m-view-btn.active {
+    background: white !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* 영상 도킹 시 유튜브 플레이어 래퍼 스타일 (광고 건너뛰기 터치 지원) */
+#m-youtube-player-wrap.docked {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+#m-youtube-player-wrap.docked iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+}
+
 

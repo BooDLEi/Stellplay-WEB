@@ -2747,7 +2747,9 @@ body::after {
     display: block;
 }
 
-.youtube-view-box iframe {
+.youtube-view-box iframe,
+.yt-player-deck,
+.yt-player-deck iframe {
     width: 100%;
     height: 100%;
     border: none;

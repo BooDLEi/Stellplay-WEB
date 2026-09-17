@@ -2167,7 +2167,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.addEventListener('stellplay:engineChanged', (e) => {
-            // 음성/영상 모드 전환 시 알림 비활성화
+            const mode = e.detail?.engineMode;
+            if (mode) {
+                const targetView = mode === 'video' ? 'video' : 'art';
+                if (state.fullPlayerViewMode !== targetView) {
+                    switchFullPlayerView(targetView);
+                }
+                const selectEngine = document.getElementById('setting-engine-select');
+                if (selectEngine && selectEngine.value !== mode) {
+                    selectEngine.value = mode;
+                }
+            }
         });
 
         window.addEventListener('stellplay:playStateChanged', () => {
@@ -2409,15 +2419,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'video') {
             if (artBox) artBox.style.display = 'none';
             dom.fullVideoContainer.classList.add('active');
-            if (!player.isWeb) {
-                player.setEngineMode('video');
-            }
+            player.setEngineMode('video');
         } else {
             dom.fullVideoContainer.classList.remove('active');
             if (artBox) artBox.style.display = 'flex';
-            if (!player.isWeb) {
-                player.setEngineMode('audio');
-            }
+            player.setEngineMode('audio');
         }
     }
 

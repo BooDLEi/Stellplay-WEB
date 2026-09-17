@@ -385,7 +385,10 @@
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </button>
-                <span class="sheet-title-badge" id="sheet-mode-badge">NOW PLAYING</span>
+                <div class="m-view-mode-toggle" id="m-view-mode-toggle" style="display:flex; background:rgba(255,255,255,0.08); border:1px solid var(--border-glass); border-radius:20px; padding:2px; gap:2px;">
+                    <button type="button" class="m-view-btn active" id="m-btn-view-art" style="border:none; background:rgba(255,255,255,0.18); color:var(--text-primary); padding:4px 10px; border-radius:16px; font-size:0.75rem; font-weight:700; cursor:pointer;">💿 앨범</button>
+                    <button type="button" class="m-view-btn" id="m-btn-view-video" style="border:none; background:transparent; color:var(--text-muted); padding:4px 10px; border-radius:16px; font-size:0.75rem; font-weight:700; cursor:pointer;">🎬 영상</button>
+                </div>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <button class="sheet-ctrl-btn" id="sheet-queue-btn" title="재생목록 보기">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -403,12 +406,18 @@
                 </div>
             </div>
 
-            <div class="vinyl-album-container">
+            <!-- 앨범 아트 바이닐 뷰 -->
+            <div class="vinyl-album-container" id="m-sheet-art-box">
                 <div class="vinyl-disc" id="sheet-vinyl-disc">
                     <div class="vinyl-center-art">
                         <img class="vinyl-img" id="sheet-album-img" src="" alt="">
                     </div>
                 </div>
+            </div>
+
+            <!-- 유튜브 영상 전용 뷰 (16:9 비율 도킹) -->
+            <div class="m-video-box" id="m-sheet-video-box" style="display:none; width:92%; max-width:440px; aspect-ratio:16/9; margin:16px auto 10px auto; border-radius:14px; overflow:hidden; background:#000; box-shadow:0 8px 24px rgba(0,0,0,0.6); position:relative;">
+                <div id="m-video-dock-target" style="width:100%; height:100%; position:relative;"></div>
             </div>
 
             <div class="sheet-meta-wrap">
@@ -921,8 +930,17 @@
         </div>
 
         <!-- 독립형 유튜브 플레이어 (모바일 브라우저 쓰로틀링 방지 뷰포트 내 배치) -->
-        <div id="m-youtube-player-wrap" style="position:fixed; bottom:0; right:0; width:200px; height:200px; z-index:-10; opacity:0.05; pointer-events:none; overflow:hidden;">
-            <div id="m-youtube-hidden-player"></div>
+        <div id="m-youtube-player-wrap" class="m-yt-player-wrap" style="position:fixed; bottom:0; right:0; width:200px; height:200px; z-index:-10; opacity:0.01; pointer-events:none; overflow:hidden;">
+            <div id="m-youtube-hidden-player" style="width:100%; height:100%;"></div>
+        </div>
+
+        <!-- 광고 안내 & 즉시 건너뛰기 플로팅 배너 -->
+        <div id="m-ad-floating-banner" style="display:none; position:fixed; top:12px; left:12px; right:12px; background:linear-gradient(135deg, #ef4444, #dc2626); color:white; padding:10px 14px; border-radius:14px; font-size:0.8rem; font-weight:700; z-index:99999; box-shadow:0 8px 24px rgba(0,0,0,0.5); align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1rem;">📢</span>
+                <span>유튜브 광고 재생 중</span>
+            </div>
+            <button type="button" id="m-btn-open-ad-skip" style="border:none; background:white; color:#dc2626; padding:5px 12px; border-radius:10px; font-weight:800; font-size:0.75rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.2);">광고 건너뛰기</button>
         </div>
 
         <!-- 토스트 컨테이너 -->

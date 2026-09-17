@@ -33,26 +33,55 @@ class MusicPlayer {
         this.isShuffle = settings.isShuffle ?? false;
         this.sabiMode = settings.sabiMode ?? false;
         this.isWeb = (window.location.port !== '8888');
-        this.engineMode = this.isWeb ? 'video' : (settings.engineMode ?? 'audio');
+        this.engineMode = settings.engineMode ?? 'audio';
         this.sabiDuration = settings.sabiDuration ?? 35;
         this.crossfade = settings.crossfade ?? 0;
         this.isCrossfading = false;
 
-        // 1. 네이티브 오디오 엘리먼트 초기화 (Zero-Ad 모드)
+        // 듀얼 덱(Dual-Deck) 엔진 상태 (Deck A & Deck B)
+        this.deckA = null;
+        this.deckB = null;
+        this.isDeckAReady = false;
+        this.isDeckBReady = false;
+        this.activeDeckId = 'A'; // 'A' | 'B'
+
+        // 1. 네이티브 오디오 엘리먼트 초기화 (Zero-Ad 모드 - 데스크톱 백엔드 전용)
         this.audioElement = new Audio();
         this.audioElement.preload = 'auto';
         this.audioElement.volume = this.volume / 100;
         this.setupAudioElement();
 
-        // 2. YouTube IFrame API 초기화 (MV 뷰어 및 백업용)
+        // 2. YouTube IFrame API 초기화 (듀얼 덱 크로스페이드 및 MV 뷰어)
         this.initYouTubeAPI();
 
         // 3. PC 전용 키보드 단축키 등록
         this.initKeyboardShortcuts();
+    }
 
-        // 4. 무광고 스마트 쉴드 (Zero-Ad Smart Shield) 초기화
-        this.isAdShieldActive = false;
-        this.initAdShield();
+    // 덱 접근자 (Active Deck & Standby Deck)
+    get activeDeck() {
+        return this.activeDeckId === 'A' ? this.deckA : this.deckB;
+    }
+
+    get standbyDeck() {
+        return this.activeDeckId === 'A' ? this.deckB : this.deckA;
+    }
+
+    get ytPlayer() {
+        return this.activeDeck;
+    }
+
+    set ytPlayer(val) {
+        if (this.activeDeckId === 'A') this.deckA = val;
+        else this.deckB = val;
+    }
+
+    get isYtReady() {
+        return this.activeDeckId === 'A' ? this.isDeckAReady : this.isDeckBReady;
+    }
+
+    get isUsingAudioElement() {
+        return !this.isWeb && this.engineMode === 'audio';
     }
 
     setupAudioElement() {
@@ -100,210 +129,176 @@ class MusicPlayer {
         }
 
         window.onYouTubeIframeAPIReady = () => {
-            const playerVars = {
-                autoplay: 0,
-                controls: 0,
-                disablekb: 1,
-                fs: 0,
-                rel: 0,
-                modestbranding: 1,
-                playsinline: 1,
-                enablejsapi: 1,
-                iv_load_policy: 3
+            const getPlayerVars = () => {
+                const pVars = {
+                    autoplay: 0,
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    rel: 0,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    enablejsapi: 1,
+                    iv_load_policy: 3
+                };
+                if (window.location.origin && window.location.origin.startsWith('http')) {
+                    pVars.origin = window.location.origin;
+                }
+                return pVars;
             };
-            if (window.location.origin && window.location.origin.startsWith('http')) {
-                playerVars.origin = window.location.origin;
-            }
 
-            const embedEl = document.getElementById('youtube-player-embed');
-            if (embedEl) {
-                this.ytPlayer = new YT.Player('youtube-player-embed', {
+            const embedA = document.getElementById('youtube-player-deck-a');
+            const embedB = document.getElementById('youtube-player-deck-b');
+            const embedLegacy = document.getElementById('youtube-player-embed');
+
+            if (embedA) {
+                this.deckA = new YT.Player('youtube-player-deck-a', {
                     height: '100%',
                     width: '100%',
                     host: 'https://www.youtube-nocookie.com',
-                    playerVars: playerVars,
+                    playerVars: getPlayerVars(),
                     events: {
-                        onReady: (event) => this.onPlayerReady(event),
-                        onStateChange: (event) => this.onPlayerStateChange(event),
-                        onError: (event) => this.onPlayerError(event)
+                        onReady: (event) => this.onDeckReady('A', event),
+                        onStateChange: (event) => this.onDeckStateChange('A', event),
+                        onError: (event) => this.onDeckError('A', event)
+                    }
+                });
+            }
+
+            if (embedB) {
+                this.deckB = new YT.Player('youtube-player-deck-b', {
+                    height: '100%',
+                    width: '100%',
+                    host: 'https://www.youtube-nocookie.com',
+                    playerVars: getPlayerVars(),
+                    events: {
+                        onReady: (event) => this.onDeckReady('B', event),
+                        onStateChange: (event) => this.onDeckStateChange('B', event),
+                        onError: (event) => this.onDeckError('B', event)
+                    }
+                });
+            } else if (embedLegacy && !embedA) {
+                this.deckA = new YT.Player('youtube-player-embed', {
+                    height: '100%',
+                    width: '100%',
+                    host: 'https://www.youtube-nocookie.com',
+                    playerVars: getPlayerVars(),
+                    events: {
+                        onReady: (event) => this.onDeckReady('A', event),
+                        onStateChange: (event) => this.onDeckStateChange('A', event),
+                        onError: (event) => this.onDeckError('A', event)
                     }
                 });
             }
         };
     }
 
-    // --- 무광고 스마트 쉴드 엔진 (Zero-Ad Smart Shield) ---
-    initAdShield() {
-        window.addEventListener('message', (event) => {
-            if (this.engineMode !== 'video' || !this.ytPlayer) return;
-            try {
-                let data = event.data;
-                if (typeof data === 'string') {
-                    try { data = JSON.parse(data); } catch (e) { return; }
+    onDeckReady(deckId, event) {
+        if (deckId === 'A') this.isDeckAReady = true;
+        if (deckId === 'B') this.isDeckBReady = true;
+
+        if (event && event.target && typeof event.target.setVolume === 'function') {
+            event.target.setVolume(this.volume);
+        }
+
+        if (deckId === this.activeDeckId) {
+            window.dispatchEvent(new CustomEvent('stellplay:ready'));
+
+            if (this.pendingVideoPlay) {
+                this.activeDeck.loadVideoById({
+                    videoId: this.pendingVideoPlay.videoId,
+                    startSeconds: this.pendingVideoPlay.startSeconds
+                });
+                if (this.pendingVideoPlay.autoPlay) {
+                    try { this.activeDeck.playVideo(); } catch (e) {}
                 }
-                if (!data || (data.event !== 'infoDelivery' && !data.info)) return;
+                this.pendingVideoPlay = null;
+            }
 
-                const info = data.info || {};
-                const isAdState = info.adState === 1 || info.adState === 2;
-                const isAdFlag = info.isAd === true;
-                const isAdVideoData = info.videoData && (
-                    info.videoData.isAd === true ||
-                    (info.videoData.video_id && this.currentSong && info.videoData.video_id !== this.currentSong.youtubeId)
-                );
-
-                if (isAdState || isAdFlag || isAdVideoData) {
-                    this.handleAdDetected(info.duration || 0);
-                } else if (info.adState === 0 || (info.videoData && this.currentSong && info.videoData.video_id === this.currentSong.youtubeId)) {
-                    if (this.isAdShieldActive) {
-                        this.handleAdFinished();
-                    }
-                }
-            } catch (e) {}
-        });
-    }
-
-    handleAdDetected(adDuration = 0) {
-        if (!this.isAdShieldActive) {
-            this.isAdShieldActive = true;
-            // 1. 광고 사운드 즉각 100% 무음화
-            if (this.ytPlayer && typeof this.ytPlayer.mute === 'function') {
-                try { this.ytPlayer.mute(); } catch (e) {}
+            if (this.queue.length === 0 && window.getAllSongs) {
+                const allSongs = window.getAllSongs();
+                this.setQueue(allSongs, 0, false);
             }
         }
-
-        // 2. 최대 재생 배속 가속 (광고 초고속 통과)
-        if (this.ytPlayer && typeof this.ytPlayer.setPlaybackRate === 'function') {
-            try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
-        }
-
-        // 3. 광고 끝 지점 강제 탐색으로 즉각 스킵 유도
-        if (this.ytPlayer && typeof this.ytPlayer.seekTo === 'function') {
-            try {
-                const targetTime = adDuration > 0 ? adDuration + 1 : 9999;
-                this.ytPlayer.seekTo(targetTime, true);
-            } catch (e) {}
-        }
-
-        window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
     }
 
-    handleAdFinished() {
-        if (!this.isAdShieldActive) return;
-        this.isAdShieldActive = false;
-
-        // 1. 본래 사용자 볼륨 및 음소거 상태 복원
-        if (this.ytPlayer) {
-            try {
-                if (!this.isMuted && typeof this.ytPlayer.unMute === 'function') {
-                    this.ytPlayer.unMute();
-                    this.ytPlayer.setVolume(this.volume);
-                }
-                if (typeof this.ytPlayer.setPlaybackRate === 'function') {
-                    this.ytPlayer.setPlaybackRate(1);
-                }
-            } catch (e) {}
-        }
-
-        window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: false } }));
-    }
-
-    onPlayerReady(event) {
-        this.isYtReady = true;
-        this.ytPlayer.setVolume(this.volume);
-        window.dispatchEvent(new CustomEvent('stellplay:ready'));
-
-        if (this.pendingVideoPlay) {
-            this.ytPlayer.loadVideoById({
-                videoId: this.pendingVideoPlay.videoId,
-                startSeconds: this.pendingVideoPlay.startSeconds
-            });
-            if (this.pendingVideoPlay.autoPlay) {
-                try { this.ytPlayer.playVideo(); } catch(e) {}
-            }
-            this.pendingVideoPlay = null;
-        }
-
-        if (this.queue.length === 0 && window.getAllSongs) {
-            const allSongs = window.getAllSongs();
-            this.setQueue(allSongs, 0, false);
-        }
-    }
-
-    onPlayerStateChange(event) {
-        if (!event || this.engineMode !== 'video') return;
+    onDeckStateChange(deckId, event) {
+        if (!event) return;
         const state = event.data;
+
+        // 크로스페이드 중 대기 덱(Standby Deck) 이벤트 처리
+        if (deckId !== this.activeDeckId) {
+            return;
+        }
 
         if (state === YT.PlayerState.PLAYING) {
             this.isPlaying = true;
             this.startTimeUpdater();
             window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', { detail: { isPlaying: true } }));
         } else if (state === YT.PlayerState.PAUSED) {
-            this.isPlaying = false;
-            this.stopTimeUpdater();
-            window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', { detail: { isPlaying: false } }));
+            if (!this.isCrossfading) {
+                this.isPlaying = false;
+                this.stopTimeUpdater();
+                window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', { detail: { isPlaying: false } }));
+            }
         } else if (state === YT.PlayerState.ENDED) {
-            this.handleTrackEnded();
+            if (!this.isCrossfading) {
+                this.handleTrackEnded();
+            }
         } else if (state === YT.PlayerState.BUFFERING) {
             window.dispatchEvent(new CustomEvent('stellplay:buffering'));
         }
     }
 
-    onPlayerError(event) {
-        if (this.engineMode !== 'video') return;
-        console.warn('YouTube Player Error code:', event.data);
+    onDeckError(deckId, event) {
+        if (deckId !== this.activeDeckId) return;
+        console.warn(`[DualDeck] Deck ${deckId} Error code:`, event.data);
         setTimeout(() => {
-            if (this.queue.length > 1) {
+            if (this.queue.length > 1 && !this.isCrossfading) {
                 this.playNext(true);
             }
         }, 1500);
     }
 
-    // --- 재생 엔진 전환 (무광고 오디오 <-> 유튜브 MV 영상) ---
+    // --- 재생 엔진 전환 (앨범 아트 모드 <-> 유튜브 MV 영상 모드) ---
     toggleEngineMode() {
         const newMode = this.engineMode === 'audio' ? 'video' : 'audio';
         this.setEngineMode(newMode);
     }
 
     setEngineMode(mode) {
-        if (this.isWeb) {
-            this.engineMode = 'video';
-            return;
-        }
         if (this.engineMode === mode) return;
-        const prevCurrentTime = this.getCurrentTime();
         this.engineMode = mode;
 
         if (window.StorageManager) {
             window.StorageManager.saveSettings({ engineMode: this.engineMode });
         }
 
-        if (this.engineMode === 'audio') {
-            if (this.ytPlayer && this.isYtReady && typeof this.ytPlayer.pauseVideo === 'function') {
-                this.ytPlayer.pauseVideo();
-            }
-            if (this.currentSong) {
-                this.audioElement.src = `/api/audio?id=${this.currentSong.youtubeId}`;
-                this.audioElement.currentTime = prevCurrentTime;
-                if (this.isPlaying) {
-                    this.audioElement.play().catch(e => console.debug(e));
+        // 데스크톱 Python 서버 환경에서만 로컬 스트림과 유튜브 플레이어 교체
+        if (!this.isWeb) {
+            const prevCurrentTime = this.getCurrentTime();
+            if (this.engineMode === 'audio') {
+                if (this.activeDeck && this.isYtReady && typeof this.activeDeck.pauseVideo === 'function') {
+                    this.activeDeck.pauseVideo();
                 }
-            }
-        } else {
-            this.audioElement.pause();
-            if (this.currentSong && this.ytPlayer && this.isYtReady) {
-                this.ytPlayer.loadVideoById({
-                    videoId: this.currentSong.youtubeId,
-                    startSeconds: prevCurrentTime
-                });
-                if (this.isPlaying) {
-                    try { this.ytPlayer.playVideo(); } catch (e) {}
+                if (this.currentSong) {
+                    this.audioElement.src = `/api/audio?id=${this.currentSong.youtubeId}`;
+                    this.audioElement.currentTime = prevCurrentTime;
+                    if (this.isPlaying) {
+                        this.audioElement.play().catch(e => console.debug(e));
+                    }
                 }
-            } else if (this.currentSong) {
-                this.pendingVideoPlay = {
-                    videoId: this.currentSong.youtubeId,
-                    startSeconds: prevCurrentTime,
-                    autoPlay: this.isPlaying
-                };
+            } else {
+                this.audioElement.pause();
+                if (this.currentSong && this.activeDeck && this.isYtReady) {
+                    this.activeDeck.loadVideoById({
+                        videoId: this.currentSong.youtubeId,
+                        startSeconds: prevCurrentTime
+                    });
+                    if (this.isPlaying) {
+                        try { this.activeDeck.playVideo(); } catch (e) {}
+                    }
+                }
             }
         }
 
@@ -313,7 +308,6 @@ class MusicPlayer {
     }
 
     switchToVideoEngine(song, autoPlay = true) {
-        this.engineMode = 'video';
         if (song) {
             this.currentSong = song;
             if (window.StorageManager && song.id) {
@@ -323,22 +317,33 @@ class MusicPlayer {
         if (this.audioElement) this.audioElement.pause();
         const startSec = this.getInitialStartSeconds(song);
 
-        if (this.isYtReady && this.ytPlayer && typeof this.ytPlayer.loadVideoById === 'function') {
+        const activeDeck = this.activeDeck;
+        const activeEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-a' : 'youtube-player-deck-b');
+        const standbyEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-b' : 'youtube-player-deck-a');
+
+        if (activeEl && standbyEl) {
+            activeEl.style.opacity = '1';
+            activeEl.style.pointerEvents = 'auto';
+            standbyEl.style.opacity = '0';
+            standbyEl.style.pointerEvents = 'none';
+        }
+
+        if (this.isYtReady && activeDeck && typeof activeDeck.loadVideoById === 'function') {
             try {
-                this.ytPlayer.loadVideoById({
+                activeDeck.loadVideoById({
                     videoId: song.youtubeId,
                     startSeconds: startSec
                 });
-                this.ytPlayer.setVolume(this.isMuted ? 0 : this.volume);
+                activeDeck.setVolume(this.isMuted ? 0 : this.volume);
                 if (autoPlay) {
-                    this.ytPlayer.playVideo();
+                    activeDeck.playVideo();
                     this.isPlaying = true;
                 } else {
-                    this.ytPlayer.pauseVideo();
+                    activeDeck.pauseVideo();
                     this.isPlaying = false;
                 }
             } catch (e) {
-                console.error('Failed to play video', e);
+                console.error('[switchToVideoEngine] Failed to play video', e);
             }
         } else {
             this.pendingVideoPlay = {
@@ -347,6 +352,7 @@ class MusicPlayer {
                 autoPlay: autoPlay
             };
         }
+
         window.dispatchEvent(new CustomEvent('stellplay:engineChanged', {
             detail: { engineMode: this.engineMode }
         }));
@@ -531,7 +537,6 @@ class MusicPlayer {
 
         this.currentSong = song;
         this.isTransitioningSabi = false;
-        this.isAdShieldActive = false;
         this.applyCustomSabi(this.currentSong);
         this.parseLyrics(song.lyrics);
 
@@ -660,7 +665,7 @@ class MusicPlayer {
     }
 
     togglePlay() {
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             if (this.audioElement.paused) {
                 if (!this.currentSong && this.queue.length > 0) {
                     this.playSong(this.queue[0], 0);
@@ -671,14 +676,14 @@ class MusicPlayer {
                 this.audioElement.pause();
             }
         } else {
-            if (!this.isYtReady || !this.ytPlayer) return;
+            if (!this.isYtReady || !this.activeDeck) return;
             if (this.isPlaying) {
-                this.ytPlayer.pauseVideo();
+                this.activeDeck.pauseVideo();
             } else {
                 if (!this.currentSong && this.queue.length > 0) {
                     this.playSong(this.queue[0], 0);
                 } else {
-                    this.ytPlayer.playVideo();
+                    this.activeDeck.playVideo();
                 }
             }
         }
@@ -690,10 +695,10 @@ class MusicPlayer {
         if (isAuto && this.repeatMode === 'one') {
             const startSec = this.getInitialStartSeconds(this.currentSong);
             this.seekTo(startSec);
-            if (this.engineMode === 'audio') {
+            if (this.isUsingAudioElement) {
                 this.audioElement.play().catch(e => console.debug(e));
-            } else if (this.ytPlayer) {
-                this.ytPlayer.playVideo();
+            } else if (this.activeDeck) {
+                this.activeDeck.playVideo();
             }
             return;
         }
@@ -734,15 +739,15 @@ class MusicPlayer {
 
     seekTo(seconds) {
         seconds = Math.max(0, seconds);
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             try {
                 this.audioElement.currentTime = seconds;
             } catch (e) {
                 console.error(e);
             }
-        } else if (this.isYtReady && this.ytPlayer) {
+        } else if (this.isYtReady && this.activeDeck && typeof this.activeDeck.seekTo === 'function') {
             try {
-                this.ytPlayer.seekTo(seconds, true);
+                this.activeDeck.seekTo(seconds, true);
             } catch (e) {
                 console.error(e);
             }
@@ -758,11 +763,11 @@ class MusicPlayer {
 
     setVolume(vol) {
         this.volume = Math.max(0, Math.min(100, vol));
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             this.audioElement.volume = this.isMuted ? 0 : this.volume / 100;
         }
-        if (this.isYtReady && this.ytPlayer) {
-            this.ytPlayer.setVolume(this.volume);
+        if (this.isYtReady && this.activeDeck && typeof this.activeDeck.setVolume === 'function') {
+            this.activeDeck.setVolume(this.volume);
         }
         if (this.volume > 0 && this.isMuted) {
             this.toggleMute(false);
@@ -777,15 +782,15 @@ class MusicPlayer {
 
     toggleMute(forceState = null) {
         this.isMuted = forceState !== null ? forceState : !this.isMuted;
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             this.audioElement.muted = this.isMuted;
             this.audioElement.volume = this.isMuted ? 0 : this.volume / 100;
         }
-        if (this.isYtReady && this.ytPlayer) {
+        if (this.isYtReady && this.activeDeck) {
             if (this.isMuted) {
-                this.ytPlayer.mute();
+                if (typeof this.activeDeck.mute === 'function') this.activeDeck.mute();
             } else {
-                this.ytPlayer.unMute();
+                if (typeof this.activeDeck.unMute === 'function') this.activeDeck.unMute();
             }
         }
         window.dispatchEvent(new CustomEvent('stellplay:volumeChanged', {
@@ -867,26 +872,6 @@ class MusicPlayer {
         this.updateInterval = setInterval(() => {
             if (!this.isPlaying) return;
 
-            // [Zero-Ad Smart Shield] 실시간 쉴드 폴링 체크 (postMessage 누락 및 프리롤 방어)
-            if (this.engineMode === 'video' && this.ytPlayer && this.currentSong) {
-                try {
-                    const vData = typeof this.ytPlayer.getVideoData === 'function' ? this.ytPlayer.getVideoData() : null;
-                    const curDur = typeof this.ytPlayer.getDuration === 'function' ? this.ytPlayer.getDuration() : 0;
-                    const isAdByData = vData && (
-                        vData.isAd === true ||
-                        (vData.video_id && vData.video_id !== this.currentSong.youtubeId)
-                    );
-                    const isAdByDur = (curDur > 0 && curDur <= 35 && this.currentSong.duration > 60);
-
-                    if (isAdByData || isAdByDur) {
-                        this.handleAdDetected(curDur);
-                        return; // 광고 처리 중에는 일반 타이머 갱신 대기
-                    } else if (this.isAdShieldActive && vData && vData.video_id === this.currentSong.youtubeId) {
-                        this.handleAdFinished();
-                    }
-                } catch (e) {}
-            }
-
             const currentTime = this.getCurrentTime();
             const duration = this.getDuration();
 
@@ -963,40 +948,110 @@ class MusicPlayer {
             step++;
             if (step >= steps) {
                 clearInterval(timer);
-                if (this.engineMode === 'audio') this.audioElement.volume = targetVol;
+                if (this.isUsingAudioElement) this.audioElement.volume = targetVol;
             } else {
-                if (this.engineMode === 'audio') this.audioElement.volume = targetVol * (step / steps);
+                if (this.isUsingAudioElement) this.audioElement.volume = targetVol * (step / steps);
             }
         }, stepTime);
     }
 
+    // --- 진짜 듀얼 덱(Deck A & Deck B) 동시 크로스페이드 ---
     triggerCrossfade() {
         if (this.isCrossfading || this.queue.length <= 1) return;
+        if (!this.deckA || !this.deckB || !this.isDeckAReady || !this.isDeckBReady) {
+            return;
+        }
+
+        const nextIndex = this.getNextTrackIndex();
+        if (nextIndex === this.currentIndex && this.repeatMode !== 'one') return;
+        const nextSong = this.queue[nextIndex];
+        if (!nextSong) return;
+
         this.isCrossfading = true;
-
+        const fadeSec = Math.max(2, Math.min(12, this.crossfade || 5));
         const targetVol = this.isMuted ? 0 : this.volume;
-        const fadeSec = Math.max(1, Math.min(4, this.crossfade || 2));
-        const steps = 15;
-        const intervalTime = Math.max(30, Math.floor((fadeSec * 1000) / steps));
-        let currentStep = steps;
 
-        const fadeOutTimer = setInterval(() => {
-            currentStep--;
-            if (currentStep <= 0) {
-                clearInterval(fadeOutTimer);
-                this.isCrossfading = false;
-                this.playNext(true);
-            } else {
-                const volFactor = currentStep / steps;
-                if (this.engineMode === 'audio') {
-                    this.audioElement.volume = (targetVol / 100) * volFactor;
-                } else if (this.ytPlayer && typeof this.ytPlayer.setVolume === 'function') {
-                    try {
-                        this.ytPlayer.setVolume(Math.round(targetVol * volFactor));
-                    } catch (e) {}
-                }
+        const activeDeck = this.activeDeck;
+        const standbyDeck = this.standbyDeck;
+        const activeEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-a' : 'youtube-player-deck-b');
+        const standbyEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-b' : 'youtube-player-deck-a');
+
+        const nextStart = (this.sabiMode && nextSong.sabi) ? (nextSong.sabi.start || 0) : 0;
+        try {
+            standbyDeck.setVolume(0);
+            standbyDeck.loadVideoById({
+                videoId: nextSong.youtubeId,
+                startSeconds: nextStart
+            });
+            standbyDeck.playVideo();
+        } catch (e) {
+            console.warn('[Crossfade] 대기 덱 재생 시작 실패, 크로스페이드 중단', e);
+            this.isCrossfading = false;
+            return;
+        }
+
+        const startTime = Date.now();
+        const durationMs = fadeSec * 1000;
+
+        const crossfadeInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(1, elapsed / durationMs);
+
+            const activeVol = Math.round(targetVol * (1 - progress));
+            const standbyVol = Math.round(targetVol * progress);
+
+            try {
+                activeDeck.setVolume(activeVol);
+                standbyDeck.setVolume(standbyVol);
+            } catch (e) {}
+
+            if (activeEl && standbyEl) {
+                activeEl.style.opacity = (1 - progress);
+                standbyEl.style.opacity = progress;
             }
-        }, intervalTime);
+
+            if (progress >= 1) {
+                clearInterval(crossfadeInterval);
+
+                try {
+                    activeDeck.pauseVideo();
+                    activeDeck.setVolume(0);
+                    standbyDeck.setVolume(targetVol);
+                } catch (e) {}
+
+                if (activeEl && standbyEl) {
+                    activeEl.style.opacity = '0';
+                    activeEl.style.pointerEvents = 'none';
+                    standbyEl.style.opacity = '1';
+                    standbyEl.style.pointerEvents = 'auto';
+                }
+
+                // 활성 덱 전환
+                this.activeDeckId = this.activeDeckId === 'A' ? 'B' : 'A';
+                this.currentIndex = nextIndex;
+                this.currentSong = nextSong;
+
+                this.applyCustomSabi(this.currentSong);
+                this.parseLyrics(this.currentSong.lyrics);
+                this.updateMediaSession(this.currentSong);
+
+                if (window.StorageManager && this.currentSong.id) {
+                    window.StorageManager.addToHistory(this.currentSong.id);
+                }
+
+                window.dispatchEvent(new CustomEvent('stellplay:trackChanged', {
+                    detail: {
+                        song: this.currentSong,
+                        index: this.currentIndex,
+                        isPlaying: true,
+                        sabiMode: this.sabiMode,
+                        engineMode: this.engineMode
+                    }
+                }));
+
+                this.isCrossfading = false;
+            }
+        }, 80);
     }
 
     stopTimeUpdater() {
@@ -1011,11 +1066,11 @@ class MusicPlayer {
     }
 
     getCurrentTime() {
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             return this.audioElement.currentTime || 0;
-        } else if (this.isYtReady && this.ytPlayer && typeof this.ytPlayer.getCurrentTime === 'function') {
+        } else if (this.isYtReady && this.activeDeck && typeof this.activeDeck.getCurrentTime === 'function') {
             try {
-                return this.ytPlayer.getCurrentTime() || 0;
+                return this.activeDeck.getCurrentTime() || 0;
             } catch (e) {
                 return 0;
             }
@@ -1024,12 +1079,12 @@ class MusicPlayer {
     }
 
     getDuration() {
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             const d = this.audioElement.duration;
             if (d && !isNaN(d) && d > 0) return d;
-        } else if (this.isYtReady && this.ytPlayer && typeof this.ytPlayer.getDuration === 'function') {
+        } else if (this.isYtReady && this.activeDeck && typeof this.activeDeck.getDuration === 'function') {
             try {
-                const d = this.ytPlayer.getDuration();
+                const d = this.activeDeck.getDuration();
                 if (d && d > 0) return d;
             } catch (e) { }
         }

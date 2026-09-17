@@ -179,6 +179,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         sheetNextBtn: document.getElementById('sheet-next-btn'),
         sheetSabiBtn: document.getElementById('sheet-sabi-btn'),
         sheetModeBadge: document.getElementById('sheet-mode-badge'),
+        btnViewArt: document.getElementById('m-btn-view-art'),
+        btnViewVideo: document.getElementById('m-btn-view-video'),
+        sheetArtBox: document.getElementById('m-sheet-art-box'),
+        sheetVideoBox: document.getElementById('m-sheet-video-box'),
+        videoDockTarget: document.getElementById('m-video-dock-target'),
+        adFloatingBanner: document.getElementById('m-ad-floating-banner'),
+        btnOpenAdSkip: document.getElementById('m-btn-open-ad-skip'),
 
         // 대기열 시트
         queueSheet: document.getElementById('m-queue-sheet'),
@@ -3232,16 +3239,89 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderAllViews();
         });
 
+        let mobilePlayerViewMode = 'art';
+
+        function switchMobilePlayerView(mode) {
+            mobilePlayerViewMode = mode;
+            if (dom.btnViewArt) {
+                dom.btnViewArt.classList.toggle('active', mode === 'art');
+                dom.btnViewArt.style.background = mode === 'art' ? 'rgba(255,255,255,0.2)' : 'transparent';
+                dom.btnViewArt.style.color = mode === 'art' ? 'var(--text-primary)' : 'var(--text-muted)';
+            }
+            if (dom.btnViewVideo) {
+                dom.btnViewVideo.classList.toggle('active', mode === 'video');
+                dom.btnViewVideo.style.background = mode === 'video' ? 'rgba(255,255,255,0.2)' : 'transparent';
+                dom.btnViewVideo.style.color = mode === 'video' ? 'var(--text-primary)' : 'var(--text-muted)';
+            }
+
+            if (mode === 'video') {
+                if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'none';
+                if (dom.sheetVideoBox) dom.sheetVideoBox.style.display = 'block';
+                dockYouTubePlayer(true);
+            } else {
+                if (dom.sheetVideoBox) dom.sheetVideoBox.style.display = 'none';
+                if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
+                dockYouTubePlayer(false);
+            }
+        }
+
+        function dockYouTubePlayer(isDocked) {
+            const wrap = document.getElementById('m-youtube-player-wrap');
+            const target = document.getElementById('m-video-dock-target');
+            if (!wrap) return;
+
+            if (isDocked && target) {
+                target.appendChild(wrap);
+                wrap.classList.add('docked');
+            } else {
+                const appContainer = document.querySelector('.mobile-app-container') || document.body;
+                appContainer.appendChild(wrap);
+                wrap.classList.remove('docked');
+            }
+        }
+
+        if (dom.btnViewArt) {
+            dom.btnViewArt.addEventListener('click', () => switchMobilePlayerView('art'));
+        }
+        if (dom.btnViewVideo) {
+            dom.btnViewVideo.addEventListener('click', () => switchMobilePlayerView('video'));
+        }
+
+        if (dom.btnOpenAdSkip) {
+            dom.btnOpenAdSkip.addEventListener('click', () => {
+                document.body.classList.remove('tablet-queue-collapsed');
+                dom.fullscreenSheet.classList.add('open');
+                switchMobilePlayerView('video');
+                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
+            });
+        }
+
+        window.addEventListener('mobileplayer:adNotice', (e) => {
+            const isAd = e.detail?.isAd;
+            if (isAd) {
+                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'flex';
+                if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
+                    switchMobilePlayerView('video');
+                }
+            } else {
+                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
+            }
+        });
+
         // 미니 플레이어 탭 -> 전체화면 시트 열기
         dom.miniLeftContent.addEventListener('click', () => {
             document.body.classList.remove('tablet-queue-collapsed');
             dom.fullscreenSheet.classList.add('open');
+            if (mobilePlayerViewMode === 'video') {
+                dockYouTubePlayer(true);
+            }
             if (window.innerWidth >= 650) {
                 renderMobileQueue(true);
             }
         });
         dom.sheetCloseBtn.addEventListener('click', () => {
             dom.fullscreenSheet.classList.remove('open');
+            dockYouTubePlayer(false);
         });
 
         // 대기열 열기/닫기 및 메뉴 버튼
@@ -3319,6 +3399,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 40) {
                         // 재생창 영역에서 내리면: 메인화면으로 바로 내려가기
                         dom.fullscreenSheet.classList.remove('open');
+                        dockYouTubePlayer(false);
                         return;
                     }
                 } else {
@@ -3327,6 +3408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (deltaY > 40) {
                             // 내리면: 메인화면으로 복귀
                             dom.fullscreenSheet.classList.remove('open');
+                            dockYouTubePlayer(false);
                         } else if (deltaY < -40) {
                             // 올리면: 재생목록(대기열) 열기
                             openQueueSheet();
@@ -4083,6 +4165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 6. 전체화면 재생 시트가 열려있는 경우 -> 시트 닫고 메인으로 복귀
         if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
             dom.fullscreenSheet.classList.remove('open');
+            dockYouTubePlayer(false);
             return true;
         }
 
