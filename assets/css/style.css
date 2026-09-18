@@ -2756,12 +2756,7 @@ body::after {
 }
 
 .pc-yt-player-wrap.docked {
-    position: relative !important;
-    bottom: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    height: 100% !important;
-    z-index: 2 !important;
+    z-index: 105 !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
@@ -2784,7 +2779,7 @@ body::after {
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
-    z-index: 10;
+    z-index: 110;
 }
 
 .youtube-view-box:hover .btn-video-fullscreen-toggle {

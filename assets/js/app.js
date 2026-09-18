@@ -1791,6 +1791,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // 비디오 모드 vs 앨범 아트 모드 전환
         dom.btnViewArt.addEventListener('click', () => switchFullPlayerView('art'));
         dom.btnViewVideo.addEventListener('click', () => switchFullPlayerView('video'));
+        if (dom.btnVideoFullscreen) {
+            dom.btnVideoFullscreen.addEventListener('click', () => {
+                const wrap = document.getElementById('pc-youtube-player-wrap');
+                if (!wrap) return;
+                if (!document.fullscreenElement) {
+                    wrap.requestFullscreen().catch(e => console.warn(e));
+                } else {
+                    document.exitFullscreen().catch(e => console.warn(e));
+                }
+            });
+        }
+        window.addEventListener('resize', updatePcDockPosition);
+        window.addEventListener('scroll', updatePcDockPosition);
 
         // 검색 (150ms 디바운스로 UI 렌더링 부하 최적화)
         let pcSearchDebounceTimer = null;
@@ -2369,6 +2382,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updatePcDockPosition() {
+        const wrap = document.getElementById('pc-youtube-player-wrap');
+        const target = document.getElementById('pc-video-dock-target');
+        if (!wrap) return;
+
+        const isDocked = wrap.classList.contains('docked') &&
+                         dom.fullPlayerModal &&
+                         dom.fullPlayerModal.classList.contains('open') &&
+                         state.fullPlayerViewMode === 'video' &&
+                         target;
+
+        if (isDocked) {
+            const rect = target.getBoundingClientRect();
+            wrap.style.position = 'fixed';
+            wrap.style.top = rect.top + 'px';
+            wrap.style.left = rect.left + 'px';
+            wrap.style.width = rect.width + 'px';
+            wrap.style.height = rect.height + 'px';
+            wrap.style.bottom = 'auto';
+            wrap.style.right = 'auto';
+            wrap.style.opacity = '1';
+            wrap.style.pointerEvents = 'auto';
+            wrap.style.zIndex = '105';
+            wrap.style.borderRadius = 'var(--radius-md, 12px)';
+        } else {
+            wrap.style.position = 'fixed';
+            wrap.style.top = 'auto';
+            wrap.style.left = 'auto';
+            wrap.style.bottom = '0';
+            wrap.style.right = '0';
+            wrap.style.width = '240px';
+            wrap.style.height = '135px';
+            wrap.style.opacity = '0.01';
+            wrap.style.pointerEvents = 'none';
+            wrap.style.zIndex = '-10';
+            wrap.style.borderRadius = '0';
+        }
+    }
+
     function openFullPlayer() {
         closeQueueDrawer();
         dom.fullPlayerModal.classList.add('open');
@@ -2384,19 +2436,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.btnToggleQueueDrawer) {
             updateFullPlayerQueueToggleBtn();
         }
+        if (state.fullPlayerViewMode === 'video') {
+            dockPcPlayer(true);
+        }
     }
 
     function dockPcPlayer(isDocked) {
         const wrap = document.getElementById('pc-youtube-player-wrap');
-        const target = document.getElementById('pc-video-dock-target');
         if (!wrap) return;
 
-        if (isDocked && target) {
-            target.appendChild(wrap);
+        if (isDocked) {
             wrap.classList.add('docked');
+            let start = performance.now();
+            function sync() {
+                updatePcDockPosition();
+                if (performance.now() - start < 450 && dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open')) {
+                    requestAnimationFrame(sync);
+                }
+            }
+            requestAnimationFrame(sync);
         } else {
-            document.body.appendChild(wrap);
             wrap.classList.remove('docked');
+            updatePcDockPosition();
         }
     }
 
@@ -2422,9 +2483,6 @@ document.addEventListener('DOMContentLoaded', () => {
             closeFullPlayer();
         } else {
             openFullPlayer();
-            if (state.fullPlayerViewMode === 'video') {
-                dockPcPlayer(true);
-            }
         }
     }
 

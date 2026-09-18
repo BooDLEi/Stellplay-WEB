@@ -217,6 +217,16 @@ class MusicPlayer {
                     try { this.activeDeck.playVideo(); } catch (e) {}
                 }
                 this.pendingVideoPlay = null;
+            } else if (this.pendingCue) {
+                try {
+                    this.activeDeck.cueVideoById({
+                        videoId: this.pendingCue.videoId,
+                        startSeconds: this.pendingCue.startSeconds
+                    });
+                } catch (e) {
+                    try { this.activeDeck.cueVideoById(this.pendingCue.videoId, this.pendingCue.startSeconds); } catch (e2) {}
+                }
+                this.pendingCue = null;
             }
 
             if (this.queue.length === 0 && window.getAllSongs) {
@@ -255,6 +265,14 @@ class MusicPlayer {
     }
 
     onDeckError(deckId, event) {
+        if (this.isCrossfading && deckId !== this.activeDeckId) {
+            console.warn(`[Crossfade] Standby deck ${deckId} error, aborting crossfade and restoring active deck`);
+            this.isCrossfading = false;
+            if (this.activeDeck && typeof this.activeDeck.setVolume === 'function') {
+                this.activeDeck.setVolume(this.isMuted ? 0 : this.volume);
+            }
+            return;
+        }
         if (deckId !== this.activeDeckId) return;
         console.warn(`[DualDeck] Deck ${deckId} Error code:`, event.data);
         setTimeout(() => {
@@ -339,6 +357,9 @@ class MusicPlayer {
                     startSeconds: startSec
                 });
                 activeDeck.setVolume(this.isMuted ? 0 : this.volume);
+                if (!this.isMuted && typeof activeDeck.unMute === 'function') {
+                    try { activeDeck.unMute(); } catch (e) {}
+                }
                 if (autoPlay) {
                     activeDeck.playVideo();
                     this.isPlaying = true;
@@ -501,7 +522,7 @@ class MusicPlayer {
         this.applyCustomSabi(this.currentSong);
         this.parseLyrics(song.lyrics);
 
-        if (this.engineMode === 'audio') {
+        if (this.isUsingAudioElement) {
             this.audioElement.src = `/api/audio?id=${song.youtubeId}`;
             const startSec = this.getInitialStartSeconds(song);
             if (startSec > 0) {
@@ -509,8 +530,23 @@ class MusicPlayer {
                     try { this.audioElement.currentTime = startSec; } catch (e) {}
                 }, { once: true });
             }
-        } else if (this.isYtReady && this.ytPlayer) {
-            this.ytPlayer.cueVideoById(song.youtubeId);
+        } else {
+            const startSec = this.getInitialStartSeconds(song);
+            if (this.isYtReady && this.ytPlayer && typeof this.ytPlayer.cueVideoById === 'function') {
+                try {
+                    this.ytPlayer.cueVideoById({
+                        videoId: song.youtubeId,
+                        startSeconds: startSec
+                    });
+                } catch (e) {
+                    try { this.ytPlayer.cueVideoById(song.youtubeId, startSec); } catch (e2) {}
+                }
+            } else {
+                this.pendingCue = {
+                    videoId: song.youtubeId,
+                    startSeconds: startSec
+                };
+            }
         }
         window.dispatchEvent(new CustomEvent('stellplay:trackChanged', {
             detail: { song: this.currentSong, index: this.currentIndex, isPlaying: false, engineMode: this.engineMode }
@@ -680,14 +716,35 @@ class MusicPlayer {
                 this.audioElement.pause();
             }
         } else {
-            if (!this.isYtReady || !this.activeDeck) return;
+            if (!this.isYtReady || !this.activeDeck) {
+                const songToPlay = this.currentSong || (this.queue.length > 0 ? this.queue[0] : null);
+                if (songToPlay) {
+                    this.pendingVideoPlay = {
+                        videoId: songToPlay.youtubeId,
+                        startSeconds: this.getInitialStartSeconds(songToPlay),
+                        autoPlay: true
+                    };
+                }
+                return;
+            }
             if (this.isPlaying) {
                 this.activeDeck.pauseVideo();
             } else {
-                if (!this.currentSong && this.queue.length > 0) {
-                    this.playSong(this.queue[0], 0);
-                } else {
+                let state = -1;
+                try { state = this.activeDeck.getPlayerState(); } catch (e) {}
+                if (state === 2) {
+                    if (typeof this.activeDeck.unMute === 'function' && !this.isMuted) {
+                        try { this.activeDeck.unMute(); } catch (e) {}
+                    }
                     this.activeDeck.playVideo();
+                } else {
+                    const songToPlay = this.currentSong || (this.queue.length > 0 ? this.queue[0] : null);
+                    if (songToPlay) {
+                        const idx = this.currentIndex >= 0 ? this.currentIndex : 0;
+                        this.playSong(songToPlay, idx, true);
+                    } else {
+                        this.activeDeck.playVideo();
+                    }
                 }
             }
         }
@@ -983,6 +1040,9 @@ class MusicPlayer {
         const nextStart = (this.sabiMode && nextSong.sabi) ? (nextSong.sabi.start || 0) : 0;
         try {
             standbyDeck.setVolume(0);
+            if (typeof standbyDeck.unMute === 'function' && !this.isMuted) {
+                try { standbyDeck.unMute(); } catch (e) {}
+            }
             standbyDeck.loadVideoById({
                 videoId: nextSong.youtubeId,
                 startSeconds: nextStart
