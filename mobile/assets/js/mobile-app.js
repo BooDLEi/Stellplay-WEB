@@ -141,6 +141,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         crossfadeSliderWrap: document.getElementById('m-crossfade-slider-wrap'),
         btnThemeDark: document.getElementById('m-btn-theme-dark'),
         btnThemeLight: document.getElementById('m-btn-theme-light'),
+        btnTopTheme: document.getElementById('m-btn-top-theme'),
+        topThemeIcon: document.getElementById('m-top-theme-icon'),
         qualityBtns: document.querySelectorAll('.quality-opt-btn'),
         btnSyncSongsSettings: document.getElementById('btn-sync-songs-settings'),
         btnRestoreHiddenSettings: document.getElementById('btn-restore-hidden-settings'),
@@ -302,6 +304,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.documentElement.setAttribute('data-theme', theme);
         if (dom.btnThemeDark) dom.btnThemeDark.classList.toggle('active', theme === 'dark');
         if (dom.btnThemeLight) dom.btnThemeLight.classList.toggle('active', theme === 'light');
+        if (dom.topThemeIcon) {
+            dom.topThemeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        if (dom.btnTopTheme) {
+            dom.btnTopTheme.setAttribute('title', theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환');
+        }
         if (window.StorageManager && typeof window.StorageManager.setSetting === 'function') {
             window.StorageManager.setSetting('theme', theme);
         } else {
@@ -3137,6 +3145,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showToast('☀️ 라이트 모드가 적용되었습니다.');
             });
         }
+        if (dom.btnTopTheme) {
+            dom.btnTopTheme.addEventListener('click', () => {
+                const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+                const nextTheme = cur === 'dark' ? 'light' : 'dark';
+                applyMobileTheme(nextTheme);
+                showToast(nextTheme === 'dark' ? '🌙 다크 모드가 적용되었습니다.' : '☀️ 라이트 모드가 적용되었습니다.');
+            });
+        }
 
         if (dom.qualityBtns) {
             dom.qualityBtns.forEach(btn => {
@@ -3261,6 +3277,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 dockYouTubePlayer(false);
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
+            }
+
+            if (player && typeof player.switchViewMode === 'function') {
+                player.switchViewMode(mode);
             }
         }
 

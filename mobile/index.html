@@ -18,22 +18,6 @@
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
     <link rel="stylesheet" href="./assets/css/mobile.css?v=3.0">
-    <!-- 안드로이드 백그라운드 및 화면 잠금 시 유튜브 플레이어 자동 일시정지 방지 -->
-    <script>
-        try {
-            Object.defineProperty(document, 'hidden', {
-                get: function() { return false; },
-                configurable: true
-            });
-            Object.defineProperty(document, 'visibilityState', {
-                get: function() { return 'visible'; },
-                configurable: true
-            });
-            window.addEventListener('visibilitychange', function(e) {
-                e.stopImmediatePropagation();
-            }, true);
-        } catch (e) {}
-    </script>
 </head>
 <body>
     <div id="app-container">
@@ -48,7 +32,10 @@
                     </div>
                     <span class="logo-title">StellPlay</span>
                 </div>
-                <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+                <div class="header-actions" style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" class="m-header-theme-btn" id="m-btn-top-theme" title="라이트 / 다크 모드 전환">
+                        <span id="m-top-theme-icon">☀️</span>
+                    </button>
                     <button class="m-header-pc-btn" id="m-btn-switch-pc" title="PC 모드로 보기">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>

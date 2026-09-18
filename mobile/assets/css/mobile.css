@@ -3239,18 +3239,19 @@ body.offline-select-active .m-track-select-box {
     transition: opacity 0.2s ease;
 }
 
-/* 동영상 탭이 아닐 때는 화면 밖으로 숨기되 display:none을 사용하지 않아 재생 중단 방지 */
+/* 동영상 탭이 아닐 때는 브라우저가 offscreen으로 분류하여 백그라운드 재생을 차단하지 않도록 뷰포트 내(top:0, left:0) 2px로 최소화 */
 .m-video-box:not(.active-video) {
     position: fixed !important;
-    bottom: -9999px !important;
-    right: -9999px !important;
-    width: 200px !important;
-    height: 112px !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 2px !important;
+    height: 2px !important;
     aspect-ratio: auto !important;
     margin: 0 !important;
-    opacity: 0.001 !important;
+    opacity: 0.01 !important;
     pointer-events: none !important;
-    z-index: -999 !important;
+    z-index: -9999 !important;
+    overflow: hidden !important;
 }
 
 .m-video-box.active-video {
@@ -3316,5 +3317,300 @@ body.offline-select-active .m-track-select-box {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
 }
 
+/* 상단 헤더 테마 전환 버튼 */
+.m-header-theme-btn {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-glass);
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.m-header-theme-btn:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.15);
+}
+[data-theme="light"] .m-header-theme-btn {
+    background: #f1f5f9 !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
 
+/* 라이트모드 텍스트 및 UI 요소 전수 보정 (하얀색 글씨 방지) */
+[data-theme="light"] .mini-title-text {
+    color: #0f172a !important;
+}
+[data-theme="light"] .mini-artist-text {
+    color: #64748b !important;
+}
+[data-theme="light"] .mini-ctrl-group .m-btn-action {
+    color: #475569 !important;
+}
 
+[data-theme="light"] .sheet-song-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .sheet-song-artist {
+    color: #64748b !important;
+}
+[data-theme="light"] .sheet-time-row span {
+    color: #64748b !important;
+}
+[data-theme="light"] .sheet-ctrl-btn {
+    color: #334155 !important;
+}
+[data-theme="light"] .sheet-close-btn {
+    color: #334155 !important;
+}
+[data-theme="light"] .sheet-sabi-btn {
+    color: #475569 !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .sheet-sabi-btn.active {
+    color: #7c3aed !important;
+    background: rgba(124, 58, 237, 0.12) !important;
+    border-color: rgba(124, 58, 237, 0.3) !important;
+}
+[data-theme="light"] .m-view-mode-toggle {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .m-view-btn {
+    color: #64748b !important;
+}
+[data-theme="light"] .m-view-btn.active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="light"] .playlist-card {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+[data-theme="light"] .playlist-card-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .playlist-card-sub {
+    color: #64748b !important;
+}
+[data-theme="light"] .btn-playlist-back {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+[data-theme="light"] .playlist-detail-hero {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+}
+[data-theme="light"] .playlist-detail-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .playlist-detail-sub {
+    color: #64748b !important;
+}
+[data-theme="light"] .btn-playlist-add-tracks {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .btn-create-playlist-top {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .modal-playlist-item-name {
+    color: #0f172a !important;
+}
+[data-theme="light"] .modal-playlist-item-count {
+    color: #64748b !important;
+}
+[data-theme="light"] .modal-playlist-item {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] .modal-playlist-item:active {
+    background: rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .offline-stats-card {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+[data-theme="light"] .offline-stats-num {
+    color: #0f172a !important;
+}
+[data-theme="light"] .offline-stats-label {
+    color: #64748b !important;
+}
+[data-theme="light"] .offline-count-num {
+    color: #0f172a !important;
+}
+[data-theme="light"] .offline-header-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .btn-offline-action-btn {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    color: #334155 !important;
+}
+
+[data-theme="light"] #btn-restore-hidden-settings {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #334155 !important;
+}
+[data-theme="light"] .quality-opt-btn:not(.active) {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: #475569 !important;
+}
+[data-theme="light"] .m-theme-toggle {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] .m-theme-btn {
+    color: #64748b !important;
+}
+[data-theme="light"] .m-theme-btn.active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .queue-sheet-content {
+    background: #ffffff !important;
+    border-top-color: rgba(0, 0, 0, 0.1) !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .queue-sheet-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .queue-sheet-action-btn {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #334155 !important;
+}
+[data-theme="light"] .queue-sheet-close-btn {
+    color: #64748b !important;
+}
+[data-theme="light"] .queue-drag-hint {
+    color: #94a3b8 !important;
+}
+[data-theme="light"] .queue-sheet-handle {
+    background: rgba(0, 0, 0, 0.18) !important;
+}
+
+[data-theme="light"] .mobile-modal .modal-content {
+    background: #ffffff !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .mobile-modal .modal-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .sort-select {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+}
+[data-theme="light"] .sort-select option {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .modal-form .form-select option {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .form-label {
+    color: #334155 !important;
+}
+[data-theme="light"] .btn-cancel {
+    background: rgba(0, 0, 0, 0.06) !important;
+    color: #475569 !important;
+}
+[data-theme="light"] .mood-chip-name {
+    color: #0f172a !important;
+}
+[data-theme="light"] .mood-card-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] .sabi-modal-card {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+[data-theme="light"] .sabi-time-val {
+    color: #0f172a !important;
+}
+[data-theme="light"] .section-title {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .member-major-btn:not(.active),
+[data-theme="light"] .member-sub-btn:not(.active),
+[data-theme="light"] .member-text-btn:not(.active) {
+    color: #191f28 !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+[data-theme="light"] .member-text-btn.btn-white:not(.active),
+[data-theme="light"] .member-major-btn.btn-white:not(.active),
+[data-theme="light"] .member-sub-btn.btn-white:not(.active) {
+    color: #191f28 !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+[data-theme="light"] .member-text-btn.btn-white.active,
+[data-theme="light"] .member-major-btn.btn-white.active,
+[data-theme="light"] .member-sub-btn.btn-white.active {
+    background: #191f28 !important;
+    color: #ffffff !important;
+    border-color: #191f28 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+[data-theme="light"] .btn-mood-refresh,
+[data-theme="light"] .btn-mood-save-playlist {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #191f28 !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+}
+[data-theme="light"] .btn-random-play-home {
+    background: linear-gradient(135deg, #7c5cfc, #3b82f6) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3) !important;
+}
+[data-theme="light"] .member-chip-select span {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #334155 !important;
+}
+[data-theme="light"] .member-chips-container .member-chip-label {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #334155 !important;
+}
+[data-theme="light"] .member-scope-selector {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] .member-scope-btn {
+    color: #64748b !important;
+}
+[data-theme="light"] .member-scope-btn.active {
+    background: var(--theme-color) !important;
+    color: #ffffff !important;
+}
