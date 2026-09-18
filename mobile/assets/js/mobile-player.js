@@ -84,6 +84,8 @@ class MobilePlayer {
         this.silentAudio.setAttribute('webkit-playsinline', '');
         this.isUserPaused = false;
         this.isAdPlaying = false;
+        this.isAdShieldActive = false;
+        this._initAdShield();
 
         // iOS WebKit 오디오 잠금 해제 (User Gesture Unlocker)
         const unlockAudio = () => {
@@ -223,7 +225,6 @@ class MobilePlayer {
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
                         width: '100%',
-                        host: 'https://www.youtube-nocookie.com',
                         playerVars: pVars,
                         events: {
                             onError: (event) => {
@@ -299,19 +300,107 @@ class MobilePlayer {
         }
     }
 
+    // --- 제로 광고 스마트 쉴드 (Mobile Zero-Ad Smart Shield) ---
+    _initAdShield() {
+        window.addEventListener('message', (event) => {
+            if (this.activeEngine !== 'youtube' || !this.ytPlayer) return;
+            try {
+                let data = event.data;
+                if (typeof data === 'string') {
+                    try { data = JSON.parse(data); } catch (e) { return; }
+                }
+                if (!data || (data.event !== 'infoDelivery' && !data.info)) return;
+
+                const info = data.info || {};
+                const isAdState = info.adState === 1 || info.adState === 2;
+                const isAdFlag = info.isAd === true;
+                const isAdVideoData = info.videoData && (
+                    info.videoData.isAd === true ||
+                    (info.videoData.video_id && this.currentSong && info.videoData.video_id !== this.currentSong.youtubeId)
+                );
+
+                if (isAdState || isAdFlag || isAdVideoData) {
+                    this._handleAdDetected(info.duration || 0);
+                } else if (info.adState === 0 || (info.videoData && this.currentSong && info.videoData.video_id === this.currentSong.youtubeId)) {
+                    if (this.isAdShieldActive) {
+                        this._handleAdFinished();
+                    }
+                }
+            } catch (e) {}
+        });
+    }
+
+    _handleAdDetected(adDuration = 0) {
+        if (!this.isAdShieldActive) {
+            this.isAdShieldActive = true;
+            // 1. 광고 음성 즉각 100% 음소거
+            if (this.ytPlayer && typeof this.ytPlayer.mute === 'function') {
+                try { this.ytPlayer.mute(); } catch (e) {}
+            }
+            // 2. 1회 스킵 시도
+            if (this.ytPlayer && typeof this.ytPlayer.seekTo === 'function') {
+                try {
+                    const targetTime = adDuration > 0 ? adDuration + 1 : 9999;
+                    this.ytPlayer.seekTo(targetTime, true);
+                } catch (e) {}
+            }
+        }
+
+        // 3. 광고 재생 속도 2배속 가속
+        if (this.ytPlayer && typeof this.ytPlayer.setPlaybackRate === 'function') {
+            try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+    }
+
+    _handleAdFinished() {
+        if (!this.isAdShieldActive) return;
+        this.isAdShieldActive = false;
+
+        // 1. 본곡 복귀 시 음소거 해제 및 재생 속도 복원
+        if (this.ytPlayer) {
+            try {
+                if (typeof this.ytPlayer.unMute === 'function') {
+                    this.ytPlayer.unMute();
+                }
+                if (typeof this.ytPlayer.setPlaybackRate === 'function') {
+                    this.ytPlayer.setPlaybackRate(1);
+                }
+                // 본곡 시작 위치 복원
+                if (this.currentSong && this.currentSong.start && typeof this.ytPlayer.getCurrentTime === 'function' && typeof this.ytPlayer.seekTo === 'function') {
+                    const cur = this.ytPlayer.getCurrentTime();
+                    if (cur < this.currentSong.start) {
+                        this.ytPlayer.seekTo(this.currentSong.start, true);
+                    }
+                }
+            } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
+    }
+
     _startYtTimer() {
         this._stopYtTimer();
         this.ytUpdateTimer = setInterval(() => {
             if (this.activeEngine !== 'youtube' || !this.ytPlayer || !this.ytPlayer.getCurrentTime) return;
 
-            // 유튜브 광고 상태 안전 감지 (seekTo 호출 금지 - UI 알림 및 건너뛰기 터치 활성화 전용)
+            // [Mobile Zero-Ad Smart Shield] 실시간 광고 상태 체크
             if (this.currentSong) {
                 try {
                     const vData = typeof this.ytPlayer.getVideoData === 'function' ? this.ytPlayer.getVideoData() : null;
-                    const isAdNow = !!(vData && (vData.isAd === true || (vData.video_id && vData.video_id !== this.currentSong.youtubeId)));
-                    if (isAdNow !== this.isAdPlaying) {
-                        this.isAdPlaying = isAdNow;
-                        window.dispatchEvent(new CustomEvent('mobileplayer:adNotice', { detail: { isAd: isAdNow } }));
+                    const curDur = typeof this.ytPlayer.getDuration === 'function' ? this.ytPlayer.getDuration() : 0;
+                    const isAdByData = vData && (
+                        vData.isAd === true ||
+                        (vData.video_id && vData.video_id !== this.currentSong.youtubeId)
+                    );
+                    const isAdByDur = (curDur > 0 && curDur <= 35 && this.currentSong.duration > 60);
+
+                    if (isAdByData || isAdByDur) {
+                        this._handleAdDetected(curDur);
+                        return; // 광고 스킵 및 가속 처리 중에는 일반 타이머 대기
+                    } else if (this.isAdShieldActive && vData && vData.video_id === this.currentSong.youtubeId) {
+                        this._handleAdFinished();
                     }
                 } catch (e) {}
             }
@@ -362,6 +451,7 @@ class MobilePlayer {
         this.audio.pause();
         this.audio.src = '';
         this.isOfflinePlayback = false;
+        this.isAdShieldActive = false;
 
         const startSec = (this.sabiMode && song.sabi && typeof song.sabi.start === 'number') ? song.sabi.start : 0;
 

@@ -54,6 +54,10 @@ class MusicPlayer {
 
         // 3. PC 전용 키보드 단축키 등록
         this.initKeyboardShortcuts();
+
+        // 4. 제로 광고 스마트 쉴드 (Zero-Ad Smart Shield) 초기화
+        this.isAdShieldActive = false;
+        this.initAdShield();
     }
 
     // 덱 접근자 (Active Deck & Standby Deck)
@@ -159,7 +163,6 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-deck-a', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube-nocookie.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -173,7 +176,6 @@ class MusicPlayer {
                 this.deckB = new YT.Player('youtube-player-deck-b', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube-nocookie.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('B', event),
@@ -185,7 +187,6 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-embed', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube-nocookie.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -195,6 +196,91 @@ class MusicPlayer {
                 });
             }
         };
+    }
+
+    // --- 제로 광고 스마트 쉴드 (Zero-Ad Smart Shield) ---
+    initAdShield() {
+        window.addEventListener('message', (event) => {
+            const player = this.activeDeck;
+            if (!player) return;
+            try {
+                let data = event.data;
+                if (typeof data === 'string') {
+                    try { data = JSON.parse(data); } catch (e) { return; }
+                }
+                if (!data || (data.event !== 'infoDelivery' && !data.info)) return;
+
+                const info = data.info || {};
+                const isAdState = info.adState === 1 || info.adState === 2;
+                const isAdFlag = info.isAd === true;
+                const isAdVideoData = info.videoData && (
+                    info.videoData.isAd === true ||
+                    (info.videoData.video_id && this.currentSong && info.videoData.video_id !== this.currentSong.youtubeId)
+                );
+
+                if (isAdState || isAdFlag || isAdVideoData) {
+                    this.handleAdDetected(info.duration || 0);
+                } else if (info.adState === 0 || (info.videoData && this.currentSong && info.videoData.video_id === this.currentSong.youtubeId)) {
+                    if (this.isAdShieldActive) {
+                        this.handleAdFinished();
+                    }
+                }
+            } catch (e) {}
+        });
+    }
+
+    handleAdDetected(adDuration = 0) {
+        const player = this.activeDeck;
+        if (!player) return;
+
+        if (!this.isAdShieldActive) {
+            this.isAdShieldActive = true;
+            // 1. 광고 음성 즉각 100% 음소거
+            if (typeof player.mute === 'function') {
+                try { player.mute(); } catch (e) {}
+            }
+            // 2. 1회 즉시 스킵 시도
+            if (typeof player.seekTo === 'function') {
+                try {
+                    const targetTime = adDuration > 0 ? adDuration + 1 : 9999;
+                    player.seekTo(targetTime, true);
+                } catch (e) {}
+            }
+        }
+
+        // 3. 광고 재생 속도 2배속 가속 (빠른 경과)
+        if (typeof player.setPlaybackRate === 'function') {
+            try { player.setPlaybackRate(2); } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
+    }
+
+    handleAdFinished() {
+        if (!this.isAdShieldActive) return;
+        this.isAdShieldActive = false;
+
+        const player = this.activeDeck;
+        if (player) {
+            try {
+                if (!this.isMuted && typeof player.unMute === 'function') {
+                    player.unMute();
+                    player.setVolume(this.volume);
+                }
+                if (typeof player.setPlaybackRate === 'function') {
+                    player.setPlaybackRate(1);
+                }
+                // 본곡 재생 위치 복원 (시작 지점 보정)
+                if (this.currentSong && this.currentSong.start && typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function') {
+                    const cur = player.getCurrentTime();
+                    if (cur < this.currentSong.start) {
+                        player.seekTo(this.currentSong.start, true);
+                    }
+                }
+            } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: false } }));
     }
 
     onDeckReady(deckId, event) {
@@ -576,6 +662,7 @@ class MusicPlayer {
         }
 
         this.currentSong = song;
+        this.isAdShieldActive = false;
         this.isTransitioningSabi = false;
         this.applyCustomSabi(this.currentSong);
         this.parseLyrics(song.lyrics);
@@ -932,6 +1019,26 @@ class MusicPlayer {
         this.stopTimeUpdater();
         this.updateInterval = setInterval(() => {
             if (!this.isPlaying) return;
+
+            // [Zero-Ad Smart Shield] 실시간 광고 상태 체크 (postMessage 누락 대비 폴백)
+            if (this.engineMode === 'video' && this.ytPlayer && this.currentSong) {
+                try {
+                    const vData = typeof this.ytPlayer.getVideoData === 'function' ? this.ytPlayer.getVideoData() : null;
+                    const curDur = typeof this.ytPlayer.getDuration === 'function' ? this.ytPlayer.getDuration() : 0;
+                    const isAdByData = vData && (
+                        vData.isAd === true ||
+                        (vData.video_id && vData.video_id !== this.currentSong.youtubeId)
+                    );
+                    const isAdByDur = (curDur > 0 && curDur <= 35 && this.currentSong.duration > 60);
+
+                    if (isAdByData || isAdByDur) {
+                        this.handleAdDetected(curDur);
+                        return; // 광고 처리 중에는 일반 타이머 로직 일시 중단
+                    } else if (this.isAdShieldActive && vData && vData.video_id === this.currentSong.youtubeId) {
+                        this.handleAdFinished();
+                    }
+                } catch (e) {}
+            }
 
             const currentTime = this.getCurrentTime();
             const duration = this.getDuration();
