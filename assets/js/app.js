@@ -1630,16 +1630,62 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 시크바 인터랙션
-        const handleSeek = (e, container) => {
-            const rect = container.getBoundingClientRect();
-            const clickPos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-            const duration = player.getDuration();
-            player.seekTo(duration * clickPos);
+        // 시크바 인터랙션 (클릭 및 드래그 탐색 지원)
+        let isScrubbingProgress = false;
+        const setupScrubbing = (container, isMini = false) => {
+            if (!container) return;
+            let isDragging = false;
+
+            const updateSeekFromEvent = (e, commit = false) => {
+                const rect = container.getBoundingClientRect();
+                if (rect.width <= 0) return;
+                const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                const duration = player.getDuration();
+                const seekTime = duration * pos;
+
+                // UI 실시간 반응 (드래그 중 매끄러운 진행바 및 시간 표시)
+                if (dom.progressBarFill) dom.progressBarFill.style.width = `${pos * 100}%`;
+                if (dom.miniProgressBar) dom.miniProgressBar.style.width = `${pos * 100}%`;
+                if (!isMini && dom.currentTimeText) {
+                    dom.currentTimeText.textContent = formatTime(seekTime);
+                }
+
+                if (commit) {
+                    player.seekTo(seekTime);
+                }
+            };
+
+            container.addEventListener('pointerdown', (e) => {
+                if (e.button !== 0) return;
+                isDragging = true;
+                isScrubbingProgress = true;
+                try {
+                    container.setPointerCapture(e.pointerId);
+                } catch (_) {}
+                updateSeekFromEvent(e, false);
+            });
+
+            container.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                updateSeekFromEvent(e, false);
+            });
+
+            const handlePointerUp = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                isScrubbingProgress = false;
+                try {
+                    container.releasePointerCapture(e.pointerId);
+                } catch (_) {}
+                updateSeekFromEvent(e, true);
+            };
+
+            container.addEventListener('pointerup', handlePointerUp);
+            container.addEventListener('pointercancel', handlePointerUp);
         };
 
-        dom.progressSliderContainer.addEventListener('click', (e) => handleSeek(e, dom.progressSliderContainer));
-        dom.miniProgressTrack.addEventListener('click', (e) => handleSeek(e, dom.miniProgressTrack));
+        setupScrubbing(dom.progressSliderContainer, false);
+        setupScrubbing(dom.miniProgressTrack, true);
 
         // 볼륨 & 음소거
         dom.volumeSlider.value = player.volume;
@@ -2214,6 +2260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         window.addEventListener('stellplay:timeUpdate', (e) => {
+            if (isScrubbingProgress) return;
             const { currentTime, duration, progress, sabiRemaining } = e.detail;
 
             // 시크바 진행도

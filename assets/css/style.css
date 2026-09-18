@@ -132,12 +132,20 @@ button,
 }
 
 [data-theme="light"] .search-box-wrapper {
-    background: rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: transparent;
+    border: none;
 }
 
 [data-theme="light"] .search-input {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     color: var(--text-primary);
+}
+
+[data-theme="light"] .search-input:focus {
+    background: #ffffff;
+    border-color: var(--theme-color);
+    box-shadow: 0 0 0 3px var(--theme-glow);
 }
 
 [data-theme="light"] .mini-player-bar {
@@ -1035,6 +1043,41 @@ body::after {
 @keyframes spin-sync {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* 상단 탑바 모바일 전환 버튼 */
+.btn-topbar-mobile {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border-radius: var(--radius-full);
+    background: rgba(168, 85, 247, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #c084fc;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-topbar-mobile:hover {
+    background: rgba(168, 85, 247, 0.22);
+    border-color: #c084fc;
+    color: #e9d5ff;
+}
+
+[data-theme="light"] .btn-topbar-mobile {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.35);
+    color: #9333ea;
+}
+
+[data-theme="light"] .btn-topbar-mobile:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: #9333ea;
+    color: #7e22ce;
 }
 
 /* --- 본문 스크롤 영역 --- */

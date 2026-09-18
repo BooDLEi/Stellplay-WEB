@@ -201,6 +201,14 @@ class MusicPlayer {
     // --- 제로 광고 스마트 쉴드 (Zero-Ad Smart Shield) ---
     initAdShield() {
         window.addEventListener('message', (event) => {
+            if (this.isCrossfading) return; // 크로스페이드 중에는 대기 덱 간섭 차단
+            const deckEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-a' : 'youtube-player-deck-b');
+            const activeWin = deckEl ? (deckEl.contentWindow || deckEl.querySelector('iframe')?.contentWindow) : null;
+            // 대기 덱(Standby Deck)이나 외부 창에서 온 메시지는 일체 무시
+            if (activeWin && event.source !== activeWin) {
+                return;
+            }
+
             const player = this.activeDeck;
             if (!player) return;
             try {
@@ -230,6 +238,7 @@ class MusicPlayer {
     }
 
     handleAdDetected(adDuration = 0) {
+        if (this.isCrossfading) return; // 크로스페이드 전환 중에는 건너뛰기/배속 조작 방지
         const player = this.activeDeck;
         if (!player) return;
 

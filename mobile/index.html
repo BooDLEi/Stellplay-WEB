@@ -258,7 +258,7 @@
             <!-- 5. 설정 뷰 -->
             <section class="view-section" id="view-settings">
                 <div style="display:flex; flex-direction:column; gap:12px;">
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                    <div class="m-settings-card" style="border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
                         <div style="font-weight:700; font-size:0.9rem;">라이브러리 동기화 및 관리</div>
                         <button id="btn-sync-songs-settings" style="width:100%; height:38px; border-radius:8px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); color:#38bdf8; font-weight:700; font-size:0.82rem; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -273,7 +273,7 @@
                     </div>
 
                     <!-- 화면 테마 설정 (라이트 / 다크 모드) -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                    <div class="m-settings-card" style="border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div>
                                 <div style="font-weight:700; font-size:0.9rem;">🎨 화면 테마 모드</div>
@@ -293,7 +293,7 @@
                     </div>
 
                     <!-- 재생 옵션 (크로스페이드 설정) -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                    <div class="m-settings-card" style="border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div style="display:flex; align-items:center; gap:8px;">
                                 <div style="font-weight:700; font-size:0.9rem;">🔀 곡 전환 크로스페이드</div>
@@ -417,8 +417,12 @@
             </div>
 
             <!-- 유튜브 영상 전용 뷰 (16:9 비율 도킹) -->
-            <div class="m-video-box" id="m-sheet-video-box" style="display:none; width:92%; max-width:440px; aspect-ratio:16/9; margin:16px auto 10px auto; border-radius:14px; overflow:hidden; background:#000; box-shadow:0 8px 24px rgba(0,0,0,0.6); position:relative;">
-                <div id="m-video-dock-target" style="width:100%; height:100%; position:relative;"></div>
+            <div class="m-video-box" id="m-sheet-video-box">
+                <div id="m-video-dock-target" style="width:100%; height:100%; position:relative;">
+                    <div id="m-youtube-player-wrap" class="m-yt-player-wrap">
+                        <div id="m-youtube-hidden-player" style="width:100%; height:100%;"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="sheet-meta-wrap">
@@ -930,10 +934,6 @@
             </div>
         </div>
 
-        <!-- 독립형 유튜브 플레이어 (모바일 브라우저 쓰로틀링 방지 뷰포트 내 배치) -->
-        <div id="m-youtube-player-wrap" class="m-yt-player-wrap" style="position:fixed; bottom:0; right:0; width:200px; height:200px; z-index:-10; opacity:0.01; pointer-events:none; overflow:hidden;">
-            <div id="m-youtube-hidden-player" style="width:100%; height:100%;"></div>
-        </div>
 
         <!-- 광고 안내 & 즉시 건너뛰기 플로팅 배너 -->
         <div id="m-ad-floating-banner" style="display:none; position:fixed; top:12px; left:12px; right:12px; background:linear-gradient(135deg, #ef4444, #dc2626); color:white; padding:10px 14px; border-radius:14px; font-size:0.8rem; font-weight:700; z-index:99999; box-shadow:0 8px 24px rgba(0,0,0,0.5); align-items:center; justify-content:space-between;">

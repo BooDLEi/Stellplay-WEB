@@ -3257,27 +3257,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (mode === 'video') {
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'none';
-                if (dom.sheetVideoBox) dom.sheetVideoBox.style.display = 'block';
                 dockYouTubePlayer(true);
             } else {
-                if (dom.sheetVideoBox) dom.sheetVideoBox.style.display = 'none';
-                if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
                 dockYouTubePlayer(false);
+                if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
             }
         }
 
         function dockYouTubePlayer(isDocked) {
             const wrap = document.getElementById('m-youtube-player-wrap');
-            const target = document.getElementById('m-video-dock-target');
-            if (!wrap) return;
-
-            if (isDocked && target) {
-                target.appendChild(wrap);
-                wrap.classList.add('docked');
-            } else {
-                const appContainer = document.querySelector('.mobile-app-container') || document.body;
-                appContainer.appendChild(wrap);
-                wrap.classList.remove('docked');
+            const sheetBox = dom.sheetVideoBox || document.getElementById('m-sheet-video-box');
+            if (sheetBox) {
+                sheetBox.classList.toggle('active-video', !!isDocked);
+            }
+            if (wrap) {
+                wrap.classList.toggle('docked', !!isDocked);
             }
         }
 

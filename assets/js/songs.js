@@ -996,7 +996,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "hina-season-crime",
-        "title": "季節は次々死んでいく (계절범죄)",
+        "title": "계절범죄 (Season Crime)",
         "artist": "시라유키 히나",
         "originalArtist": "Miiro (미로)",
         "type": "cover",
@@ -1303,7 +1303,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "lize-blue-green",
-        "title": "青と夏 (청록)",
+        "title": "청록 [Blue Rock]",
         "artist": "아카네 리제",
         "originalArtist": "it's",
         "type": "cover",
@@ -1974,9 +1974,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-zQp6ZZAT6ew",
-        "title": "もしもし? (모시 모시?)",
+        "title": "mosi mosi? (모시모시?)",
         "artist": "텐코 시부키",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "楽音 (사사네)",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -2069,9 +2069,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-wu2a0AeQOCc",
-        "title": "ミライチズ (미랫빛 라이더)",
+        "title": "미랫빛 라이더 (Mirairo Rider)",
         "artist": "아카네 리제",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "명일방주: 엔드필드 EP",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -2145,9 +2145,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-_pTBkDP1TE0",
-        "title": "ラヴィット (러빗)",
+        "title": "Loveit? (러빗)",
         "artist": "하나코 나나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "biz×ZERA",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -2526,9 +2526,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-RLKm8ymJPlo",
-        "title": "앗... (Ah...)",
+        "title": "Oh...",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "타다노 카에데 (只野 楓)",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -2603,9 +2603,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-QXUxnxoOIOI",
-        "title": "愛及屋烏 (애급옥오)",
+        "title": "AIZO (아이조)",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "King Gnu",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -3119,9 +3119,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-6gEc7lUi6xs",
-        "title": "ヒバナ (히바나)",
+        "title": "울려퍼져라 (ヒビカセ / Hibikase)",
         "artist": "텐코 시부키 x 하나코 나나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Giga",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -3718,7 +3718,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-3qRN6mQJ4K4",
-        "title": "夜咄ディセイブ (야화)",
+        "title": "야화 (Night Flower)",
         "artist": "아라하시 타비 x 하나코 나나",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -3894,9 +3894,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-7gYDCoiV7cc",
-        "title": "おこちゃま戦争 (그 나라의 왕가는 이상해)",
+        "title": "그 나라의 왕가는 이상해 (아이 같은 전쟁)",
         "artist": "네네코 마시로 x 아카네 리제",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Giga",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -3990,9 +3990,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-4OzmA6a8sqY",
-        "title": "あのね (있잖아 있잖아 있잖아)",
+        "title": "있잖아 있잖아 있잖아 (ねぇねぇねぇ。)",
         "artist": "텐코 시부키 x 유즈하 리코",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "피노키오피",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -4182,7 +4182,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-QQYjoOGbUSQ",
-        "title": "モモイロ (복숭아색 열쇠)",
+        "title": "ももいろの鍵 (복숭아색 열쇠)",
         "artist": "아오쿠모 린",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -5111,9 +5111,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-sEYBQaw1vRs",
-        "title": "さよならだけが人生だ (안녕, 꽃도둑씨)",
+        "title": "さようなら、花泥棒さん (안녕, 꽃도둑씨)",
         "artist": "네네코 마시로",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "메루 (メル)",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -5149,9 +5149,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-v7UNI2YuqFc",
-        "title": "仮面 (가짜 얼굴)",
+        "title": "가짜 얼굴 (Fake Face)",
         "artist": "하나코 나나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "yama",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -5187,9 +5187,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-IRvrDhVYXHQ",
-        "title": "希望が銀河を照らす時 (희망이 은하를 비출 때)",
+        "title": "상처 입은 누군가의 마음을 지킬 수 있다면 (傷つく誰かの心を守ることができたなら)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "ツユ (TUYU)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5244,9 +5244,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-a6imWKGILZA",
-        "title": "クラクラ (두근어질)",
+        "title": "두근어질 (큐 큐라링 / きゅうくらりん)",
         "artist": "아야츠노 유니",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "이요와 (いよわ)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5434,9 +5434,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-eLJENPbBe8A",
-        "title": "ギラギラ (의심쩍어)",
+        "title": "勘ぐれい (의심쩍어 / 칸구레이)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "ZUTOMAYO",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5491,9 +5491,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-Y52kljOrCsc",
-        "title": "あの夏が飽和する。 (그 여름에 피어나)",
+        "title": "그 여름에 피어나 (あの夏に咲け)",
         "artist": "아라하시 타비",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "TUYU",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -5510,9 +5510,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-nYgMMdYDGak",
-        "title": "眠る街 (잠드는 거리)",
+        "title": "ねむるまち (잠드는 거리 / 네무루마치)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "くじら (Kujira)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5548,7 +5548,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-W-Xr4ceMOXI",
-        "title": "あの夏のある日は (그 여름의 어느 날은)",
+        "title": "그 여름의 어느 날은 (あの夏のいつかは)",
         "artist": "아라하시 타비",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -5947,9 +5947,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-6A04OifrfR0",
-        "title": "プリンセストレイン (공주열차)",
+        "title": "공상열차 (空奏列車 / 쿠소렛샤)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Orangestar",
         "type": "cover",
         "gen": "g1",
         "members": [
