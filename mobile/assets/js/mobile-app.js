@@ -2446,9 +2446,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 전체화면 시트
         dom.sheetAlbumImg.src = thumb;
         dom.sheetSongTitle.textContent = song.title;
-        dom.sheetSongArtist.textContent = `${song.artist} • ${song.originalArtist || '스텔라이브'}`;
-        dom.sheetModeBadge.textContent = isOffline ? 'OFFLINE PLAYBACK' : (player.sabiMode ? 'SABI HIGHLIGHT' : 'NOW PLAYING');
-        dom.sheetModeBadge.style.color = isOffline ? '#10b981' : (player.sabiMode ? '#f59e0b' : 'var(--text-muted)');
+        if (dom.sheetModeBadge) {
+            dom.sheetModeBadge.textContent = isOffline ? 'OFFLINE PLAYBACK' : (player.sabiMode ? 'SABI HIGHLIGHT' : 'NOW PLAYING');
+            dom.sheetModeBadge.style.color = isOffline ? '#10b981' : (player.sabiMode ? '#f59e0b' : 'var(--text-muted)');
+        }
 
         syncSabiUI();
 

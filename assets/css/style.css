@@ -2755,6 +2755,17 @@ body::after {
     border: none;
 }
 
+.pc-yt-player-wrap.docked {
+    position: relative !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 2 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
 .btn-video-fullscreen-toggle {
     position: absolute;
     top: 12px;

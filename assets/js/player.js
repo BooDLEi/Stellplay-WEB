@@ -7,8 +7,6 @@
 
 class MusicPlayer {
     constructor() {
-        this.ytPlayer = null;
-        this.isYtReady = false;
         this.queue = [];
         this.originalQueue = [];
         this.currentIndex = -1;
@@ -80,11 +78,17 @@ class MusicPlayer {
         return this.activeDeckId === 'A' ? this.isDeckAReady : this.isDeckBReady;
     }
 
+    set isYtReady(val) {
+        if (this.activeDeckId === 'A') this.isDeckAReady = !!val;
+        else this.isDeckBReady = !!val;
+    }
+
     get isUsingAudioElement() {
         return !this.isWeb && this.engineMode === 'audio';
     }
 
     setupAudioElement() {
+        if (this.isWeb) return;
         this.audioElement.addEventListener('play', () => {
             this.isPlaying = true;
             this.startTimeUpdater();
@@ -136,13 +140,13 @@ class MusicPlayer {
                     disablekb: 1,
                     fs: 0,
                     rel: 0,
-                    modestbranding: 1,
                     playsinline: 1,
                     enablejsapi: 1,
                     iv_load_policy: 3
                 };
                 if (window.location.origin && window.location.origin.startsWith('http')) {
                     pVars.origin = window.location.origin;
+                    pVars.widget_referrer = window.location.href;
                 }
                 return pVars;
             };

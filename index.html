@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- 스마트폰(아이폰/안드로이드) 접속 시 모바일 전용 앱(/mobile/)으로 즉시 자동 전환 -->
     <script>
@@ -641,10 +642,9 @@
                     </div>
                 </div>
 
-                <!-- 유튜브 영상 뷰 (듀얼 YouTube IFrame Player 덱) -->
+                <!-- 유튜브 영상 뷰 (영상 모드 시 듀얼 덱 도킹 슬롯) -->
                 <div class="youtube-view-box" id="full-video-container" style="position: relative;">
-                    <div id="youtube-player-deck-a" class="yt-player-deck" style="width:100%; height:100%; position:absolute; top:0; left:0; transition:opacity 0.4s ease;"></div>
-                    <div id="youtube-player-deck-b" class="yt-player-deck" style="width:100%; height:100%; position:absolute; top:0; left:0; opacity:0; pointer-events:none; transition:opacity 0.4s ease;"></div>
+                    <div id="pc-video-dock-target" style="width:100%; height:100%; position:relative;"></div>
                     <button class="btn-video-fullscreen-toggle" id="btn-video-fullscreen" title="영상 전체화면 확대">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
@@ -1187,6 +1187,12 @@
             <!-- 대기열 리스트 동적 렌더링 -->
         </div>
     </aside>
+
+    <!-- PC Web 전용 백그라운드 듀얼 덱 래퍼 (상시 렌더링 유지로 브라우저 재생 차단 방지) -->
+    <div id="pc-youtube-player-wrap" class="pc-yt-player-wrap" style="position:fixed; bottom:0; right:0; width:240px; height:135px; z-index:-10; opacity:0.01; pointer-events:none; overflow:hidden;">
+        <div id="youtube-player-deck-a" class="yt-player-deck" style="width:100%; height:100%; position:absolute; top:0; left:0; transition:opacity 0.4s ease;"></div>
+        <div id="youtube-player-deck-b" class="yt-player-deck" style="width:100%; height:100%; position:absolute; top:0; left:0; opacity:0; pointer-events:none; transition:opacity 0.4s ease;"></div>
+    </div>
 
     <!-- 토스트 알림 컨테이너 -->
     <div class="toast-container" id="toast-container"></div>

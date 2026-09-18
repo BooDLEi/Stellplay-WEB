@@ -2386,9 +2386,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function dockPcPlayer(isDocked) {
+        const wrap = document.getElementById('pc-youtube-player-wrap');
+        const target = document.getElementById('pc-video-dock-target');
+        if (!wrap) return;
+
+        if (isDocked && target) {
+            target.appendChild(wrap);
+            wrap.classList.add('docked');
+        } else {
+            document.body.appendChild(wrap);
+            wrap.classList.remove('docked');
+        }
+    }
+
     function closeFullPlayer() {
         dom.fullPlayerModal.classList.remove('open');
         document.body.style.overflow = '';
+        dockPcPlayer(false);
         if (dom.openFullPlayerBtn) {
             dom.openFullPlayerBtn.innerHTML = `
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2407,6 +2422,9 @@ document.addEventListener('DOMContentLoaded', () => {
             closeFullPlayer();
         } else {
             openFullPlayer();
+            if (state.fullPlayerViewMode === 'video') {
+                dockPcPlayer(true);
+            }
         }
     }
 
@@ -2419,10 +2437,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'video') {
             if (artBox) artBox.style.display = 'none';
             dom.fullVideoContainer.classList.add('active');
+            dockPcPlayer(true);
             player.setEngineMode('video');
         } else {
             dom.fullVideoContainer.classList.remove('active');
             if (artBox) artBox.style.display = 'flex';
+            dockPcPlayer(false);
             player.setEngineMode('audio');
         }
     }

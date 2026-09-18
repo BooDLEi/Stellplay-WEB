@@ -203,30 +203,40 @@ class MobilePlayer {
                 try {
                     const appOrigin = (window.location.origin && window.location.origin.startsWith('http')) 
                         ? window.location.origin 
-                        : 'https://www.youtube.com';
+                        : undefined;
+
+                    const pVars = {
+                        autoplay: 0,
+                        controls: 0,
+                        disablekb: 1,
+                        fs: 0,
+                        rel: 0,
+                        playsinline: 1,
+                        enablejsapi: 1,
+                        iv_load_policy: 3
+                    };
+                    if (appOrigin) {
+                        pVars.origin = appOrigin;
+                        pVars.widget_referrer = window.location.href;
+                    }
 
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
                         width: '100%',
                         host: 'https://www.youtube-nocookie.com',
-                        playerVars: {
-                            autoplay: 1,
-                            controls: 0,
-                            disablekb: 1,
-                            fs: 0,
-                            rel: 0,
-                            playsinline: 1,
-                            enablejsapi: 1,
-                            iv_load_policy: 3,
-                            origin: appOrigin
-                        },
+                        playerVars: pVars,
                         events: {
                             onError: (event) => {
                                 console.warn('[MobilePlayer] YouTube Player error event code:', event.data);
-                                if (event.data === 150 || event.data === 101) {
+                                if (event.data === 150 || event.data === 101 || event.data === 153) {
                                     window.dispatchEvent(new CustomEvent('mobileplayer:error', {
                                         detail: { message: `"${this.currentSong?.title}"은(는) 유튜브 임베드 정책으로 인해 재생이 제한되었습니다. Wi-Fi로 PC 서버를 연동하거나 오프라인 저장을 이용해주세요.` }
                                     }));
+                                    setTimeout(() => {
+                                        if (this.queue.length > 1) {
+                                            this.playNext();
+                                        }
+                                    }, 1500);
                                 }
                             },
                             onReady: () => {
@@ -637,34 +647,10 @@ class MobilePlayer {
             }
         }
 
-        // 단독 앱(Standalone APK) 환경인 경우 즉시 유튜브 엔진으로 다이렉트 스트리밍
-        if (this.isStandalone) {
-            console.log('[MobilePlayer] Standalone mode: Playing directly via YouTube engine');
-            this._playWithYouTubeEngine(song);
-            return;
-        }
-
-        // 로컬 PC 서버 또는 단독 유튜브 재생 시도
-        this.activeEngine = 'audio';
-        sourceUrl = `/api/audio?id=${song.youtubeId}`;
-
-        this.audio.addEventListener('loadedmetadata', applyTargetStart, { once: true });
-        this.audio.addEventListener('canplay', applyTargetStart, { once: true });
-
-        this.audio.src = sourceUrl;
-        this._updateMediaSessionMetadata();
-
-        try {
-            this.audio.currentTime = targetStart;
-        } catch (e) {}
-
-        try {
-            await this.audio.play();
-        } catch (err) {
-            if (!this.isOfflinePlayback) {
-                this._playWithYouTubeEngine(song);
-            }
-        }
+        // 웹 버전 환경: 항상 유튜브 엔진으로 다이렉트 스트리밍 (오프라인 제외)
+        console.log('[MobilePlayer] Web mode: Playing directly via YouTube engine');
+        this._playWithYouTubeEngine(song);
+        return;
 
         window.dispatchEvent(new CustomEvent('mobileplayer:trackChanged', {
             detail: {
