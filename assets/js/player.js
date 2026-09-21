@@ -163,6 +163,7 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-deck-a', {
                     height: '100%',
                     width: '100%',
+                    host: 'https://www.youtube-nocookie.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -176,6 +177,7 @@ class MusicPlayer {
                 this.deckB = new YT.Player('youtube-player-deck-b', {
                     height: '100%',
                     width: '100%',
+                    host: 'https://www.youtube-nocookie.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('B', event),
@@ -187,6 +189,7 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-embed', {
                     height: '100%',
                     width: '100%',
+                    host: 'https://www.youtube-nocookie.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -202,10 +205,10 @@ class MusicPlayer {
     initAdShield() {
         window.addEventListener('message', (event) => {
             if (this.isCrossfading) return; // 크로스페이드 중에는 대기 덱 간섭 차단
-            const deckEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-a' : 'youtube-player-deck-b');
-            const activeWin = deckEl ? (deckEl.contentWindow || deckEl.querySelector('iframe')?.contentWindow) : null;
-            // 대기 덱(Standby Deck)이나 외부 창에서 온 메시지는 일체 무시
-            if (activeWin && event.source !== activeWin) {
+            const standbyEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-b' : 'youtube-player-deck-a');
+            const standbyWin = standbyEl ? (standbyEl.contentWindow || standbyEl.querySelector('iframe')?.contentWindow) : null;
+            // 대기 덱(Standby Deck) 창에서 온 메시지만 정확히 차단 (활성 덱 서브프레임 메시지는 차단하지 않음)
+            if (standbyWin && event.source === standbyWin) {
                 return;
             }
 
@@ -238,48 +241,60 @@ class MusicPlayer {
     }
 
     handleAdDetected(adDuration = 0) {
-        if (this.isCrossfading) return; // 크로스페이드 전환 중에는 건너뛰기/배속 조작 방지
+        if (this.isCrossfading) return; // 크로스페이드 전환 중에는 간섭 방지
         const player = this.activeDeck;
         if (!player) return;
 
-        if (!this.isAdShieldActive) {
-            this.isAdShieldActive = true;
-            // 1. 광고 음성 즉각 100% 음소거
-            if (typeof player.mute === 'function') {
-                try { player.mute(); } catch (e) {}
-            }
-            // 2. 1회 즉시 스킵 시도
+        this.isAdShieldActive = true;
+
+        // 1. 광고 음성 즉시 & 상시 100% 음소거 강제 (볼륨 리셋 방지)
+        if (typeof player.mute === 'function') {
+            try { player.mute(); } catch (e) {}
+        }
+        if (typeof player.setVolume === 'function') {
+            try { player.setVolume(0); } catch (e) {}
+        }
+
+        // 2. 광고 재생 속도 2배속 가속 유지
+        if (typeof player.setPlaybackRate === 'function') {
+            try { player.setPlaybackRate(2); } catch (e) {}
+        }
+
+        // 3. 광고 즉시 및 주기적 스킵 시도 (600ms 간격 스킵 재시도)
+        const now = Date.now();
+        if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 600)) {
+            this._lastAdSeekTime = now;
             if (typeof player.seekTo === 'function') {
                 try {
-                    const targetTime = adDuration > 0 ? adDuration + 1 : 9999;
+                    const targetTime = adDuration > 0 ? adDuration + 1 : 99999;
                     player.seekTo(targetTime, true);
                 } catch (e) {}
             }
         }
 
-        // 3. 광고 재생 속도 2배속 가속 (빠른 경과)
-        if (typeof player.setPlaybackRate === 'function') {
-            try { player.setPlaybackRate(2); } catch (e) {}
-        }
-
-        window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
+        window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true, adDuration } }));
     }
 
     handleAdFinished() {
         if (!this.isAdShieldActive) return;
         this.isAdShieldActive = false;
+        this._lastAdSeekTime = 0;
 
         const player = this.activeDeck;
         if (player) {
             try {
-                if (!this.isMuted && typeof player.unMute === 'function') {
-                    player.unMute();
-                    player.setVolume(this.volume);
-                }
+                // 1. 정상 1배속 복구
                 if (typeof player.setPlaybackRate === 'function') {
                     player.setPlaybackRate(1);
                 }
-                // 본곡 재생 위치 복원 (시작 지점 보정)
+                // 2. 음소거 해제 및 원래 볼륨 복원
+                if (!this.isMuted && typeof player.unMute === 'function') {
+                    player.unMute();
+                    if (typeof player.setVolume === 'function') {
+                        player.setVolume(this.volume);
+                    }
+                }
+                // 3. 본곡 재생 위치 복원 (시작 지점 보정)
                 if (this.currentSong && this.currentSong.start && typeof player.getCurrentTime === 'function' && typeof player.seekTo === 'function') {
                     const cur = player.getCurrentTime();
                     if (cur < this.currentSong.start) {
@@ -290,6 +305,38 @@ class MusicPlayer {
         }
 
         window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: false } }));
+    }
+
+    // [Zero-Ad Smart Shield] 수동 및 강제 광고 탈출
+    skipAd() {
+        const player = this.activeDeck;
+        if (!player) return;
+
+        try {
+            if (typeof player.seekTo === 'function') {
+                player.seekTo(99999, true);
+            }
+        } catch (e) {}
+
+        // 0.4초 후에도 광고가 해제되지 않을 경우 본곡 위치로 즉시 재로드하여 강제 탈출
+        setTimeout(() => {
+            if (this.isAdShieldActive && this.currentSong && this.activeDeck) {
+                const p = this.activeDeck;
+                const startSec = (this.getInitialStartSeconds && typeof this.getInitialStartSeconds === 'function')
+                    ? this.getInitialStartSeconds(this.currentSong)
+                    : (this.currentSong.start || 0);
+                if (typeof p.loadVideoById === 'function') {
+                    try {
+                        p.loadVideoById({
+                            videoId: this.currentSong.youtubeId,
+                            startSeconds: startSec
+                        });
+                        if (typeof p.playVideo === 'function') p.playVideo();
+                    } catch (e) {}
+                }
+                this.handleAdFinished();
+            }
+        }, 400);
     }
 
     onDeckReady(deckId, event) {
@@ -1030,15 +1077,16 @@ class MusicPlayer {
             if (!this.isPlaying) return;
 
             // [Zero-Ad Smart Shield] 실시간 광고 상태 체크 (postMessage 누락 대비 폴백)
-            if (this.engineMode === 'video' && this.ytPlayer && this.currentSong) {
+            const activePlayer = this.activeDeck;
+            if (!this.isUsingAudioElement && activePlayer && this.currentSong) {
                 try {
-                    const vData = typeof this.ytPlayer.getVideoData === 'function' ? this.ytPlayer.getVideoData() : null;
-                    const curDur = typeof this.ytPlayer.getDuration === 'function' ? this.ytPlayer.getDuration() : 0;
+                    const vData = typeof activePlayer.getVideoData === 'function' ? activePlayer.getVideoData() : null;
+                    const curDur = typeof activePlayer.getDuration === 'function' ? activePlayer.getDuration() : 0;
                     const isAdByData = vData && (
                         vData.isAd === true ||
-                        (vData.video_id && vData.video_id !== this.currentSong.youtubeId)
+                        (vData.video_id && this.currentSong.youtubeId && vData.video_id !== this.currentSong.youtubeId)
                     );
-                    const isAdByDur = (curDur > 0 && curDur <= 35 && this.currentSong.duration > 60);
+                    const isAdByDur = (curDur > 0 && curDur <= 45 && this.currentSong.duration > 60);
 
                     if (isAdByData || isAdByDur) {
                         this.handleAdDetected(curDur);

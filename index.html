@@ -1189,6 +1189,13 @@
     <div id="pc-youtube-player-wrap" class="pc-yt-player-wrap" style="position:fixed; bottom:0; right:0; width:240px; height:135px; z-index:-10; opacity:0.01; pointer-events:none; overflow:hidden;">
         <div id="youtube-player-deck-a" class="yt-player-deck" style="width:100%; height:100%; position:absolute; top:0; left:0; transition:opacity 0.4s ease;"></div>
         <div id="youtube-player-deck-b" class="yt-player-deck" style="width:100%; height:100%; position:absolute; top:0; left:0; opacity:0; pointer-events:none; transition:opacity 0.4s ease;"></div>
+        <!-- 광고 차단 쉴드 오버레이 (영상 모드 시 광고 화면 은폐 및 수동 스킵 제공) -->
+        <div id="pc-ad-shield-overlay" style="display:none; position:absolute; inset:0; z-index:30; background:rgba(15, 12, 29, 0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:16px; pointer-events:auto;">
+            <div style="font-size:2.2rem; margin-bottom:8px;">🛡️</div>
+            <div style="font-size:1.05rem; font-weight:700; margin-bottom:4px; letter-spacing:-0.3px;">제로 광고 쉴드 작동 중</div>
+            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:14px;">광고 음소거 및 초고속 스킵 진행 중...</div>
+            <button id="btn-pc-skip-ad" type="button" style="background:#7c5cfc; color:#fff; border:none; border-radius:8px; padding:6px 16px; font-weight:700; font-size:0.8rem; cursor:pointer; box-shadow:0 4px 12px rgba(124,92,252,0.4); transition:all 0.2s ease;">광고 건너뛰기</button>
+        </div>
     </div>
 
     <!-- 토스트 알림 컨테이너 -->

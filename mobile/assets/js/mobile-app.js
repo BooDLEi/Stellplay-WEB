@@ -362,6 +362,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (player && typeof player.syncFromNative === 'function') {
             player.syncFromNative();
         }
+
+        // 앱 실행 3초 후 백그라운드 신곡 자동 동기화 (초기 로딩 0초 지연 보장, 15분 주기)
+        setTimeout(() => {
+            syncNewSongs(false);
+        }, 3000);
     }
 
     // 갤럭시 Z 폴드 등 화면 접기/펼침(Configuration 변경) 시 UI 리렌더링 및 네이티브 재생상태 동기화
@@ -2316,6 +2321,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function syncNewSongs(isManual = false) {
         if (state.isSyncing) return;
+
+        // 자동 동기화 시 쿨다운 검사: 15분 주기 (단, 등록된 자동 탐색 곡이 없을 때는 무조건 실행)
+        if (!isManual) {
+            const autoSongs = window.StorageManager ? window.StorageManager.getAutoDetectedSongs() : [];
+            const lastSync = window.StorageManager ? window.StorageManager.getLastSyncTime() : 0;
+            const cooldownMs = 15 * 60 * 1000;
+            if (autoSongs.length > 0 && (Date.now() - lastSync < cooldownMs)) {
+                return;
+            }
+        }
+
         state.isSyncing = true;
 
         if (dom.btnSyncSongsHome) dom.btnSyncSongsHome.querySelector('svg')?.classList.add('syncing');
@@ -3304,19 +3320,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (dom.btnOpenAdSkip) {
             dom.btnOpenAdSkip.addEventListener('click', () => {
-                document.body.classList.remove('tablet-queue-collapsed');
-                dom.fullscreenSheet.classList.add('open');
-                switchMobilePlayerView('video');
+                if (player && typeof player.skipAd === 'function') {
+                    player.skipAd();
+                }
                 if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
             });
         }
 
-        window.addEventListener('mobileplayer:adNotice', (e) => {
-            const isAd = e.detail?.isAd;
+        const mBtnOverlaySkipAd = document.getElementById('m-btn-overlay-skip-ad');
+        if (mBtnOverlaySkipAd) {
+            mBtnOverlaySkipAd.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (player && typeof player.skipAd === 'function') {
+                    player.skipAd();
+                }
+            });
+        }
+
+        window.addEventListener('mobileplayer:adShieldState', (e) => {
+            const isAd = !!e.detail?.isAd;
+            const mOverlay = document.getElementById('m-ad-shield-overlay');
+            if (mOverlay) {
+                mOverlay.style.display = isAd ? 'flex' : 'none';
+            }
             if (isAd) {
-                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'flex';
-                if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
-                    switchMobilePlayerView('video');
+                if (dom.adFloatingBanner && (!dom.fullscreenSheet || !dom.fullscreenSheet.classList.contains('open'))) {
+                    dom.adFloatingBanner.style.display = 'flex';
                 }
             } else {
                 if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';

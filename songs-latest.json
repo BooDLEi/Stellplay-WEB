@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 50,
-  "updatedAt": "2026-09-21T03:04:38.593926Z",
+  "count": 78,
+  "updatedAt": "2026-09-21T18:22:31.268151+00:00",
   "tracks": [
     {
       "id": "blFr5w6o2jQ",
@@ -370,6 +370,249 @@
       "defaultType": "cover"
     },
     {
+      "id": "L-pn_xrqQkQ",
+      "title": "Akane Lize",
+      "rawTitle": "Hollowness - 「 美波」ㅣAkane Lize 【COVER】",
+      "duration": 321,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "bRa_zAaaCCE",
+      "title": "Onegai Darling \"Onegai Darling\" (ONE - Nanahoshi Orchestra) - Ayatsuno Yuni",
+      "rawTitle": "Onegai Darling \"Onegai Darling\" (ONE - Nanahoshi Orchestra) - Ayatsuno Yuni Cover",
+      "duration": 195,
+      "uploader": "아야츠노 유니 AYATSUNO YUNI",
+      "defaultMember": "group",
+      "members": [
+        "yuni",
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "xwuVYaJYERo",
+      "title": "나에게 꽃다발 [わたしに花束 - Ado] / 텐코 시부키(Tenko Shibuki)",
+      "rawTitle": "나에게 꽃다발 [わたしに花束 - Ado] / 텐코 시부키(Tenko Shibuki) cover",
+      "duration": 228,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "KmH0RhhenzE",
+      "title": "I",
+      "rawTitle": "Deja vu (Olivia Rodrigo) | I Covered [Nana Drive]",
+      "duration": 218,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "6mVByQMyxdY",
+      "title": "Back in the day, a nostalgic Tooniverse medley🎈 [StelLive🎀]",
+      "rawTitle": "Back in the day, a nostalgic Tooniverse medley🎈 [StelLive🎀]",
+      "duration": 1235,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
+      "members": [
+        "hina"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "jTUOSAmCqeI",
+      "title": "Dancehall (Mrs. GREEN APPLE \"Dancehall\") / Aokumo Rin",
+      "rawTitle": "Dancehall (Mrs. GREEN APPLE \"Dancehall\") / Aokumo Rin Cover",
+      "duration": 202,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "-RrbCkl3YJo",
+      "title": "Melt CPK! Remix (初音ミク ver.) [ryo (supercell)] l 사키하네 후야(Sakihane Huya)",
+      "rawTitle": "Melt CPK! Remix (初音ミク ver.) [ryo (supercell)] l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 271,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "C0hOHzutBRI",
+      "title": "Orange [ オレンジ / Your Lie in April ED ] Yuzuha Riko",
+      "rawTitle": "Orange [ オレンジ / Your Lie in April ED ] Yuzuha Riko cover",
+      "duration": 352,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "CU8hsIhmkwc",
+      "title": "Akane Lize",
+      "rawTitle": "orion - [Kenshi Yonezu] | Akane Lize 【COVER】",
+      "duration": 287,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "5rQSMZLi5z4",
+      "title": "Eine Kleine (アイネクライネ : Kenshi Yonezu) / Aokumo Rin",
+      "rawTitle": "Eine Kleine (アイネクライネ : Kenshi Yonezu) / Aokumo Rin Cover",
+      "duration": 289,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "LxqwR1KE81o",
+      "title": "시라유키 히나",
+      "rawTitle": "Acacia (BUMP OF CHICKEN) / Pokémon GOTCHA！| 시라유키 히나 Cover",
+      "duration": 263,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
+      "members": [
+        "hina"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "fLLX2R-RwVE",
+      "title": "AliA ] / 유즈하 리코 Yuzuha Riko",
+      "rawTitle": "숨바꼭질 [ かくれんぼㅣAliA ] / 유즈하 리코 Yuzuha Riko cover",
+      "duration": 300,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "Xo1Q-RPAk2c",
+      "title": "푸른 하늘의 랩소디 [青空のラプソディ/ 코바야시네 메이드래곤 OP] l 사키하네 후야(Sakihane Huya)",
+      "rawTitle": "푸른 하늘의 랩소디 [青空のラプソディ/ 코바야시네 메이드래곤 OP] l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 278,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "DHG3s8GF1DM",
+      "title": "Akane Lize",
+      "rawTitle": "Stellar Stellar - [星街すいせい] ㅣAkane Lize 【COVER】",
+      "duration": 303,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "prBtBX0wGxc",
+      "title": "Arahashi Tabi",
+      "rawTitle": "Carried on a Love Cold [恋風邪にのせて - Vaundy] | Arahashi Tabi Cover",
+      "duration": 256,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "cWnykOC5b_c",
+      "title": "phony [포니 / ツミキ] / 유즈하 리코 Yuzuha Riko",
+      "rawTitle": "phony [포니 / ツミキ] / 유즈하 리코 Yuzuha Riko cover",
+      "duration": 190,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "RLKm8ymJPlo",
+      "title": "Oh... [타다노 카에데 只野 楓] / 아오쿠모 린(Aokumo Rin)",
+      "rawTitle": "Oh... [타다노 카에데 只野 楓] / 아오쿠모 린(Aokumo Rin) Cover",
+      "duration": 222,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "IoBUWPQ3dwc",
+      "title": "One Last Kiss - 『宇多田ヒカル, 신 에반게리온 극장판  𝄇  OST / 하나코 나나",
+      "rawTitle": "One Last Kiss - 『宇多田ヒカル, 신 에반게리온 극장판  𝄇  OST / 하나코 나나 COVER",
+      "duration": 258,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "yA25-F9SJh0",
+      "title": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』 / 텐코 시부키(Tenko Shibuki)",
+      "rawTitle": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』 / 텐코 시부키(Tenko Shibuki) cover",
+      "duration": 222,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "UcFBb927-kU",
+      "title": "Shirayuki Hina x Akane Rize",
+      "rawTitle": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN | Shirayuki Hina x Akane Rize Cover",
+      "duration": 283,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "lize",
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
+    {
       "id": "ZYSQLv_L26Y",
       "title": "Maid My Way",
       "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
@@ -606,6 +849,104 @@
       "defaultMember": "group",
       "members": [
         "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "uTj88854gZ0",
+      "title": "Dear my fairy",
+      "rawTitle": "시라유키 히나 X 네네코 마시로 | ‘Dear my fairy’",
+      "duration": 250,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "mashiro"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "suyhkCwKX48",
+      "title": "Hit On Shot",
+      "rawTitle": "아이리 칸나 x 아카네 리제  | ‘Hit On Shot’",
+      "duration": 209,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "kanna",
+        "lize"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "iCCqSFvz9kM",
+      "title": "최종화 (Acoustic Ver.)",
+      "rawTitle": "아이리 칸나(Airi Kanna) | 최종화 (Acoustic Ver.)",
+      "duration": 247,
+      "uploader": "Airi Kanna",
+      "defaultMember": "kanna",
+      "members": [
+        "kanna"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "YcyDo-jp4YM",
+      "title": "STELLIVE (스텔라이브) ‘Milky Way’",
+      "rawTitle": "STELLIVE (스텔라이브) ‘Milky Way’ Music Video",
+      "duration": 193,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "ajDAmJYPQ-U",
+      "title": "最終花",
+      "rawTitle": "藍璃かんな(Airi Kanna) | ‘最終花’",
+      "duration": 256,
+      "uploader": "Airi Kanna",
+      "defaultMember": "kanna",
+      "members": [
+        "kanna"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "pkypi5nXSYM",
+      "title": "내꺼 하는 법",
+      "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘내꺼 하는 법’ Music Video",
+      "duration": 146,
+      "uploader": "아야츠노 유니 AYATSUNO YUNI",
+      "defaultMember": "yuni",
+      "members": [
+        "yuni"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "AsoPg-h-644",
+      "title": "色彩 / Team. Palette 【ボカデュオ2023】",
+      "rawTitle": "色彩 / Team. Palette 【ボカデュオ2023】",
+      "duration": 230,
+      "uploader": "Airi Kanna",
+      "defaultMember": "kanna",
+      "members": [
+        "kanna"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "kPdB6iGYBBc",
+      "title": "ADDICT!ON",
+      "rawTitle": "藍璃かんな(Airi Kanna) | ‘ADDICT!ON’ Music Video",
+      "duration": 217,
+      "uploader": "Airi Kanna",
+      "defaultMember": "kanna",
+      "members": [
+        "kanna"
       ],
       "defaultType": "original"
     }

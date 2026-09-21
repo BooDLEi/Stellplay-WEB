@@ -2239,6 +2239,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // 제로 광고 스마트 쉴드 (PC Web 영상모드 오버레이 연동)
+        window.addEventListener('stellplay:adShieldState', (e) => {
+            const isAd = !!e.detail?.isAd;
+            const pcOverlay = document.getElementById('pc-ad-shield-overlay');
+            if (pcOverlay) {
+                pcOverlay.style.display = isAd ? 'flex' : 'none';
+            }
+        });
+
+        const btnPcSkipAd = document.getElementById('btn-pc-skip-ad');
+        if (btnPcSkipAd) {
+            btnPcSkipAd.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (player && typeof player.skipAd === 'function') {
+                    player.skipAd();
+                }
+            });
+        }
+
         window.addEventListener('stellplay:playStateChanged', () => {
             updatePlayPauseButtons();
         });
@@ -3848,11 +3867,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function triggerBackgroundSync(isManual = false) {
         if (isSyncing) return;
 
-        // 자동 동기화 시 12시간 쿨다운 검사
+        // 자동 동기화 시 쿨다운 검사: 15분 주기 (단, 등록된 자동 탐색 곡이 없을 때는 무조건 실행)
         if (!isManual) {
-            const lastSync = window.StorageManager.getLastSyncTime();
-            const twelveHours = 12 * 60 * 60 * 1000;
-            if (Date.now() - lastSync < twelveHours) {
+            const autoSongs = window.StorageManager ? window.StorageManager.getAutoDetectedSongs() : [];
+            const lastSync = window.StorageManager ? window.StorageManager.getLastSyncTime() : 0;
+            const cooldownMs = 15 * 60 * 1000; // 15분
+            if (autoSongs.length > 0 && (Date.now() - lastSync < cooldownMs)) {
                 return;
             }
         }
@@ -3933,6 +3953,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             youtubeId: ytId,
                             duration: dur,
                             publishedAt: publishedAt,
+                            addedAt: Date.now(),
                             sabi: {
                                 start: sStart,
                                 end: sEnd,

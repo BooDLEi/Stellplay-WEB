@@ -241,6 +241,7 @@ class MobilePlayer {
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
                         width: '100%',
+                        host: 'https://www.youtube-nocookie.com',
                         playerVars: pVars,
                         events: {
                             onError: (event) => {
@@ -360,39 +361,54 @@ class MobilePlayer {
     _handleAdDetected(adDuration = 0) {
         if (!this.isAdShieldActive) {
             this.isAdShieldActive = true;
-            // 1. 광고 음성 즉각 100% 음소거
-            if (this.ytPlayer && typeof this.ytPlayer.mute === 'function') {
+        }
+
+        // 1. 광고 음성 즉시 & 상시 100% 음소거 강제
+        if (this.ytPlayer) {
+            if (typeof this.ytPlayer.mute === 'function') {
                 try { this.ytPlayer.mute(); } catch (e) {}
             }
-            // 2. 1회 스킵 시도
+            if (typeof this.ytPlayer.setVolume === 'function') {
+                try { this.ytPlayer.setVolume(0); } catch (e) {}
+            }
+        }
+
+        // 2. 광고 재생 속도 2배속 가속 유지
+        if (this.ytPlayer && typeof this.ytPlayer.setPlaybackRate === 'function') {
+            try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
+        }
+
+        // 3. 광고 즉시 및 주기적 스킵 시도 (600ms 간격 스킵 재시도)
+        const now = Date.now();
+        if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 600)) {
+            this._lastAdSeekTime = now;
             if (this.ytPlayer && typeof this.ytPlayer.seekTo === 'function') {
                 try {
-                    const targetTime = adDuration > 0 ? adDuration + 1 : 9999;
+                    const targetTime = adDuration > 0 ? adDuration + 1 : 99999;
                     this.ytPlayer.seekTo(targetTime, true);
                 } catch (e) {}
             }
         }
 
-        // 3. 광고 재생 속도 2배속 가속
-        if (this.ytPlayer && typeof this.ytPlayer.setPlaybackRate === 'function') {
-            try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
-        }
-
-        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true, adDuration } }));
     }
 
     _handleAdFinished() {
         if (!this.isAdShieldActive) return;
         this.isAdShieldActive = false;
+        this._lastAdSeekTime = 0;
 
         // 1. 본곡 복귀 시 음소거 해제 및 재생 속도 복원
         if (this.ytPlayer) {
             try {
+                if (typeof this.ytPlayer.setPlaybackRate === 'function') {
+                    this.ytPlayer.setPlaybackRate(1);
+                }
                 if (typeof this.ytPlayer.unMute === 'function') {
                     this.ytPlayer.unMute();
                 }
-                if (typeof this.ytPlayer.setPlaybackRate === 'function') {
-                    this.ytPlayer.setPlaybackRate(1);
+                if (typeof this.ytPlayer.setVolume === 'function') {
+                    this.ytPlayer.setVolume(100);
                 }
                 // 본곡 시작 위치 복원
                 if (this.currentSong && this.currentSong.start && typeof this.ytPlayer.getCurrentTime === 'function' && typeof this.ytPlayer.seekTo === 'function') {
@@ -407,6 +423,34 @@ class MobilePlayer {
         window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
     }
 
+    // [Mobile Zero-Ad Smart Shield] 수동 및 강제 광고 탈출
+    skipAd() {
+        if (!this.ytPlayer) return;
+
+        try {
+            if (typeof this.ytPlayer.seekTo === 'function') {
+                this.ytPlayer.seekTo(99999, true);
+            }
+        } catch (e) {}
+
+        // 0.4초 후에도 여전히 광고 상태라면 본곡으로 재로드하여 강제 탈출
+        setTimeout(() => {
+            if (this.isAdShieldActive && this.currentSong && this.ytPlayer) {
+                const startSec = this.currentSong.start || 0;
+                if (typeof this.ytPlayer.loadVideoById === 'function') {
+                    try {
+                        this.ytPlayer.loadVideoById({
+                            videoId: this.currentSong.youtubeId,
+                            startSeconds: startSec
+                        });
+                        if (typeof this.ytPlayer.playVideo === 'function') this.ytPlayer.playVideo();
+                    } catch (e) {}
+                }
+                this._handleAdFinished();
+            }
+        }, 400);
+    }
+
     _startYtTimer() {
         this._stopYtTimer();
         this.ytUpdateTimer = setInterval(() => {
@@ -419,9 +463,9 @@ class MobilePlayer {
                     const curDur = typeof this.ytPlayer.getDuration === 'function' ? this.ytPlayer.getDuration() : 0;
                     const isAdByData = vData && (
                         vData.isAd === true ||
-                        (vData.video_id && vData.video_id !== this.currentSong.youtubeId)
+                        (vData.video_id && this.currentSong.youtubeId && vData.video_id !== this.currentSong.youtubeId)
                     );
-                    const isAdByDur = (curDur > 0 && curDur <= 35 && this.currentSong.duration > 60);
+                    const isAdByDur = (curDur > 0 && curDur <= 45 && this.currentSong.duration > 60);
 
                     if (isAdByData || isAdByDur) {
                         this._handleAdDetected(curDur);

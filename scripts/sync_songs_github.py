@@ -9,7 +9,7 @@ import sys
 import os
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 # 콘솔 UTF-8 설정
 if hasattr(sys.stdout, 'reconfigure'):
@@ -33,13 +33,13 @@ OFFICIAL_PLAYLISTS = [
         'category': 'cover',
         'defaultMember': 'group',
         'url': 'https://www.youtube.com/playlist?list=PLLjd981H8qSN9PQ8-X6wINqBF1GjGxusy',
-        'limit': 30
+        'limit': 50
     },
     {
         'category': 'original',
         'defaultMember': 'group',
         'url': 'https://www.youtube.com/playlist?list=PLLjd981H8qSMGC4Nir0hD2Gj9n9PDUoHX',
-        'limit': 20
+        'limit': 30
     }
 ]
 
@@ -166,7 +166,7 @@ def main():
     payload = {
         'success': True,
         'count': len(tracks),
-        'updatedAt': datetime.utcnow().isoformat() + 'Z',
+        'updatedAt': datetime.now(timezone.utc).isoformat(),
         'tracks': tracks
     }
 
