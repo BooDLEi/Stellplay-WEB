@@ -39,6 +39,8 @@ class MobilePlayer {
         this.playerViewMode = 'art';
         this._pendingYtSong = null;
         this._pendingYtStartTime = 0;
+        this.wakeLock = null;
+        this._isRequestingWakeLock = false;
 
         // PWA & 모바일 웹앱 백그라운드 재생 및 잠금화면 유지를 위한 무음 오디오 킵얼라이브 (16-bit 가청한계 이하 미세 디더링)
         function createKeepAliveAudioBlob() {
@@ -124,21 +126,18 @@ class MobilePlayer {
 
         const handleVisibilityChange = () => {
             if (document.hidden) {
+                this.wakeLock = null;
                 if (this.isPlaying) {
                     try { this.silentAudio.play().catch(() => {}); } catch (e) {}
                     if (this.audioCtx && this.audioCtx.state === 'suspended') {
                         try { this.audioCtx.resume().catch(() => {}); } catch (e) {}
                     }
-                    if (this.activeEngine === 'youtube' && this.ytPlayer) {
-                        setTimeout(() => {
-                            if (this.isPlaying && !this.isUserPaused && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
-                                try { this.ytPlayer.playVideo(); } catch (e) {}
-                            }
-                        }, 200);
-                    }
                 }
             } else {
                 this.syncFromNative();
+                if (this.isPlaying) {
+                    this._requestWakeLock();
+                }
                 if (this.isPlaying && this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getPlayerState === 'function') {
                     try {
                         const s = this.ytPlayer.getPlayerState();
@@ -156,10 +155,36 @@ class MobilePlayer {
         window.MobilePlayerInstance = this;
     }
 
+    async _requestWakeLock() {
+        if (!('wakeLock' in navigator) || this.wakeLock !== null || this._isRequestingWakeLock) return;
+        try {
+            this._isRequestingWakeLock = true;
+            this.wakeLock = await navigator.wakeLock.request('screen');
+            this.wakeLock.addEventListener('release', () => {
+                this.wakeLock = null;
+            });
+        } catch (err) {
+            this.wakeLock = null;
+        } finally {
+            this._isRequestingWakeLock = false;
+        }
+    }
+
+    _releaseWakeLock() {
+        if (this.wakeLock) {
+            try {
+                this.wakeLock.release();
+            } catch (e) {}
+            this.wakeLock = null;
+        }
+    }
+
     _setupAudioListeners() {
         this.audio.addEventListener('play', () => {
             if (this.activeEngine === 'audio') {
                 this.isPlaying = true;
+                this.isUserPaused = false;
+                this._requestWakeLock();
                 this._updateMediaSessionState();
                 window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: true } }));
             }
@@ -168,6 +193,7 @@ class MobilePlayer {
         this.audio.addEventListener('pause', () => {
             if (this.activeEngine === 'audio') {
                 this.isPlaying = false;
+                this._releaseWakeLock();
                 this._updateMediaSessionState();
                 window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: false } }));
             }
@@ -175,6 +201,7 @@ class MobilePlayer {
 
         this.audio.addEventListener('ended', () => {
             if (this.activeEngine === 'audio') {
+                this._releaseWakeLock();
                 if (this.repeatMode === 'one') {
                     this.audio.currentTime = this.sabiMode && this.currentSong?.sabi ? this.currentSong.sabi.start : 0;
                     this.audio.play().catch(() => {});
@@ -299,6 +326,7 @@ class MobilePlayer {
                                 if (event.data === window.YT.PlayerState.PLAYING) {
                                     this.isPlaying = true;
                                     this.isUserPaused = false;
+                                    this._requestWakeLock();
                                     try { this.silentAudio.play().catch(() => {}); } catch (e) {}
                                     this._updateMediaSessionState();
                                     this._startYtTimer();
@@ -316,24 +344,15 @@ class MobilePlayer {
                                         } catch (e) {}
                                     }
                                 } else if (event.data === window.YT.PlayerState.PAUSED) {
-                                    // 백그라운드 전환 또는 화면 잠금 시 브라우저가 유튜브를 강제 일시정지한 경우
-                                    if (!this.isUserPaused) {
-                                        console.log('[MobilePlayer] Background pause detected. Resuming playback with keep-alive audio session...');
-                                        try { this.silentAudio.play().catch(() => {}); } catch (e) {}
-                                        setTimeout(() => {
-                                            if (!this.isUserPaused && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
-                                                try { this.ytPlayer.playVideo(); } catch (e) {}
-                                            }
-                                        }, 150);
-                                        return;
-                                    }
+                                    // 화면 잠금 또는 백그라운드 전환으로 인해 브라우저에 의해 일시정지되거나 사용자가 일시정지한 경우
                                     this.isPlaying = false;
+                                    this._releaseWakeLock();
                                     try { this.silentAudio.pause(); } catch (e) {}
                                     this._updateMediaSessionState();
                                     this._stopYtTimer();
                                     window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: false } }));
                                 } else if (event.data === window.YT.PlayerState.ENDED) {
-                                    // 곡 종료 시에도 silentAudio를 일시정지하지 않고 백그라운드 스레드를 유지하여 다음 곡 연속 재생
+                                    this._releaseWakeLock();
                                     this._stopYtTimer();
                                     if (this.repeatMode === 'one') {
                                         const sStart = this.sabiMode && this.currentSong?.sabi ? this.currentSong.sabi.start : 0;
@@ -657,6 +676,7 @@ class MobilePlayer {
                     startSeconds: startSec
                 });
                 this.ytPlayer.playVideo();
+                this._requestWakeLock();
                 try { this.silentAudio.play().catch(() => {}); } catch (e) {}
 
                 // 3. 100ms 고빈도 감시 가동 (본곡 감지 즉시 부드럽게 언뮤트)
@@ -692,9 +712,27 @@ class MobilePlayer {
                 }
                 this.silentAudio.play().catch(() => {});
             } catch (e) {}
-            this.togglePlay();
+            this.isUserPaused = false;
+            this._requestWakeLock();
+            if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
+                try { this.ytPlayer.playVideo(); } catch (e) {}
+            } else if (this.activeEngine === 'audio' && this.audio) {
+                try { this.audio.play().catch(() => {}); } catch (e) {}
+            } else {
+                this.togglePlay();
+            }
         });
-        navigator.mediaSession.setActionHandler('pause', () => this.togglePlay());
+        navigator.mediaSession.setActionHandler('pause', () => {
+            this.isUserPaused = true;
+            this._releaseWakeLock();
+            if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
+                try { this.ytPlayer.pauseVideo(); } catch (e) {}
+            } else if (this.activeEngine === 'audio' && this.audio) {
+                try { this.audio.pause(); } catch (e) {}
+            } else {
+                this.togglePlay();
+            }
+        });
         navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev());
         navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext());
         try {
@@ -980,9 +1018,11 @@ class MobilePlayer {
                 if (this.isPlaying) {
                     this.isUserPaused = true;
                     this.ytPlayer.pauseVideo();
+                    this._releaseWakeLock();
                     try { this.silentAudio.pause(); } catch (e) {}
                 } else {
                     this.isUserPaused = false;
+                    this._requestWakeLock();
                     try { this.silentAudio.play().catch(() => {}); } catch (e) {}
                     this.ytPlayer.playVideo();
                 }
@@ -992,8 +1032,12 @@ class MobilePlayer {
 
         if (!this.audio.src) return;
         if (this.audio.paused) {
+            this.isUserPaused = false;
+            this._requestWakeLock();
             this.audio.play().catch(() => {});
         } else {
+            this.isUserPaused = true;
+            this._releaseWakeLock();
             this.audio.pause();
         }
     }
