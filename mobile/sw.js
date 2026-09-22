@@ -1,5 +1,5 @@
-// StellPlay Mobile - Service Worker (v4 Web)
-const CACHE_NAME = 'stellplay-mobile-shell-v4';
+// StellPlay Mobile - Service Worker (v5 Web)
+const CACHE_NAME = 'stellplay-mobile-shell-v5';
 const SHELL_ASSETS = [
   './',
   './index.html',

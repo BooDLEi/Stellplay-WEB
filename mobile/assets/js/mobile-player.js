@@ -87,12 +87,31 @@ class MobilePlayer {
         this.isUserPaused = false;
         this.isAdPlaying = false;
         this.isAdShieldActive = false;
-        this._initAdShield();
+        this.audioCtx = null;
+        const initAudioContext = () => {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass && !this.audioCtx) {
+                    this.audioCtx = new AudioContextClass();
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    gain.gain.value = 0.0001; // 청취 불가능한 극미세 무음 버퍼
+                    osc.frequency.value = 440;
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start();
+                    if (this.audioCtx.state === 'suspended') {
+                        this.audioCtx.resume().catch(() => {});
+                    }
+                }
+            } catch (e) {}
+        };
 
-        // iOS WebKit 오디오 잠금 해제 (User Gesture Unlocker)
+        // iOS WebKit / Android Chrome 오디오 잠금 해제 (User Gesture Unlocker)
         const unlockAudio = () => {
             try {
                 this.silentAudio.play().catch(() => {});
+                initAudioContext();
             } catch (e) {}
         };
         window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
@@ -101,11 +120,15 @@ class MobilePlayer {
         this._setupAudioListeners();
         this._setupMediaSession();
         this._initYouTubeAPI();
+        this._initAdShield();
 
         const handleVisibilityChange = () => {
             if (document.hidden) {
                 if (this.isPlaying) {
                     try { this.silentAudio.play().catch(() => {}); } catch (e) {}
+                    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                        try { this.audioCtx.resume().catch(() => {}); } catch (e) {}
+                    }
                     if (this.activeEngine === 'youtube' && this.ytPlayer) {
                         setTimeout(() => {
                             if (this.isPlaying && !this.isUserPaused && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
@@ -221,10 +244,6 @@ class MobilePlayer {
                     let appOrigin = (window.location.origin && window.location.origin.startsWith('http')) 
                         ? window.location.origin 
                         : undefined;
-                    if (!appOrigin || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === 'appassets.androidplatform.net' || window.location.protocol === 'file:') {
-                        appOrigin = 'https://www.youtube.com';
-                    }
-
                     const pVars = {
                         autoplay: 0,
                         controls: 0,
@@ -233,10 +252,12 @@ class MobilePlayer {
                         rel: 0,
                         playsinline: 1,
                         enablejsapi: 1,
-                        iv_load_policy: 3,
-                        origin: appOrigin,
-                        widget_referrer: 'https://www.youtube.com'
+                        iv_load_policy: 3
                     };
+                    if (appOrigin && !['localhost', '127.0.0.1', 'appassets.androidplatform.net'].includes(window.location.hostname) && window.location.protocol !== 'file:') {
+                        pVars.origin = appOrigin;
+                        pVars.widget_referrer = window.location.href;
+                    }
 
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
@@ -402,7 +423,10 @@ class MobilePlayer {
             }
         }
 
-        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true, adDuration } }));
+        // 앨범 모드일 때는 UI 광고 이벤트 송출 차단 (영상 모드일 때만 비주얼 쉴드 표시)
+        if (this.playerViewMode === 'video') {
+            window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true, adDuration } }));
+        }
     }
 
     _startAdShieldPolling() {
@@ -437,7 +461,9 @@ class MobilePlayer {
                     try { player.setVolume(0); } catch (e) {}
                     try { player.setPlaybackRate(2); } catch (e) {}
                     this.isAdShieldActive = true;
-                    window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+                    if (this.playerViewMode === 'video') {
+                        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+                    }
                     return;
                 }
 
@@ -448,10 +474,13 @@ class MobilePlayer {
                     return;
                 }
 
-                if (attempts > 80) { // 8초 경과 시 강제 복구
-                    clearInterval(this._adShieldPollTimer);
-                    this._adShieldPollTimer = null;
-                    this._handleAdFinished();
+                if (attempts > 80) { // 8초 경과 시
+                    // 광고 영상이 여전히 재생 중이면 광고 소리가 터져나오지 않도록 음소거 유지
+                    if (!isAdVideo) {
+                        clearInterval(this._adShieldPollTimer);
+                        this._adShieldPollTimer = null;
+                        this._handleAdFinished();
+                    }
                 }
             } catch (e) {}
         }, 100);
@@ -595,7 +624,9 @@ class MobilePlayer {
         this.audio.src = '';
         this.isOfflinePlayback = false;
         this.isAdShieldActive = true;
-        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+        if (this.playerViewMode === 'video') {
+            window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+        }
 
         const startSec = (typeof startSecOverride === 'number')
             ? startSecOverride
@@ -615,9 +646,11 @@ class MobilePlayer {
                     try { this.ytPlayer.setVolume(0); } catch (e) {}
                 }
 
-                // 2. 비주얼 쉴드 즉시 작동 (광고 화면 은폐)
+                // 2. 비주얼 쉴드 즉시 작동 (광고 화면 은폐 - 영상 모드일 때만 표시)
                 this.isAdShieldActive = true;
-                window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+                if (this.playerViewMode === 'video') {
+                    window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
+                }
 
                 this.ytPlayer.loadVideoById({
                     videoId: song.youtubeId,
@@ -652,7 +685,15 @@ class MobilePlayer {
     _setupMediaSession() {
         if (!('mediaSession' in navigator)) return;
 
-        navigator.mediaSession.setActionHandler('play', () => this.togglePlay());
+        navigator.mediaSession.setActionHandler('play', () => {
+            try {
+                if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume().catch(() => {});
+                }
+                this.silentAudio.play().catch(() => {});
+            } catch (e) {}
+            this.togglePlay();
+        });
         navigator.mediaSession.setActionHandler('pause', () => this.togglePlay());
         navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev());
         navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext());
@@ -714,10 +755,19 @@ class MobilePlayer {
         if (!song) return;
         this.currentSong = song;
 
-        // iOS WebKit: 비동기(await) 진입 전 사용자 터치 제스처 권한을 동기적으로 선점
+        // iOS WebKit / Android: 비동기(await) 진입 전 사용자 터치 제스처 권한을 동기적으로 선점
         try {
             this.silentAudio.play().catch(() => {});
+            if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                this.audioCtx.resume().catch(() => {});
+            }
         } catch (e) {}
+
+        // 새 곡을 재생할 때는 영상 모드 광고 세션 전파를 방지하기 위해 기본 'art'(앨범 모드)로 클린 초기화
+        if (isUserInitiated || this.playerViewMode === 'video') {
+            this.playerViewMode = 'art';
+            window.dispatchEvent(new CustomEvent('mobileplayer:viewModeChanged', { detail: { mode: 'art' } }));
+        }
 
         // 최근 재생 기록 (History) 저장
         if (window.StorageManager && song && song.id) {
@@ -1092,6 +1142,11 @@ class MobilePlayer {
                         try { window.AndroidBridge.seekToNative(Math.floor(curSec)); } catch (e) {}
                     }, 400);
                 }
+            } else {
+                // 웹 브라우저 환경: 광고 오버레이 및 배너 즉시 리셋하고 앨범 모드 복귀
+                this.isAdShieldActive = false;
+                window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
+                window.dispatchEvent(new CustomEvent('mobileplayer:viewModeChanged', { detail: { mode: 'art' } }));
             }
         }
     }

@@ -3248,10 +3248,14 @@ body.offline-select-active .m-track-select-box {
     height: 2px !important;
     aspect-ratio: auto !important;
     margin: 0 !important;
-    opacity: 0.01 !important;
+    opacity: 0.001 !important;
     pointer-events: none !important;
     z-index: -9999 !important;
     overflow: hidden !important;
+}
+
+.m-video-box:not(.active-video) #m-ad-shield-overlay {
+    display: none !important;
 }
 
 .m-video-box.active-video {

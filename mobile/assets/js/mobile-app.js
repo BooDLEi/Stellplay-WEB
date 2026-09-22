@@ -3293,6 +3293,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 dockYouTubePlayer(false);
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
+                // 앨범 아트 모드일 때는 비디오 광고 오버레이 및 배너 강제 은폐
+                const mOverlay = document.getElementById('m-ad-shield-overlay');
+                if (mOverlay) mOverlay.style.display = 'none';
+                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
             }
 
             if (player && typeof player.switchViewMode === 'function') {
@@ -3337,9 +3341,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        window.addEventListener('mobileplayer:viewModeChanged', (e) => {
+            const mode = e.detail?.mode || 'art';
+            if (mobilePlayerViewMode !== mode) {
+                switchMobilePlayerView(mode);
+            }
+        });
+
         window.addEventListener('mobileplayer:adShieldState', (e) => {
             const isAd = !!e.detail?.isAd;
             const mOverlay = document.getElementById('m-ad-shield-overlay');
+            // 앨범 아트 모드일 때는 영상 광고 오버레이 및 상단 배너 노출을 원천 차단
+            if (mobilePlayerViewMode !== 'video') {
+                if (mOverlay) mOverlay.style.display = 'none';
+                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
+                return;
+            }
             if (mOverlay) {
                 mOverlay.style.display = isAd ? 'flex' : 'none';
             }
@@ -3365,7 +3382,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         dom.sheetCloseBtn.addEventListener('click', () => {
             dom.fullscreenSheet.classList.remove('open');
-            dockYouTubePlayer(false);
+            switchMobilePlayerView('art');
         });
 
         // 대기열 열기/닫기 및 메뉴 버튼
@@ -3443,7 +3460,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 40) {
                         // 재생창 영역에서 내리면: 메인화면으로 바로 내려가기
                         dom.fullscreenSheet.classList.remove('open');
-                        dockYouTubePlayer(false);
+                        switchMobilePlayerView('art');
                         return;
                     }
                 } else {
@@ -3452,7 +3469,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (deltaY > 40) {
                             // 내리면: 메인화면으로 복귀
                             dom.fullscreenSheet.classList.remove('open');
-                            dockYouTubePlayer(false);
+                            switchMobilePlayerView('art');
                         } else if (deltaY < -40) {
                             // 올리면: 재생목록(대기열) 열기
                             openQueueSheet();
@@ -4209,7 +4226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 6. 전체화면 재생 시트가 열려있는 경우 -> 시트 닫고 메인으로 복귀
         if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
             dom.fullscreenSheet.classList.remove('open');
-            dockYouTubePlayer(false);
+            switchMobilePlayerView('art');
             return true;
         }
 
