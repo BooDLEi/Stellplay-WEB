@@ -27,20 +27,36 @@ except ImportError:
     print("yt-dlp is not installed. Please run: pip install yt-dlp", file=sys.stderr)
     sys.exit(1)
 
-# 스텔라이브 공식 큐레이션 재생목록
-OFFICIAL_PLAYLISTS = [
+# 스텔라이브 공식 큐레이션 재생목록 및 10인 멤버 채널
+OFFICIAL_SOURCES = [
     {
         'category': 'cover',
         'defaultMember': 'group',
         'url': 'https://www.youtube.com/playlist?list=PLLjd981H8qSN9PQ8-X6wINqBF1GjGxusy',
-        'limit': 50
+        'limit': 50,
+        'isChannel': False
     },
     {
         'category': 'original',
         'defaultMember': 'group',
         'url': 'https://www.youtube.com/playlist?list=PLLjd981H8qSMGC4Nir0hD2Gj9n9PDUoHX',
-        'limit': 30
-    }
+        'limit': 30,
+        'isChannel': False
+    },
+    # 스텔라이브 공식 채널
+    {'category': 'original', 'defaultMember': 'group', 'url': 'https://www.youtube.com/@stellive_official/videos', 'limit': 6, 'isChannel': True},
+    # 1기 미스틱
+    {'category': 'cover', 'defaultMember': 'yuni', 'url': 'https://www.youtube.com/@ayatsunoyuni/videos', 'limit': 6, 'isChannel': True},
+    {'category': 'cover', 'defaultMember': 'tabi', 'url': 'https://www.youtube.com/@arahashitabi/videos', 'limit': 6, 'isChannel': True},
+    # 2기 유니버스
+    {'category': 'cover', 'defaultMember': 'lize', 'url': 'https://www.youtube.com/@akanelize/videos', 'limit': 6, 'isChannel': True},
+    {'category': 'cover', 'defaultMember': 'hina', 'url': 'https://www.youtube.com/@shirayukihina/videos', 'limit': 6, 'isChannel': True},
+    {'category': 'cover', 'defaultMember': 'mashiro', 'url': 'https://www.youtube.com/@neneko_mashiro/videos', 'limit': 6, 'isChannel': True},
+    # 3기 클리셰
+    {'category': 'cover', 'defaultMember': 'rin', 'url': 'https://www.youtube.com/@aokumorin/videos', 'limit': 6, 'isChannel': True},
+    {'category': 'cover', 'defaultMember': 'shibuki', 'url': 'https://www.youtube.com/@tenkoshibuki/videos', 'limit': 6, 'isChannel': True},
+    {'category': 'cover', 'defaultMember': 'nana', 'url': 'https://www.youtube.com/@hanako_nana/videos', 'limit': 8, 'isChannel': True},
+    {'category': 'cover', 'defaultMember': 'riko', 'url': 'https://www.youtube.com/@yuzuhariko/videos', 'limit': 8, 'isChannel': True},
 ]
 
 # 멤버 판별 키워드
@@ -53,7 +69,7 @@ MEMBER_KEYWORDS = {
     'tabi': ['타비', 'tabi', '아라하시', '아라하시 타비', 'arahashi'],
     'mashiro': ['마시로', 'mashiro', '네네코', '네네코 마시로', 'neneko'],
     'rin': ['린', 'rin', '아오쿠모', '아오쿠모 린', 'aokumo'],
-    'nana': ['나나', 'nana', '시라하나', '시라하나 나나', 'shirahana'],
+    'nana': ['나나', 'nana', '하나코', '하나코 나나', 'hanako'],
     'chloe': ['클로에', 'chloe', '하나히라', '하나히라 클로에', 'hanahira'],
     'kura': ['쿠라', 'kura', '유리르', '유리르 쿠라', 'yurir'],
     'riko': ['리코', 'riko', '유즈하', '유즈하 리코', 'yuzuha'],
@@ -66,19 +82,19 @@ def clean_title(title):
         return ""
     import re
     t = title.strip()
-    t = re.sub(r'[\[【\(]\s*(?:4K|MV|Live|Official)\s*[\]】\)]', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'\[\s*(?:4K|UHD|HD|MV|Live|Official)\s*\]', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'【\s*(?:4K|UHD|HD|MV|Live|Official)\s*】', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'\(\s*(?:4K|UHD|HD|MV|Live|Official)\s*\)', '', t, flags=re.IGNORECASE)
     t = re.sub(r'\s*Official\s*(?:Music\s*Video|Video|MV)\s*$', '', t, flags=re.IGNORECASE)
     t = re.sub(r'\s*(?:Music\s*Video|MV)\s*$', '', t, flags=re.IGNORECASE)
-    t = re.sub(r'[\s\|ㅣ/]*[\[【\(]?(?:Live\s*)?Cover[\]】\)]?.*$', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'\s*[/\|ㅣ]\s*[^/\|ㅣ\n]*(?:3D\s*)?(?:Live\s*)?Cover\s*$', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'[\s\|ㅣ/]*[\[【\(]?(?:3D\s*)?(?:Live\s*)?Cover[\]】\)]?.*$', '', t, flags=re.IGNORECASE)
     t = re.sub(r'\s*\(Feat\.[^\)]+\)', '', t, flags=re.IGNORECASE)
 
-    pipe_match = re.match(r'^[^\|ㅣ]+[\|ㅣ]\s*[\'‘"“]([^\'’"”]+)[\'’"”]', t)
-    if pipe_match:
-        t = pipe_match.group(1).strip()
-    else:
-        pipe_match2 = re.match(r'^[^\|ㅣ]+[\|ㅣ]\s*([^\|ㅣ\n]+)$', t)
-        if pipe_match2 and not re.search(r'cover|보았다', pipe_match2.group(1), re.IGNORECASE):
-            t = pipe_match2.group(1).strip()
+    if '|' in t or 'ㅣ' in t:
+        parts = [p.strip() for p in re.split(r'[\|ㅣ]', t) if p.strip()]
+        if len(parts) >= 2:
+            t = parts[0]
 
     t = re.sub(r'^[\'‘"“](.+)[\'’"”]$', r'\1', t).strip()
     t = re.sub(r'^[\|\-ㅣ/]\s*', '', t)
@@ -96,14 +112,16 @@ def detect_members(text):
     return detected
 
 def fetch_tracks():
+    import re
     tracks = []
     seen_ids = set()
 
-    for item in OFFICIAL_PLAYLISTS:
+    for item in OFFICIAL_SOURCES:
         url = item['url']
         category = item['category']
         default_member = item['defaultMember']
         limit = item.get('limit', 20)
+        is_channel = item.get('isChannel', False)
 
         ydl_opts = {
             'extract_flat': True,
@@ -112,7 +130,7 @@ def fetch_tracks():
             'no_warnings': True,
         }
 
-        print(f"Fetching {category} playlist: {url}")
+        print(f"Fetching {category} source: {url}")
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
@@ -129,9 +147,13 @@ def fetch_tracks():
                     title_lower = raw_title.lower()
                     if '[private video]' in title_lower or '[deleted video]' in title_lower:
                         continue
-                    if '#shorts' in title_lower or 'shorts' in title_lower or (dur > 0 and dur < 50):
+                    if '#shorts' in title_lower or 'shorts' in title_lower or '#' in raw_title or (dur > 0 and dur < 50):
                         continue
-                    if any(k in title_lower for k in ['다시보기', '풀영상', '풀버전', '잡담', '공지사항', '클립']):
+                    if any(k in title_lower for k in ['다시보기', '풀영상', '풀버전', '잡담', '공지사항', '클립', 'bongnudo', 'q&a', '썰']):
+                        continue
+                    if is_channel and not re.search(r'cover|mv|original|official|커버|노래|sing|music|feat|3d', title_lower):
+                        continue
+                    if dur > 450:
                         continue
 
                     seen_ids.add(vid)
@@ -151,7 +173,7 @@ def fetch_tracks():
                         'defaultType': category
                     })
         except Exception as e:
-            print(f"Error fetching playlist {url}: {e}", file=sys.stderr)
+            print(f"Error fetching {url}: {e}", file=sys.stderr)
 
     return tracks
 

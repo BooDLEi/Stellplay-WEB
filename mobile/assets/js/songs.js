@@ -6536,6 +6536,140 @@ const DEFAULT_SONGS = [
             "title": "후렴구: Born to run"
         },
         "publishedAt": "2024-12-12"
+    },
+    {
+        "id": "stel-blFr5w6o2jQ",
+        "title": "My Sea (아이와 나의 바다) [IU]",
+        "artist": "유즈하 리코",
+        "originalArtist": "아이유 (IU)",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "riko"
+        ],
+        "youtubeId": "blFr5w6o2jQ",
+        "duration": 318,
+        "sabi": {
+            "start": 79,
+            "end": 114,
+            "title": "후렴구: 아이와 나의 바다"
+        },
+        "publishedAt": "2024-12-20"
+    },
+    {
+        "id": "stel-y-rdBQSrzSs",
+        "title": "Dynamite",
+        "artist": "하나코 나나",
+        "originalArtist": "BTS (방탄소년단)",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "nana"
+        ],
+        "youtubeId": "y-rdBQSrzSs",
+        "duration": 200,
+        "sabi": {
+            "start": 50,
+            "end": 85,
+            "title": "후렴구: Shining through the city with a little funk and soul"
+        },
+        "publishedAt": "2024-12-25"
+    },
+    {
+        "id": "stel-qv_VVUJOt0M",
+        "title": "Catallena (까탈레나)",
+        "artist": "하나코 나나",
+        "originalArtist": "오렌지캬라멜 (Orange Caramel)",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "nana"
+        ],
+        "youtubeId": "qv_VVUJOt0M",
+        "duration": 197,
+        "sabi": {
+            "start": 49,
+            "end": 84,
+            "title": "후렴구: 까탈레나"
+        },
+        "publishedAt": "2024-12-18"
+    },
+    {
+        "id": "stel-npwilOOckxY",
+        "title": "100% for You",
+        "artist": "하나코 나나",
+        "originalArtist": "커버곡",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "nana"
+        ],
+        "youtubeId": "npwilOOckxY",
+        "duration": 206,
+        "sabi": {
+            "start": 51,
+            "end": 86,
+            "title": "후렴구: 100% for You"
+        },
+        "publishedAt": "2024-12-15"
+    },
+    {
+        "id": "stel-Zetk77I6_s8",
+        "title": "Otsukare Summer [おつかれsummer]",
+        "artist": "하나코 나나, 사키하네 후야",
+        "originalArtist": "HALCALI",
+        "type": "cover",
+        "gen": "group",
+        "members": [
+            "nana",
+            "huya"
+        ],
+        "youtubeId": "Zetk77I6_s8",
+        "duration": 240,
+        "sabi": {
+            "start": 60,
+            "end": 95,
+            "title": "후렴구: Otsukare Summer"
+        },
+        "publishedAt": "2024-12-10"
+    },
+    {
+        "id": "stel-zQp6ZZAT6ew",
+        "title": "mosi mosi? (楽音 / 사사네)",
+        "artist": "텐코 시부키",
+        "originalArtist": "楽音 (사사네)",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "shibuki"
+        ],
+        "youtubeId": "zQp6ZZAT6ew",
+        "duration": 164,
+        "sabi": {
+            "start": 41,
+            "end": 76,
+            "title": "후렴구: mosi mosi?"
+        },
+        "publishedAt": "2024-12-05"
+    },
+    {
+        "id": "stel-uBtFoUXR9Qc",
+        "title": "Plover [Yorushika - Chidori]",
+        "artist": "아라하시 타비",
+        "originalArtist": "요루시카 (Yorushika)",
+        "type": "cover",
+        "gen": "g1",
+        "members": [
+            "tabi"
+        ],
+        "youtubeId": "uBtFoUXR9Qc",
+        "duration": 255,
+        "sabi": {
+            "start": 63,
+            "end": 98,
+            "title": "후렴구: Plover"
+        },
+        "publishedAt": "2024-12-01"
     }
 ];
 

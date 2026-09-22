@@ -88,11 +88,11 @@ class MusicPlayer {
     }
 
     get isUsingAudioElement() {
-        return !this.isWeb && this.engineMode === 'audio';
+        const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim();
+        return this.engineMode === 'audio' && (!this.isWeb || !!pcServer);
     }
 
     setupAudioElement() {
-        if (this.isWeb) return;
         this.audioElement.addEventListener('play', () => {
             this.isPlaying = true;
             this.startTimeUpdater();
@@ -275,7 +275,63 @@ class MusicPlayer {
         window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true, adDuration } }));
     }
 
+    startAdShieldPolling() {
+        if (this._adShieldPollTimer) {
+            clearInterval(this._adShieldPollTimer);
+            this._adShieldPollTimer = null;
+        }
+        const song = this.currentSong;
+        let attempts = 0;
+        this._adShieldPollTimer = setInterval(() => {
+            attempts++;
+            const player = this.activeDeck;
+            if (!player || !song) {
+                clearInterval(this._adShieldPollTimer);
+                this._adShieldPollTimer = null;
+                return;
+            }
+
+            try {
+                const vData = (typeof player.getVideoData === 'function') ? player.getVideoData() : null;
+                const pState = (typeof player.getPlayerState === 'function') ? player.getPlayerState() : null;
+                const curTime = (typeof player.getCurrentTime === 'function') ? player.getCurrentTime() : 0;
+                const dur = (typeof player.getDuration === 'function') ? player.getDuration() : 0;
+
+                const isCurrentVideo = vData && vData.video_id === song.youtubeId;
+                const isPlaying = pState === (window.YT?.PlayerState?.PLAYING ?? 1);
+                const isAdVideo = vData && vData.video_id && vData.video_id !== song.youtubeId;
+                const isAdDuration = (dur > 0 && dur <= 35 && song.duration > 60);
+
+                if (isAdVideo || isAdDuration) {
+                    try { player.mute(); } catch (e) {}
+                    try { player.setVolume(0); } catch (e) {}
+                    try { player.setPlaybackRate(2); } catch (e) {}
+                    this.isAdShieldActive = true;
+                    window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
+                    return;
+                }
+
+                if (isCurrentVideo && isPlaying && curTime >= 0) {
+                    clearInterval(this._adShieldPollTimer);
+                    this._adShieldPollTimer = null;
+                    this.handleAdFinished();
+                    return;
+                }
+
+                if (attempts > 80) {
+                    clearInterval(this._adShieldPollTimer);
+                    this._adShieldPollTimer = null;
+                    this.handleAdFinished();
+                }
+            } catch (e) {}
+        }, 100);
+    }
+
     handleAdFinished() {
+        if (this._adShieldPollTimer) {
+            clearInterval(this._adShieldPollTimer);
+            this._adShieldPollTimer = null;
+        }
         if (!this.isAdShieldActive) return;
         this.isAdShieldActive = false;
         this._lastAdSeekTime = 0;
@@ -438,15 +494,25 @@ class MusicPlayer {
             window.StorageManager.saveSettings({ engineMode: this.engineMode });
         }
 
-        // 데스크톱 Python 서버 환경에서만 로컬 스트림과 유튜브 플레이어 교체
-        if (!this.isWeb) {
+        // 덱 가시성 모드별 분기 (오디오 모드에서는 비디오 창 완전 숨김)
+        const activeEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-a' : 'youtube-player-deck-b');
+        if (activeEl) {
+            activeEl.style.opacity = (this.engineMode === 'video') ? '1' : '0';
+            activeEl.style.pointerEvents = (this.engineMode === 'video') ? 'auto' : 'none';
+        }
+
+        const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+        const canUseNativeAudio = !this.isWeb || !!pcServer;
+
+        if (canUseNativeAudio) {
             const prevCurrentTime = this.getCurrentTime();
             if (this.engineMode === 'audio') {
                 if (this.activeDeck && this.isYtReady && typeof this.activeDeck.pauseVideo === 'function') {
                     this.activeDeck.pauseVideo();
                 }
                 if (this.currentSong) {
-                    this.audioElement.src = `/api/audio?id=${this.currentSong.youtubeId}`;
+                    const streamUrl = !this.isWeb ? `/api/audio?id=${this.currentSong.youtubeId}` : `${pcServer}/api/audio?id=${this.currentSong.youtubeId}`;
+                    this.audioElement.src = streamUrl;
                     this.audioElement.currentTime = prevCurrentTime;
                     if (this.isPlaying) {
                         this.audioElement.play().catch(e => console.debug(e));
@@ -455,13 +521,7 @@ class MusicPlayer {
             } else {
                 this.audioElement.pause();
                 if (this.currentSong && this.activeDeck && this.isYtReady) {
-                    this.activeDeck.loadVideoById({
-                        videoId: this.currentSong.youtubeId,
-                        startSeconds: prevCurrentTime
-                    });
-                    if (this.isPlaying) {
-                        try { this.activeDeck.playVideo(); } catch (e) {}
-                    }
+                    this.switchToVideoEngine(this.currentSong, this.isPlaying);
                 }
             }
         }
@@ -486,22 +546,28 @@ class MusicPlayer {
         const standbyEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-b' : 'youtube-player-deck-a');
 
         if (activeEl && standbyEl) {
-            activeEl.style.opacity = '1';
-            activeEl.style.pointerEvents = 'auto';
+            const isVideoMode = (this.engineMode === 'video');
+            activeEl.style.opacity = isVideoMode ? '1' : '0';
+            activeEl.style.pointerEvents = isVideoMode ? 'auto' : 'none';
             standbyEl.style.opacity = '0';
             standbyEl.style.pointerEvents = 'none';
         }
 
         if (this.isYtReady && activeDeck && typeof activeDeck.loadVideoById === 'function') {
             try {
+                // 1. Mute-First: 즉시 0 볼륨 및 음소거 강제 (광고 소리 노출 원천 차단)
+                try { activeDeck.mute(); } catch (e) {}
+                try { activeDeck.setVolume(0); } catch (e) {}
+
+                // 2. 비주얼 쉴드 즉시 가동 (영상 모드에서도 광고 화면 가림)
+                this.isAdShieldActive = true;
+                window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
+
                 activeDeck.loadVideoById({
                     videoId: song.youtubeId,
                     startSeconds: startSec
                 });
-                activeDeck.setVolume(this.isMuted ? 0 : this.volume);
-                if (!this.isMuted && typeof activeDeck.unMute === 'function') {
-                    try { activeDeck.unMute(); } catch (e) {}
-                }
+
                 if (autoPlay) {
                     activeDeck.playVideo();
                     this.isPlaying = true;
@@ -509,6 +575,9 @@ class MusicPlayer {
                     activeDeck.pauseVideo();
                     this.isPlaying = false;
                 }
+
+                // 3. 100ms 고빈도 감시로 본곡 시작 확인 즉시 언뮤트 복원
+                this.startAdShieldPolling();
             } catch (e) {
                 console.error('[switchToVideoEngine] Failed to play video', e);
             }
@@ -729,14 +798,21 @@ class MusicPlayer {
 
         const startSeconds = this.getInitialStartSeconds(song);
 
-        // 1. Zero-Ad 네이티브 오디오 엔진 재생 (로컬 백엔드가 있는 PC 앱 환경만)
-        if (this.engineMode === 'audio' && !this.isWeb) {
+        const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+        let nativeStreamUrl = null;
+        if (!this.isWeb) {
+            nativeStreamUrl = `/api/audio?id=${song.youtubeId}`;
+        } else if (pcServer) {
+            nativeStreamUrl = `${pcServer}/api/audio?id=${song.youtubeId}`;
+        }
+
+        // 1. Zero-Ad 네이티브 오디오 엔진 재생 (로컬 백엔드 또는 PC 서버 연동)
+        if (this.engineMode === 'audio' && nativeStreamUrl) {
             if (this.ytPlayer && this.isYtReady && typeof this.ytPlayer.pauseVideo === 'function') {
                 this.ytPlayer.pauseVideo();
             }
 
-            const streamUrl = `/api/audio?id=${song.youtubeId}`;
-            this.audioElement.src = streamUrl;
+            this.audioElement.src = nativeStreamUrl;
             const targetVolume = this.isMuted ? 0 : this.volume / 100;
             if (this.crossfade > 0 && !this.sabiMode) {
                 this.audioElement.volume = 0;
