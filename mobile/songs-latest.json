@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 80,
-  "updatedAt": "2026-09-24T03:04:41.465100+00:00",
+  "count": 81,
+  "updatedAt": "2026-09-25T03:04:42.884322+00:00",
   "tracks": [
     {
       "id": "blFr5w6o2jQ",
@@ -937,6 +937,18 @@
         "group"
       ],
       "defaultType": "original"
+    },
+    {
+      "id": "jHc5yW6iOPk",
+      "title": "Mashiro - Land of Lola, Bedroom Musical [Kinky Boots]",
+      "rawTitle": "Mashiro - Land of Lola, Bedroom Musical [Kinky Boots] (4K)",
+      "duration": 216,
+      "uploader": "",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
     },
     {
       "id": "y-rdBQSrzSs",
