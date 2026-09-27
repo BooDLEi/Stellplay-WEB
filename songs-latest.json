@@ -1,19 +1,92 @@
 {
   "success": true,
-  "count": 84,
-  "updatedAt": "2026-09-27T03:04:38.938181+00:00",
+  "count": 87,
+  "updatedAt": "2026-09-27T19:16:01.056325+00:00",
   "tracks": [
     {
+      "id": "Qngf5HNfl6Q",
+      "title": "소녀레이 (少女レイ)",
+      "rawTitle": "소녀레이(少女レイ) - みきとP | 시라유키 히나 x 유즈하 리코 Cover",
+      "duration": 290,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "riko"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "OlJ-7k9Trm0",
+      "title": "Confrontation (지킬 앤 하이드 OST)",
+      "rawTitle": "마시로 - Confrontation 방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
+      "duration": 224,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "ost"
+    },
+    {
       "id": "FzefgoF26Ac",
-      "title": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)",
+      "title": "여우의 별자리 「심월과 달의 노래」 (명조 OST)",
       "rawTitle": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)ㅣ아카네 리제(Akane Lize) 【COVER】",
-      "duration": 219,
+      "duration": 218,
       "uploader": "아카네 리제 AKANE LIZE",
       "defaultMember": "lize",
       "members": [
         "lize"
       ],
+      "defaultType": "ost"
+    },
+    {
+      "id": "Da77IyHlwao",
+      "title": "웃는남자 (뮤지컬 웃는남자 OST)",
+      "rawTitle": "마시로 - 웃는남자 방구석 뮤지컬 [ 웃는남자 ] (4k)",
+      "duration": 221,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "ost"
+    },
+    {
+      "id": "F7kdEX0VRss",
+      "title": "Dance The Night Away [3D Live]",
+      "rawTitle": "[4K] Dance The Night Away - TWICE(트와이스) / 하나코 나나 3D Cover",
+      "duration": 186,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
       "defaultType": "cover"
+    },
+    {
+      "id": "j_RAn7yvq_0",
+      "title": "Alive 2 (지킬 앤 하이드 OST)",
+      "rawTitle": "마시로 -  Alive 2  방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
+      "duration": 102,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "ost"
+    },
+    {
+      "id": "jHc5yW6iOPk",
+      "title": "Land of Lola (킹키부츠 OST)",
+      "rawTitle": "마시로 - Land of Lola 방구석 뮤지컬 [ 킹키부츠 ] (4k)",
+      "duration": 215,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "ost"
     },
     {
       "id": "blFr5w6o2jQ",
@@ -572,7 +645,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "ost"
     },
     {
       "id": "yA25-F9SJh0",
@@ -583,6 +656,20 @@
       "defaultMember": "shibuki",
       "members": [
         "shibuki"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "UcFBb927-kU",
+      "title": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN",
+      "rawTitle": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN | Shirayuki Hina x Akane Rize Cover",
+      "duration": 283,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "lize",
+        "rin"
       ],
       "defaultType": "cover"
     },
@@ -926,74 +1013,14 @@
     },
     {
       "id": "JsnnXkxNGQU",
-      "title": "Viva Happy [Viva Happy / Mitchie M]",
-      "rawTitle": "Viva Happy [Viva Happy / Mitchie M] | EVERYS Cover",
+      "title": "Viva Happy (비바해피)",
+      "rawTitle": "비바해피 [ビバハピ / Mitchie M] l 에버리스 (EVERYS) Cover",
       "duration": 210,
-      "uploader": "",
+      "uploader": "스텔라이브 StelLive Official",
       "defaultMember": "group",
       "members": [
-        "group"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "Qngf5HNfl6Q",
-      "title": "소녀레이(少女レイ) - みきとP",
-      "rawTitle": "소녀레이(少女レイ) - みきとP | 시라유키 히나 x 유즈하 리코 Cover",
-      "duration": 200,
-      "uploader": "",
-      "defaultMember": "group",
-      "members": [
-        "hina",
-        "riko"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "Da77IyHlwao",
-      "title": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ]",
-      "rawTitle": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ] (4K)",
-      "duration": 222,
-      "uploader": "",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "j_RAn7yvq_0",
-      "title": "Mashiro - Alive 2 Bedroom Musical [ Jekyll & Hyde ]",
-      "rawTitle": "Mashiro - Alive 2 Bedroom Musical [ Jekyll & Hyde ] (4K)",
-      "duration": 103,
-      "uploader": "",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "jHc5yW6iOPk",
-      "title": "Mashiro - Land of Lola, Bedroom Musical [Kinky Boots]",
-      "rawTitle": "Mashiro - Land of Lola, Bedroom Musical [Kinky Boots] (4K)",
-      "duration": 216,
-      "uploader": "",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "F7kdEX0VRss",
-      "title": "Dance The Night Away - TWICE",
-      "rawTitle": "[4K] Dance The Night Away - TWICE / Hanako Nana 3D Cover",
-      "duration": 186,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
+        "huya",
+        "yuni"
       ],
       "defaultType": "cover"
     },
@@ -1014,6 +1041,18 @@
       "title": "Catallena - Orange Caramel",
       "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
       "duration": 197,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "npwilOOckxY",
+      "title": "100% for You",
+      "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
+      "duration": 206,
       "uploader": "",
       "defaultMember": "nana",
       "members": [

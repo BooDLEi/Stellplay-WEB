@@ -1208,6 +1208,7 @@ body::before {
 }
 .m-track-type-badge.original { background: rgba(124, 92, 252, 0.2); color: #a78bfa; }
 .m-track-type-badge.cover { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+.m-track-type-badge.ost { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.35); }
 .m-track-type-badge.feat { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
 
 .m-track-status-badge {
@@ -2515,7 +2516,7 @@ body::before {
    태블릿 및 갤럭시 폴드(펼침) 대화면 전용 2분할 뷰 (@media min-width: 650px)
    - 재생중 창 오픈 시, 좌측 50% = 플레이어, 우측 50% = 현재 재생목록 상시 표시
 =================================================================== */
-@media (min-width: 650px) {
+@media (min-width: 650px), (orientation: landscape) and (min-width: 480px) {
     /* 기본 분할 모드: 전체화면 재생 창 좌측 50% 분할 패널 */
     body:not(.tablet-queue-collapsed) .fullscreen-sheet.open {
         width: 50% !important;
@@ -2654,6 +2655,76 @@ body::before {
     }
     body.tablet-queue-collapsed .fullscreen-sheet.open #sheet-queue-btn {
         color: var(--text-secondary) !important;
+    }
+
+    /* ===================================================================
+       가로/폴드/태블릿 분할 뷰 라이트 테마 (Light Theme) 완벽 대응
+    =================================================================== */
+    [data-theme="light"] body:not(.tablet-queue-collapsed) .fullscreen-sheet.open {
+        background: #f8fafc !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 10px 0 35px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-content {
+        background: #ffffff !important;
+        border-left: 1px solid rgba(0, 0, 0, 0.08) !important;
+        color: var(--text-primary) !important;
+        box-shadow: none !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+        background: #ffffff !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-title {
+        color: #0f172a !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-badge {
+        background: rgba(124, 92, 252, 0.12) !important;
+        color: var(--theme-color) !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-action-btn {
+        background: rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        color: #475569 !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-action-btn:active {
+        background: rgba(0, 0, 0, 0.08) !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .queue-drag-hint {
+        color: #64748b !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .m-queue-item {
+        color: #0f172a !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .m-queue-item:active {
+        background: rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .m-queue-item.active {
+        background: rgba(124, 92, 252, 0.1) !important;
+        border-color: var(--theme-color) !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .m-queue-title {
+        color: #0f172a !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .m-queue-artist {
+        color: #475569 !important;
+    }
+
+    [data-theme="light"] .fullscreen-sheet.open ~ .queue-sheet .m-queue-index {
+        color: #94a3b8 !important;
     }
 }
 

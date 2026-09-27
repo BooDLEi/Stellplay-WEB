@@ -2125,6 +2125,12 @@ body::after {
     border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
+.badge-ost {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
 .badge-stream {
     background: rgba(236, 72, 153, 0.15);
     color: #f472b6;

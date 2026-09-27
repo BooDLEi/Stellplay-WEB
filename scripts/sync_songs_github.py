@@ -162,6 +162,9 @@ def fetch_tracks():
                     if not members:
                         members = [default_member]
 
+                    is_ost = bool(re.search(r'(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])', f"{raw_title} {c_title}", re.IGNORECASE))
+                    final_type = 'ost' if is_ost else category
+
                     tracks.append({
                         'id': vid,
                         'title': c_title or raw_title,
@@ -170,7 +173,7 @@ def fetch_tracks():
                         'uploader': uploader,
                         'defaultMember': members[0] if len(members) == 1 else 'group',
                         'members': members,
-                        'defaultType': category
+                        'defaultType': final_type
                     })
         except Exception as e:
             print(f"Error fetching {url}: {e}", file=sys.stderr)

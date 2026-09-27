@@ -589,6 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let typeBadge = '';
         if (song.type === 'original') typeBadge = '<span class="m-track-type-badge original">ORIGINAL</span>';
         else if (song.type === 'cover') typeBadge = '<span class="m-track-type-badge cover">COVER</span>';
+        else if (song.type === 'ost') typeBadge = '<span class="m-track-type-badge ost">OST</span>';
         else if (song.type === 'featuring') typeBadge = '<span class="m-track-type-badge feat">FEAT</span>';
 
         row.innerHTML = `
@@ -796,7 +797,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 2. 타입 필터 (홈 뷰 등에서 적용)
         if (applyType && state.selectedType !== 'all') {
-            res = res.filter(s => s.type === state.selectedType);
+            if (state.selectedType === 'featuring') {
+                res = res.filter(s => s.type === 'featuring' || s.type === 'ost');
+            } else if (state.selectedType === 'ost') {
+                res = res.filter(s => s.type === 'ost');
+            } else {
+                res = res.filter(s => s.type === state.selectedType);
+            }
         }
 
         // 3. 검색 쿼리
@@ -2224,12 +2231,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (Array.isArray(rawTracks)) {
                 const currentSongs = window.getAllSongs ? window.getAllSongs() : [];
                 const existingYtIds = new Set(currentSongs.map(s => s.youtubeId).filter(Boolean));
-                currentSongs.forEach(s => { if (s.id) existingYtIds.add(s.id); });
+                currentSongs.forEach(s => {
+                    if (s.id) {
+                        existingYtIds.add(s.id);
+                        existingYtIds.add(s.id.replace(/^(auto|stel)-/, ''));
+                    }
+                });
+                if (window.DEFAULT_SONGS) {
+                    window.DEFAULT_SONGS.forEach(s => {
+                        if (s.youtubeId) existingYtIds.add(s.youtubeId);
+                        if (s.id) {
+                            existingYtIds.add(s.id);
+                            existingYtIds.add(s.id.replace(/^(auto|stel)-/, ''));
+                        }
+                    });
+                }
 
                 const newTracks = [];
                 for (const t of rawTracks) {
                     const ytId = t.id;
-                    if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`)) {
+                    if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`) && !existingYtIds.has(`stel-${ytId}`)) {
                         // 1. 한국어 표준 제목 정규화
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');
 
@@ -2264,12 +2285,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const sEnd = Math.min(dur - 5, sStart + 35);
                         const publishedAt = t.publishedAt || (t.upload_date ? `${t.upload_date.slice(0,4)}-${t.upload_date.slice(4,6)}-${t.upload_date.slice(6,8)}` : new Date().toISOString().split('T')[0]);
 
+                        const isOst = (t.defaultType === 'ost') ||
+                            /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
+                            (t.id && t.id.startsWith('ost-'));
+                        const trackType = isOst ? 'ost' : (t.defaultType || 'cover');
+                        const origArtistText = isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡');
+
                         newTracks.push({
                             id: `auto-${ytId}`,
                             title: cleanedTitle,
                             artist: artistName,
-                            originalArtist: t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡',
-                            type: t.defaultType || 'cover',
+                            originalArtist: origArtistText,
+                            type: trackType,
                             members: detected,
                             gen: genKey,
                             youtubeId: ytId,
@@ -2309,15 +2336,58 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     window.onNativeSyncSongsSuccess = function(tracks) {
-        processDiscoveredSongs(tracks, true);
+        if (Array.isArray(tracks) && tracks.length > 0) {
+            processDiscoveredSongs(tracks, true);
+        } else {
+            console.log('[Native Sync returned 0 tracks, attempting HTTP/asset fallback]');
+            syncNewSongsHttp(true);
+        }
     };
 
     window.onNativeSyncSongsError = function(errMsg) {
-        state.isSyncing = false;
-        if (dom.btnSyncSongsHome) dom.btnSyncSongsHome.querySelector('svg')?.classList.remove('syncing');
-        if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.querySelector('svg')?.classList.remove('syncing');
-        showToast(`신곡 탐색 실패: ${errMsg || '네트워크 오류'}`);
+        console.warn('[Native Sync Error, fallback to HTTP/asset]', errMsg);
+        syncNewSongsHttp(true);
     };
+
+    async function syncNewSongsHttp(isManual = false) {
+        try {
+            const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+            const endpoints = [];
+            if (pcServer) {
+                endpoints.push(`${pcServer}/api/sync-new-songs`);
+            }
+            endpoints.push(`./songs-latest.json?t=${Date.now()}`);
+            endpoints.push(`../songs-latest.json?t=${Date.now()}`);
+            endpoints.push(`songs-latest.json?t=${Date.now()}`);
+            endpoints.push('/api/sync-new-songs');
+
+            let data = null;
+            for (const ep of endpoints) {
+                try {
+                    const res = await fetch(ep, { signal: AbortSignal.timeout(5000) });
+                    if (res.ok) {
+                        const parsed = await res.json();
+                        if (parsed && parsed.success && Array.isArray(parsed.tracks) && parsed.tracks.length > 0) {
+                            data = parsed;
+                            break;
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            if (!data) throw new Error('신곡 데이터를 가져올 수 없습니다.');
+
+            processDiscoveredSongs(data.tracks || [], isManual);
+        } catch (err) {
+            console.warn('[Sync Error]', err);
+            if (isManual) {
+                showToast('신곡 탐색에 실패했습니다. 네트워크 상태를 확인해주세요.');
+            }
+            state.isSyncing = false;
+            if (dom.btnSyncSongsHome) dom.btnSyncSongsHome.querySelector('svg')?.classList.remove('syncing');
+            if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.querySelector('svg')?.classList.remove('syncing');
+        }
+    }
 
     async function syncNewSongs(isManual = false) {
         if (state.isSyncing) return;
@@ -2352,46 +2422,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 2. PC 서버 또는 웹 API를 통한 신곡 탐색 (브라우저/PWA 환경 폴백)
-        try {
-            const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
-            const isWeb = (window.location.port !== '8888');
-            const endpoints = [];
-            if (pcServer) {
-                endpoints.push(`${pcServer}/api/sync-new-songs`);
-            }
-            if (isWeb) {
-                endpoints.push(`./songs-latest.json?t=${Date.now()}`);
-                endpoints.push(`../songs-latest.json?t=${Date.now()}`);
-            } else {
-                endpoints.push('/api/sync-new-songs');
-            }
-
-            let data = null;
-            for (const ep of endpoints) {
-                try {
-                    const res = await fetch(ep, { signal: AbortSignal.timeout(5000) });
-                    if (res.ok) {
-                        const parsed = await res.json();
-                        if (parsed && parsed.success) {
-                            data = parsed;
-                            break;
-                        }
-                    }
-                } catch (e) {}
-            }
-
-            if (!data) throw new Error('신곡 동기화 서버 연결 실패');
-
-            processDiscoveredSongs(data.tracks || [], isManual);
-        } catch (err) {
-            console.warn('[Sync Error]', err);
-            if (isManual) {
-                showToast('ℹ️ 신곡 자동 탐색은 PC 서버 연동(설정 탭)이 필요합니다.');
-            }
-            state.isSyncing = false;
-            if (dom.btnSyncSongsHome) dom.btnSyncSongsHome.querySelector('svg')?.classList.remove('syncing');
-            if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.querySelector('svg')?.classList.remove('syncing');
-        }
+        syncNewSongsHttp(isManual);
     }
 
     // ===================================================================
@@ -3382,7 +3413,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         dom.sheetCloseBtn.addEventListener('click', () => {
             dom.fullscreenSheet.classList.remove('open');
-            switchMobilePlayerView('art');
+            if (mobilePlayerViewMode === 'video') {
+                switchMobilePlayerView('art');
+            }
         });
 
         // 대기열 열기/닫기 및 메뉴 버튼
@@ -3460,7 +3493,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 40) {
                         // 재생창 영역에서 내리면: 메인화면으로 바로 내려가기
                         dom.fullscreenSheet.classList.remove('open');
-                        switchMobilePlayerView('art');
+                        if (mobilePlayerViewMode === 'video') {
+                            switchMobilePlayerView('art');
+                        }
                         return;
                     }
                 } else {
@@ -3469,7 +3504,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (deltaY > 40) {
                             // 내리면: 메인화면으로 복귀
                             dom.fullscreenSheet.classList.remove('open');
-                            switchMobilePlayerView('art');
+                            if (mobilePlayerViewMode === 'video') {
+                                switchMobilePlayerView('art');
+                            }
                         } else if (deltaY < -40) {
                             // 올리면: 재생목록(대기열) 열기
                             openQueueSheet();
@@ -4226,7 +4263,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 6. 전체화면 재생 시트가 열려있는 경우 -> 시트 닫고 메인으로 복귀
         if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
             dom.fullscreenSheet.classList.remove('open');
-            switchMobilePlayerView('art');
+            if (mobilePlayerViewMode === 'video') {
+                switchMobilePlayerView('art');
+            }
             return true;
         }
 

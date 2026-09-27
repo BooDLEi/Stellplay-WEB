@@ -920,9 +920,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 3. 타입 필터 (오리지널 / 커버 / 피처링 / 노래방송)
+        // 3. 타입 필터 (오리지널 / 커버 / 피처링 & OST)
         if (state.currentFilterType !== 'all') {
-            songs = songs.filter(s => s.type === state.currentFilterType);
+            if (state.currentFilterType === 'featuring') {
+                songs = songs.filter(s => s.type === 'featuring' || s.type === 'ost');
+            } else if (state.currentFilterType === 'ost') {
+                songs = songs.filter(s => s.type === 'ost');
+            } else {
+                songs = songs.filter(s => s.type === state.currentFilterType);
+            }
         }
 
         // 4. 검색어 필터
@@ -1066,9 +1072,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (song.type === 'original') {
                 badgeClass = 'badge-original';
                 badgeText = '오리지널';
+            } else if (song.type === 'ost') {
+                badgeClass = 'badge-ost';
+                badgeText = '공식 OST';
             } else if (song.type === 'featuring') {
                 badgeClass = 'badge-featuring';
-                badgeText = '피처링 & OST';
+                badgeText = '피처링';
             } else if (song.type === 'stream') {
                 badgeClass = 'badge-stream';
                 badgeText = '노래방송 Live';
@@ -2938,9 +2947,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (song.type === 'original') {
                     plBadgeClass = 'badge-original';
                     plBadgeText = '오리지널';
+                } else if (song.type === 'ost') {
+                    plBadgeClass = 'badge-ost';
+                    plBadgeText = '공식 OST';
                 } else if (song.type === 'featuring') {
                     plBadgeClass = 'badge-featuring';
-                    plBadgeText = '피처링 & OST';
+                    plBadgeText = '피처링';
                 } else if (song.type === 'stream') {
                     plBadgeClass = 'badge-stream';
                     plBadgeText = '노래방송 Live';
@@ -3889,29 +3901,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             let data = null;
-            const isWeb = (window.location.port !== '8888');
+            const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
-            if (isWeb) {
-                // 웹(GitHub Pages) 정적 호스팅 환경: GitHub 동기화 파일(songs-latest.json) 조회
-                const res = await fetch(`./songs-latest.json?t=${Date.now()}`);
-                if (!res.ok) throw new Error(`웹 신곡 데이터 로드 실패 (${res.status})`);
-                data = await res.json();
-            } else {
-                // 로컬 PC 앱 환경: 파이썬 백엔드 API 호출
-                const res = await fetch('/api/sync-new-songs');
-                if (!res.ok) throw new Error('신곡 동기화 서버 응답 실패');
-                data = await res.json();
+            if (isLocal) {
+                // 로컬 PC 앱 환경: 파이썬 백엔드 API 호출 시도 (타임아웃 12초)
+                try {
+                    const res = await fetch('/api/sync-new-songs', { signal: AbortSignal.timeout(12000) });
+                    if (res.ok) {
+                        const parsed = await res.json();
+                        if (parsed && parsed.success && Array.isArray(parsed.tracks) && parsed.tracks.length > 0) {
+                            data = parsed;
+                        }
+                    }
+                } catch (apiErr) {
+                    console.warn('[Sync API Error, attempting songs-latest.json fallback]', apiErr);
+                }
+            }
+
+            // 웹(GitHub Pages) 환경 또는 로컬 API 폴백: songs-latest.json 조회
+            if (!data) {
+                const endpoints = [
+                    `./songs-latest.json?t=${Date.now()}`,
+                    `songs-latest.json?t=${Date.now()}`,
+                    `/songs-latest.json?t=${Date.now()}`
+                ];
+                for (const ep of endpoints) {
+                    try {
+                        const res = await fetch(ep, { signal: AbortSignal.timeout(4000) });
+                        if (res.ok) {
+                            const parsed = await res.json();
+                            if (parsed && parsed.success && Array.isArray(parsed.tracks)) {
+                                data = parsed;
+                                break;
+                            }
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (!data || !data.success || !Array.isArray(data.tracks)) {
+                throw new Error('신곡 데이터를 가져올 수 없습니다.');
             }
 
             if (data.success && Array.isArray(data.tracks)) {
-                const currentSongs = window.getAllSongs();
+                const currentSongs = window.getAllSongs ? window.getAllSongs() : [];
                 const existingYtIds = new Set(currentSongs.map(s => s.youtubeId).filter(Boolean));
-                currentSongs.forEach(s => { if (s.id) existingYtIds.add(s.id); });
+                currentSongs.forEach(s => {
+                    if (s.id) {
+                        existingYtIds.add(s.id);
+                        existingYtIds.add(s.id.replace(/^(auto|stel)-/, ''));
+                    }
+                });
+                if (window.DEFAULT_SONGS) {
+                    window.DEFAULT_SONGS.forEach(s => {
+                        if (s.youtubeId) existingYtIds.add(s.youtubeId);
+                        if (s.id) {
+                            existingYtIds.add(s.id);
+                            existingYtIds.add(s.id.replace(/^(auto|stel)-/, ''));
+                        }
+                    });
+                }
 
                 const newTracks = [];
                 for (const t of data.tracks) {
                     const ytId = t.id;
-                    if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`)) {
+                    if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`) && !existingYtIds.has(`stel-${ytId}`)) {
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');
                         const textToAnalyze = `${t.title || ''} ${t.uploader || ''} ${t.channelTitle || ''}`;
                         let detected = detectMembersFromText(textToAnalyze);
@@ -3942,12 +3996,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         const sEnd = Math.min(dur - 5, sStart + 35);
                         const publishedAt = t.publishedAt || (t.upload_date ? `${t.upload_date.slice(0,4)}-${t.upload_date.slice(4,6)}-${t.upload_date.slice(6,8)}` : new Date().toISOString().split('T')[0]);
 
+                        const isOst = (t.defaultType === 'ost') ||
+                            /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
+                            (t.id && t.id.startsWith('ost-'));
+                        const trackType = isOst ? 'ost' : (t.defaultType || 'cover');
+                        const origArtistText = isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡');
+
                         newTracks.push({
                             id: `auto-${ytId}`,
                             title: cleanedTitle,
                             artist: artistName,
-                            originalArtist: t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡',
-                            type: t.defaultType || 'cover',
+                            originalArtist: origArtistText,
+                            type: trackType,
                             members: detected,
                             gen: genKey,
                             youtubeId: ytId,

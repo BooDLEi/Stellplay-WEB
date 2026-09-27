@@ -161,6 +161,160 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-JsnnXkxNGQU",
+        "title": "Viva Happy (비바해피)",
+        "artist": "에버리스 (사키하네 후야, 아야츠노 유니)",
+        "originalArtist": "Mitchie M",
+        "type": "cover",
+        "gen": "g1",
+        "members": [
+            "huya",
+            "yuni"
+        ],
+        "youtubeId": "JsnnXkxNGQU",
+        "duration": 210,
+        "sabi": {
+            "start": 52,
+            "end": 88,
+            "title": "후렴구: 비바 비바 해피"
+        },
+        "publishedAt": "2026-09-20"
+    },
+    {
+        "id": "stel-jHc5yW6iOPk",
+        "title": "Land of Lola (킹키부츠 OST)",
+        "artist": "네네코 마시로",
+        "originalArtist": "뮤지컬 킹키부츠 OST",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "mashiro"
+        ],
+        "youtubeId": "jHc5yW6iOPk",
+        "duration": 215,
+        "sabi": {
+            "start": 50,
+            "end": 90,
+            "title": "후렴구: Land of Lola"
+        },
+        "publishedAt": "2026-09-24"
+    },
+    {
+        "id": "stel-j_RAn7yvq_0",
+        "title": "Alive 2 (지킬 앤 하이드 OST)",
+        "artist": "네네코 마시로",
+        "originalArtist": "뮤지컬 지킬 앤 하이드 OST",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "mashiro"
+        ],
+        "youtubeId": "j_RAn7yvq_0",
+        "duration": 102,
+        "sabi": {
+            "start": 25,
+            "end": 65,
+            "title": "후렴구: Alive 2"
+        },
+        "publishedAt": "2026-09-25"
+    },
+    {
+        "id": "stel-F7kdEX0VRss",
+        "title": "Dance The Night Away [3D Live]",
+        "artist": "하나코 나나",
+        "originalArtist": "TWICE (트와이스)",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "nana"
+        ],
+        "youtubeId": "F7kdEX0VRss",
+        "duration": 186,
+        "sabi": {
+            "start": 48,
+            "end": 85,
+            "title": "후렴구: Dance The Night Away"
+        },
+        "publishedAt": "2026-09-25"
+    },
+    {
+        "id": "stel-Da77IyHlwao",
+        "title": "웃는남자 (뮤지컬 웃는남자 OST)",
+        "artist": "네네코 마시로",
+        "originalArtist": "뮤지컬 웃는남자 OST",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "mashiro"
+        ],
+        "youtubeId": "Da77IyHlwao",
+        "duration": 221,
+        "sabi": {
+            "start": 55,
+            "end": 95,
+            "title": "후렴구: 웃는남자"
+        },
+        "publishedAt": "2026-09-26"
+    },
+    {
+        "id": "stel-FzefgoF26Ac",
+        "title": "여우의 별자리 「심월과 달의 노래」 (명조 OST)",
+        "artist": "아카네 리제",
+        "originalArtist": "명조: 워더링 웨이브 OST (Cover)",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "lize"
+        ],
+        "youtubeId": "FzefgoF26Ac",
+        "duration": 218,
+        "sabi": {
+            "start": 65,
+            "end": 105,
+            "title": "후렴구: 여우의 별자리 「심월과 달의 노래」"
+        },
+        "publishedAt": "2026-09-26"
+    },
+    {
+        "id": "stel-OlJ-7k9Trm0",
+        "title": "Confrontation (지킬 앤 하이드 OST)",
+        "artist": "네네코 마시로",
+        "originalArtist": "뮤지컬 지킬 앤 하이드 OST",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "mashiro"
+        ],
+        "youtubeId": "OlJ-7k9Trm0",
+        "duration": 224,
+        "sabi": {
+            "start": 55,
+            "end": 95,
+            "title": "후렴구: Confrontation"
+        },
+        "publishedAt": "2026-09-27"
+    },
+    {
+        "id": "stel-Qngf5HNfl6Q",
+        "title": "소녀레이 (少女レイ)",
+        "artist": "시라유키 히나 x 유즈하 리코",
+        "originalArtist": "みきとP (MikitoP)",
+        "type": "cover",
+        "gen": "group",
+        "members": [
+            "hina",
+            "riko"
+        ],
+        "youtubeId": "Qngf5HNfl6Q",
+        "duration": 290,
+        "sabi": {
+            "start": 70,
+            "end": 110,
+            "title": "후렴구: 소녀레이"
+        },
+        "publishedAt": "2026-09-27"
+    },
+    {
         "id": "stel-milkyway",
         "title": "Milky Way",
         "artist": "스텔라이브 (STELLIVE)",
@@ -502,7 +656,7 @@ const DEFAULT_SONGS = [
         "title": "불꽃 (Seed of Hope)",
         "artist": "시라유키 히나",
         "originalArtist": "명일방주 (Arknights) 5.5주년 공식 OST",
-        "type": "featuring",
+        "type": "ost",
         "gen": "g2",
         "members": [
             "hina"
@@ -521,7 +675,7 @@ const DEFAULT_SONGS = [
         "title": "Frozen Eclipse",
         "artist": "아이리 칸나",
         "originalArtist": "에픽세븐 (Epic Seven) 공식 OST",
-        "type": "featuring",
+        "type": "ost",
         "gen": "g1",
         "members": [
             "kanna"
@@ -828,7 +982,7 @@ const DEFAULT_SONGS = [
         "title": "地球儀 (지구본)",
         "artist": "아이리 칸나",
         "originalArtist": "요네즈 켄시 (그대들은 어떻게 살 것인가 OST)",
-        "type": "cover",
+        "type": "ost",
         "gen": "g1",
         "members": [
             "kanna"
@@ -885,7 +1039,7 @@ const DEFAULT_SONGS = [
         "title": "逆光 (역광)",
         "artist": "아이리 칸나",
         "originalArtist": "Ado (원피스 필름 레드 OST)",
-        "type": "cover",
+        "type": "ost",
         "gen": "g1",
         "members": [
             "kanna"
@@ -980,7 +1134,7 @@ const DEFAULT_SONGS = [
         "title": "I Really Want to Stay At Your House",
         "artist": "시라유키 히나",
         "originalArtist": "사이버펑크: 엣지러너 OST",
-        "type": "cover",
+        "type": "ost",
         "gen": "g2",
         "members": [
             "hina"
@@ -996,7 +1150,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "hina-season-crime",
-        "title": "季節は次々死んでいく (계절범죄)",
+        "title": "계절범죄 (Season Crime)",
         "artist": "시라유키 히나",
         "originalArtist": "Miiro (미로)",
         "type": "cover",
@@ -1303,7 +1457,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "lize-blue-green",
-        "title": "青と夏 (청록)",
+        "title": "청록 [Blue Rock]",
         "artist": "아카네 리제",
         "originalArtist": "it's",
         "type": "cover",
@@ -1440,7 +1594,7 @@ const DEFAULT_SONGS = [
         "artist": "아라하시 타비",
         "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
-        "gen": "g2",
+        "gen": "g1",
         "members": [
             "tabi"
         ],
@@ -1591,7 +1745,7 @@ const DEFAULT_SONGS = [
         "title": "여우비",
         "artist": "텐코 시부키",
         "originalArtist": "이선희 (내 여자친구는 구미호 OST)",
-        "type": "cover",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "shibuki"
@@ -1760,10 +1914,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "nana-grand-escape",
-        "title": "グランドエスケープ (그랜드 이스케이프)",
+        "title": "그랜드 이스케이프 (날씨의 아이 OST)",
         "artist": "하나코 나나 (feat. Cliché)",
-        "originalArtist": "RADWIMPS",
-        "type": "cover",
+        "originalArtist": "RADWIMPS (날씨의 아이 OST)",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "nana",
@@ -1782,10 +1936,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "nana-rain",
-        "title": "Rain (레인)",
+        "title": "Rain (강철의 연금술사 OST)",
         "artist": "하나코 나나",
-        "originalArtist": "SID (シド)",
-        "type": "cover",
+        "originalArtist": "SID (강철의 연금술사 OST)",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "nana"
@@ -1974,9 +2128,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-zQp6ZZAT6ew",
-        "title": "もしもし? (모시 모시?)",
+        "title": "mosi mosi? (모시모시?)",
         "artist": "텐코 시부키",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "楽音 (사사네)",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -2069,9 +2223,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-wu2a0AeQOCc",
-        "title": "ミライチズ (미랫빛 라이더)",
+        "title": "미랫빛 라이더 (Mirairo Rider)",
         "artist": "아카네 리제",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "명일방주: 엔드필드 EP",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -2145,9 +2299,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-_pTBkDP1TE0",
-        "title": "ラヴィット (러빗)",
+        "title": "Loveit? (러빗)",
         "artist": "하나코 나나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "biz×ZERA",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -2526,9 +2680,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-RLKm8ymJPlo",
-        "title": "앗... (Ah...)",
+        "title": "Oh...",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "타다노 카에데 (只野 楓)",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -2545,10 +2699,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-IoBUWPQ3dwc",
-        "title": "One Last Kiss",
+        "title": "One Last Kiss (신 에반게리온 극장판 OST)",
         "artist": "하나코 나나",
-        "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "originalArtist": "우타다 히카루 (신 에반게리온 극장판 𝄇 OST)",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "nana"
@@ -2603,9 +2757,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-QXUxnxoOIOI",
-        "title": "愛及屋烏 (애급옥오)",
+        "title": "AIZO (아이조)",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "King Gnu",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -3119,9 +3273,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-6gEc7lUi6xs",
-        "title": "ヒバナ (히바나)",
+        "title": "울려퍼져라 (ヒビカセ / Hibikase)",
         "artist": "텐코 시부키 x 하나코 나나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Giga",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -3329,10 +3483,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-WICzT2lsQa8",
-        "title": "POP IN 2",
+        "title": "POP IN 2 (최애의 아이 OST)",
         "artist": "아야츠노 유니 x 아카네 리제 x 유즈하 리코",
-        "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "originalArtist": "B-Komachi (최애의 아이 OST)",
+        "type": "ost",
         "gen": "group",
         "members": [
             "yuni",
@@ -3623,10 +3777,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-i5ZEIsWt0Fk",
-        "title": "Summertime",
+        "title": "Summertime (이터널 리턴 OST)",
         "artist": "하나코 나나",
-        "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "originalArtist": "caz (이터널 리턴 OST)",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "nana"
@@ -3718,7 +3872,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-3qRN6mQJ4K4",
-        "title": "夜咄ディセイブ (야화)",
+        "title": "야화 (Night Flower)",
         "artist": "아라하시 타비 x 하나코 나나",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -3894,9 +4048,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-7gYDCoiV7cc",
-        "title": "おこちゃま戦争 (그 나라의 왕가는 이상해)",
+        "title": "그 나라의 왕가는 이상해 (아이 같은 전쟁)",
         "artist": "네네코 마시로 x 아카네 리제",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Giga",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -3952,10 +4106,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-zVNbcnSQrCU",
-        "title": "Unbreakable Sphere",
+        "title": "Unbreakable Sphere (승리의 여신: 니케 OST)",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "originalArtist": "Cosmograph (승리의 여신: 니케 OST)",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "rin"
@@ -3990,9 +4144,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-4OzmA6a8sqY",
-        "title": "あのね (있잖아 있잖아 있잖아)",
+        "title": "있잖아 있잖아 있잖아 (ねぇねぇねぇ。)",
         "artist": "텐코 시부키 x 유즈하 리코",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "피노키오피",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -4182,7 +4336,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-QQYjoOGbUSQ",
-        "title": "モモイロ (복숭아색 열쇠)",
+        "title": "ももいろの鍵 (복숭아색 열쇠)",
         "artist": "아오쿠모 린",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -5111,9 +5265,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-sEYBQaw1vRs",
-        "title": "さよならだけが人生だ (안녕, 꽃도둑씨)",
+        "title": "さようなら、花泥棒さん (안녕, 꽃도둑씨)",
         "artist": "네네코 마시로",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "메루 (メル)",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -5149,9 +5303,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-v7UNI2YuqFc",
-        "title": "仮面 (가짜 얼굴)",
+        "title": "가짜 얼굴 (Fake Face)",
         "artist": "하나코 나나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "yama",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -5187,9 +5341,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-IRvrDhVYXHQ",
-        "title": "希望が銀河を照らす時 (희망이 은하를 비출 때)",
+        "title": "상처 입은 누군가의 마음을 지킬 수 있다면 (傷つく誰かの心を守ることができたなら)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "ツユ (TUYU)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5244,9 +5398,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-a6imWKGILZA",
-        "title": "クラクラ (두근어질)",
+        "title": "두근어질 (큐 큐라링 / きゅうくらりん)",
         "artist": "아야츠노 유니",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "이요와 (いよわ)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5434,9 +5588,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-eLJENPbBe8A",
-        "title": "ギラギラ (의심쩍어)",
+        "title": "勘ぐれい (의심쩍어 / 칸구레이)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "ZUTOMAYO",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5491,9 +5645,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-Y52kljOrCsc",
-        "title": "あの夏が飽和する。 (그 여름에 피어나)",
+        "title": "그 여름에 피어나 (あの夏に咲け)",
         "artist": "아라하시 타비",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "TUYU",
         "type": "cover",
         "gen": "g2",
         "members": [
@@ -5510,9 +5664,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-nYgMMdYDGak",
-        "title": "眠る街 (잠드는 거리)",
+        "title": "ねむるまち (잠드는 거리 / 네무루마치)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "くじら (Kujira)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -5548,7 +5702,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-W-Xr4ceMOXI",
-        "title": "あの夏のある日は (그 여름의 어느 날은)",
+        "title": "그 여름의 어느 날은 (あの夏のいつかは)",
         "artist": "아라하시 타비",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -5947,9 +6101,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-6A04OifrfR0",
-        "title": "プリンセストレイン (공주열차)",
+        "title": "공상열차 (空奏列車 / 쿠소렛샤)",
         "artist": "아이리 칸나",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Orangestar",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -6007,7 +6161,7 @@ const DEFAULT_SONGS = [
         "title": "개화 (Blooming)",
         "artist": "시라유키 히나",
         "originalArtist": "명조: 워더링 웨이브 선약 방송국 OST",
-        "type": "featuring",
+        "type": "ost",
         "gen": "g2",
         "members": [
             "hina"
@@ -6409,7 +6563,7 @@ const DEFAULT_SONGS = [
         "title": "Ready to Fire!",
         "artist": "아카네 리제",
         "originalArtist": "월드 오브 탱크 공식 OST",
-        "type": "featuring",
+        "type": "ost",
         "gen": "g2",
         "members": [
             "lize"
@@ -6447,7 +6601,7 @@ const DEFAULT_SONGS = [
         "title": "Colorful Tempo",
         "artist": "텐코 시부키",
         "originalArtist": "명조: 워더링 웨이브 솔라리스 해변 이야기 공식 OST",
-        "type": "featuring",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "shibuki"
@@ -6523,7 +6677,7 @@ const DEFAULT_SONGS = [
         "title": "Born to run",
         "artist": "하나코 나나",
         "originalArtist": "미츠키요 (Mitsukiyo) [봉누도 오프닝 OST]",
-        "type": "featuring",
+        "type": "ost",
         "gen": "g3",
         "members": [
             "nana"
@@ -6632,44 +6786,6 @@ const DEFAULT_SONGS = [
             "title": "후렴구: Otsukare Summer"
         },
         "publishedAt": "2024-12-10"
-    },
-    {
-        "id": "stel-zQp6ZZAT6ew",
-        "title": "mosi mosi? (楽音 / 사사네)",
-        "artist": "텐코 시부키",
-        "originalArtist": "楽音 (사사네)",
-        "type": "cover",
-        "gen": "g3",
-        "members": [
-            "shibuki"
-        ],
-        "youtubeId": "zQp6ZZAT6ew",
-        "duration": 164,
-        "sabi": {
-            "start": 41,
-            "end": 76,
-            "title": "후렴구: mosi mosi?"
-        },
-        "publishedAt": "2024-12-05"
-    },
-    {
-        "id": "stel-uBtFoUXR9Qc",
-        "title": "Plover [Yorushika - Chidori]",
-        "artist": "아라하시 타비",
-        "originalArtist": "요루시카 (Yorushika)",
-        "type": "cover",
-        "gen": "g1",
-        "members": [
-            "tabi"
-        ],
-        "youtubeId": "uBtFoUXR9Qc",
-        "duration": 255,
-        "sabi": {
-            "start": 63,
-            "end": 98,
-            "title": "후렴구: Plover"
-        },
-        "publishedAt": "2024-12-01"
     }
 ];
 
@@ -6691,21 +6807,36 @@ function getAllSongs() {
         autoDetected = [];
     }
 
-    // 신곡 자동 감지 곡(최신) -> 사용자 직접 추가 곡 -> 정규 카탈로그 순으로 통합
+    // DEFAULT_SONGS 정규 카탈로그 인덱스 부여
     DEFAULT_SONGS.forEach((s, idx) => {
         if (!s._catalogIndex) s._catalogIndex = idx + 1;
     });
-    const baseList = [...autoDetected, ...custom, ...DEFAULT_SONGS];
+
+    // DEFAULT_SONGS에 이미 정식 수록된 곡은 autoDetected 목록에서 제외 (정식 큐레이션 데이터 우선)
+    const defaultYtIds = new Set(DEFAULT_SONGS.map(s => s.youtubeId).filter(Boolean));
+    const defaultIds = new Set(DEFAULT_SONGS.map(s => s.id).filter(Boolean));
+    const filteredAuto = autoDetected.filter(s => {
+        const ytid = s.youtubeId || (s.id && s.id.startsWith('auto-') ? s.id.replace('auto-', '') : null);
+        if (ytid && defaultYtIds.has(ytid)) return false;
+        if (s.id && defaultIds.has(s.id)) return false;
+        return true;
+    });
+
+    // 신곡 자동 감지 곡(최신) -> 사용자 직접 추가 곡 -> 정규 카탈로그 순으로 통합
+    const baseList = [...filteredAuto, ...custom, ...DEFAULT_SONGS];
     
-    // ID 및 유튜브 ID 중복 방지
+    // ID 및 유튜브 ID 이중 중복 완벽 방지
     const seenIds = new Set();
+    const seenYtIds = new Set();
     let all = [];
     for (const song of baseList) {
-        const key = song.id || song.youtubeId;
-        if (!seenIds.has(key)) {
-            seenIds.add(key);
-            all.push({ ...song });
-        }
+        const sid = song.id;
+        const ytid = song.youtubeId;
+        if (sid && seenIds.has(sid)) continue;
+        if (ytid && seenYtIds.has(ytid)) continue;
+        if (sid) seenIds.add(sid);
+        if (ytid) seenYtIds.add(ytid);
+        all.push({ ...song });
     }
 
     // 사용자 맞춤 곡 정보 수정(Overrides) 및 맞춤 사비 실시간 병합
@@ -6737,10 +6868,20 @@ function getAllSongs() {
         }
     } catch (e) {}
 
-    // 전곡 한국어 제목 및 불필요한 노이즈 단어 자동 정제
+    // 전곡 한국어 제목 자동 정제 및 OST 무조건 자동 분류
+    const OST_DETECTION_REGEX = /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i;
     all.forEach(song => {
-        if (song && song.title) {
-            song.title = cleanAndKoreanizeTitle(song.title);
+        if (song) {
+            if (song.title) {
+                song.title = cleanAndKoreanizeTitle(song.title);
+            }
+            // 곡 제목(또는 원제목/원곡 정보/ID)에 OST가 포함된 경우 무조건 OST로 분류
+            if (OST_DETECTION_REGEX.test(song.title || '') ||
+                OST_DETECTION_REGEX.test(song.rawTitle || '') ||
+                OST_DETECTION_REGEX.test(song.originalArtist || '') ||
+                (song.id && song.id.startsWith('ost-'))) {
+                song.type = 'ost';
+            }
         }
     });
 
@@ -6804,7 +6945,14 @@ function cleanAndKoreanizeTitle(title) {
 window.cleanAndKoreanizeTitle = cleanAndKoreanizeTitle;
 
 function getSongById(id) {
-    return getAllSongs().find(s => s.id === id) || null;
+    if (!id) return null;
+    const all = getAllSongs();
+    let found = all.find(s => s.id === id);
+    if (!found) {
+        const pureId = id.replace(/^(auto|stel)-/, '');
+        found = all.find(s => s.youtubeId === id || s.youtubeId === pureId || s.id === `stel-${pureId}` || s.id === `auto-${pureId}`);
+    }
+    return found || null;
 }
 
 function getSongsByMember(memberId) {
@@ -6827,6 +6975,9 @@ function getSongsByGen(genId) {
 function getSongsByType(type) {
     const songs = getAllSongs();
     if (!type || type === 'all') return songs;
+    if (type === 'featuring') {
+        return songs.filter(s => s.type === 'featuring' || s.type === 'ost');
+    }
     return songs.filter(s => s.type === type);
 }
 

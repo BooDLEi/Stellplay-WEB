@@ -372,7 +372,29 @@ const StorageManager = {
     getAutoDetectedSongs() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.AUTO_SONGS);
-            return data ? JSON.parse(data) : [];
+            if (!data) return [];
+            let songs = JSON.parse(data);
+            if (!Array.isArray(songs)) return [];
+
+            // DEFAULT_SONGS에 이미 정식 등록된 곡은 autoDetected 로컬 캐시에서 자동 정리 (중복 원천 차단)
+            if (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS) && window.DEFAULT_SONGS.length > 0) {
+                const defaultYtIds = new Set(window.DEFAULT_SONGS.map(s => s.youtubeId).filter(Boolean));
+                const defaultIds = new Set(window.DEFAULT_SONGS.map(s => s.id).filter(Boolean));
+                const seenYt = new Set();
+                const filtered = songs.filter(s => {
+                    const ytid = s.youtubeId || (s.id && s.id.startsWith('auto-') ? s.id.replace('auto-', '') : null);
+                    if (ytid && defaultYtIds.has(ytid)) return false;
+                    if (s.id && defaultIds.has(s.id)) return false;
+                    if (ytid && seenYt.has(ytid)) return false;
+                    if (ytid) seenYt.add(ytid);
+                    return true;
+                });
+                if (filtered.length !== songs.length) {
+                    localStorage.setItem(STORAGE_KEYS.AUTO_SONGS, JSON.stringify(filtered));
+                    songs = filtered;
+                }
+            }
+            return songs;
         } catch (e) {
             return [];
         }
@@ -382,13 +404,24 @@ const StorageManager = {
         if (!newSongs || newSongs.length === 0) return [];
         try {
             const current = this.getAutoDetectedSongs();
-            const existingIds = new Set(current.map(s => s.id || s.youtubeId));
+            const existingIds = new Set(current.map(s => s.id));
+            const existingYtIds = new Set(current.map(s => s.youtubeId).filter(Boolean));
+
+            if (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS)) {
+                window.DEFAULT_SONGS.forEach(s => {
+                    if (s.id) existingIds.add(s.id);
+                    if (s.youtubeId) existingYtIds.add(s.youtubeId);
+                });
+            }
+
             const toAdd = [];
             for (const s of newSongs) {
-                const sid = s.id || `stel-${s.youtubeId}`;
-                if (!existingIds.has(sid) && !existingIds.has(s.youtubeId)) {
+                const ytid = s.youtubeId || (s.id && s.id.startsWith('auto-') ? s.id.replace('auto-', '') : s.id);
+                const sid = s.id || `auto-${ytid}`;
+                if (!existingIds.has(sid) && (!ytid || !existingYtIds.has(ytid))) {
                     existingIds.add(sid);
-                    toAdd.push({ ...s, id: sid, isAutoAdded: true });
+                    if (ytid) existingYtIds.add(ytid);
+                    toAdd.push({ ...s, id: sid, youtubeId: ytid, isAutoAdded: true });
                 }
             }
             if (toAdd.length > 0) {
@@ -478,8 +511,10 @@ const StorageManager = {
     },
 
     async saveToServer() {
-        const isWeb = (window.location.port !== '8888');
-        if (isWeb) return;
+        const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+        const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        const endpoint = pcServer ? `${pcServer}/api/user-data` : (isLocal ? '/api/user-data' : null);
+        if (!endpoint) return;
         try {
             const payload = {
                 favorites: this.getFavorites(),
@@ -492,7 +527,7 @@ const StorageManager = {
                 hiddenSongs: this.getHiddenSongs(),
                 updatedAt: new Date().toISOString()
             };
-            await fetch('/api/user-data', {
+            await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -503,10 +538,12 @@ const StorageManager = {
     },
 
     async syncWithServer() {
-        const isWeb = (window.location.port !== '8888');
-        if (isWeb) return;
+        const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+        const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        const endpoint = pcServer ? `${pcServer}/api/user-data` : (isLocal ? '/api/user-data' : null);
+        if (!endpoint) return;
         try {
-            const resp = await fetch('/api/user-data');
+            const resp = await fetch(endpoint);
             if (!resp.ok) return;
             const data = await resp.json();
             if (!data || Object.keys(data).length === 0) return;
