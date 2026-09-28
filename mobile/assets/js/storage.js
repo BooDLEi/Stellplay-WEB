@@ -380,11 +380,18 @@ const StorageManager = {
             const isNonMusicTrack = (s) => {
                 if (!s) return true;
                 const dur = parseInt(s.duration, 10) || 0;
-                if (dur > 660) return true;
+                if (dur > 600) return true;
                 const title = (s.title || '').toLowerCase();
                 const rawTitle = (s.rawTitle || '').toLowerCase();
                 const combined = `${title} ${rawTitle}`;
-                const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                const nonSongKeywords = [
+                    'hot clip', 'hotclip', 'hot-clip', 'stellar hot', 'stella hot', 'stellive hot',
+                    '핫클립', '[클립]', '(클립)', 'clip]', '[clip',
+                    '주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내',
+                    '하이라이트', 'highlight', '비하인드', 'behind', 'q&a', 'qna', 'vlog', '브이로그',
+                    'asmr', '라디오', '전야제', '콘서트', '신규 의상', '신의상', '수영복', '여름 휴가',
+                    '여름휴가', '의상 공개', '티저', 'teaser', 'trailer', '트레일러'
+                ];
                 return nonSongKeywords.some(kw => combined.includes(kw));
             };
 
@@ -420,11 +427,18 @@ const StorageManager = {
             const isNonMusicTrack = (s) => {
                 if (!s) return true;
                 const dur = parseInt(s.duration, 10) || 0;
-                if (dur > 660) return true;
+                if (dur > 600) return true;
                 const title = (s.title || '').toLowerCase();
                 const rawTitle = (s.rawTitle || '').toLowerCase();
                 const combined = `${title} ${rawTitle}`;
-                const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                const nonSongKeywords = [
+                    'hot clip', 'hotclip', 'hot-clip', 'stellar hot', 'stella hot', 'stellive hot',
+                    '핫클립', '[클립]', '(클립)', 'clip]', '[clip',
+                    '주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내',
+                    '하이라이트', 'highlight', '비하인드', 'behind', 'q&a', 'qna', 'vlog', '브이로그',
+                    'asmr', '라디오', '전야제', '콘서트', '신규 의상', '신의상', '수영복', '여름 휴가',
+                    '여름휴가', '의상 공개', '티저', 'teaser', 'trailer', '트레일러'
+                ];
                 return nonSongKeywords.some(kw => combined.includes(kw));
             };
 

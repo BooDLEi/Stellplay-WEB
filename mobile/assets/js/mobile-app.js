@@ -2331,9 +2331,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const ytId = t.id;
                     if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`) && !existingYtIds.has(`stel-${ytId}`)) {
                         const dur = parseInt(t.duration, 10) || 0;
-                        if (dur > 660) continue; // 11분 초과 롱폼 방송은 음악 단일 트랙이 아니므로 제외
+                        if (dur > 600) continue; // 10분 초과 롱폼 방송은 음악 단일 트랙이 아니므로 제외
                         const rawTitleLower = (t.title || '').toLowerCase() + ' ' + (t.rawTitle || '').toLowerCase();
-                        const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                        const nonSongKeywords = [
+                            'hot clip', 'hotclip', 'hot-clip', 'stellar hot', 'stella hot', 'stellive hot',
+                            '핫클립', '[클립]', '(클립)', 'clip]', '[clip',
+                            '주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내',
+                            '하이라이트', 'highlight', '비하인드', 'behind', 'q&a', 'qna', 'vlog', '브이로그',
+                            'asmr', '라디오', '전야제', '콘서트', '신규 의상', '신의상', '수영복', '여름 휴가',
+                            '여름휴가', '의상 공개', '티저', 'teaser', 'trailer', '트레일러'
+                        ];
                         if (nonSongKeywords.some(kw => rawTitleLower.includes(kw))) continue;
 
                         // 1. 한국어 표준 제목 정규화
@@ -4149,10 +4156,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.sheetSabiBtn) dom.sheetSabiBtn.addEventListener('click', handleToggleSabi);
         if (dom.headerSabiBtn) dom.headerSabiBtn.addEventListener('click', handleToggleSabi);
         if (dom.btnSwitchPc) {
-            dom.btnSwitchPc.addEventListener('click', () => {
-                localStorage.setItem('stellplay_force_pc', 'true');
-                window.location.href = '../index.html?force=pc';
-            });
+            if (window.AndroidBridge) {
+                // 네이티브 앱 환경에서는 상단 PC 모드 버튼 숨김 (모바일 앱 전용 UI 유지)
+                dom.btnSwitchPc.style.display = 'none';
+            } else {
+                dom.btnSwitchPc.style.display = 'inline-flex';
+                dom.btnSwitchPc.addEventListener('click', () => {
+                    localStorage.setItem('stellplay_force_pc', 'true');
+                    localStorage.removeItem('stellplay_force_mobile');
+                    const target = location.pathname.includes('/mobile/')
+                        ? location.pathname.replace(/\/mobile\/?.*$/, '/index.html?force=pc')
+                        : '../index.html?force=pc';
+                    window.location.href = target;
+                });
+            }
         }
 
         // 셔플 토글

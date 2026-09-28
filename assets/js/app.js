@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
         searchClearBtn: document.getElementById('search-clear-btn'),
         sabiQuickToggle: document.getElementById('btn-sabi-quick'),
         btnSyncNewSongs: document.getElementById('btn-sync-new-songs'),
+        navItemSwitchMobile: document.getElementById('nav-item-switch-mobile'),
+        btnSwitchMobile: document.getElementById('btn-switch-mobile'),
+        topbarBtnSwitchMobile: document.getElementById('topbar-btn-switch-mobile'),
 
         // 네비게이션 & 뷰 컨테이너
         navHome: document.getElementById('nav-home'),
@@ -1860,13 +1863,23 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.btnViewArt.addEventListener('click', () => switchFullPlayerView('art'));
         dom.btnViewVideo.addEventListener('click', () => switchFullPlayerView('video'));
         if (dom.btnVideoFullscreen) {
-            dom.btnVideoFullscreen.addEventListener('click', () => {
+            dom.btnVideoFullscreen.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const wrap = document.getElementById('pc-youtube-player-wrap');
                 if (!wrap) return;
-                if (!document.fullscreenElement) {
-                    wrap.requestFullscreen().catch(e => console.warn(e));
+                const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+                if (!isFs) {
+                    if (wrap.requestFullscreen) {
+                        wrap.requestFullscreen().catch(err => console.warn(err));
+                    } else if (wrap.webkitRequestFullscreen) {
+                        wrap.webkitRequestFullscreen();
+                    }
                 } else {
-                    document.exitFullscreen().catch(e => console.warn(e));
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen().catch(err => console.warn(err));
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
                 }
             });
         }
@@ -1979,31 +1992,25 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // 영상 모드 전체화면 버튼 (요구사항 4)
-        if (dom.btnVideoFullscreen) {
-            dom.btnVideoFullscreen.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const container = dom.fullVideoContainer;
-                if (!container) return;
-                if (document.fullscreenElement) {
-                    if (document.exitFullscreen) document.exitFullscreen();
-                } else {
-                    if (container.requestFullscreen) {
-                        container.requestFullscreen();
-                    } else if (container.webkitRequestFullscreen) {
-                        container.webkitRequestFullscreen();
-                    }
-                }
-            });
-        }
-
-        document.addEventListener('fullscreenchange', () => {
-            const isFs = !!document.fullscreenElement;
+        // 영상 모드 전체화면 상태 변화 동기화 (아이콘 및 툴팁)
+        const handleFullscreenChange = () => {
+            const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
             if (dom.btnVideoFullscreen) {
                 dom.btnVideoFullscreen.classList.toggle('active', isFs);
                 dom.btnVideoFullscreen.title = isFs ? '전체화면 종료' : '영상 전체화면 확대';
+                dom.btnVideoFullscreen.innerHTML = isFs ? `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/>
+                    </svg>
+                ` : `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+                    </svg>
+                `;
             }
-        });
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
         // 재생중 창 대기열 플레이리스트 저장 액션들 (요구사항 3)
         if (dom.btnFullQueueSaveAll) {
@@ -2157,6 +2164,29 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.btnSyncNewSongs.addEventListener('click', () => {
                 triggerBackgroundSync(true);
             });
+        }
+
+        // PC 웹 -> 모바일 웹 버전 전환 버튼
+        const isPyWebView = typeof window.pywebview !== 'undefined';
+        if (isPyWebView) {
+            // 데스크톱 앱(pywebview)에서는 모바일 전환 버튼 숨김
+            if (dom.navItemSwitchMobile) dom.navItemSwitchMobile.style.display = 'none';
+            if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.style.display = 'none';
+        } else {
+            const handleSwitchToMobile = (e) => {
+                e.preventDefault();
+                try {
+                    localStorage.removeItem('stellplay_force_pc');
+                    localStorage.setItem('stellplay_force_mobile', 'true');
+                } catch (_) {}
+                const currentPath = location.pathname;
+                const targetPath = currentPath.endsWith('/') 
+                    ? currentPath + 'mobile/' 
+                    : currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + 'mobile/';
+                window.location.href = targetPath;
+            };
+            if (dom.btnSwitchMobile) dom.btnSwitchMobile.addEventListener('click', handleSwitchToMobile);
+            if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.addEventListener('click', handleSwitchToMobile);
         }
 
         // 풀플레이어 현재 재생 곡 정보 수정 버튼
@@ -3980,9 +4010,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     const ytId = t.id;
                     if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`) && !existingYtIds.has(`stel-${ytId}`)) {
                         const dur = parseInt(t.duration, 10) || 0;
-                        if (dur > 660) continue; // 11분 초과 롱폼 방송은 음악 단일 트랙이 아니므로 제외
+                        if (dur > 600) continue; // 10분 초과 롱폼 방송은 음악 단일 트랙이 아니므로 제외
                         const rawTitleLower = (t.title || '').toLowerCase() + ' ' + (t.rawTitle || '').toLowerCase();
-                        const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                        const nonSongKeywords = [
+                            'hot clip', 'hotclip', 'hot-clip', 'stellar hot', 'stella hot', 'stellive hot',
+                            '핫클립', '[클립]', '(클립)', 'clip]', '[clip',
+                            '주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내',
+                            '하이라이트', 'highlight', '비하인드', 'behind', 'q&a', 'qna', 'vlog', '브이로그',
+                            'asmr', '라디오', '전야제', '콘서트', '신규 의상', '신의상', '수영복', '여름 휴가',
+                            '여름휴가', '의상 공개', '티저', 'teaser', 'trailer', '트레일러'
+                        ];
                         if (nonSongKeywords.some(kw => rawTitleLower.includes(kw))) continue;
 
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');

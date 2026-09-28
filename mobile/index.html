@@ -33,6 +33,15 @@
                     <span class="logo-title">StellPlay</span>
                 </div>
                 <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+                    <!-- 웹 브라우저 접속 시 PC 버전 전환 버튼 (안드로이드 앱에서는 JS로 자동 숨김) -->
+                    <button class="m-header-pc-btn" id="m-btn-switch-pc" type="button" title="PC 웹 버전으로 전환">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                        <span>PC 모드</span>
+                    </button>
                     <button class="theme-toggle-switch" id="m-btn-top-theme" type="button" role="switch" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환">
                         <div class="theme-switch-track">
                             <span class="track-icon track-sun" aria-hidden="true">
