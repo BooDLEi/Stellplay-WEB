@@ -345,6 +345,11 @@ class MobilePlayer {
                                     }
                                 } else if (event.data === window.YT.PlayerState.PAUSED) {
                                     // 화면 잠금 또는 백그라운드 전환으로 인해 브라우저에 의해 일시정지되거나 사용자가 일시정지한 경우
+                                    if (document.hidden && !this.isUserPaused) {
+                                        // 백그라운드 전환으로 인한 브라우저 강제 일시정지 시: 미디어 세션 및 킵얼라이브 유지
+                                        try { this.silentAudio.play().catch(() => {}); } catch (e) {}
+                                        return;
+                                    }
                                     this.isPlaying = false;
                                     this._releaseWakeLock();
                                     try { this.silentAudio.pause(); } catch (e) {}
@@ -994,11 +999,15 @@ class MobilePlayer {
             return;
         }
 
-        // PC 서버 IP가 설정된 경우 홈 Wi-Fi를 통한 고음질 yt-dlp 스트림 시도
+        // PC 서버 IP 또는 현재 호스팅 서버 오리진을 통한 고음질 yt-dlp 스트림 시도 (백그라운드 영구 재생 및 광고 0% 보장)
         const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
-        if (pcServer) {
+        const serverOrigin = (window.location.protocol.startsWith('http') && !['localhost', '127.0.0.1', 'appassets.androidplatform.net'].includes(window.location.hostname))
+            ? window.location.origin
+            : '';
+        const effectiveServer = pcServer || serverOrigin;
+        if (effectiveServer) {
             this.activeEngine = 'audio';
-            sourceUrl = `${pcServer}/api/audio?id=${song.youtubeId}`;
+            sourceUrl = `${effectiveServer}/api/audio?id=${song.youtubeId}`;
             this.audio.addEventListener('loadedmetadata', applyTargetStart, { once: true });
             this.audio.addEventListener('canplay', applyTargetStart, { once: true });
             this.audio.src = sourceUrl;
@@ -1011,7 +1020,7 @@ class MobilePlayer {
                 }));
                 return;
             } catch (err) {
-                console.warn('[PC Server Play Failed, switching to direct YouTube engine]', err);
+                console.warn('[Server Audio Stream Failed, switching to direct YouTube engine]', err);
             }
         }
 
@@ -1271,11 +1280,15 @@ class MobilePlayer {
                 this._stopYtTimer();
 
                 this.activeEngine = 'native';
-                window.AndroidBridge.playIndexNative(this.queueIndex);
-                if (curSec > 0 && typeof window.AndroidBridge.seekToNative === 'function') {
-                    setTimeout(() => {
-                        try { window.AndroidBridge.seekToNative(Math.floor(curSec)); } catch (e) {}
-                    }, 400);
+                if (typeof window.AndroidBridge.playIndexWithSeekNative === 'function') {
+                    window.AndroidBridge.playIndexWithSeekNative(this.queueIndex, Math.floor(curSec));
+                } else {
+                    window.AndroidBridge.playIndexNative(this.queueIndex);
+                    if (curSec > 0 && typeof window.AndroidBridge.seekToNative === 'function') {
+                        setTimeout(() => {
+                            try { window.AndroidBridge.seekToNative(Math.floor(curSec)); } catch (e) {}
+                        }, 400);
+                    }
                 }
             } else {
                 // 웹 브라우저 환경: 광고 오버레이 및 배너 즉시 리셋하고 앨범 모드 복귀
@@ -1285,6 +1298,27 @@ class MobilePlayer {
                 this.isAdShieldActive = false;
                 window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
                 window.dispatchEvent(new CustomEvent('mobileplayer:viewModeChanged', { detail: { mode: 'art' } }));
+
+                const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+                const serverOrigin = (window.location.protocol.startsWith('http') && !['localhost', '127.0.0.1', 'appassets.androidplatform.net'].includes(window.location.hostname))
+                    ? window.location.origin
+                    : '';
+                const effectiveServer = pcServer || serverOrigin;
+                if (effectiveServer && this.currentSong) {
+                    const curSec = (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getCurrentTime === 'function')
+                        ? (this.ytPlayer.getCurrentTime() || 0)
+                        : (this.audio.currentTime || 0);
+                    if (this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
+                        try { this.ytPlayer.pauseVideo(); } catch (e) {}
+                    }
+                    this._stopYtTimer();
+                    this.activeEngine = 'audio';
+                    this.audio.src = `${effectiveServer}/api/audio?id=${this.currentSong.youtubeId}`;
+                    try { this.audio.currentTime = curSec; } catch (e) {}
+                    if (this.isPlaying) {
+                        this.audio.play().catch(() => {});
+                    }
+                }
             }
         }
         if (mode === 'video' && this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {

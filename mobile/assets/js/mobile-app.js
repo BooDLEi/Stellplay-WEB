@@ -299,6 +299,75 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/"/g, '&quot;');
     }
 
+    // 앱 내 커스텀 선택 알림창 (시스템 'http://localhost' 얼럿 완전 대체)
+    function showAppConfirmModal(options) {
+        const {
+            title = '알림',
+            message = '',
+            confirmText = '확인',
+            cancelText = '취소',
+            isDestructive = false,
+            onConfirm = null,
+            onCancel = null
+        } = typeof options === 'string' ? { message: options } : (options || {});
+
+        let modal = document.getElementById('m-modal-confirm');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.className = 'mobile-modal';
+            modal.id = 'm-modal-confirm';
+            modal.innerHTML = `
+                <div class="modal-backdrop" id="m-confirm-backdrop"></div>
+                <div class="modal-content" style="max-width:320px; width:88%; text-align:center; padding:22px 20px 18px; border-radius:20px;">
+                    <div style="font-size:1.05rem; font-weight:700; margin-bottom:10px;" id="m-confirm-title">알림</div>
+                    <div id="m-confirm-message" style="font-size:0.88rem; line-height:1.55; color:var(--text-secondary); margin-bottom:20px; white-space:pre-line; word-break:keep-all;"></div>
+                    <div style="display:flex; gap:10px; width:100%;">
+                        <button type="button" id="m-btn-confirm-cancel" style="flex:1; padding:10px; border-radius:12px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.06); color:var(--text-primary); font-size:0.85rem; font-weight:600; cursor:pointer;">취소</button>
+                        <button type="button" id="m-btn-confirm-ok" style="flex:1; padding:10px; border-radius:12px; border:none; background:var(--theme-color); color:#fff; font-size:0.85rem; font-weight:700; cursor:pointer;">확인</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const titleEl = modal.querySelector('#m-confirm-title');
+        const msgEl = modal.querySelector('#m-confirm-message');
+        const btnCancel = modal.querySelector('#m-btn-confirm-cancel');
+        const btnOk = modal.querySelector('#m-btn-confirm-ok');
+        const backdrop = modal.querySelector('#m-confirm-backdrop');
+
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+        if (btnCancel) btnCancel.textContent = cancelText;
+        if (btnOk) {
+            btnOk.textContent = confirmText;
+            btnOk.style.background = isDestructive ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'var(--theme-color)';
+        }
+
+        const closeModal = () => {
+            modal.classList.remove('open');
+            btnOk.onclick = null;
+            btnCancel.onclick = null;
+            backdrop.onclick = null;
+        };
+
+        btnOk.onclick = () => {
+            closeModal();
+            if (typeof onConfirm === 'function') onConfirm();
+        };
+        btnCancel.onclick = () => {
+            closeModal();
+            if (typeof onCancel === 'function') onCancel();
+        };
+        backdrop.onclick = () => {
+            closeModal();
+            if (typeof onCancel === 'function') onCancel();
+        };
+
+        modal.classList.add('open');
+    }
+    window.showAppConfirmModal = showAppConfirmModal;
+
     // 화면 테마 설정 (라이트 / 다크 모드)
     function applyMobileTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
@@ -1101,11 +1170,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const pl = playlists.find(p => p.id === playlistId);
         if (!pl) return;
 
-        if (confirm(`'${pl.name}' 재생목록을 완전히 삭제하시겠습니까?`)) {
-            StorageManager.deletePlaylist(playlistId);
-            showToast(`'${pl.name}' 재생목록이 삭제되었습니다.`);
-            closePlaylistDetail();
-        }
+        showAppConfirmModal({
+            title: '재생목록 삭제',
+            message: `'${pl.name}' 재생목록을 완전히 삭제하시겠습니까?`,
+            confirmText: '삭제',
+            isDestructive: true,
+            onConfirm: () => {
+                StorageManager.deletePlaylist(playlistId);
+                showToast(`'${pl.name}' 재생목록이 삭제되었습니다.`);
+                closePlaylistDetail();
+            }
+        });
     }
 
     // ===================================================================
@@ -1445,17 +1520,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const count = state.offlineSelectedSongIds.size;
-        if (!confirm(`선택한 ${count}곡을 오프라인 저장소에서 완전히 삭제하시겠습니까?`)) {
-            return;
-        }
-
-        const idsToDelete = Array.from(state.offlineSelectedSongIds);
-        await window.OfflineDB.deleteTracks(idsToDelete);
-        showToast(`선택한 ${count}곡이 오프라인에서 완전히 삭제되었습니다.`);
-        toggleOfflineSelectMode(false);
-        await refreshOfflineCacheState();
-        renderOfflineTracks();
-        renderHomeTracks();
+        showAppConfirmModal({
+            title: '오프라인 저장소 삭제',
+            message: `선택한 ${count}곡을 오프라인 저장소에서 완전히 삭제하시겠습니까?`,
+            confirmText: '삭제',
+            isDestructive: true,
+            onConfirm: async () => {
+                const idsToDelete = Array.from(state.offlineSelectedSongIds);
+                await window.OfflineDB.deleteTracks(idsToDelete);
+                showToast(`선택한 ${count}곡이 오프라인에서 완전히 삭제되었습니다.`);
+                toggleOfflineSelectMode(false);
+                await refreshOfflineCacheState();
+                renderOfflineTracks();
+                renderHomeTracks();
+            }
+        });
     }
 
     // ===================================================================
@@ -2251,6 +2330,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 for (const t of rawTracks) {
                     const ytId = t.id;
                     if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`) && !existingYtIds.has(`stel-${ytId}`)) {
+                        const dur = parseInt(t.duration, 10) || 0;
+                        if (dur > 660) continue; // 11분 초과 롱폼 방송은 음악 단일 트랙이 아니므로 제외
+                        const rawTitleLower = (t.title || '').toLowerCase() + ' ' + (t.rawTitle || '').toLowerCase();
+                        const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                        if (nonSongKeywords.some(kw => rawTitleLower.includes(kw))) continue;
+
                         // 1. 한국어 표준 제목 정규화
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');
 
@@ -2433,12 +2518,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const isSaved = state.offlineSongIds.has(song.id);
         if (isSaved) {
-            if (confirm(`[${song.title}] 곡을 오프라인 저장소에서 삭제하시겠습니까?`)) {
-                await window.OfflineDB.deleteTrack(song.id);
-                showToast(`[${song.title}] 오프라인 저장소에서 삭제되었습니다.`);
-                await refreshOfflineCacheState();
-                renderAllViews();
-            }
+            showAppConfirmModal({
+                title: '오프라인 저장소 삭제',
+                message: `[${song.title}] 곡을 오프라인 저장소에서 삭제하시겠습니까?`,
+                confirmText: '삭제',
+                isDestructive: true,
+                onConfirm: async () => {
+                    await window.OfflineDB.deleteTrack(song.id);
+                    showToast(`[${song.title}] 오프라인 저장소에서 삭제되었습니다.`);
+                    await refreshOfflineCacheState();
+                    renderAllViews();
+                }
+            });
             return;
         }
 
@@ -2501,6 +2592,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 전체화면 시트
         dom.sheetAlbumImg.src = thumb;
         dom.sheetSongTitle.textContent = song.title;
+        if (dom.sheetSongArtist) {
+            dom.sheetSongArtist.textContent = song.artist + (song.originalArtist ? ' • ' + song.originalArtist : '');
+        }
         if (dom.sheetModeBadge) {
             dom.sheetModeBadge.textContent = isOffline ? 'OFFLINE PLAYBACK' : (player.sabiMode ? 'SABI HIGHLIGHT' : 'NOW PLAYING');
             dom.sheetModeBadge.style.color = isOffline ? '#10b981' : (player.sabiMode ? '#f59e0b' : 'var(--text-muted)');
@@ -3021,11 +3115,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 재생목록 상세 감상 기록 비우기
         if (dom.btnPlaylistDetailClearHistory) {
             dom.btnPlaylistDetailClearHistory.addEventListener('click', () => {
-                if (confirm('최근 감상 기록을 모두 비우시겠습니까?')) {
-                    StorageManager.clearHistory();
-                    showToast('최근 감상 기록이 모두 지워졌습니다.');
-                    openPlaylistDetail('pl-history');
-                }
+                showAppConfirmModal({
+                    title: '감상 기록 비우기',
+                    message: '최근 감상 기록을 모두 비우시겠습니까?',
+                    confirmText: '비우기',
+                    isDestructive: true,
+                    onConfirm: () => {
+                        StorageManager.clearHistory();
+                        showToast('최근 감상 기록이 모두 지워졌습니다.');
+                        openPlaylistDetail('pl-history');
+                    }
+                });
             });
         }
 
@@ -3183,13 +3283,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.btnThemeDark) {
             dom.btnThemeDark.addEventListener('click', () => {
                 applyMobileTheme('dark');
-                showToast('🌙 다크 모드가 적용되었습니다.');
             });
         }
         if (dom.btnThemeLight) {
             dom.btnThemeLight.addEventListener('click', () => {
                 applyMobileTheme('light');
-                showToast('☀️ 라이트 모드가 적용되었습니다.');
             });
         }
         if (dom.btnTopTheme) {
@@ -3197,7 +3295,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const cur = document.documentElement.getAttribute('data-theme') || 'dark';
                 const nextTheme = cur === 'dark' ? 'light' : 'dark';
                 applyMobileTheme(nextTheme);
-                showToast(nextTheme === 'dark' ? '🌙 다크 모드가 적용되었습니다.' : '☀️ 라이트 모드가 적용되었습니다.');
             });
         }
 
@@ -3247,13 +3344,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.addEventListener('click', () => syncNewSongs(true));
         if (dom.btnRestoreHiddenSettings) {
             dom.btnRestoreHiddenSettings.addEventListener('click', () => {
-                if (confirm('숨겨졌던 모든 곡을 라이브러리에 다시 복원하시겠습니까?')) {
-                    if (window.StorageManager) {
-                        window.StorageManager.restoreAllHiddenSongs();
+                showAppConfirmModal({
+                    title: '숨긴 곡 복원',
+                    message: '숨겨졌던 모든 곡을 라이브러리에 다시 복원하시겠습니까?',
+                    confirmText: '복원',
+                    onConfirm: () => {
+                        if (window.StorageManager) {
+                            window.StorageManager.restoreAllHiddenSongs();
+                        }
+                        renderAllViews();
+                        showToast('🎉 숨겨졌던 모든 곡이 정상 복원되었습니다!');
                     }
-                    renderAllViews();
-                    showToast('🎉 숨겨졌던 모든 곡이 정상 복원되었습니다!');
-                }
+                });
             });
         }
 
@@ -3368,6 +3470,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 e.stopPropagation();
                 if (player && typeof player.skipAd === 'function') {
                     player.skipAd();
+                }
+            });
+        }
+
+        const mBtnVideoFs = document.getElementById('m-btn-video-fullscreen');
+        if (mBtnVideoFs) {
+            mBtnVideoFs.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const target = document.getElementById('m-sheet-video-box') || document.getElementById('m-youtube-player-wrap');
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    if (target.requestFullscreen) {
+                        target.requestFullscreen().catch(() => {});
+                    } else if (target.webkitRequestFullscreen) {
+                        target.webkitRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen().catch(() => {});
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
                 }
             });
         }
@@ -3761,21 +3884,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const isCustom = song.id && (song.id.startsWith('custom-') || song.isCustom);
                 if (isCustom) {
-                    if (confirm(`[${song.title}] 커스텀 곡을 완전히 삭제하시겠습니까?`)) {
-                        if (window.StorageManager) {
-                            window.StorageManager.deleteCustomSong(song.id);
+                    showAppConfirmModal({
+                        title: '커스텀 곡 삭제',
+                        message: `[${song.title}] 커스텀 곡을 완전히 삭제하시겠습니까?`,
+                        confirmText: '삭제',
+                        isDestructive: true,
+                        onConfirm: () => {
+                            if (window.StorageManager) {
+                                window.StorageManager.deleteCustomSong(song.id);
+                            }
+                            showToast(`[${song.title}] 곡이 삭제되었습니다.`);
+                            renderAllViews();
                         }
-                        showToast(`[${song.title}] 곡이 삭제되었습니다.`);
-                        renderAllViews();
-                    }
+                    });
                 } else {
-                    if (confirm(`[${song.title}] 곡을 라이브러리에서 숨기시겠습니까?\n(설정 탭에서 언제든 다시 복원할 수 있습니다)`)) {
-                        if (window.StorageManager) {
-                            window.StorageManager.hideSong(song.id);
+                    showAppConfirmModal({
+                        title: '곡 숨기기',
+                        message: `[${song.title}] 곡을 라이브러리에서 숨기시겠습니까?\n(설정 탭에서 언제든 다시 복원할 수 있습니다)`,
+                        confirmText: '숨기기',
+                        isDestructive: true,
+                        onConfirm: () => {
+                            if (window.StorageManager) {
+                                window.StorageManager.hideSong(song.id);
+                            }
+                            showToast(`[${song.title}] 곡이 숨겨졌습니다.`);
+                            renderAllViews();
                         }
-                        showToast(`[${song.title}] 곡이 숨겨졌습니다.`);
-                        renderAllViews();
-                    }
+                    });
                 }
             });
         }
@@ -3971,14 +4106,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.btnResetSongEdit.addEventListener('click', () => {
                 const songId = dom.editSongId.value;
                 if (!songId) return;
-                if (confirm('이 곡의 수정 내용을 모두 지우고 기본 정보로 되돌리시겠습니까?')) {
-                    if (window.StorageManager) {
-                        window.StorageManager.resetSongOverride(songId);
+                showAppConfirmModal({
+                    title: '곡 정보 초기화',
+                    message: '이 곡의 수정 내용을 모두 지우고 기본 정보로 되돌리시겠습니까?',
+                    confirmText: '초기화',
+                    isDestructive: true,
+                    onConfirm: () => {
+                        if (window.StorageManager) {
+                            window.StorageManager.resetSongOverride(songId);
+                        }
+                        showToast('곡 정보가 기본값으로 복원되었습니다.');
+                        closeEditSongModal();
+                        renderAllViews();
                     }
-                    showToast('곡 정보가 기본값으로 복원되었습니다.');
-                    closeEditSongModal();
-                    renderAllViews();
-                }
+                });
             });
         }
 

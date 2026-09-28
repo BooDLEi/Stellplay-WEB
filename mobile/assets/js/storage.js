@@ -377,22 +377,36 @@ const StorageManager = {
             if (!Array.isArray(songs)) return [];
 
             // DEFAULT_SONGS에 이미 정식 등록된 곡은 autoDetected 로컬 캐시에서 자동 정리 (중복 원천 차단)
-            if (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS) && window.DEFAULT_SONGS.length > 0) {
-                const defaultYtIds = new Set(window.DEFAULT_SONGS.map(s => s.youtubeId).filter(Boolean));
-                const defaultIds = new Set(window.DEFAULT_SONGS.map(s => s.id).filter(Boolean));
-                const seenYt = new Set();
-                const filtered = songs.filter(s => {
-                    const ytid = s.youtubeId || (s.id && s.id.startsWith('auto-') ? s.id.replace('auto-', '') : null);
-                    if (ytid && defaultYtIds.has(ytid)) return false;
-                    if (s.id && defaultIds.has(s.id)) return false;
-                    if (ytid && seenYt.has(ytid)) return false;
-                    if (ytid) seenYt.add(ytid);
-                    return true;
-                });
-                if (filtered.length !== songs.length) {
-                    localStorage.setItem(STORAGE_KEYS.AUTO_SONGS, JSON.stringify(filtered));
-                    songs = filtered;
-                }
+            const isNonMusicTrack = (s) => {
+                if (!s) return true;
+                const dur = parseInt(s.duration, 10) || 0;
+                if (dur > 660) return true;
+                const title = (s.title || '').toLowerCase();
+                const rawTitle = (s.rawTitle || '').toLowerCase();
+                const combined = `${title} ${rawTitle}`;
+                const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                return nonSongKeywords.some(kw => combined.includes(kw));
+            };
+
+            const defaultYtIds = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS)) 
+                ? new Set(window.DEFAULT_SONGS.map(s => s.youtubeId).filter(Boolean)) 
+                : null;
+            const defaultIds = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS)) 
+                ? new Set(window.DEFAULT_SONGS.map(s => s.id).filter(Boolean)) 
+                : null;
+            const seenYt = new Set();
+            const filtered = songs.filter(s => {
+                if (isNonMusicTrack(s)) return false;
+                const ytid = s.youtubeId || (s.id && s.id.startsWith('auto-') ? s.id.replace('auto-', '') : null);
+                if (ytid && defaultYtIds && defaultYtIds.has(ytid)) return false;
+                if (s.id && defaultIds && defaultIds.has(s.id)) return false;
+                if (ytid && seenYt.has(ytid)) return false;
+                if (ytid) seenYt.add(ytid);
+                return true;
+            });
+            if (filtered.length !== songs.length) {
+                localStorage.setItem(STORAGE_KEYS.AUTO_SONGS, JSON.stringify(filtered));
+                songs = filtered;
             }
             return songs;
         } catch (e) {
@@ -403,6 +417,17 @@ const StorageManager = {
     addAutoDetectedSongs(newSongs) {
         if (!newSongs || newSongs.length === 0) return [];
         try {
+            const isNonMusicTrack = (s) => {
+                if (!s) return true;
+                const dur = parseInt(s.duration, 10) || 0;
+                if (dur > 660) return true;
+                const title = (s.title || '').toLowerCase();
+                const rawTitle = (s.rawTitle || '').toLowerCase();
+                const combined = `${title} ${rawTitle}`;
+                const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                return nonSongKeywords.some(kw => combined.includes(kw));
+            };
+
             const current = this.getAutoDetectedSongs();
             const existingIds = new Set(current.map(s => s.id));
             const existingYtIds = new Set(current.map(s => s.youtubeId).filter(Boolean));
@@ -416,6 +441,7 @@ const StorageManager = {
 
             const toAdd = [];
             for (const s of newSongs) {
+                if (isNonMusicTrack(s)) continue;
                 const ytid = s.youtubeId || (s.id && s.id.startsWith('auto-') ? s.id.replace('auto-', '') : s.id);
                 const sid = s.id || `auto-${ytid}`;
                 if (!existingIds.has(sid) && (!ytid || !existingYtIds.has(ytid))) {

@@ -2617,6 +2617,7 @@ body::after {
     z-index: 100;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -2668,7 +2669,8 @@ body::after {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
-    overflow-y: auto;
+    overflow: hidden;
+    min-height: 0;
     box-sizing: border-box;
 }
 
@@ -2826,16 +2828,14 @@ body::after {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    opacity: 0;
+    opacity: 0.85;
     transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
-    z-index: 110;
+    z-index: 120;
 }
 
-.youtube-view-box:hover .btn-video-fullscreen-toggle {
-    opacity: 1;
-}
-
+.youtube-view-box:hover .btn-video-fullscreen-toggle,
 .btn-video-fullscreen-toggle:hover {
+    opacity: 1;
     background: rgba(0, 0, 0, 0.9);
     transform: scale(1.08);
 }

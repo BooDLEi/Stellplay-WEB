@@ -1806,12 +1806,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        function syncDockTransition() {
+            let start = performance.now();
+            function step() {
+                updatePcDockPosition();
+                if (performance.now() - start < 400 && dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open')) {
+                    requestAnimationFrame(step);
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
         // 대기열 버튼 (메인화면: 서랍 토글 / 재생창: 대기열 패널 온오프 토글)
         if (dom.btnToggleQueueDrawer) {
             dom.btnToggleQueueDrawer.addEventListener('click', () => {
                 if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open')) {
                     dom.fullPlayerModal.classList.toggle('hide-queue');
                     updateFullPlayerQueueToggleBtn();
+                    syncDockTransition();
                 } else {
                     toggleQueueDrawer();
                 }
@@ -1822,6 +1834,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 dom.fullPlayerModal.classList.toggle('hide-queue');
                 updateFullPlayerQueueToggleBtn();
+                syncDockTransition();
             });
         }
         if (dom.btnCloseDrawer) {
@@ -3966,6 +3979,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const t of data.tracks) {
                     const ytId = t.id;
                     if (!existingYtIds.has(ytId) && !existingYtIds.has(`auto-${ytId}`) && !existingYtIds.has(`stel-${ytId}`)) {
+                        const dur = parseInt(t.duration, 10) || 0;
+                        if (dur > 660) continue; // 11분 초과 롱폼 방송은 음악 단일 트랙이 아니므로 제외
+                        const rawTitleLower = (t.title || '').toLowerCase() + ' ' + (t.rawTitle || '').toLowerCase();
+                        const nonSongKeywords = ['주년', '기념 방송', '기념방송', '다시보기', '풀영상', '풀버전', '잡담', '공지', '안내', '하이라이트', '비하인드', 'q&a', 'qna', 'vlog', '브이로그', 'asmr', '라디오', '전야제'];
+                        if (nonSongKeywords.some(kw => rawTitleLower.includes(kw))) continue;
+
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');
                         const textToAnalyze = `${t.title || ''} ${t.uploader || ''} ${t.channelTitle || ''}`;
                         let detected = detectMembersFromText(textToAnalyze);
