@@ -4010,9 +4010,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             genKey = (gens.size === 1) ? Array.from(gens)[0] : 'group';
                         }
 
-                        const dur = parseInt(t.duration, 10) || 200;
-                        const sStart = Math.floor(dur * 0.25);
-                        const sEnd = Math.min(dur - 5, sStart + 35);
+                        const finalDur = dur > 0 ? dur : 200;
+                        const sStart = Math.floor(finalDur * 0.25);
+                        const sEnd = Math.min(finalDur - 5, sStart + 35);
                         const publishedAt = t.publishedAt || (t.upload_date ? `${t.upload_date.slice(0,4)}-${t.upload_date.slice(4,6)}-${t.upload_date.slice(6,8)}` : new Date().toISOString().split('T')[0]);
 
                         const isOst = (t.defaultType === 'ost') ||
