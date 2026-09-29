@@ -1,11 +1,11 @@
 {
   "success": true,
-  "count": 87,
-  "updatedAt": "2026-09-27T19:16:01.056325+00:00",
+  "count": 83,
+  "updatedAt": "2026-09-29T03:05:03.378688+00:00",
   "tracks": [
     {
       "id": "Qngf5HNfl6Q",
-      "title": "소녀레이 (少女レイ)",
+      "title": "소녀레이(少女レイ) - みきとP",
       "rawTitle": "소녀레이(少女レイ) - みきとP | 시라유키 히나 x 유즈하 리코 Cover",
       "duration": 290,
       "uploader": "시라유키 히나 SHIRAYUKI HINA",
@@ -17,74 +17,14 @@
       "defaultType": "cover"
     },
     {
-      "id": "OlJ-7k9Trm0",
-      "title": "Confrontation (지킬 앤 하이드 OST)",
-      "rawTitle": "마시로 - Confrontation 방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
-      "duration": 224,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "ost"
-    },
-    {
       "id": "FzefgoF26Ac",
-      "title": "여우의 별자리 「심월과 달의 노래」 (명조 OST)",
+      "title": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)",
       "rawTitle": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)ㅣ아카네 리제(Akane Lize) 【COVER】",
-      "duration": 218,
+      "duration": 219,
       "uploader": "아카네 리제 AKANE LIZE",
       "defaultMember": "lize",
       "members": [
         "lize"
-      ],
-      "defaultType": "ost"
-    },
-    {
-      "id": "Da77IyHlwao",
-      "title": "웃는남자 (뮤지컬 웃는남자 OST)",
-      "rawTitle": "마시로 - 웃는남자 방구석 뮤지컬 [ 웃는남자 ] (4k)",
-      "duration": 221,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "ost"
-    },
-    {
-      "id": "F7kdEX0VRss",
-      "title": "Dance The Night Away [3D Live]",
-      "rawTitle": "[4K] Dance The Night Away - TWICE(트와이스) / 하나코 나나 3D Cover",
-      "duration": 186,
-      "uploader": "하나코 나나 HANAKO NANA",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "j_RAn7yvq_0",
-      "title": "Alive 2 (지킬 앤 하이드 OST)",
-      "rawTitle": "마시로 -  Alive 2  방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
-      "duration": 102,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "ost"
-    },
-    {
-      "id": "jHc5yW6iOPk",
-      "title": "Land of Lola (킹키부츠 OST)",
-      "rawTitle": "마시로 - Land of Lola 방구석 뮤지컬 [ 킹키부츠 ] (4k)",
-      "duration": 215,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
       ],
       "defaultType": "ost"
     },
@@ -648,32 +588,6 @@
       "defaultType": "ost"
     },
     {
-      "id": "yA25-F9SJh0",
-      "title": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』",
-      "rawTitle": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』 / 텐코 시부키(Tenko Shibuki) cover",
-      "duration": 222,
-      "uploader": "텐코 시부키 TENKO SHIBUKI",
-      "defaultMember": "shibuki",
-      "members": [
-        "shibuki"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "UcFBb927-kU",
-      "title": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN",
-      "rawTitle": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN | Shirayuki Hina x Akane Rize Cover",
-      "duration": 283,
-      "uploader": "시라유키 히나 SHIRAYUKI HINA",
-      "defaultMember": "group",
-      "members": [
-        "hina",
-        "lize",
-        "rin"
-      ],
-      "defaultType": "cover"
-    },
-    {
       "id": "ZYSQLv_L26Y",
       "title": "아오쿠모 린(Aokumo Rin)",
       "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
@@ -1013,46 +927,81 @@
     },
     {
       "id": "JsnnXkxNGQU",
-      "title": "Viva Happy (비바해피)",
-      "rawTitle": "비바해피 [ビバハピ / Mitchie M] l 에버리스 (EVERYS) Cover",
+      "title": "Viva Happy [Viva Happy / Mitchie M]",
+      "rawTitle": "Viva Happy [Viva Happy / Mitchie M] | EVERYS Cover",
       "duration": 210,
-      "uploader": "스텔라이브 StelLive Official",
+      "uploader": "",
       "defaultMember": "group",
       "members": [
-        "huya",
-        "yuni"
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "OlJ-7k9Trm0",
+      "title": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ]",
+      "rawTitle": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ] (4K)",
+      "duration": 225,
+      "uploader": "",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "Da77IyHlwao",
+      "title": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ]",
+      "rawTitle": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ] (4K)",
+      "duration": 222,
+      "uploader": "",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "j_RAn7yvq_0",
+      "title": "Mashiro - Alive 2 Bedroom Musical [ Jekyll & Hyde ]",
+      "rawTitle": "Mashiro - Alive 2 Bedroom Musical [ Jekyll & Hyde ] (4K)",
+      "duration": 103,
+      "uploader": "",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "jHc5yW6iOPk",
+      "title": "Mashiro - Land of Lola, Bedroom Musical [Kinky Boots]",
+      "rawTitle": "Mashiro - Land of Lola, Bedroom Musical [Kinky Boots] (4K)",
+      "duration": 216,
+      "uploader": "",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "F7kdEX0VRss",
+      "title": "Dance The Night Away - TWICE",
+      "rawTitle": "[4K] Dance The Night Away - TWICE / Hanako Nana 3D Cover",
+      "duration": 186,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
       ],
       "defaultType": "cover"
     },
     {
       "id": "y-rdBQSrzSs",
-      "title": "Dynamite - BTS(방탄소년단)",
-      "rawTitle": "[4K] Dynamite - BTS(방탄소년단) / 하나코 나나 3D Cover",
+      "title": "Dynamite - BTS",
+      "rawTitle": "[4K] Dynamite - BTS / Hanako Nana 3D Cover",
       "duration": 200,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "qv_VVUJOt0M",
-      "title": "Catallena - Orange Caramel",
-      "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
-      "duration": 197,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "npwilOOckxY",
-      "title": "100% for You",
-      "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
-      "duration": 206,
       "uploader": "",
       "defaultMember": "nana",
       "members": [
