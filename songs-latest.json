@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 83,
-  "updatedAt": "2026-10-01T03:05:45.891539+00:00",
+  "count": 84,
+  "updatedAt": "2026-10-02T03:06:08.444133+00:00",
   "tracks": [
     {
       "id": "Qi_JLmXBFFo",
@@ -936,6 +936,18 @@
         "group"
       ],
       "defaultType": "original"
+    },
+    {
+      "id": "_Ek8LoDlsTk",
+      "title": "🩵 STELLIVE 아라하시 타비 생일 3D 🩵",
+      "rawTitle": "[4K]🩵 STELLIVE 아라하시 타비 생일 3D 🩵",
+      "duration": 200,
+      "uploader": "",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover"
     },
     {
       "id": "OlJ-7k9Trm0",
