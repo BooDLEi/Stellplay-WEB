@@ -231,6 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         addTitle: document.getElementById('m-add-title'),
         addArtist: document.getElementById('m-add-artist'),
         addType: document.getElementById('m-add-type'),
+        addMood: document.getElementById('m-add-mood'),
         addMember: document.getElementById('m-add-member'),
         addSabiStart: document.getElementById('m-add-sabi-start'),
         addSabiEnd: document.getElementById('m-add-sabi-end'),
@@ -245,6 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         editArtist: document.getElementById('m-edit-artist'),
         editOriginalArtist: document.getElementById('m-edit-original-artist'),
         editType: document.getElementById('m-edit-type'),
+        editMood: document.getElementById('m-edit-mood'),
         editPublishedAt: document.getElementById('m-edit-published-at'),
         editMember: document.getElementById('m-edit-member'),
         editSabiStart: document.getElementById('m-edit-sabi-start'),
@@ -368,6 +370,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     window.showAppConfirmModal = showAppConfirmModal;
 
+    const MEMBER_BUTTON_COLORS = {
+        all: { color: '#7c5cfc', glow: 'rgba(124, 92, 252, 0.45)' },
+        group: { color: '#7c5cfc', glow: 'rgba(124, 92, 252, 0.45)' },
+        g1: { color: '#a29bfe', glow: 'rgba(162, 155, 254, 0.45)' },
+        g2: { color: '#6c5ce7', glow: 'rgba(108, 92, 231, 0.45)' },
+        g3: { color: '#00cec9', glow: 'rgba(0, 206, 201, 0.45)' },
+        yuni: { color: '#f472b6', glow: 'rgba(244, 114, 182, 0.5)' },
+        huya: { color: '#7e22ce', glow: 'rgba(126, 34, 206, 0.55)' },
+        kanna: { color: '#1e40af', glow: 'rgba(30, 64, 175, 0.6)' },
+        hina: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' },
+        mashiro: { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.45)' },
+        lize: { color: '#ef4444', glow: 'rgba(239, 68, 68, 0.55)' },
+        tabi: { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.55)' },
+        shibuki: { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.5)' },
+        rin: { color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.55)' },
+        nana: { color: '#ff2a85', glow: 'rgba(255, 42, 133, 0.65)' },
+        riko: { color: '#84cc16', glow: 'rgba(132, 204, 22, 0.55)' }
+    };
+
+    function applyMemberTheme(memberKey) {
+        const theme = MEMBER_BUTTON_COLORS[memberKey] || MEMBER_BUTTON_COLORS.all;
+        const root = document.documentElement;
+        const isLight = root.getAttribute('data-theme') === 'light';
+        root.style.setProperty('--theme-color', theme.color);
+        root.style.setProperty('--theme-glow', theme.glow);
+        root.style.setProperty('--theme-gradient', `linear-gradient(135deg, ${theme.color}, #3b82f6)`);
+        root.style.setProperty('--theme-gradient-subtle', isLight ? `linear-gradient(135deg, ${theme.glow}, rgba(0,0,0,0.02))` : `linear-gradient(135deg, ${theme.glow}, rgba(255,255,255,0.02))`);
+    }
+
     // 화면 테마 설정 (라이트 / 다크 모드)
     function applyMobileTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
@@ -379,6 +410,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.btnTopTheme) {
             dom.btnTopTheme.setAttribute('title', theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환');
         }
+        const currentMember = (state && (state.selectedSub || state.selectedMajor)) || 'all';
+        applyMemberTheme(currentMember);
         if (window.StorageManager && typeof window.StorageManager.setSetting === 'function') {
             window.StorageManager.setSetting('theme', theme);
         } else {
@@ -413,18 +446,55 @@ document.addEventListener('DOMContentLoaded', async () => {
             navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
 
-        // 초기 실행 시 첫 곡을 대기열 및 미니 플레이어에 장착하여 즉시 재생 준비
-        if (player && !player.currentSong) {
-            const defaultSongs = (state.currentHomeSongs && state.currentHomeSongs.length > 0)
-                ? state.currentHomeSongs
-                : (window.getAllSongs ? window.getAllSongs() : []);
-            if (defaultSongs.length > 0) {
-                const firstSong = defaultSongs[0];
-                player.queue = [...defaultSongs];
-                player.queueIndex = 0;
-                player.currentSong = firstSong;
-                updatePlayerUI(firstSong, false);
+        // 유튜브뮤직 방식: 이전 재생 이력이 있으면 마지막 재생 곡 및 대기열/셔플 상태 복원 후 자동 재생
+        // 최초 앱 실행이거나 재생 이력이 없을 때는 어떤 곡도 선택/재생되지 않은 순수 대기 상태 유지
+        const hasPlayedBefore = localStorage.getItem('stellplay_has_played_before') === '1';
+        const savedShuffle = localStorage.getItem('stellplay_saved_shuffle');
+        if (player) {
+            if (savedShuffle !== null) {
+                player.isShuffle = (savedShuffle === '1');
             }
+            if (dom.sheetShuffleBtn) {
+                dom.sheetShuffleBtn.classList.toggle('active', !!player.isShuffle);
+                dom.sheetShuffleBtn.style.color = player.isShuffle ? 'var(--theme-color)' : 'var(--text-muted)';
+            }
+        }
+
+        if (hasPlayedBefore && player) {
+            const savedQueueStr = localStorage.getItem('stellplay_saved_queue');
+            const savedIndex = parseInt(localStorage.getItem('stellplay_saved_index') || '0', 10);
+            if (savedQueueStr) {
+                try {
+                    const savedQueue = JSON.parse(savedQueueStr);
+                    if (Array.isArray(savedQueue) && savedQueue.length > 0) {
+                        const targetIdx = (savedIndex >= 0 && savedIndex < savedQueue.length) ? savedIndex : 0;
+                        player.queue = savedQueue;
+                        player.queueIndex = targetIdx;
+                        updateQueueBadge();
+                        // 마지막 곡 자동 재생 (유튜브뮤직 방식)
+                        setTimeout(() => {
+                            if (player && typeof player.playQueueIndex === 'function') {
+                                player.playQueueIndex(targetIdx);
+                            }
+                        }, 300);
+                    }
+                } catch (e) {
+                    console.warn('[Auto-resume error]', e);
+                }
+            }
+        } else {
+            // 최초 실행: 아무 노래도 재생되지 않은 준비 상태 (하단 재생바는 항상 표시)
+            if (player) {
+                player.currentSong = null;
+                player.queue = [];
+                player.queueIndex = 0;
+            }
+            if (dom.miniPlayer) {
+                dom.miniPlayer.style.display = 'flex';
+            }
+            if (dom.miniTitle) dom.miniTitle.textContent = '재생할 곡을 선택하세요';
+            if (dom.miniArtist) dom.miniArtist.textContent = '스텔라이브 (Stellive)';
+            updatePlayButtonUI(false);
         }
 
         // 백그라운드 재생 중인 네이티브 서비스 상태 동기화
@@ -496,13 +566,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function refreshOfflineCacheState() {
-        state.offlineSongIds = new Set();
-        state.cachedSongIds = new Set();
-        if (dom.offlineStatsCount) dom.offlineStatsCount.textContent = '0곡 저장됨';
-        if (dom.offlineStatsSize) dom.offlineStatsSize.textContent = '0 MB 사용 중';
-        if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '0곡';
-        if (dom.tabBadgeOffline) dom.tabBadgeOffline.style.display = 'none';
-        if (dom.settingsStorageInfo) dom.settingsStorageInfo.textContent = '0 MB';
+        try {
+            if (window.OfflineDB && typeof window.OfflineDB.syncNativeOfflineTracks === 'function' && window.getAllSongs) {
+                await window.OfflineDB.syncNativeOfflineTracks(window.getAllSongs());
+            }
+            const tracks = await window.OfflineDB.getAllTracks();
+            state.offlineSongIds = new Set(tracks.map(t => t.id));
+
+            // 네이티브 오디오 캐시 동기화
+            state.cachedSongIds = new Set();
+            if (window.AndroidBridge && typeof window.AndroidBridge.getCachedSongIdsJson === 'function') {
+                try {
+                    const raw = window.AndroidBridge.getCachedSongIdsJson();
+                    const arr = JSON.parse(raw);
+                    if (Array.isArray(arr)) {
+                        arr.forEach(id => state.cachedSongIds.add(id));
+                    }
+                } catch (e) {}
+            }
+
+            const stats = await window.OfflineDB.getStorageStats();
+
+            if (dom.offlineStatsCount) dom.offlineStatsCount.textContent = `${stats.count}곡 저장됨`;
+            if (dom.offlineStatsSize) dom.offlineStatsSize.textContent = `${stats.formattedSize} 사용 중`;
+            if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = `${stats.count}곡`;
+            if (dom.settingsStorageInfo) dom.settingsStorageInfo.textContent = stats.formattedSize;
+            updateSettingsCacheInfo();
+
+            if (dom.tabBadgeOffline) {
+                if (stats.count > 0) {
+                    dom.tabBadgeOffline.style.display = 'block';
+                    dom.tabBadgeOffline.textContent = stats.count > 99 ? '99+' : stats.count;
+                } else {
+                    dom.tabBadgeOffline.style.display = 'none';
+                }
+            }
+        } catch (e) {}
     }
 
     function updateNetworkStatus() {
@@ -582,6 +681,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        applyMemberTheme(majorKey);
         renderSubFilterRow();
         requestAnimationFrame(() => {
             renderAllViews();
@@ -612,11 +712,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (state.selectedSub === item.id) {
                     state.selectedSub = null;
                     btn.classList.remove('active');
+                    applyMemberTheme(state.selectedMajor || 'all');
                 } else {
                     state.selectedSub = item.id;
                     dom.membersSubRow.querySelectorAll('.member-sub-btn').forEach(b => {
                         b.classList.toggle('active', b.dataset.sub === item.id);
                     });
+                    applyMemberTheme(item.id);
                 }
                 requestAnimationFrame(() => {
                     renderAllViews();
@@ -686,6 +788,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </div>
             <div class="m-track-actions">
+                <button class="m-btn-action btn-track-download ${isDownloaded ? 'downloaded' : (isDownloading ? 'downloading' : '')}" data-id="${song.id}" title="${isDownloaded ? '오프라인 보관됨 (삭제하려면 클릭)' : (isDownloading ? '다운로드 진행 중...' : '오프라인 다운로드')}">
+                    ${isDownloaded 
+                        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`
+                        : (isDownloading
+                            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`
+                            : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
+                          )
+                    }
+                </button>
                 <button class="m-btn-action btn-add-to-playlist" data-id="${song.id}" title="재생목록에 추가">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -725,6 +836,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else if (state.isOfflineSelectMode) {
                 toggleOfflineSongSelection(song.id);
             }
+            return;
+        }
+
+        // 2. 오프라인 다운로드 버튼 클릭
+        const dlBtn = e.target.closest('.btn-track-download');
+        if (dlBtn) {
+            e.stopPropagation();
+            handleDownloadToggle(song);
             return;
         }
 
@@ -986,7 +1105,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function renderOfflineTracks() {
         if (!dom.trackListOffline) return;
+        const records = await window.OfflineDB.getAllTracks();
+        const allOfflineSongs = records.map(r => r.song);
+
+        // 멤버 필터 및 검색 적용
+        const filteredSongs = filterSongList(allOfflineSongs, false);
+        if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = `${filteredSongs.length}곡`;
         dom.trackListOffline.innerHTML = '';
+
+        if (allOfflineSongs.length === 0) {
+            dom.trackListOffline.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+                    <div style="font-size:1.8rem; margin-bottom:8px;">✈️</div>
+                    <div style="font-weight:700; margin-bottom:4px; color:var(--text-primary);">오프라인 보관함이 비어있습니다</div>
+                    <div style="font-size:0.8rem;">곡 우측의 ⋮ 메뉴나 플레이어 상단의 다운로드 버튼을 눌러 오프라인에서도 자유롭게 감상해보세요!</div>
+                </div>
+            `;
+            return;
+        }
+
+        if (filteredSongs.length === 0) {
+            dom.trackListOffline.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">선택된 멤버/조건에 맞는 오프라인 곡이 없습니다.</div>';
+            return;
+        }
+
+        state.currentOfflineSongs = filteredSongs;
+        const frag = document.createDocumentFragment();
+        filteredSongs.forEach((song, idx) => {
+            frag.appendChild(createTrackRowElement(song, filteredSongs, idx));
+        });
+        dom.trackListOffline.appendChild(frag);
     }
 
     // ===================================================================
@@ -1423,6 +1571,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.classList.toggle('multiselect-active', state.isMultiSelectHome);
         if (dom.multiselectBar) {
             dom.multiselectBar.style.display = state.isMultiSelectHome ? 'flex' : 'none';
+            if (state.isMultiSelectHome) {
+                const isMiniActive = dom.miniPlayer && dom.miniPlayer.style.display !== 'none' && !dom.miniPlayer.classList.contains('hidden');
+                dom.multiselectBar.style.bottom = isMiniActive
+                    ? 'calc(var(--tab-height) + var(--safe-bottom) + var(--mini-player-height) + 16px)'
+                    : 'calc(var(--tab-height) + var(--safe-bottom) + 12px)';
+            }
         }
         if (!state.isMultiSelectHome) {
             state.selectedSongIds.clear();
@@ -1891,6 +2045,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function applyDetectedMembersToPicker(prefix, detected, artistInput) {
+        if (!detected || detected.length === 0) return;
+        const hasGroup = detected.includes('group') && detected.length === 1;
+        const activeMembers = detected.filter(m => m !== 'group');
+        let units = [];
+        if (activeMembers.length > 0) {
+            const g1 = ['yuni', 'huya'];
+            const g2 = ['hina', 'mashiro', 'lize', 'tabi'];
+            const g3 = ['shibuki', 'rin', 'nana', 'riko'];
+            if (g1.every(m => activeMembers.includes(m))) units.push('everlys');
+            if (g2.every(m => activeMembers.includes(m))) units.push('universe');
+            if (g3.every(m => activeMembers.includes(m))) units.push('cliche');
+        }
+        setMemberPickerState(prefix, {
+            isStellive: hasGroup,
+            units: units,
+            members: activeMembers
+        }, artistInput);
+        syncArtistFromCheckboxes(prefix, artistInput);
+    }
+
     function getSelectedMemberData(prefix) {
         const scopeRadio = document.querySelector(`input[name="${prefix}-member-scope"]:checked`);
         const isStellive = scopeRadio && scopeRadio.value === 'stellive';
@@ -2007,20 +2182,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const detected = new Set();
 
         const rules = [
-            { id: 'kanna', keywords: ['칸나', '아이리', 'kanna', 'airi', 'カンナ', '藍莉'] },
-            { id: 'yuni', keywords: ['유니', '아야츠노', 'yuni', 'ayatsuno', 'ユニ', '綾津野'] },
-            { id: 'huya', keywords: ['후야', '사키하네', '호시미야', 'huya', 'sakihane', 'hoshimiya', 'フヤ', '星宮'] },
-            { id: 'hina', keywords: ['히나', '시라유키', 'hina', 'shirayuki', 'ヒナ', '白雪'] },
-            { id: 'mashiro', keywords: ['마시로', '네네코', 'mashiro', 'neneko', 'マシロ', '音猫'] },
-            { id: 'lize', keywords: ['리제', '아카네', 'lize', 'akane', 'リゼ', '朱音'] },
-            { id: 'tabi', keywords: ['타비', '아라하시', 'tabi', 'arahashi', 'タビ', '荒橋'] },
-            { id: 'shibuki', keywords: ['시부키', '텐코', 'shibuki', 'tenko', 'シブキ', '天狐'] },
-            { id: 'rin', keywords: ['린', '아오쿠모', 'rin', 'aokumo', 'リン', '蒼雲'] },
-            { id: 'nana', keywords: ['나나', '하나코', 'nana', 'hanako', 'ナナ', '花子'] },
-            { id: 'riko', keywords: ['리코', '유즈하', 'riko', 'yuzuha', 'リコ', '柚葉'] }
+            { id: 'kanna', keywords: ['아이리 칸나', '아이리칸나', '칸나', '아이리', 'kanna', 'airi', 'airikanna', 'カンナ', '藍莉', '보라매'] },
+            { id: 'yuni', keywords: ['아야츠노 유니', '아야츠노유니', '유니', '아야츠노', 'yuni', 'ayatsuno', 'ayatsunoyuni', 'ユニ', '綾津野', '아기여우'] },
+            { id: 'huya', keywords: ['사키하네 후야', '사키하네후야', '후야', '사키하네', '호시미야', 'huya', 'sakihane', 'sakihanehuya', 'hoshimiya', 'フヤ', '星宮', '후냐'] },
+            { id: 'hina', keywords: ['시라유키 히나', '시라유키히나', '히나', '시라유키', 'hina', 'shirayuki', 'shirayukihina', 'ヒナ', '白雪', '눈송이'] },
+            { id: 'mashiro', keywords: ['네네코 마시로', '네네코마시로', '마시로', '네네코', 'mashiro', 'neneko', 'neneko_mashiro', 'マシロ', '音猫', '시로'] },
+            { id: 'lize', keywords: ['아카네 리제', '아카네리제', '리제', '아카네', 'lize', 'akane', 'akanelize', 'リゼ', '朱音'] },
+            { id: 'tabi', keywords: ['아라하시 타비', '아라하시타비', '타비', '아라하시', 'tabi', 'arahashi', 'arahashitabi', 'タビ', '荒橋', '땨비'] },
+            { id: 'shibuki', keywords: ['텐코 시부키', '텐코시부키', '시부키', '텐코', 'shibuki', 'tenko', 'tenkoshibuki', 'シブキ', '天狐', '부키'] },
+            { id: 'rin', keywords: ['아오쿠모 린', '아오쿠모린', '아오쿠모', 'aokumo rin', 'aokumo', 'aokumorin', '린', 'rin', 'リン', '蒼雲'] },
+            { id: 'nana', keywords: ['하나코 나나', '하나코나나', '하나코', 'hanako nana', 'hanako', 'hanakonana', '나나', 'nana', 'ナナ', '花子'] },
+            { id: 'riko', keywords: ['유즈하 리코', '유즈하리코', '유즈하', 'yuzuha riko', 'yuzuha', 'yuzuhariko', '리코', 'riko', 'リコ', '柚葉'] }
         ];
 
-        if (t.includes('스텔라이브') || t.includes('stellive') || t.includes('단체')) {
+        if (t.includes('스텔라이브') || t.includes('stellive') || t.includes('단체') || t.includes('전체')) {
             detected.add('group');
         }
         if (t.includes('미스틱') || t.includes('mystic')) {
@@ -2046,9 +2221,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         rules.forEach(rule => {
             for (const kw of rule.keywords) {
-                if (t.includes(kw)) {
-                    detected.add(rule.id);
-                    break;
+                if (kw.length >= 2) {
+                    if (t.includes(kw)) {
+                        detected.add(rule.id);
+                        break;
+                    }
+                } else {
+                    const regex = new RegExp(`(?:^|[\\s\\p{Punctuation}_~xX&+,/ㅣ|「『【\\[(])${kw}(?:[\\s\\p{Punctuation}_~xX&+,/ㅣ|」』】\\])]|$)`, 'u');
+                    if (regex.test(t)) {
+                        detected.add(rule.id);
+                        break;
+                    }
                 }
             }
         });
@@ -2060,11 +2243,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.detectMembersFromText = detectMembersFromText;
 
     function openAddSongModal() {
-        dom.formAddSong.reset();
-        setSelectedMembersInForm('m-add-member-chips', ['group']);
-        dom.addSabiStart.value = '45';
-        dom.addSabiEnd.value = '75';
-        dom.modalAddSong.classList.add('open');
+        if (dom.formAddSong) dom.formAddSong.reset();
+        setMemberPickerState('m-add', { isStellive: false, units: [], members: [] }, dom.addArtist);
+        const origInput = document.getElementById('m-add-original-artist');
+        if (origInput) origInput.value = '';
+        const pubInput = document.getElementById('m-add-published-at');
+        if (pubInput) pubInput.value = new Date().toISOString().split('T')[0];
+        if (dom.addSabiStart) dom.addSabiStart.value = '45';
+        if (dom.addSabiEnd) dom.addSabiEnd.value = '75';
+        if (dom.modalAddSong) dom.modalAddSong.classList.add('open');
     }
 
     function closeAddSongModal() {
@@ -2078,6 +2265,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         dom.editArtist.value = song.artist || '';
         dom.editOriginalArtist.value = song.originalArtist || '';
         dom.editType.value = song.type || 'cover';
+        if (dom.editMood) {
+            dom.editMood.value = song.mood || 'none';
+        }
         if (dom.editPublishedAt) {
             dom.editPublishedAt.value = song.publishedAt || song.releaseDate || '';
         }
@@ -2588,6 +2778,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===================================================================
     function updatePlayerUI(song, isOffline) {
         if (!song) return;
+        if (dom.miniPlayer) dom.miniPlayer.style.display = 'flex';
 
         const thumb = `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`;
 
@@ -2663,6 +2854,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 음질 및 데이터 모드 상태 표시
         const curQuality = player.getAudioQuality();
+        if (dom.dataSaverStatus) {
+            if (curQuality === 'high_always') {
+                dom.dataSaverStatus.textContent = '항상 고음질';
+                dom.dataSaverStatus.style.background = 'rgba(245, 158, 11, 0.15)';
+                dom.dataSaverStatus.style.color = '#f59e0b';
+            } else if (curQuality === 'wifi_only') {
+                dom.dataSaverStatus.textContent = 'Wi-Fi만 고음질';
+                dom.dataSaverStatus.style.background = 'rgba(56, 189, 248, 0.15)';
+                dom.dataSaverStatus.style.color = '#38bdf8';
+            } else {
+                dom.dataSaverStatus.textContent = '데이터 절약';
+                dom.dataSaverStatus.style.background = 'rgba(16, 185, 129, 0.15)';
+                dom.dataSaverStatus.style.color = 'var(--color-green)';
+            }
+        }
         if (dom.qualityBtns) {
             dom.qualityBtns.forEach(btn => {
                 const q = btn.dataset.quality;
@@ -2906,16 +3112,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const titleLower = (song.title || '').toLowerCase();
                 const fullText = `${titleLower} ${song.artist || ''} ${song.originalArtist || ''} ${song.id || ''}`.toLowerCase();
                 
-                // 1. 제외 키워드 필터링 (분위기에 어울리지 않는 곡 원천 차단)
-                if (preset.exclude_titles && preset.exclude_titles.some(ex => titleLower.includes(ex) || fullText.includes(ex))) {
-                    return;
+                // 1. 직접 지정된 분위기(mood)가 있는 경우 최우선 반영
+                let score = 0;
+                let hasExplicitMood = false;
+                if (song.mood && song.mood !== 'none') {
+                    if (song.mood === moodKey) {
+                        hasExplicitMood = true;
+                        score += 100; // 사용자가 직접 지정한 분위기 곡은 최상위 점수(+100점)
+                    } else {
+                        // 다른 분위기로 지정된 곡은 이 분위기 추천 풀에서 완전히 제외
+                        return;
+                    }
                 }
 
-                // 2. 긍정 키워드 매칭
-                let score = 0;
-                for (const kw of preset.keywords) {
-                    if (fullText.includes(kw.toLowerCase())) {
-                        score += 5;
+                if (!hasExplicitMood) {
+                    // 2. 제외 키워드 필터링 (분위기에 어울리지 않는 곡 원천 차단)
+                    if (preset.exclude_titles && preset.exclude_titles.some(ex => titleLower.includes(ex) || fullText.includes(ex))) {
+                        return;
+                    }
+
+                    // 3. 긍정 키워드 매칭
+                    for (const kw of preset.keywords) {
+                        if (fullText.includes(kw.toLowerCase())) {
+                            score += 5;
+                        }
                     }
                 }
 
@@ -3415,22 +3635,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         let mobilePlayerViewMode = 'art';
 
         function switchMobilePlayerView(mode) {
+            if (mobilePlayerViewMode === mode) return;
             mobilePlayerViewMode = mode;
             if (dom.btnViewArt) {
                 dom.btnViewArt.classList.toggle('active', mode === 'art');
-                dom.btnViewArt.style.background = mode === 'art' ? 'rgba(255,255,255,0.2)' : 'transparent';
-                dom.btnViewArt.style.color = mode === 'art' ? 'var(--text-primary)' : 'var(--text-muted)';
+                dom.btnViewArt.style.removeProperty('background');
+                dom.btnViewArt.style.removeProperty('color');
             }
             if (dom.btnViewVideo) {
                 dom.btnViewVideo.classList.toggle('active', mode === 'video');
-                dom.btnViewVideo.style.background = mode === 'video' ? 'rgba(255,255,255,0.2)' : 'transparent';
-                dom.btnViewVideo.style.color = mode === 'video' ? 'var(--text-primary)' : 'var(--text-muted)';
+                dom.btnViewVideo.style.removeProperty('background');
+                dom.btnViewVideo.style.removeProperty('color');
             }
 
             if (mode === 'video') {
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'none';
                 dockYouTubePlayer(true);
             } else {
+                if (typeof toggleVideoFullscreen === 'function') {
+                    toggleVideoFullscreen(false);
+                }
                 dockYouTubePlayer(false);
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
                 // 앨범 아트 모드일 때는 비디오 광고 오버레이 및 배너 강제 은폐
@@ -3482,25 +3706,101 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const mBtnVideoFs = document.getElementById('m-btn-video-fullscreen');
-        if (mBtnVideoFs) {
-            mBtnVideoFs.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const target = document.getElementById('m-sheet-video-box') || document.getElementById('m-youtube-player-wrap');
-                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                    if (target.requestFullscreen) {
-                        target.requestFullscreen().catch(() => {});
-                    } else if (target.webkitRequestFullscreen) {
-                        target.webkitRequestFullscreen();
-                    }
-                } else {
+        const mVideoBox = document.getElementById('m-sheet-video-box');
+
+        function toggleVideoFullscreen(forceState) {
+            const target = mVideoBox || document.getElementById('m-sheet-video-box') || document.getElementById('m-youtube-player-wrap');
+            if (!target) return;
+            const isCurrentlyFs = target.classList.contains('video-fullscreen-active') || !!document.fullscreenElement || !!document.webkitFullscreenElement;
+            const targetState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyFs;
+
+            if (targetState) {
+                target.classList.add('video-fullscreen-active');
+                if (window.AndroidBridge && typeof window.AndroidBridge.setFullscreenNative === 'function') {
+                    try { window.AndroidBridge.setFullscreenNative(true); } catch (e) {}
+                }
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                }
+                if (target.requestFullscreen) {
+                    target.requestFullscreen().catch(() => {});
+                } else if (target.webkitRequestFullscreen) {
+                    try { target.webkitRequestFullscreen(); } catch (e) {}
+                }
+                if (mBtnVideoFs) {
+                    mBtnVideoFs.title = "전체화면 종료";
+                    mBtnVideoFs.innerHTML = `
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+                        </svg>
+                    `;
+                }
+            } else {
+                target.classList.remove('video-fullscreen-active');
+                if (window.AndroidBridge && typeof window.AndroidBridge.setFullscreenNative === 'function') {
+                    try { window.AndroidBridge.setFullscreenNative(false); } catch (e) {}
+                }
+                if (screen.orientation && screen.orientation.unlock) {
+                    try { screen.orientation.unlock(); } catch (e) {}
+                }
+                if (document.fullscreenElement || document.webkitFullscreenElement) {
                     if (document.exitFullscreen) {
                         document.exitFullscreen().catch(() => {});
                     } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
+                        try { document.webkitExitFullscreen(); } catch (e) {}
                     }
+                }
+                if (mBtnVideoFs) {
+                    mBtnVideoFs.title = "전체화면 전환";
+                    mBtnVideoFs.innerHTML = `
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+                    `;
+                }
+            }
+        }
+
+        window.toggleVideoFullscreen = toggleVideoFullscreen;
+
+        if (mBtnVideoFs) {
+            mBtnVideoFs.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleVideoFullscreen();
+            });
+        }
+
+        const mBtnShuffleQueue = document.getElementById('m-btn-shuffle-queue');
+        if (mBtnShuffleQueue) {
+            mBtnShuffleQueue.addEventListener('click', () => {
+                if (player && typeof player.shuffleQueue === 'function') {
+                    if (!player.queue || player.queue.length <= 1) {
+                        showToast('대기열에 섞을 곡이 부족합니다.');
+                        return;
+                    }
+                    player.shuffleQueue();
+                    renderMobileQueue(true);
+                    showToast('🔀 현재 재생목록 순서를 무작위로 섞었습니다.');
                 }
             });
         }
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const target = mVideoBox || document.getElementById('m-sheet-video-box');
+                if (target && target.classList.contains('video-fullscreen-active')) {
+                    toggleVideoFullscreen(false);
+                }
+            }
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const target = mVideoBox || document.getElementById('m-sheet-video-box');
+                if (target && target.classList.contains('video-fullscreen-active')) {
+                    toggleVideoFullscreen(false);
+                }
+            }
+        });
 
         window.addEventListener('mobileplayer:viewModeChanged', (e) => {
             const mode = e.detail?.mode || 'art';
@@ -3530,22 +3830,68 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 미니 플레이어 탭 -> 전체화면 시트 열기
-        dom.miniLeftContent.addEventListener('click', () => {
-            document.body.classList.remove('tablet-queue-collapsed');
-            dom.fullscreenSheet.classList.add('open');
-            if (mobilePlayerViewMode === 'video') {
-                dockYouTubePlayer(true);
-            }
-            if (window.innerWidth >= 650) {
-                renderMobileQueue(true);
-            }
-        });
+        // 미니 플레이어 좌/우 슬라이드 (스와이프) 제스처 -> 이전곡 / 다음곡 전환
+        let miniTouchStartX = 0;
+        let miniTouchStartY = 0;
+        let miniIsSwiped = false;
+
+        if (dom.miniLeftContent) {
+            dom.miniLeftContent.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length > 0) {
+                    miniTouchStartX = e.touches[0].clientX;
+                    miniTouchStartY = e.touches[0].clientY;
+                    miniIsSwiped = false;
+                }
+            }, { passive: true });
+
+            dom.miniLeftContent.addEventListener('touchend', (e) => {
+                if (e.changedTouches && e.changedTouches.length > 0) {
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    const dx = endX - miniTouchStartX;
+                    const dy = endY - miniTouchStartY;
+
+                    // 수평 스와이프 판정: 가로 40px 이상 이동 및 수직 이동 대비 1.4배 이상
+                    if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+                        miniIsSwiped = true;
+                        if (dx > 0) {
+                            // 오른쪽 슬라이드: 이전곡
+                            if (player && typeof player.playPrev === 'function') {
+                                player.playPrev();
+                                showToast('⏮ 이전 곡 재생');
+                            }
+                        } else {
+                            // 왼쪽 슬라이드: 다음곡
+                            if (player && typeof player.playNext === 'function') {
+                                player.playNext();
+                                showToast('⏭ 다음 곡 재생');
+                            }
+                        }
+                        // 탭 시트 열림 방지 타이머
+                        setTimeout(() => { miniIsSwiped = false; }, 320);
+                    }
+                }
+            }, { passive: true });
+
+            // 미니 플레이어 탭 -> 전체화면 시트 열기
+            dom.miniLeftContent.addEventListener('click', (e) => {
+                if (miniIsSwiped) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+                document.body.classList.remove('tablet-queue-collapsed');
+                dom.fullscreenSheet.classList.add('open');
+                if (mobilePlayerViewMode === 'video') {
+                    dockYouTubePlayer(true);
+                }
+                if (window.innerWidth >= 650) {
+                    renderMobileQueue(true);
+                }
+            });
+        }
         dom.sheetCloseBtn.addEventListener('click', () => {
             dom.fullscreenSheet.classList.remove('open');
-            if (mobilePlayerViewMode === 'video') {
-                switchMobilePlayerView('art');
-            }
         });
 
         // 대기열 열기/닫기 및 메뉴 버튼
@@ -3623,9 +3969,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 40) {
                         // 재생창 영역에서 내리면: 메인화면으로 바로 내려가기
                         dom.fullscreenSheet.classList.remove('open');
-                        if (mobilePlayerViewMode === 'video') {
-                            switchMobilePlayerView('art');
-                        }
                         return;
                     }
                 } else {
@@ -3634,9 +3977,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (deltaY > 40) {
                             // 내리면: 메인화면으로 복귀
                             dom.fullscreenSheet.classList.remove('open');
-                            if (mobilePlayerViewMode === 'video') {
-                                switchMobilePlayerView('art');
-                            }
                         } else if (deltaY < -40) {
                             // 올리면: 재생목록(대기열) 열기
                             openQueueSheet();
@@ -3922,7 +4262,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 곡 추가 모달 핸들러
+        // 곡 추가 모달 핸들러 및 2단계 멤버 선택기 초기화
+        setupMemberPicker('m-add', dom.addArtist);
         if (dom.btnCloseAddModal) dom.btnCloseAddModal.addEventListener('click', () => closeAddSongModal());
         if (dom.btnCancelAdd) dom.btnCancelAdd.addEventListener('click', () => closeAddSongModal());
         if (dom.btnAutoFetchAdd) {
@@ -3935,28 +4276,96 @@ document.addEventListener('DOMContentLoaded', async () => {
                 dom.btnAutoFetchAdd.disabled = true;
                 dom.btnAutoFetchAdd.textContent = '분석 중...';
                 try {
-                    const resp = await fetch(`/api/info?url=${encodeURIComponent(url)}`);
-                    if (!resp.ok) throw new Error('정보 조회 실패');
-                    const data = await resp.json();
-                    if (data.title && dom.addTitle) dom.addTitle.value = cleanAndKoreanizeTitle(data.title);
-                    if (data.artist && dom.addArtist) dom.addArtist.value = cleanAndKoreanizeTitle(data.artist);
+                    let data = null;
+                    let vid = url;
+                    if (vid.includes('v=')) {
+                        vid = vid.split('v=')[1].split('&')[0];
+                    } else if (vid.includes('youtu.be/')) {
+                        vid = vid.split('youtu.be/')[1].split('?')[0];
+                    }
+
+                    // 1. 서버 API 조회 시도
+                    try {
+                        const resp = await fetch(`/api/info?url=${encodeURIComponent(url)}`);
+                        if (resp.ok) {
+                            data = await resp.json();
+                        }
+                    } catch (_) {}
+
+                    // 2. 서버 없을 때 YouTube oEmbed 폴백
+                    if (!data || !data.title) {
+                        try {
+                            const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}&format=json`;
+                            const oembedResp = await fetch(oembedUrl);
+                            if (oembedResp.ok) {
+                                const oData = await oembedResp.json();
+                                data = {
+                                    title: oData.title,
+                                    artist: oData.author_name,
+                                    author_name: oData.author_name,
+                                    duration: 200
+                                };
+                            }
+                        } catch (_) {}
+                    }
+
+                    // 3. noembed 폴백
+                    if (!data || !data.title) {
+                        try {
+                            const noembedUrl = `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}`;
+                            const noembedResp = await fetch(noembedUrl);
+                            if (noembedResp.ok) {
+                                const nData = await noembedResp.json();
+                                data = {
+                                    title: nData.title,
+                                    artist: nData.author_name,
+                                    author_name: nData.author_name,
+                                    duration: 200
+                                };
+                            }
+                        } catch (_) {}
+                    }
+
+                    if (!data || !data.title) {
+                        throw new Error('정보 조회 실패');
+                    }
+
+                    const rawTitle = data.title || '';
+                    const rawAuthor = data.author_name || data.artist || '';
+
+                    // 원곡자 자동 감지
+                    const origInput = document.getElementById('m-add-original-artist');
+                    let detectedOriginalArtist = '';
+                    const origMatch = rawTitle.match(/(?:원곡|Covered from|Original)\s*[:：]?\s*([^)/\]]+)/i) ||
+                                      rawTitle.match(/\(([^)]+)\)/) ||
+                                      rawTitle.match(/（([^）]+)）/);
+                    if (origMatch && origMatch[1]) {
+                        const cand = origMatch[1].trim();
+                        if (!detectMembersFromText(cand).length && !cand.toLowerCase().includes('cover') && !cand.toLowerCase().includes('mv')) {
+                            detectedOriginalArtist = cand;
+                        }
+                    }
+                    if (origInput && detectedOriginalArtist) {
+                        origInput.value = detectedOriginalArtist;
+                    }
+
+                    if (dom.addTitle) dom.addTitle.value = cleanAndKoreanizeTitle(rawTitle);
                     if (data.duration) {
                         const sStart = Math.floor(data.duration * 0.25);
                         const sEnd = Math.floor(sStart + 35);
                         if (dom.addSabiStart) dom.addSabiStart.value = sStart;
                         if (dom.addSabiEnd) dom.addSabiEnd.value = sEnd;
                     }
-                    // 멤버 자동 추론
-                    const detected = detectMembersFromText(`${data.title || ''} ${data.artist || ''}`);
+
+                    // 참여 멤버 및 아티스트 자동 추론
+                    const textToAnalyze = `${rawTitle} ${rawAuthor} ${data.uploader || ''} ${data.channelTitle || ''}`;
+                    const detected = detectMembersFromText(textToAnalyze);
                     if (detected.length > 0) {
-                        setSelectedMembersInForm('m-add-member-chips', detected);
-                        if (dom.addArtist && (!dom.addArtist.value || dom.addArtist.value === '스텔라이브')) {
-                            const memberNames = detected
-                                .filter(m => m !== 'group')
-                                .map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].name : m);
-                            if (memberNames.length > 0) dom.addArtist.value = memberNames.join(', ');
-                        }
+                        applyDetectedMembersToPicker('m-add', detected, dom.addArtist);
+                    } else if (rawAuthor && dom.addArtist) {
+                        dom.addArtist.value = cleanAndKoreanizeTitle(rawAuthor);
                     }
+
                     showToast('유튜브 곡 정보를 성공적으로 불러왔습니다!');
                 } catch (err) {
                     showToast('영상 정보를 가져오지 못했습니다. 직접 입력해주세요.');
@@ -3972,7 +4381,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const text = `${dom.addTitle ? dom.addTitle.value : ''} ${dom.addArtist ? dom.addArtist.value : ''}`;
             const detected = detectMembersFromText(text);
             if (detected.length > 0) {
-                setSelectedMembersInForm('m-add-member-chips', detected);
+                applyDetectedMembersToPicker('m-add', detected, dom.addArtist);
             }
         }
         if (dom.addTitle) dom.addTitle.addEventListener('input', autoDetectAddFormMembers);
@@ -3984,8 +4393,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const text = `${dom.addTitle ? dom.addTitle.value : ''} ${dom.addArtist ? dom.addArtist.value : ''}`;
                 const detected = detectMembersFromText(text);
                 if (detected.length > 0) {
-                    setSelectedMembersInForm('m-add-member-chips', detected);
-                    showToast(`⚡ ${detected.length}명의 멤버가 감지되어 체크되었습니다.`);
+                    applyDetectedMembersToPicker('m-add', detected, dom.addArtist);
+                    showToast(`⚡ ${detected.length}명의 멤버가 감지되어 선택되었습니다.`);
                 } else {
                     showToast('감지된 멤버가 없습니다. 직접 체크박스를 선택해주세요.');
                 }
@@ -3998,8 +4407,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const ytInput = dom.addYoutube.value.trim();
                 const title = dom.addTitle.value.trim();
                 const artist = dom.addArtist.value.trim();
+                const originalArtist = document.getElementById('m-add-original-artist')?.value.trim() || '';
+                const publishedAt = document.getElementById('m-add-published-at')?.value || '';
                 const type = dom.addType.value;
-                const members = getSelectedMembersFromForm('m-add-member-chips');
+                const mood = dom.addMood ? dom.addMood.value : 'none';
+                const memberData = getSelectedMemberData('m-add');
                 const sStart = parseInt(dom.addSabiStart.value, 10) || 45;
                 const sEnd = parseInt(dom.addSabiEnd.value, 10) || 75;
 
@@ -4009,8 +4421,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                             youtubeUrlOrId: ytInput,
                             title: title,
                             artist: artist,
+                            originalArtist: originalArtist,
+                            publishedAt: publishedAt,
                             type: type,
-                            members: members,
+                            mood: mood,
+                            members: memberData.members,
+                            gen: memberData.gen,
                             sabiStart: sStart,
                             sabiEnd: sEnd
                         });
@@ -4033,23 +4449,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const text = `${dom.editTitle ? dom.editTitle.value : ''} ${dom.editArtist ? dom.editArtist.value : ''}`;
                 const detected = detectMembersFromText(text);
                 if (detected.length > 0) {
-                    const hasGroup = detected.includes('group') && detected.length === 1;
-                    const activeMembers = detected.filter(m => m !== 'group');
-                    let units = [];
-                    if (activeMembers.length > 0) {
-                        const g1 = ['yuni', 'huya', 'kanna'];
-                        const g2 = ['hina', 'mashiro', 'lize', 'tabi'];
-                        const g3 = ['shibuki', 'rin', 'nana', 'riko'];
-                        if (g1.every(m => activeMembers.includes(m))) units.push('everlys');
-                        if (g2.every(m => activeMembers.includes(m))) units.push('universe');
-                        if (g3.every(m => activeMembers.includes(m))) units.push('cliche');
-                    }
-                    setMemberPickerState('m-edit', {
-                        isStellive: hasGroup,
-                        units: units,
-                        members: activeMembers
-                    }, dom.editArtist);
-                    syncArtistFromCheckboxes('m-edit', dom.editArtist);
+                    applyDetectedMembersToPicker('m-edit', detected, dom.editArtist);
                     showToast(`⚡ ${detected.length}명의 멤버가 감지되어 선택되었습니다.`);
                 } else {
                     showToast('감지된 멤버가 없습니다. 직접 체크박스를 선택해주세요.');
@@ -4067,6 +4467,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const artist = dom.editArtist.value.trim();
                 const originalArtist = dom.editOriginalArtist ? dom.editOriginalArtist.value.trim() : '';
                 const type = dom.editType.value;
+                const mood = dom.editMood ? dom.editMood.value : 'none';
                 const publishedAt = dom.editPublishedAt ? dom.editPublishedAt.value.trim() : '';
                 const memberData = getSelectedMemberData('m-edit');
                 const sStart = parseInt(dom.editSabiStart.value, 10);
@@ -4079,6 +4480,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     artist: artist,
                     originalArtist: originalArtist,
                     type: type,
+                    mood: mood,
                     publishedAt: publishedAt,
                     releaseDate: publishedAt,
                     members: memberData.members,
@@ -4156,14 +4558,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.sheetSabiBtn) dom.sheetSabiBtn.addEventListener('click', handleToggleSabi);
         if (dom.headerSabiBtn) dom.headerSabiBtn.addEventListener('click', handleToggleSabi);
         if (dom.btnSwitchPc) {
-            if (window.AndroidBridge) {
-                // 네이티브 앱 환경에서는 상단 PC 모드 버튼 숨김 (모바일 앱 전용 UI 유지)
-                dom.btnSwitchPc.style.display = 'none';
+            const checkIsNativeMobileApp = () => {
+                if (typeof window.AndroidBridge !== 'undefined') return true;
+                if (window.location.href.includes('localhost/assets/') || window.location.href.includes('android_asset')) return true;
+                if (localStorage.getItem('stellplay_is_native_app') === 'true') return true;
+                if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return true;
+                return false;
+            };
+
+            const isNative = checkIsNativeMobileApp();
+            if (isNative) {
+                try { localStorage.setItem('stellplay_is_native_app', 'true'); } catch (_) {}
+                dom.btnSwitchPc.style.setProperty('display', 'none', 'important');
             } else {
-                dom.btnSwitchPc.style.display = 'inline-flex';
+                // 순수 웹 브라우저 접속 환경에서만 상단 PC 모드 버튼 활성화
+                dom.btnSwitchPc.style.setProperty('display', 'inline-flex', 'important');
                 dom.btnSwitchPc.addEventListener('click', () => {
-                    localStorage.setItem('stellplay_force_pc', 'true');
-                    localStorage.removeItem('stellplay_force_mobile');
+                    try {
+                        localStorage.setItem('stellplay_force_pc', 'true');
+                        localStorage.removeItem('stellplay_force_mobile');
+                    } catch (_) {}
                     const target = location.pathname.includes('/mobile/')
                         ? location.pathname.replace(/\/mobile\/?.*$/, '/index.html?force=pc')
                         : '../index.html?force=pc';
@@ -4240,14 +4654,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 오프라인 전곡 재생 버튼
         if (dom.btnOfflinePlayAll) {
             dom.btnOfflinePlayAll.addEventListener('click', async () => {
-                showToast('오프라인 보관함이 비어있습니다.');
+                const records = await window.OfflineDB.getAllTracks();
+                if (records.length === 0) {
+                    showToast('오프라인 보관함이 비어있습니다.');
+                    return;
+                }
+                const songs = records.map(r => r.song);
+                player.setQueue(songs, 0, true);
+                showToast(`오프라인 보관함 (${songs.length}곡) 재생을 시작합니다.`);
             });
         }
 
         // 오프라인 전체 삭제 버튼
         if (dom.btnOfflineClearAll) {
             dom.btnOfflineClearAll.addEventListener('click', async () => {
-                showToast('모든 오프라인 음원이 삭제되었습니다.');
+                showAppConfirmModal({
+                    title: '오프라인 전체 삭제',
+                    message: '저장된 모든 오프라인 음원을 삭제하시겠습니까?',
+                    confirmText: '전체 삭제',
+                    isDestructive: true,
+                    onConfirm: async () => {
+                        await window.OfflineDB.clearAll();
+                        await refreshOfflineCacheState();
+                        renderAllViews();
+                        showToast('모든 오프라인 음원이 삭제되었습니다.');
+                    }
+                });
+            });
+        }
+
+        // 스트리밍 음원 캐시 비우기 버튼 (설정 뷰)
+        if (dom.btnClearCacheSettings) {
+            dom.btnClearCacheSettings.addEventListener('click', () => {
+                showAppConfirmModal({
+                    title: '스트리밍 캐시 비우기',
+                    message: '임시 저장된 스트리밍 음원 캐시를 모두 삭제하시겠습니까?\n(영구 저장된 오프라인 다운로드 보관함 곡은 안전하게 유지됩니다)',
+                    confirmText: '캐시 비우기',
+                    isDestructive: true,
+                    onConfirm: () => {
+                        if (player && typeof player.clearAudioCache === 'function') {
+                            player.clearAudioCache();
+                        }
+                        updateSettingsCacheInfo();
+                        refreshOfflineCacheState();
+                        showToast('스트리밍 음원 캐시가 모두 비워졌습니다.');
+                    }
+                });
             });
         }
 
@@ -4372,6 +4824,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     let lastBackPressTime = 0;
 
     window.handleAndroidBack = function() {
+        // 0. 영상 모드 전체화면 상태인 경우 -> 전체화면 먼저 종료
+        const mVideoBox = document.getElementById('m-sheet-video-box');
+        if (mVideoBox && (mVideoBox.classList.contains('video-fullscreen-active') || !!document.fullscreenElement || !!document.webkitFullscreenElement)) {
+            if (typeof window.toggleVideoFullscreen === 'function') {
+                window.toggleVideoFullscreen(false);
+            } else {
+                mVideoBox.classList.remove('video-fullscreen-active');
+            }
+            return true;
+        }
+
         // 1. 모달이 열려있는 경우
         if (dom.modalSelectPlaylist && dom.modalSelectPlaylist.classList.contains('open')) {
             closeAddToPlaylistModal();
@@ -4421,9 +4884,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 6. 전체화면 재생 시트가 열려있는 경우 -> 시트 닫고 메인으로 복귀
         if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
             dom.fullscreenSheet.classList.remove('open');
-            if (mobilePlayerViewMode === 'video') {
-                switchMobilePlayerView('art');
-            }
             return true;
         }
 

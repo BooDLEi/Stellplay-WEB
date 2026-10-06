@@ -5,7 +5,20 @@
    - 한 손 조작 하단 5단 탭바 & 슬라이드 플레이어 시트
 =================================================================== */
 
+@property --theme-color {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #7c5cfc;
+}
+
+@property --theme-glow {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: rgba(124, 92, 252, 0.4);
+}
+
 :root {
+    transition: --theme-color 0.45s ease, --theme-glow 0.45s ease;
     --bg-primary: #090a10;
     --bg-surface: rgba(18, 20, 32, 0.85);
     --bg-glass: rgba(26, 29, 46, 0.72);
@@ -130,9 +143,16 @@
 }
 
 [data-theme="light"] .mobile-mini-player {
-    background: rgba(255, 255, 255, 0.96);
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.98);
+    border: 1.5px solid rgba(0, 0, 0, 0.14);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .m-home-action-btn.m-btn-queue-shortcut {
+    background: rgba(109, 40, 217, 0.08);
+    border: 1px solid rgba(109, 40, 217, 0.35);
+    color: #6d28d9;
+    font-weight: 700;
 }
 
 [data-theme="light"] .fullscreen-sheet {
@@ -458,9 +478,9 @@ body::before {
     border: 1px solid var(--border-active);
 }
 
-/* 상단 PC 모드 전환 버튼 */
+/* 상단 PC 모드 전환 버튼 (기본 숨김, 모바일 웹 브라우저에서만 활성화) */
 .m-header-pc-btn {
-    display: inline-flex;
+    display: none !important;
     align-items: center;
     gap: 4px;
     padding: 5px 9px;
@@ -1688,6 +1708,7 @@ body::before {
 }
 
 .sheet-topbar {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2040,7 +2061,7 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 18px 8px;
+    padding: 12px 14px 8px;
     border-bottom: 1px solid var(--border-glass);
 }
 
@@ -2048,11 +2069,14 @@ body::before {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
+    flex-shrink: 1;
 }
 
 .queue-sheet-title {
     font-size: 1.05rem;
     font-weight: 800;
+    white-space: nowrap;
 }
 
 .queue-sheet-badge {
@@ -2063,23 +2087,31 @@ body::before {
     background: rgba(124, 92, 252, 0.15);
     color: var(--theme-color);
     border: 1px solid var(--border-active);
+    white-space: nowrap;
 }
 
 .queue-sheet-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
 }
 
 .queue-sheet-action-btn {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--border-glass);
     color: var(--text-secondary);
-    padding: 5px 10px;
+    padding: 5px 8px;
     border-radius: 8px;
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .queue-sheet-close-btn {
@@ -2974,10 +3006,10 @@ body.offline-select-active .m-track-select-box {
 /* 복수 선택 하단 플로팅 액션바 */
 .m-multiselect-floating-bar {
     position: fixed;
-    bottom: 125px;
+    bottom: calc(var(--tab-height) + var(--safe-bottom) + var(--mini-player-height) + 16px);
     left: 12px;
     right: 12px;
-    z-index: 45;
+    z-index: 105;
     background: rgba(18, 21, 35, 0.96);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -3418,6 +3450,9 @@ body.offline-select-active .m-track-select-box {
    모바일 앨범 커버 vs 유튜브 영상 뷰 모드 및 플레이어 도킹 스타일
 =================================================================== */
 .m-view-mode-toggle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     background: rgba(255, 255, 255, 0.08);
@@ -3425,6 +3460,7 @@ body.offline-select-active .m-track-select-box {
     border-radius: 20px;
     padding: 2px;
     gap: 2px;
+    z-index: 2;
 }
 
 .m-view-btn {
@@ -3436,12 +3472,12 @@ body.offline-select-active .m-track-select-box {
     font-size: 0.75rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .m-view-btn.active {
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: var(--text-primary) !important;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
 }
 
 [data-theme="light"] .m-view-mode-toggle {
@@ -3449,10 +3485,14 @@ body.offline-select-active .m-track-select-box {
     border-color: rgba(0, 0, 0, 0.1);
 }
 
+[data-theme="light"] .m-view-btn {
+    color: #64748b;
+}
+
 [data-theme="light"] .m-view-btn.active {
-    background: white !important;
-    color: #0f172a !important;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* 영상 도킹 및 백그라운드 재생 스타일 (DOM 재부모화 방지 & 상시 렌더 유지) */
@@ -3469,18 +3509,19 @@ body.offline-select-active .m-track-select-box {
     transition: opacity 0.2s ease;
 }
 
-/* 동영상 탭이 아닐 때는 브라우저가 offscreen으로 분류하여 백그라운드 재생을 차단하지 않도록 뷰포트 내(top:0, left:0) 2px로 최소화 */
+/* 동영상 탭이 아닐 때는 브라우저 백그라운드 미디어 프로세스가 무효/트래커 요소로 간주하여 차단하지 않도록,
+   뷰포트 내(우측 하단) 유효한 규격(200x120px)으로 유지하되 화면상 보이지 않도록 초미세 투명도(0.01) 및 클릭 통과 적용 */
 .m-video-box:not(.active-video) {
     position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 2px !important;
-    height: 2px !important;
-    aspect-ratio: auto !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 200px !important;
+    height: 120px !important;
+    aspect-ratio: 16/9 !important;
     margin: 0 !important;
-    opacity: 0.001 !important;
+    opacity: 0.01 !important;
     pointer-events: none !important;
-    z-index: -9999 !important;
+    z-index: -10 !important;
     overflow: hidden !important;
 }
 
@@ -3542,7 +3583,14 @@ body.offline-select-active .m-track-select-box {
 }
 
 .m-video-box:fullscreen,
-.m-video-box:-webkit-full-screen {
+.m-video-box:-webkit-full-screen,
+.m-video-box.video-fullscreen-active {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100vw !important;
     max-width: 100vw !important;
     height: 100vh !important;
@@ -3554,11 +3602,40 @@ body.offline-select-active .m-track-select-box {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    z-index: 999999 !important;
+}
+
+.m-video-box:fullscreen #m-video-dock-target,
+.m-video-box:-webkit-full-screen #m-video-dock-target,
+.m-video-box.video-fullscreen-active #m-video-dock-target {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
 }
 
 .m-video-box:fullscreen #m-youtube-player-wrap,
-.m-video-box:-webkit-full-screen #m-youtube-player-wrap {
+.m-video-box:-webkit-full-screen #m-youtube-player-wrap,
+.m-video-box.video-fullscreen-active #m-youtube-player-wrap {
+    width: 100% !important;
+    height: 100% !important;
     border-radius: 0 !important;
+}
+
+.m-video-box.video-fullscreen-active #m-youtube-hidden-player,
+.m-video-box.video-fullscreen-active iframe {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.m-video-box.video-fullscreen-active .m-btn-video-fullscreen {
+    position: fixed !important;
+    top: calc(env(safe-area-inset-top, 16px) + 12px) !important;
+    right: calc(env(safe-area-inset-right, 16px) + 12px) !important;
+    z-index: 1000000 !important;
+    background: rgba(0, 0, 0, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    width: 38px !important;
+    height: 38px !important;
 }
 
 
@@ -3780,17 +3857,48 @@ body.offline-select-active .m-track-select-box {
 }
 [data-theme="light"] .queue-sheet-title {
     color: #0f172a !important;
+    font-weight: 800 !important;
 }
 [data-theme="light"] .queue-sheet-action-btn {
-    background: rgba(0, 0, 0, 0.04) !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
-    color: #334155 !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+[data-theme="light"] .queue-sheet-action-btn:active {
+    background: #e2e8f0 !important;
+}
+[data-theme="light"] .queue-sheet-action-btn svg {
+    color: #0f172a !important;
 }
 [data-theme="light"] .queue-sheet-close-btn {
-    color: #64748b !important;
+    color: #0f172a !important;
 }
 [data-theme="light"] .queue-drag-hint {
-    color: #94a3b8 !important;
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+[data-theme="light"] .queue-drag-hint svg {
+    color: #475569 !important;
+}
+[data-theme="light"] .queue-sheet-badge {
+    background: rgba(124, 92, 252, 0.15) !important;
+    color: #6d28d9 !important;
+    font-weight: 800 !important;
+}
+[data-theme="light"] #sheet-queue-btn,
+[data-theme="light"] .sheet-ctrl-btn {
+    color: #0f172a !important;
+}
+[data-theme="light"] .m-queue-index {
+    color: #64748b !important;
+}
+[data-theme="light"] .m-queue-artist {
+    color: #475569 !important;
+}
+[data-theme="light"] .m-queue-title {
+    color: #0f172a !important;
+    font-weight: 700 !important;
 }
 [data-theme="light"] .queue-sheet-handle {
     background: rgba(0, 0, 0, 0.18) !important;
@@ -3824,11 +3932,38 @@ body.offline-select-active .m-track-select-box {
     background: rgba(0, 0, 0, 0.06) !important;
     color: #475569 !important;
 }
-[data-theme="light"] .mood-chip-name {
+[data-theme="light"] .mood-shelf-title {
     color: #0f172a !important;
+}
+[data-theme="light"] .mood-chip-name {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
 }
 [data-theme="light"] .mood-card-title {
     color: #0f172a !important;
+}
+[data-theme="light"] #m-mood-modal-title {
+    color: #0f172a !important;
+}
+[data-theme="light"] #m-mood-modal-sub {
+    color: #475569 !important;
+}
+[data-theme="light"] .mood-modal-actions .btn-mood-action {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+[data-theme="light"] .mood-modal-actions .btn-mood-action svg {
+    color: #0f172a !important;
+}
+[data-theme="light"] .mood-modal-actions .btn-mood-play-all {
+    background: linear-gradient(135deg, #7c5cfc, #3b82f6) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+[data-theme="light"] .mood-modal-actions .btn-mood-play-all svg {
+    color: #ffffff !important;
 }
 [data-theme="light"] .sabi-modal-card {
     background: #ffffff !important;

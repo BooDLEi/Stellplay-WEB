@@ -141,7 +141,15 @@ def fetch_tracks():
                     dur = entry.get('duration') or 0
                     uploader = entry.get('uploader') or ''
 
-                    if not vid or vid in seen_ids:
+                    BANNED_NON_SONG_IDS = {
+                        'W5KthC3ZWsE', 'F1Z0uUObYao', 'GEkkL_4cCFU', 'gGZtkYpZ65U',
+                        'I39TsTSla7c', 'AX1XyaDMwmQ', 'qz29KlB8Qx0', 'zISpAiwawVM',
+                        'iQ9062YZRio', 'KzwlPuoVopE', '-5uKjMUnlqY', '9uXMUAbIoVo',
+                        'sN5e9ftbVvY', '6NDV1oky-Ng', '9AQ3o2CgqtI', 'XAPaEXF7wwY',
+                        'YtqUA52ZT2c', '8IAD5m1M8p0', 'EHhxKoWhKIk', '4C6GJvqG1gk',
+                        'lpukv7wjy6o'
+                    }
+                    if not vid or vid in seen_ids or vid in BANNED_NON_SONG_IDS:
                         continue
 
                     title_lower = raw_title.lower()
@@ -149,11 +157,18 @@ def fetch_tracks():
                         continue
                     if '#shorts' in title_lower or 'shorts' in title_lower or '#' in raw_title or (dur > 0 and dur < 50):
                         continue
-                    if any(k in title_lower for k in ['다시보기', '풀영상', '풀버전', '잡담', '공지사항', '클립', 'bongnudo', 'q&a', '썰']):
+                    if any(k in title_lower for k in [
+                        '다시보기', '풀영상', '풀버전', '잡담', '공지사항', '공지', '클립', 'bongnudo', 'q&a', '썰', '멋봉리', '봉누도',
+                        '컨텐츠', '대결', '생일 3d', '기념 3d', '엉덩이', '토크', '게임', 'vlog', '브이로그', 'asmr', '라디오'
+                    ]):
                         continue
-                    if is_channel and not re.search(r'cover|mv|original|official|커버|노래|sing|music|feat|3d', title_lower):
+                    if vid != '6mVByQMyxdY' and any(k in title_lower for k in [
+                        '메들리', 'medley', '모음', '모음집', '플레이리스트', 'playlist', '작업용', 'bgm', '모음곡', '연속재생'
+                    ]):
                         continue
-                    if dur > 450:
+                    if is_channel and not re.search(r'cover|mv|original|official|커버|노래|sing|music|feat|3d\s*(?:cover|live\s*cover|live\s*mv)|ost', title_lower):
+                        continue
+                    if dur > 420 and vid not in ('DMk4_4Xytz4', '6mVByQMyxdY'):
                         continue
 
                     seen_ids.add(vid)

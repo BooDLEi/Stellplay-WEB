@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalAddSong: document.getElementById('modal-add-song'),
         formAddSong: document.getElementById('form-add-song'),
         selectSongType: document.getElementById('select-song-type'),
+        selectSongMood: document.getElementById('select-song-mood'),
         rowStreamTimestamps: document.getElementById('row-stream-timestamps'),
         inputStreamStart: document.getElementById('input-stream-start'),
         inputStreamEnd: document.getElementById('input-stream-end'),
@@ -161,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editSongArtist: document.getElementById('edit-song-artist'),
         editSongOriginalArtist: document.getElementById('edit-song-original-artist'),
         editSongType: document.getElementById('edit-song-type'),
+        editSongMood: document.getElementById('edit-song-mood'),
         editSongMember: document.getElementById('edit-song-member'),
         editSongGen: document.getElementById('edit-song-gen'),
         editSongPublishedAt: document.getElementById('edit-song-published-at'),
@@ -524,14 +526,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const titleLower = (song.title || '').toLowerCase();
             const fullText = `${titleLower} ${song.artist || ''} ${song.originalArtist || ''} ${song.id || ''}`.toLowerCase();
 
-            if (preset.exclude_titles && preset.exclude_titles.some(ex => titleLower.includes(ex) || fullText.includes(ex))) {
-                return;
+            // 1. 직접 지정된 분위기(mood)가 있는 경우 최우선 반영
+            let score = 0;
+            let hasExplicitMood = false;
+            if (song.mood && song.mood !== 'none') {
+                if (song.mood === moodKey) {
+                    hasExplicitMood = true;
+                    score += 100; // 사용자가 직접 지정한 분위기 곡은 최상위 점수(+100점)
+                } else {
+                    // 다른 분위기로 지정된 곡은 이 분위기 추천 풀에서 완전히 제외
+                    return;
+                }
             }
 
-            let score = 0;
-            for (const kw of preset.keywords) {
-                if (fullText.includes(kw.toLowerCase())) {
-                    score += 5;
+            if (!hasExplicitMood) {
+                if (preset.exclude_titles && preset.exclude_titles.some(ex => titleLower.includes(ex) || fullText.includes(ex))) {
+                    return;
+                }
+
+                for (const kw of preset.keywords) {
+                    if (fullText.includes(kw.toLowerCase())) {
+                        score += 5;
+                    }
                 }
             }
 
@@ -796,20 +812,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const detected = new Set();
 
         const rules = [
-            { id: 'kanna', keywords: ['칸나', '아이리', 'kanna', 'airi', 'カンナ', '藍莉'] },
-            { id: 'yuni', keywords: ['유니', '아야츠노', 'yuni', 'ayatsuno', 'ユニ', '綾津野'] },
-            { id: 'huya', keywords: ['후야', '사키하네', '호시미야', 'huya', 'sakihane', 'hoshimiya', 'フヤ', '星宮'] },
-            { id: 'hina', keywords: ['히나', '시라유키', 'hina', 'shirayuki', 'ヒナ', '白雪'] },
-            { id: 'mashiro', keywords: ['마시로', '네네코', 'mashiro', 'neneko', 'マシロ', '音猫'] },
-            { id: 'lize', keywords: ['리제', '아카네', 'lize', 'akane', 'リゼ', '朱音'] },
-            { id: 'tabi', keywords: ['타비', '아라하시', 'tabi', 'arahashi', 'タビ', '荒橋'] },
-            { id: 'shibuki', keywords: ['시부키', '텐코', 'shibuki', 'tenko', 'シブキ', '天狐'] },
-            { id: 'rin', keywords: ['린', '아오쿠모', 'rin', 'aokumo', 'リン', '蒼雲'] },
-            { id: 'nana', keywords: ['나나', '하나코', 'nana', 'hanako', 'ナナ', '花子'] },
-            { id: 'riko', keywords: ['리코', '유즈하', 'riko', 'yuzuha', 'リコ', '柚葉'] }
+            { id: 'kanna', keywords: ['칸나', '아이리', 'airikanna', 'airi kanna', 'kanna', 'airi', 'カンナ', '藍莉'] },
+            { id: 'yuni', keywords: ['유니', '아야츠노', 'ayatsunoyuni', 'ayatsuno yuni', 'yuni', 'ayatsuno', 'ユニ', '綾津野'] },
+            { id: 'huya', keywords: ['후야', '사키하네', '호시미야', 'sakihanehuya', 'sakihane', 'hoshimiya', 'huya', 'フヤ', '星宮'] },
+            { id: 'hina', keywords: ['히나', '시라유키', 'shirayukihina', 'shirayuki hina', 'hina', 'shirayuki', 'ヒナ', '白雪'] },
+            { id: 'mashiro', keywords: ['마시로', '네네코', 'nenekomashiro', 'neneko_mashiro', 'neneko mashiro', 'mashiro', 'neneko', 'マシロ', '音猫'] },
+            { id: 'lize', keywords: ['리제', '아카네', 'akanelize', 'akane lize', 'lize', 'akane', 'リゼ', '朱音'] },
+            { id: 'tabi', keywords: ['타비', '아라하시', 'arahashitabi', 'arahashi tabi', 'tabi', 'arahashi', 'タビ', '荒橋'] },
+            { id: 'shibuki', keywords: ['시부키', '텐코', 'tenkoshibuki', 'tenko shibuki', 'shibuki', 'tenko', 'シブキ', '天狐'] },
+            { id: 'rin', keywords: ['린', '아오쿠모', 'aokumorin', 'aokumo rin', 'rin', 'aokumo', 'リン', '蒼雲'] },
+            { id: 'nana', keywords: ['나나', '하나코', 'hanakonana', 'hanako_nana', 'hanako nana', 'nana', 'hanako', 'ナナ', '花子'] },
+            { id: 'riko', keywords: ['리코', '유즈하', 'yuzuhariko', 'yuzuha riko', 'riko', 'yuzuha', 'リコ', '柚葉'] }
         ];
 
-        if (t.includes('스텔라이브') || t.includes('stellive') || t.includes('단체')) {
+        if (t.includes('스텔라이브') || t.includes('stellive') || t.includes('단체') || t.includes('stellive_official') || t.includes('@stellive')) {
             detected.add('group');
         }
         if (t.includes('미스틱') || t.includes('mystic')) {
@@ -2080,9 +2096,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const title = document.getElementById('input-song-title')?.value || '';
                 const artist = document.getElementById('input-song-artist')?.value || '';
                 const detected = detectMembersFromText(`${title} ${artist}`);
+                const artistInput = document.getElementById('input-song-artist');
                 if (detected && detected.length > 0) {
-                    setMemberPickerState('add', { isStellive: false, units: [], members: detected }, document.getElementById('input-song-artist'));
-                    syncArtistFromCheckboxes('add', document.getElementById('input-song-artist'));
+                    const isGroup = detected.includes('group') || detected.length >= 6;
+                    const validMembers = detected.filter(m => m !== 'group');
+                    if (isGroup) {
+                        setMemberPickerState('add', { isStellive: true, units: [], members: [] }, artistInput);
+                        if (artistInput) artistInput.value = '스텔라이브 (STELLIVE)';
+                    } else {
+                        setMemberPickerState('add', { isStellive: false, units: [], members: validMembers }, artistInput);
+                        syncArtistFromCheckboxes('add', artistInput);
+                    }
                     showToast(`멤버 ${detected.length}명이 자동 감지되었습니다.`);
                 } else {
                     showToast('감지된 멤버가 없습니다. 직접 체크해주세요.');
@@ -2115,40 +2139,110 @@ document.addEventListener('DOMContentLoaded', () => {
                         } catch (e) {}
                     }
 
-                    if (!data) {
-                        // 웹 환경 폴백: YouTube oEmbed API 직접 조회
-                        let vid = url;
-                        if (vid.includes('v=')) {
-                            vid = vid.split('v=')[1].split('&')[0];
-                        } else if (vid.includes('youtu.be/')) {
-                            vid = vid.split('youtu.be/')[1].split('?')[0];
-                        }
-                        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}&format=json`;
-                        const oembedResp = await fetch(oembedUrl);
-                        if (!oembedResp.ok) throw new Error('YouTube oEmbed 조회 실패');
-                        const oembedData = await oembedResp.json();
-                        data = {
-                            title: oembedData.title,
-                            artist: oembedData.author_name,
-                            uploader: oembedData.author_name,
-                            duration: 200
-                        };
+                    let vid = url;
+                    if (vid.includes('v=')) {
+                        vid = vid.split('v=')[1].split('&')[0];
+                    } else if (vid.includes('youtu.be/')) {
+                        vid = vid.split('youtu.be/')[1].split('?')[0];
                     }
-                    if (data.title) document.getElementById('input-song-title').value = cleanAndKoreanizeTitle(data.title);
-                    if (data.artist) document.getElementById('input-song-artist').value = cleanAndKoreanizeTitle(data.artist);
+
+                    if (!data) {
+                        // 웹 환경 폴백 1: YouTube oEmbed API
+                        try {
+                            const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}&format=json`;
+                            const oembedResp = await fetch(oembedUrl);
+                            if (oembedResp.ok) {
+                                const oembedData = await oembedResp.json();
+                                data = {
+                                    title: oembedData.title,
+                                    artist: oembedData.author_name,
+                                    uploader: oembedData.author_name,
+                                    duration: 200
+                                };
+                            }
+                        } catch (oeErr) {}
+                    }
+
+                    if (!data) {
+                        // 웹 환경 폴백 2: noembed.com API
+                        try {
+                            const noembedUrl = `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${encodeURIComponent(vid)}`;
+                            const noembedResp = await fetch(noembedUrl);
+                            if (noembedResp.ok) {
+                                const noembedData = await noembedResp.json();
+                                data = {
+                                    title: noembedData.title,
+                                    artist: noembedData.author_name,
+                                    uploader: noembedData.author_name,
+                                    duration: 200
+                                };
+                            }
+                        } catch (neErr) {}
+                    }
+
+                    if (!data) throw new Error('YouTube 메타데이터 조회 실패');
+
+                    const rawTitle = data.title || '';
+                    if (rawTitle) {
+                        document.getElementById('input-song-title').value = cleanAndKoreanizeTitle(rawTitle);
+                    }
+
+                    // 1. 발매일 자동 완성
+                    const pubInput = document.getElementById('input-song-published-at');
+                    if (pubInput && (data.publishedAt || data.uploadDate)) {
+                        pubInput.value = data.publishedAt || data.uploadDate;
+                    }
+
+                    // 2. 원곡자 자동 분석 (제목 패턴: 원곡:, Original:, (원곡 - 가수), 또는 오리지널곡)
+                    const origInput = document.getElementById('input-song-original-artist');
+                    if (origInput) {
+                        let extractedOriginal = '';
+                        const origMatch1 = rawTitle.match(/(?:원곡|original|原曲)\s*[:：]\s*([^\)\],\/]+)/i);
+                        const origMatch2 = rawTitle.match(/\(([^\)]+)\s*-\s*([^\)]+)\)/);
+                        if (origMatch1) {
+                            extractedOriginal = origMatch1[1].trim();
+                        } else if (origMatch2 && origMatch2[2]) {
+                            extractedOriginal = origMatch2[2].trim();
+                        }
+
+                        const typeSelect = document.getElementById('select-song-type');
+                        const isOriginalSong = /(?:오리지널|original)/i.test(rawTitle) && !/(?:cover|커버)/i.test(rawTitle);
+                        if (isOriginalSong) {
+                            if (typeSelect) typeSelect.value = 'original';
+                            origInput.value = '스텔라이브 (STELLIVE)';
+                        } else if (extractedOriginal) {
+                            origInput.value = extractedOriginal;
+                        }
+                    }
+
+                    // 3. 사비 추천 구간 설정
                     if (data.duration) {
                         const sStart = Math.floor(data.duration * 0.25);
                         const sEnd = Math.floor(sStart + 35);
                         document.getElementById('input-sabi-start').value = sStart;
                         document.getElementById('input-sabi-end').value = sEnd;
                     }
-                    const textToAnalyze = `${data.title || ''} ${data.artist || ''} ${data.uploader || ''} ${data.channelTitle || ''}`;
+
+                    // 4. 참여 멤버 & 가수명 고도화 자동 분석
+                    const textToAnalyze = `${rawTitle} ${data.artist || ''} ${data.uploader || ''} ${data.channelTitle || ''}`;
                     const detected = detectMembersFromText(textToAnalyze);
-                    if (detected && detected.length > 0) {
-                        document.querySelectorAll('#add-member-chips input[name="add-member"]').forEach(cb => {
-                            cb.checked = detected.includes(cb.value);
-                        });
+                    const artistInput = document.getElementById('input-song-artist');
+
+                    const isGroup = detected.includes('group') || detected.length >= 6;
+                    const validMembers = detected.filter(m => m !== 'group');
+
+                    if (isGroup) {
+                        setMemberPickerState('add', { isStellive: true, units: [], members: [] }, artistInput);
+                        if (artistInput) artistInput.value = '스텔라이브 (STELLIVE)';
+                    } else if (validMembers.length > 0) {
+                        setMemberPickerState('add', { isStellive: false, units: [], members: validMembers }, artistInput);
+                        syncArtistFromCheckboxes('add', artistInput);
+                    } else if (data.artist) {
+                        if (artistInput && !artistInput.value) {
+                            artistInput.value = cleanAndKoreanizeTitle(data.artist);
+                        }
                     }
+
                     showToast('유튜브 곡 정보를 성공적으로 불러왔습니다!');
                 } catch (err) {
                     showToast('영상 정보를 가져오지 못했습니다. 직접 입력해주세요.');
@@ -2166,13 +2260,28 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // PC 웹 -> 모바일 웹 버전 전환 버튼
-        const isPyWebView = typeof window.pywebview !== 'undefined';
-        if (isPyWebView) {
-            // 데스크톱 앱(pywebview)에서는 모바일 전환 버튼 숨김
-            if (dom.navItemSwitchMobile) dom.navItemSwitchMobile.style.display = 'none';
-            if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.style.display = 'none';
+        // PC 웹 -> 모바일 웹 버전 전환 버튼 (웹 브라우저 환경에서만 노출, PC 클라이언트 프로그램에서는 엄격 차단)
+        const checkIsDesktopClient = () => {
+            if (window.location.search.includes('client=pc')) return true;
+            if (typeof window.pywebview !== 'undefined') return true;
+            if (localStorage.getItem('stellplay_is_desktop_client') === 'true') return true;
+            const port = parseInt(window.location.port, 10);
+            if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && port >= 8180 && port <= 8200) {
+                return true;
+            }
+            return false;
+        };
+
+        const isDesktop = checkIsDesktopClient();
+        if (isDesktop) {
+            try { localStorage.setItem('stellplay_is_desktop_client', 'true'); } catch (_) {}
+            if (dom.navItemSwitchMobile) dom.navItemSwitchMobile.style.setProperty('display', 'none', 'important');
+            if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.style.setProperty('display', 'none', 'important');
         } else {
+            // 순수 웹 브라우저 환경에서만 모바일 전환 버튼 활성화
+            if (dom.navItemSwitchMobile) dom.navItemSwitchMobile.style.setProperty('display', 'block', 'important');
+            if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.style.setProperty('display', 'inline-flex', 'important');
+
             const handleSwitchToMobile = (e) => {
                 e.preventDefault();
                 try {
@@ -2188,6 +2297,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dom.btnSwitchMobile) dom.btnSwitchMobile.addEventListener('click', handleSwitchToMobile);
             if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.addEventListener('click', handleSwitchToMobile);
         }
+
+        window.addEventListener('pywebviewready', () => {
+            try { localStorage.setItem('stellplay_is_desktop_client', 'true'); } catch (_) {}
+            if (dom.navItemSwitchMobile) dom.navItemSwitchMobile.style.setProperty('display', 'none', 'important');
+            if (dom.topbarBtnSwitchMobile) dom.topbarBtnSwitchMobile.style.setProperty('display', 'none', 'important');
+        });
 
         // 풀플레이어 현재 재생 곡 정보 수정 버튼
         if (dom.btnFullEditSong) {
@@ -2821,7 +2936,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const youtubeUrl = document.getElementById('input-yt-url').value;
         const title = document.getElementById('input-song-title').value;
         const artist = document.getElementById('input-song-artist').value;
+        const originalArtist = document.getElementById('input-song-original-artist')?.value?.trim() || '';
+        const publishedAt = document.getElementById('input-song-published-at')?.value || '';
         const type = document.getElementById('select-song-type').value;
+        const mood = dom.selectSongMood ? dom.selectSongMood.value : 'none';
         const sabiStart = document.getElementById('input-sabi-start').value;
         const sabiEnd = document.getElementById('input-sabi-end').value;
         const streamStart = dom.inputStreamStart ? parseInt(dom.inputStreamStart.value, 10) || 0 : 0;
@@ -2835,7 +2953,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 youtubeUrlOrId: youtubeUrl,
                 title: title,
                 artist: artist,
+                originalArtist: originalArtist,
+                publishedAt: publishedAt,
                 type: type,
+                mood: mood,
                 members: memberData.members,
                 gen: memberData.gen,
                 streamStart: streamStart,
@@ -3778,6 +3899,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.editSongArtist.value = song.artist || '';
         dom.editSongOriginalArtist.value = song.originalArtist || '';
         dom.editSongType.value = song.type || 'cover';
+        if (dom.editSongMood) {
+            dom.editSongMood.value = song.mood || 'none';
+        }
         dom.editSabiStart.value = song.sabi?.start ?? 45;
         dom.editSabiEnd.value = song.sabi?.end ?? 80;
         if (dom.editSongPublishedAt) {
@@ -3823,6 +3947,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updatedArtist = dom.editSongArtist.value.trim();
         const updatedOriginal = dom.editSongOriginalArtist.value.trim();
         const updatedType = dom.editSongType.value;
+        const updatedMood = dom.editSongMood ? dom.editSongMood.value : 'none';
         const updatedMembers = memberData.members;
         const updatedGen = memberData.gen;
         const sStart = parseInt(dom.editSabiStart.value, 10);
@@ -3839,6 +3964,7 @@ document.addEventListener('DOMContentLoaded', () => {
             artist: updatedArtist,
             originalArtist: updatedOriginal,
             type: updatedType,
+            mood: updatedMood,
             members: updatedMembers,
             gen: updatedGen,
             publishedAt: updatedPublishedAt,

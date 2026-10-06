@@ -16,7 +16,7 @@ class MobilePlayer {
         this.isPlaying = false;
         this.isOfflinePlayback = false;
         this.sabiMode = false;
-        this.isShuffle = false;
+        this.isShuffle = (localStorage.getItem('stellplay_saved_shuffle') === '1');
         this.repeatMode = 'all'; // 'all', 'one', 'off'
         this.queue = [];
         this.queueIndex = 0;
@@ -41,6 +41,7 @@ class MobilePlayer {
         this._pendingYtStartTime = 0;
         this.wakeLock = null;
         this._isRequestingWakeLock = false;
+        this._lastSyncedQueueSig = null;
 
         // PWA & 모바일 웹앱 백그라운드 재생 및 잠금화면 유지를 위한 무음 오디오 킵얼라이브 (16-bit 가청한계 이하 미세 디더링)
         function createKeepAliveAudioBlob() {
@@ -127,10 +128,17 @@ class MobilePlayer {
         const handleVisibilityChange = () => {
             if (document.hidden) {
                 this.wakeLock = null;
-                if (this.isPlaying) {
+                if (this.isPlaying && !this.isUserPaused) {
                     try { this.silentAudio.play().catch(() => {}); } catch (e) {}
                     if (this.audioCtx && this.audioCtx.state === 'suspended') {
                         try { this.audioCtx.resume().catch(() => {}); } catch (e) {}
+                    }
+                    if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
+                        setTimeout(() => {
+                            if (this.isPlaying && !this.isUserPaused) {
+                                try { this.ytPlayer.playVideo(); } catch (e) {}
+                            }
+                        }, 100);
                     }
                 }
             } else {
@@ -177,6 +185,20 @@ class MobilePlayer {
             } catch (e) {}
             this.wakeLock = null;
         }
+    }
+
+    _saveState() {
+        try {
+            if (this.queue && this.queue.length > 0) {
+                localStorage.setItem('stellplay_saved_queue', JSON.stringify(this.queue));
+                localStorage.setItem('stellplay_saved_index', String(this.queueIndex));
+                if (this.currentSong && this.currentSong.id) {
+                    localStorage.setItem('stellplay_saved_song_id', String(this.currentSong.id));
+                }
+                localStorage.setItem('stellplay_saved_shuffle', this.isShuffle ? '1' : '0');
+                localStorage.setItem('stellplay_has_played_before', '1');
+            }
+        } catch (e) {}
     }
 
     _setupAudioListeners() {
@@ -332,6 +354,10 @@ class MobilePlayer {
                                     this._startYtTimer();
                                     window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: true } }));
 
+                                    if (this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
+                                        try { this.ytPlayer.setPlaybackQuality(this._getTargetVideoQuality()); } catch (e) {}
+                                    }
+
                                     if (this.isAdShieldActive) {
                                         try {
                                             const vData = typeof this.ytPlayer.getVideoData === 'function' ? this.ytPlayer.getVideoData() : null;
@@ -346,8 +372,15 @@ class MobilePlayer {
                                 } else if (event.data === window.YT.PlayerState.PAUSED) {
                                     // 화면 잠금 또는 백그라운드 전환으로 인해 브라우저에 의해 일시정지되거나 사용자가 일시정지한 경우
                                     if (document.hidden && !this.isUserPaused) {
-                                        // 백그라운드 전환으로 인한 브라우저 강제 일시정지 시: 미디어 세션 및 킵얼라이브 유지
+                                        // 백그라운드 전환으로 인한 브라우저 강제 일시정지 시:
+                                        // 백그라운드 재생 지원 브라우저(삼성 인터넷 백그라운드 재생 ON, Brave, 웨일 등)에서는
+                                        // 즉각 playVideo()를 재호출하여 백그라운드 연속 재생 유지
                                         try { this.silentAudio.play().catch(() => {}); } catch (e) {}
+                                        setTimeout(() => {
+                                            if (this.isPlaying && !this.isUserPaused && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
+                                                try { this.ytPlayer.playVideo(); } catch (e) {}
+                                            }
+                                        }, 120);
                                         return;
                                     }
                                     this.isPlaying = false;
@@ -525,6 +558,9 @@ class MobilePlayer {
                 if (typeof this.ytPlayer.setPlaybackRate === 'function') {
                     this.ytPlayer.setPlaybackRate(1);
                 }
+                if (typeof this.ytPlayer.setPlaybackQuality === 'function') {
+                    this.ytPlayer.setPlaybackQuality(this._getTargetVideoQuality());
+                }
                 if (typeof this.ytPlayer.unMute === 'function') {
                     this.ytPlayer.unMute();
                 }
@@ -635,14 +671,35 @@ class MobilePlayer {
         }
     }
 
+    _getTargetVideoQuality() {
+        if (this.playerViewMode !== 'video') {
+            return 'small'; // 앨범 아트 모드에서는 최저 해상도(240p)로 데이터 소모 극소화
+        }
+        const isWifi = (window.AndroidBridge && typeof window.AndroidBridge.isWifiConnected === 'function')
+            ? window.AndroidBridge.isWifiConnected()
+            : (navigator.connection ? (navigator.connection.type === 'wifi') : false);
+        const isDataSaver = (window.AndroidBridge && typeof window.AndroidBridge.isDataSaverMode === 'function')
+            ? window.AndroidBridge.isDataSaverMode()
+            : (navigator.connection && navigator.connection.saveData);
+
+        // 모바일 데이터(LTE/5G) 환경이거나 데이터 절약 모드일 때는 360p(medium)로 제한하여
+        // 1080p 대비 데이터 소모량을 85% 이상 절감 (모바일 화면에서 충분히 선명함)
+        if (isDataSaver || !isWifi) {
+            return 'medium';
+        }
+        return 'hd720';
+    }
+
     _playWithYouTubeEngine(song, startSecOverride) {
         if (!song) return;
         this.currentSong = song;
         if (window.AndroidBridge && typeof window.AndroidBridge.stopNativePlayback === 'function') {
             try { window.AndroidBridge.stopNativePlayback(); } catch (e) {}
         }
-        if (window.AndroidBridge && typeof window.AndroidBridge.setVideoModeNative === 'function') {
-            try { window.AndroidBridge.setVideoModeNative(true); } catch (e) {}
+        if (this.playerViewMode === 'video') {
+            if (window.AndroidBridge && typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                try { window.AndroidBridge.setVideoModeNative(true); } catch (e) {}
+            }
         }
         if (window.AndroidBridge && typeof window.AndroidBridge.updatePlaybackState === 'function') {
             try {
@@ -657,6 +714,8 @@ class MobilePlayer {
         this.audio.src = '';
         this.isOfflinePlayback = false;
         this.isAdShieldActive = true;
+        this._updateMediaSessionMetadata();
+        this._updateMediaSessionState();
         if (this.playerViewMode === 'video') {
             window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
         }
@@ -685,14 +744,14 @@ class MobilePlayer {
                     window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
                 }
 
-                const quality = (this.playerViewMode === 'video') ? 'default' : 'small';
+                const quality = this._getTargetVideoQuality();
                 this.ytPlayer.loadVideoById({
                     videoId: song.youtubeId,
                     startSeconds: startSec,
                     suggestedQuality: quality
                 });
-                if (quality === 'small' && typeof this.ytPlayer.setPlaybackQuality === 'function') {
-                    try { this.ytPlayer.setPlaybackQuality('small'); } catch (e) {}
+                if (typeof this.ytPlayer.setPlaybackQuality === 'function') {
+                    try { this.ytPlayer.setPlaybackQuality(quality); } catch (e) {}
                 }
                 this.ytPlayer.playVideo();
                 this._requestWakeLock();
@@ -731,8 +790,10 @@ class MobilePlayer {
                 }
                 this.silentAudio.play().catch(() => {});
             } catch (e) {}
+            this.isPlaying = true;
             this.isUserPaused = false;
             this._requestWakeLock();
+            this._updateMediaSessionState();
             if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
                 try { this.ytPlayer.playVideo(); } catch (e) {}
             } else if (this.activeEngine === 'audio' && this.audio) {
@@ -740,10 +801,13 @@ class MobilePlayer {
             } else {
                 this.togglePlay();
             }
+            window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: true } }));
         });
         navigator.mediaSession.setActionHandler('pause', () => {
             this.isUserPaused = true;
+            this.isPlaying = false;
             this._releaseWakeLock();
+            this._updateMediaSessionState();
             if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
                 try { this.ytPlayer.pauseVideo(); } catch (e) {}
             } else if (this.activeEngine === 'audio' && this.audio) {
@@ -751,6 +815,7 @@ class MobilePlayer {
             } else {
                 this.togglePlay();
             }
+            window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: false } }));
         });
         navigator.mediaSession.setActionHandler('previoustrack', () => this.playPrev());
         navigator.mediaSession.setActionHandler('nexttrack', () => this.playNext());
@@ -783,7 +848,7 @@ class MobilePlayer {
     _updateMediaSessionMetadata() {
         if (!this.currentSong) return;
 
-        const thumb = `https://img.youtube.com/vi/${this.currentSong.youtubeId}/hqdefault.jpg`;
+        const thumb = this.currentSong.thumbUrl || `https://img.youtube.com/vi/${this.currentSong.youtubeId}/hqdefault.jpg`;
         const displayTitle = this.currentSong.title;
         const artist = this.currentSong.artist;
 
@@ -833,12 +898,17 @@ class MobilePlayer {
         this.queueIndex = idx;
         this.isPlaying = true;
         this.isUserPaused = false;
+        this._saveState();
 
-        // 안드로이드 네이티브 서비스 큐 동기화
-        if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
-            try {
-                window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
-            } catch (e) {}
+        // 안드로이드 네이티브 서비스 큐 동기화 (직전 동기화와 동일한 경우 중복 전송 방지)
+        const currentQueueSig = `${this.queue.length}_${this.queueIndex}_${song.id}`;
+        if (this._lastSyncedQueueSig !== currentQueueSig) {
+            this._lastSyncedQueueSig = currentQueueSig;
+            if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
+                try {
+                    window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
+                } catch (e) {}
+            }
         }
 
         // 영상 모드일 경우: 네이티브 오디오를 즉시 정지하고 유튜브 영상 엔진으로만 단독 재생
@@ -852,6 +922,10 @@ class MobilePlayer {
             this.activeEngine = 'youtube';
             this._playWithYouTubeEngine(song);
             return;
+        } else {
+            if (window.AndroidBridge && typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
+            }
         }
         let offlineRecord = null;
         try {
@@ -1259,67 +1333,24 @@ class MobilePlayer {
                 if (this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
                     try { this.ytPlayer.playVideo(); } catch (e) {}
                 }
+                if (this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
+                    try { this.ytPlayer.setPlaybackQuality(this._getTargetVideoQuality()); } catch (e) {}
+                }
             }
         } else if (mode === 'art') {
-            if (this.activeEngine === 'native') {
-                // 이미 네이티브 오디오 재생 중이면 곡 재시작 방지
-                return;
+            if (this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
+                try { this.ytPlayer.setPlaybackQuality('small'); } catch (e) {}
             }
             if (window.AndroidBridge && typeof window.AndroidBridge.setVideoModeNative === 'function') {
                 try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
             }
-            // 앨범 아트 모드 전환: 안드로이드 네이티브 환경인 경우 절전 및 백그라운드 재생 최적화 네이티브 서비스로 복귀
-            if (window.AndroidBridge && typeof window.AndroidBridge.playIndexNative === 'function') {
-                const curSec = (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getCurrentTime === 'function')
-                    ? (this.ytPlayer.getCurrentTime() || 0)
-                    : (this.audio.currentTime || 0);
-
-                if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
-                    try { this.ytPlayer.pauseVideo(); } catch (e) {}
-                }
-                this._stopYtTimer();
-
-                this.activeEngine = 'native';
-                if (typeof window.AndroidBridge.playIndexWithSeekNative === 'function') {
-                    window.AndroidBridge.playIndexWithSeekNative(this.queueIndex, Math.floor(curSec));
-                } else {
-                    window.AndroidBridge.playIndexNative(this.queueIndex);
-                    if (curSec > 0 && typeof window.AndroidBridge.seekToNative === 'function') {
-                        setTimeout(() => {
-                            try { window.AndroidBridge.seekToNative(Math.floor(curSec)); } catch (e) {}
-                        }, 400);
-                    }
-                }
-            } else {
-                // 웹 브라우저 환경: 광고 오버레이 및 배너 즉시 리셋하고 앨범 모드 복귀
-                if (this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
-                    try { this.ytPlayer.setPlaybackQuality('small'); } catch (e) {}
-                }
-                this.isAdShieldActive = false;
-                window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
-                window.dispatchEvent(new CustomEvent('mobileplayer:viewModeChanged', { detail: { mode: 'art' } }));
-
-                const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
-                const serverOrigin = (window.location.protocol.startsWith('http') && !['localhost', '127.0.0.1', 'appassets.androidplatform.net'].includes(window.location.hostname))
-                    ? window.location.origin
-                    : '';
-                const effectiveServer = pcServer || serverOrigin;
-                if (effectiveServer && this.currentSong) {
-                    const curSec = (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.getCurrentTime === 'function')
-                        ? (this.ytPlayer.getCurrentTime() || 0)
-                        : (this.audio.currentTime || 0);
-                    if (this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
-                        try { this.ytPlayer.pauseVideo(); } catch (e) {}
-                    }
-                    this._stopYtTimer();
-                    this.activeEngine = 'audio';
-                    this.audio.src = `${effectiveServer}/api/audio?id=${this.currentSong.youtubeId}`;
-                    try { this.audio.currentTime = curSec; } catch (e) {}
-                    if (this.isPlaying) {
-                        this.audio.play().catch(() => {});
-                    }
-                }
-            }
+            // 앨범 아트 모드 전환:
+            // 만약 유튜브 영상 엔진으로 재생 중이었다면, 곡이 끊기거나 0초로 재시작되는 현상을 방지하기 위해
+            // 현재 곡은 재생 중인 유튜브 플레이어로 무중단 연속 재생합니다 (화면만 앨범 아트로 전환).
+            // 다음 곡 넘김이나 새 곡 선택 시에는 자동으로 네이티브 백그라운드 서비스로 재생됩니다.
+            this.isAdShieldActive = false;
+            window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
+            window.dispatchEvent(new CustomEvent('mobileplayer:viewModeChanged', { detail: { mode: 'art' } }));
         }
         if (mode === 'video' && this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
             try { this.ytPlayer.setPlaybackQuality('default'); } catch (e) {}
@@ -1364,6 +1395,7 @@ class MobilePlayer {
 
     toggleShuffle() {
         this.isShuffle = !this.isShuffle;
+        this._saveState();
         if (window.AndroidBridge && typeof window.AndroidBridge.setShuffleNative === 'function') {
             window.AndroidBridge.setShuffleNative(this.isShuffle);
         }
@@ -1395,6 +1427,7 @@ class MobilePlayer {
             detail: { queue: this.queue, index: this.queueIndex }
         }));
 
+        this._lastSyncedQueueSig = `${this.queue.length}_${this.queueIndex}_${this.queue[this.queueIndex]?.id || ''}`;
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
             if (autoPlay) {
@@ -1419,6 +1452,7 @@ class MobilePlayer {
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
         }
+        this._saveState();
         window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
             detail: { queue: this.queue, index: this.queueIndex }
         }));
@@ -1438,6 +1472,7 @@ class MobilePlayer {
             if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
                 window.AndroidBridge.syncQueue(JSON.stringify(this.queue), 0);
             }
+            this._saveState();
             window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
                 detail: { queue: this.queue, index: this.queueIndex }
             }));
@@ -1455,6 +1490,7 @@ class MobilePlayer {
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
         }
+        this._saveState();
         window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
             detail: { queue: this.queue, index: this.queueIndex }
         }));
@@ -1471,6 +1507,7 @@ class MobilePlayer {
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
         }
+        this._saveState();
         window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
             detail: { queue: this.queue, index: this.queueIndex }
         }));
@@ -1480,6 +1517,37 @@ class MobilePlayer {
         if (index < 0 || index >= this.queue.length) return;
         this.queueIndex = index;
         this.playSong(this.queue[this.queueIndex]);
+    }
+
+    playIndex(index) {
+        this.playQueueIndex(index);
+    }
+
+    shuffleQueue() {
+        if (!this.queue || this.queue.length <= 1) return;
+        const currentSong = (this.queueIndex >= 0 && this.queueIndex < this.queue.length)
+            ? this.queue[this.queueIndex]
+            : this.queue[0];
+
+        // 현재 재생 중인 곡을 제외한 나머지 대기열 곡들만 임의 셔플
+        const remaining = this.queue.filter((_, idx) => idx !== this.queueIndex);
+        for (let i = remaining.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [remaining[j], remaining[i]] = [remaining[i], remaining[j]];
+        }
+
+        // 현재 곡을 맨 앞에 배치하고 셔플된 나머지 곡들을 후속 대기열로 설정
+        this.queue = [currentSong, ...remaining];
+        this.queueIndex = 0;
+        this._saveState();
+
+        if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
+            try { window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex); } catch (e) {}
+        }
+
+        window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
+            detail: { queue: this.queue, index: this.queueIndex }
+        }));
     }
 
     // ===================================================================
@@ -1495,6 +1563,7 @@ class MobilePlayer {
         if (window.StorageManager && this.currentSong && this.currentSong.id) {
             window.StorageManager.addToHistory(this.currentSong.id);
         }
+        this._saveState();
         this._playWithYouTubeEngine(song);
         window.dispatchEvent(new CustomEvent('mobileplayer:trackChanged', {
             detail: { song: this.currentSong, isOffline: false }
@@ -1505,13 +1574,15 @@ class MobilePlayer {
     }
 
     onNativeTrackChanged(index) {
-        if (this.playerViewMode === 'video' || this.activeEngine === 'youtube') return;
+        if (this.playerViewMode === 'video') return;
+        this.activeEngine = 'native';
         if (!this.queue || this.queue.length === 0) {
             this.syncFromNative();
             return;
         }
         if (index >= 0 && index < this.queue.length) {
             this.activeEngine = 'native';
+            const isSameSong = (this.currentSong && this.queue[index] && this.currentSong.id === this.queue[index].id);
             this.queueIndex = index;
             this.currentSong = this.queue[index];
             this.isPlaying = true;
@@ -1520,26 +1591,29 @@ class MobilePlayer {
             if (window.StorageManager && this.currentSong && this.currentSong.id) {
                 window.StorageManager.addToHistory(this.currentSong.id);
             }
+            this._saveState();
 
-            const startSec = (this.sabiMode && this.currentSong && this.currentSong.sabi && typeof this.currentSong.sabi.start === 'number')
-                ? this.currentSong.sabi.start
-                : 0;
-            this.nativeCurrentTime = startSec;
-            this.nativeDuration = this.currentSong ? (this.currentSong.duration || 0) : 0;
+            if (!isSameSong) {
+                const startSec = (this.sabiMode && this.currentSong && this.currentSong.sabi && typeof this.currentSong.sabi.start === 'number')
+                    ? this.currentSong.sabi.start
+                    : 0;
+                this.nativeCurrentTime = startSec;
+                this.nativeDuration = this.currentSong ? (this.currentSong.duration || 0) : 0;
+                const progress = this.nativeDuration > 0 ? (startSec / this.nativeDuration) * 100 : 0;
+                window.dispatchEvent(new CustomEvent('mobileplayer:timeUpdate', {
+                    detail: {
+                        currentTime: startSec,
+                        duration: this.nativeDuration,
+                        progress: progress
+                    }
+                }));
+            }
             const isOffline = window.AndroidBridge && window.AndroidBridge.hasOfflineTrack ? window.AndroidBridge.hasOfflineTrack(this.currentSong.id, this.currentSong.youtubeId || '') : false;
             window.dispatchEvent(new CustomEvent('mobileplayer:trackChanged', {
                 detail: { song: this.currentSong, isOffline }
             }));
             window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', {
                 detail: { isPlaying: true }
-            }));
-            const progress = this.nativeDuration > 0 ? (startSec / this.nativeDuration) * 100 : 0;
-            window.dispatchEvent(new CustomEvent('mobileplayer:timeUpdate', {
-                detail: {
-                    currentTime: startSec,
-                    duration: this.nativeDuration,
-                    progress: progress
-                }
             }));
         }
     }

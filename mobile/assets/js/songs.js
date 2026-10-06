@@ -1419,7 +1419,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "lize-i-am",
-        "title": "僕である為 (나라는 것)",
+        "title": "僕のこと (나라는 것)",
         "artist": "아카네 리제",
         "originalArtist": "Mrs. GREEN APPLE",
         "type": "cover",
@@ -1476,7 +1476,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "lize-drunken",
-        "title": "酔いどれ知らず (취기 미지)",
+        "title": "酔いどれ知らず (취한 줄도 모르고)",
         "artist": "아카네 리제",
         "originalArtist": "Kanaria",
         "type": "cover",
@@ -1685,7 +1685,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "shibuki-dear-boy",
-        "title": "親愛なるあの子へ (친애하는 소년이여)",
+        "title": "拝啓、少年よ (친애하는 소년이여)",
         "artist": "텐코 시부키",
         "originalArtist": "Hump Back",
         "type": "cover",
@@ -1704,7 +1704,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "shibuki-happy-thought",
-        "title": "幸せについて本気出して考えてみた (행복에 대해 생각한 것)",
+        "title": "幸せについて、僕が考えたこと (행복에 대해 내가 생각한 것)",
         "artist": "텐코 시부키",
         "originalArtist": "오오이시 마사요시",
         "type": "cover",
@@ -2051,7 +2051,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "duet-rin-riko-waste-sorting",
-        "title": "ゴミ捨て場 (우리들! 쓰레기 분리수거단)",
+        "title": "我ら！ゴミ分別団 (우리! 쓰레기 분리수거단)",
         "artist": "아오쿠모 린 & 유즈하 리코",
         "originalArtist": "Giga & TeddyLoid",
         "type": "cover",
@@ -4048,7 +4048,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-7gYDCoiV7cc",
-        "title": "그 나라의 왕가는 이상해 (아이 같은 전쟁)",
+        "title": "그 나라의 왕가는 이상해 (어린애 전쟁)",
         "artist": "네네코 마시로 x 아카네 리제",
         "originalArtist": "Giga",
         "type": "cover",
@@ -4881,7 +4881,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-DrZMMirj4zo",
-        "title": "終わらない歌 (끝나지 않은 노래)",
+        "title": "終わらない歌 (끝나지 않는 노래)",
         "artist": "아카네 리제",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -5759,7 +5759,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-gBWIv6NvLcU",
-        "title": "落向 (낙향)",
+        "title": "都落ち (낙향)",
         "artist": "시라유키 히나",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -6789,6 +6789,16 @@ const DEFAULT_SONGS = [
     }
 ];
 
+// 롱폼/비커버/비음원 영상 영구 차단 블랙리스트 ID
+const BANNED_NON_SONG_IDS = new Set([
+    'W5KthC3ZWsE', 'F1Z0uUObYao', 'GEkkL_4cCFU', 'gGZtkYpZ65U',
+    'I39TsTSla7c', 'AX1XyaDMwmQ', 'qz29KlB8Qx0', 'zISpAiwawVM',
+    'iQ9062YZRio', 'KzwlPuoVopE', '-5uKjMUnlqY', '9uXMUAbIoVo',
+    'sN5e9ftbVvY', '6NDV1oky-Ng', '9AQ3o2CgqtI', 'XAPaEXF7wwY',
+    'YtqUA52ZT2c', '8IAD5m1M8p0', 'EHhxKoWhKIk', '4C6GJvqG1gk',
+    'lpukv7wjy6o'
+]);
+
 // 헬퍼 함수들
 function getAllSongs() {
     let custom = [];
@@ -6831,7 +6841,11 @@ function getAllSongs() {
     let all = [];
     for (const song of baseList) {
         const sid = song.id;
-        const ytid = song.youtubeId;
+        const ytid = song.youtubeId || (song.id && song.id.startsWith('auto-') ? song.id.replace('auto-', '') : null);
+        if (ytid && BANNED_NON_SONG_IDS.has(ytid)) continue;
+        if (sid && BANNED_NON_SONG_IDS.has(sid)) continue;
+        const dur = Number(song.duration) || 0;
+        if (dur > 420 && ytid !== 'DMk4_4Xytz4' && ytid !== '6mVByQMyxdY') continue;
         if (sid && seenIds.has(sid)) continue;
         if (ytid && seenYtIds.has(ytid)) continue;
         if (sid) seenIds.add(sid);
@@ -7014,14 +7028,15 @@ function addCustomSong(songData) {
         id: 'custom-' + Date.now(),
         title: songData.title.trim(),
         artist: songData.artist ? songData.artist.trim() : '스텔라이브',
-        originalArtist: '사용자 직접 추가',
+        originalArtist: songData.originalArtist ? songData.originalArtist.trim() : (songData.type === 'original' ? '스텔라이브 (STELLIVE)' : '커버 (Cover)'),
         type: songData.type || 'cover',
-        gen: 'custom',
+        gen: songData.gen || 'custom',
         members: songData.members && songData.members.length > 0 ? songData.members : ['group'],
         youtubeId: vid,
         duration: 200,
         publishedAt: songData.publishedAt || new Date().toISOString().split('T')[0],
         addedAt: Date.now(),
+        mood: songData.mood || 'none',
         sabi: {
             start: songData.sabiStart !== undefined ? Number(songData.sabiStart) : 45,
             end: songData.sabiEnd !== undefined ? Number(songData.sabiEnd) : 80,

@@ -37,7 +37,20 @@ button,
 
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
+@property --theme-color {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #8b5cf6;
+}
+
+@property --theme-glow {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: rgba(139, 92, 246, 0.4);
+}
+
 :root {
+    transition: --theme-color 0.45s ease, --theme-glow 0.45s ease;
     /* 기본 배경 및 베이스 컬러 */
     --bg-base: #090a10;
     --bg-card: rgba(18, 20, 32, 0.75);
@@ -2774,15 +2787,15 @@ body::after {
     overflow: hidden;
     background: #000;
     box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    opacity: 0;
+    opacity: 0.01;
     pointer-events: none;
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
     width: 320px;
     height: 180px;
     z-index: -100;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .youtube-view-box.active {
@@ -4354,5 +4367,11 @@ body.multiselect-active .track-number {
     background: rgba(16, 185, 129, 0.15);
     color: #34d399;
     border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* PC 웹 -> 모바일 웹 전환 버튼 기본 숨김 (웹 브라우저 환경에서만 JS로 활성화) */
+#nav-item-switch-mobile,
+#topbar-btn-switch-mobile {
+    display: none !important;
 }
 

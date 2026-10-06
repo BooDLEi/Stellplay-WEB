@@ -82,7 +82,7 @@
                             <span>설정</span>
                         </button>
                     </li>
-                    <li class="nav-item" id="nav-item-switch-mobile">
+                    <li class="nav-item" id="nav-item-switch-mobile" style="display: none !important;">
                         <a href="./mobile/" id="btn-switch-mobile" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; color: var(--theme-color); text-decoration: none; font-size: 0.88rem; font-weight: 600; border-radius: var(--radius-sm, 8px); background: rgba(124, 92, 252, 0.1); border: 1px solid rgba(124, 92, 252, 0.25); transition: all 0.2s;">
                             <span class="nav-icon" style="display: flex; align-items: center;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -167,7 +167,7 @@
 
                 <div class="topbar-actions">
                     <!-- 모바일 웹 버전 전환 버튼 (웹 전용) -->
-                    <a href="./mobile/" id="topbar-btn-switch-mobile" class="btn-topbar-mobile" title="모바일 전용 웹 플레이어로 전환" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-full); background: rgba(124, 92, 252, 0.12); border: 1px solid rgba(124, 92, 252, 0.3); color: var(--theme-color); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
+                    <a href="./mobile/" id="topbar-btn-switch-mobile" class="btn-topbar-mobile" title="모바일 전용 웹 플레이어로 전환" style="display: none !important; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-full); background: rgba(124, 92, 252, 0.12); border: 1px solid rgba(124, 92, 252, 0.3); color: var(--theme-color); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
                             <line x1="12" y1="18" x2="12.01" y2="18"/>
@@ -752,13 +752,32 @@
                         <input type="text" class="form-input" id="input-song-artist" placeholder="예: 시라유키 히나">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">원곡자 / 부가정보</label>
+                    <input type="text" class="form-input" id="input-song-original-artist" placeholder="예: 오리지널, Yorushika 등">
+                </div>
                 <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">발매일 (YYYY-MM-DD)</label>
+                        <input type="date" class="form-input" id="input-song-published-at" title="발매일 (정렬 기준)">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">곡 유형</label>
                         <select class="form-select" id="select-song-type">
                             <option value="original">오리지널곡</option>
                             <option value="cover" selected>커버곡</option>
                             <option value="featuring">피처링 / 컬래버 / OST</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">곡 분위기 (분위기 추천 연동)</label>
+                        <select class="form-select" id="select-song-mood">
+                            <option value="none" selected>선택 안 함 (자동 분석)</option>
+                            <option value="upbeat">🔥 파워풀 (락/에너지)</option>
+                            <option value="chill">🌙 감성 (새벽/발라드)</option>
+                            <option value="bright">✨ 청량 (상쾌/희망)</option>
+                            <option value="groovy">🎧 그루비 (트렌디/R&B)</option>
+                            <option value="cute">💖 큐트 (깜찍/요정)</option>
                         </select>
                     </div>
                 </div>
@@ -878,6 +897,17 @@
                                 <option value="original">오리지널곡</option>
                                 <option value="cover">커버곡</option>
                                 <option value="featuring">피처링 / 컬래버 / OST</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">곡 분위기 (분위기 추천 연동)</label>
+                            <select class="form-select" id="edit-song-mood">
+                                <option value="none" selected>선택 안 함 (자동 분석)</option>
+                                <option value="upbeat">🔥 파워풀 (락/에너지)</option>
+                                <option value="chill">🌙 감성 (새벽/발라드)</option>
+                                <option value="bright">✨ 청량 (상쾌/희망)</option>
+                                <option value="groovy">🎧 그루비 (트렌디/R&B)</option>
+                                <option value="cute">💖 큐트 (깜찍/요정)</option>
                             </select>
                         </div>
                     </div>
