@@ -150,7 +150,8 @@ class MobilePlayer {
                     try {
                         const s = this.ytPlayer.getPlayerState();
                         if (s === window.YT.PlayerState.PAUSED && !this.isUserPaused) {
-                            this.ytPlayer.playVideo();
+                            this._applyIframePolicies();
+                this.ytPlayer.playVideo();
                         }
                     } catch (e) {}
                 }
@@ -330,11 +331,7 @@ class MobilePlayer {
                             onReady: () => {
                                 console.log('[MobilePlayer] YouTube Iframe API ready!');
                                 this.isYtReady = true;
-                                const iframe = document.querySelector('#m-youtube-hidden-player iframe') || document.getElementById('m-youtube-hidden-player');
-                                if (iframe && iframe.tagName === 'IFRAME') {
-                                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-                                    iframe.setAttribute('allowfullscreen', 'true');
-                                }
+                                this._applyIframePolicies();
                                 if (this._pendingYtSong) {
                                     const pSong = this._pendingYtSong;
                                     const pStart = this._pendingYtStartTime || 0;
@@ -688,6 +685,36 @@ class MobilePlayer {
             return 'medium';
         }
         return 'hd720';
+    }
+
+    _applyIframePolicies() {
+        try {
+            const iframes = [
+                (typeof this.ytPlayer?.getIframe === 'function' ? this.ytPlayer.getIframe() : null),
+                document.querySelector('#m-youtube-hidden-player iframe'),
+                document.getElementById('m-youtube-hidden-player')
+            ];
+            const allowPolicy = [
+                'accelerometer *',
+                'autoplay *',
+                'clipboard-write *',
+                'encrypted-media *',
+                'gyroscope *',
+                'picture-in-picture *',
+                'web-share *',
+                'execution-while-not-rendered *',
+                'execution-while-out-of-viewport *',
+                'fullscreen *'
+            ].join('; ');
+            iframes.forEach(el => {
+                if (el && el.tagName === 'IFRAME') {
+                    el.setAttribute('allow', allowPolicy);
+                    el.setAttribute('allowfullscreen', 'true');
+                    el.setAttribute('loading', 'eager');
+                    el.setAttribute('importance', 'high');
+                }
+            });
+        } catch (e) {}
     }
 
     _playWithYouTubeEngine(song, startSecOverride) {

@@ -403,6 +403,30 @@ class MusicPlayer {
             event.target.setVolume(this.volume);
         }
 
+        if (event && event.target && typeof event.target.getIframe === 'function') {
+            try {
+                const iframe = event.target.getIframe();
+                if (iframe) {
+                    const allowPolicy = [
+                        'accelerometer *',
+                        'autoplay *',
+                        'clipboard-write *',
+                        'encrypted-media *',
+                        'gyroscope *',
+                        'picture-in-picture *',
+                        'web-share *',
+                        'execution-while-not-rendered *',
+                        'execution-while-out-of-viewport *',
+                        'fullscreen *'
+                    ].join('; ');
+                    iframe.setAttribute('allow', allowPolicy);
+                    iframe.setAttribute('allowfullscreen', 'true');
+                    iframe.setAttribute('loading', 'eager');
+                    iframe.setAttribute('importance', 'high');
+                }
+            } catch (e) {}
+        }
+
         if (deckId === this.activeDeckId) {
             window.dispatchEvent(new CustomEvent('stellplay:ready'));
 
