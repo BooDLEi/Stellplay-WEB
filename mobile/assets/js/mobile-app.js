@@ -587,19 +587,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const stats = await window.OfflineDB.getStorageStats();
 
-            if (dom.offlineStatsCount) dom.offlineStatsCount.textContent = `${stats.count}곡 저장됨`;
+            if (dom.offlineStatsCount) dom.offlineStatsCount.textContent = '';
             if (dom.offlineStatsSize) dom.offlineStatsSize.textContent = `${stats.formattedSize} 사용 중`;
-            if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = `${stats.count}곡`;
+            if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '';
             if (dom.settingsStorageInfo) dom.settingsStorageInfo.textContent = stats.formattedSize;
             updateSettingsCacheInfo();
 
             if (dom.tabBadgeOffline) {
-                if (stats.count > 0) {
-                    dom.tabBadgeOffline.style.display = 'block';
-                    dom.tabBadgeOffline.textContent = stats.count > 99 ? '99+' : stats.count;
-                } else {
-                    dom.tabBadgeOffline.style.display = 'none';
-                }
+                dom.tabBadgeOffline.style.display = 'none';
             }
         } catch (e) {}
     }
@@ -754,7 +749,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusBadge = '<span class="m-track-status-badge cache">CACHE</span>';
         }
 
-        const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`;
+        const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
         const isSelected = state.isMultiSelectHome ? state.selectedSongIds.has(song.id) : (state.isOfflineSelectMode ? state.offlineSelectedSongIds.has(song.id) : false);
 
         let typeBadge = '';
@@ -1110,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 멤버 필터 및 검색 적용
         const filteredSongs = filterSongList(allOfflineSongs, false);
-        if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = `${filteredSongs.length}곡`;
+        if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '';
         dom.trackListOffline.innerHTML = '';
 
         if (allOfflineSongs.length === 0) {
@@ -1447,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         filtered.forEach(song => {
             const isAlready = alreadySongIds.has(song.id);
             const isChecked = mPlAddSelectedSongIds.has(song.id);
-            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`;
+            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
 
             html += `
                 <div class="m-pl-add-track-item ${isChecked ? 'selected' : ''} ${isAlready ? 'already-added' : ''}" data-song-id="${song.id}">
@@ -1723,7 +1718,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         queue.forEach((song, idx) => {
             const isCurrent = idx === player.queueIndex;
-            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`;
+            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
 
             const item = document.createElement('div');
             item.className = `m-queue-item ${isCurrent ? 'active' : ''}`;
@@ -3858,13 +3853,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             // 오른쪽 슬라이드: 이전곡
                             if (player && typeof player.playPrev === 'function') {
                                 player.playPrev();
-                                showToast('⏮ 이전 곡 재생');
                             }
                         } else {
                             // 왼쪽 슬라이드: 다음곡
                             if (player && typeof player.playNext === 'function') {
                                 player.playNext();
-                                showToast('⏭ 다음 곡 재생');
                             }
                         }
                         // 탭 시트 열림 방지 타이머
