@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 82,
-  "updatedAt": "2026-10-07T03:06:12.674583+00:00",
+  "count": 80,
+  "updatedAt": "2026-10-08T03:06:14.186134+00:00",
   "tracks": [
     {
       "id": "kNzGpNEdBqw",
@@ -938,18 +938,6 @@
       "defaultType": "original"
     },
     {
-      "id": "JsnnXkxNGQU",
-      "title": "Viva Happy [Viva Happy / Mitchie M]",
-      "rawTitle": "Viva Happy [Viva Happy / Mitchie M] | EVERYS Cover",
-      "duration": 210,
-      "uploader": "",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
-    },
-    {
       "id": "OlJ-7k9Trm0",
       "title": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ]",
       "rawTitle": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ] (4K)",
@@ -966,18 +954,6 @@
       "title": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ]",
       "rawTitle": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ] (4K)",
       "duration": 222,
-      "uploader": "",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "j_RAn7yvq_0",
-      "title": "Mashiro - Alive 2 Bedroom Musical [ Jekyll & Hyde ]",
-      "rawTitle": "Mashiro - Alive 2 Bedroom Musical [ Jekyll & Hyde ] (4K)",
-      "duration": 103,
       "uploader": "",
       "defaultMember": "mashiro",
       "members": [
