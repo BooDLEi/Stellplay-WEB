@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 80,
-  "updatedAt": "2026-10-08T03:06:14.186134+00:00",
+  "count": 79,
+  "updatedAt": "2026-10-09T03:06:16.951056+00:00",
   "tracks": [
     {
       "id": "kNzGpNEdBqw",
@@ -958,18 +958,6 @@
       "defaultMember": "mashiro",
       "members": [
         "mashiro"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "F7kdEX0VRss",
-      "title": "Dance The Night Away - TWICE",
-      "rawTitle": "[4K] Dance The Night Away - TWICE / Hanako Nana 3D Cover",
-      "duration": 186,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
       ],
       "defaultType": "cover"
     }
