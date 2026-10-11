@@ -395,6 +395,25 @@ html, body {
     -webkit-user-select: none;
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 모바일 전역 테마 및 라이트/다크 모드 부드러운 전환 */
+#app-container,
+.m-app,
+.m-header,
+.m-tab-bar,
+.fullscreen-sheet,
+.sheet-topbar,
+.m-track-row,
+.modal-content,
+.actions-sheet-content,
+.queue-sheet-content,
+.m-theme-btn,
+.type-pill,
+.m-home-header,
+.m-sub-row {
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.35s ease, box-shadow 0.4s ease;
 }
 
 
@@ -652,7 +671,7 @@ body::before {
     background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.4s ease, transform 0.15s ease;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;

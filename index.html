@@ -736,120 +736,122 @@
                 <button class="btn-close-full" id="btn-close-add-song">✕</button>
             </div>
             <form id="form-add-song">
-                <div class="form-group">
-                    <label class="form-label">유튜브 링크 또는 영상 ID *</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" class="form-input" id="input-yt-url" placeholder="https://www.youtube.com/watch?v=... 또는 ID" required style="flex: 1;">
-                        <button type="button" class="btn-primary" id="btn-auto-fetch-info" style="padding: 0 14px; font-size: 0.85rem; font-weight: 700; white-space: nowrap; background: linear-gradient(135deg, #10b981, #059669);" title="링크를 분석하여 제목, 아티스트, 재생시간을 자동으로 완성합니다">자동 분석</button>
-                    </div>
-                </div>
-                <div class="form-row">
+                <div class="modal-form-body">
                     <div class="form-group">
-                        <label class="form-label">곡 제목 *</label>
-                        <input type="text" class="form-input" id="input-song-title" placeholder="예: 마음악보" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">아티스트 / 부른 사람</label>
-                        <input type="text" class="form-input" id="input-song-artist" placeholder="예: 시라유키 히나">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">원곡자 / 부가정보</label>
-                    <input type="text" class="form-input" id="input-song-original-artist" placeholder="예: 오리지널, Yorushika 등">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">발매일 (YYYY-MM-DD)</label>
-                        <input type="date" class="form-input" id="input-song-published-at" title="발매일 (정렬 기준)">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">곡 유형</label>
-                        <select class="form-select" id="select-song-type">
-                            <option value="original">오리지널곡</option>
-                            <option value="cover" selected>커버곡</option>
-                            <option value="featuring">피처링 / 컬래버 / OST</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">곡 분위기 (분위기 추천 연동)</label>
-                        <select class="form-select" id="select-song-mood">
-                            <option value="none" selected>선택 안 함 (자동 분석)</option>
-                            <option value="upbeat">🔥 파워풀 (락/에너지)</option>
-                            <option value="chill">🌙 감성 (새벽/발라드)</option>
-                            <option value="bright">✨ 청량 (상쾌/희망)</option>
-                            <option value="groovy">🎧 그루비 (트렌디/R&B)</option>
-                            <option value="cute">💖 큐트 (깜찍/요정)</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- 노래방송 세트리스트 전용 타임스탬프 필드 -->
-                <div class="form-row" id="row-stream-timestamps" style="display: none;">
-                    <div class="form-group">
-                        <label class="form-label">노래방송 시작 시간 (초)</label>
-                        <input type="number" class="form-input" id="input-stream-start" placeholder="예: 120 (2분)" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">노래방송 종료 시간 (초)</label>
-                        <input type="number" class="form-input" id="input-stream-end" placeholder="예: 360 (6분)" value="240">
-                    </div>
-                </div>
-                <div class="form-group member-picker-container">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <label class="form-label" style="margin-bottom: 0;">참여 멤버 설정 *</label>
-                        <button type="button" class="btn-detect-chips" id="btn-auto-detect-members" style="font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; background: rgba(124, 92, 252, 0.15); color: #a78bfa; border: 1px solid rgba(124, 92, 252, 0.3); cursor: pointer;">⚡ 제목에서 자동 감지</button>
-                    </div>
-                    <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브 -->
-                    <div class="member-scope-selector" id="add-member-scope-selector">
-                        <label class="member-scope-btn active">
-                            <input type="radio" name="add-member-scope" value="individual" checked>
-                            <span>개인 / 듀엣 / 유닛</span>
-                        </label>
-                        <label class="member-scope-btn">
-                            <input type="radio" name="add-member-scope" value="stellive">
-                            <span>스텔라이브 (단체)</span>
-                        </label>
-                    </div>
-                    <!-- 2분류: 유닛 및 멤버별 체크박스 -->
-                    <div class="member-selection-sub" id="add-member-selection-sub">
-                        <div class="member-unit-group">
-                            <span class="member-picker-sublabel">유닛</span>
-                            <div class="member-chips-container unit-chips">
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
-                            </div>
-                        </div>
-                        <div class="member-individual-group">
-                            <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
-                            <div class="member-chips-container member-chips" id="add-member-chips">
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
-                                <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
-                            </div>
+                        <label class="form-label">유튜브 링크 또는 영상 ID *</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" class="form-input" id="input-yt-url" placeholder="https://www.youtube.com/watch?v=... 또는 ID" required style="flex: 1;">
+                            <button type="button" class="btn-primary" id="btn-auto-fetch-info" style="padding: 0 14px; font-size: 0.85rem; font-weight: 700; white-space: nowrap; background: linear-gradient(135deg, #10b981, #059669);" title="링크를 분석하여 제목, 아티스트, 재생시간을 자동으로 완성합니다">자동 분석</button>
                         </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">사비(후렴구) 시작 (초)</label>
-                        <input type="number" class="form-input" id="input-sabi-start" value="45">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">곡 제목 *</label>
+                            <input type="text" class="form-input" id="input-song-title" placeholder="예: 마음악보" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">아티스트 / 부른 사람</label>
+                            <input type="text" class="form-input" id="input-song-artist" placeholder="예: 시라유키 히나">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">사비(후렴구) 종료 (초)</label>
-                        <input type="number" class="form-input" id="input-sabi-end" value="80">
+                        <label class="form-label">원곡자 / 부가정보</label>
+                        <input type="text" class="form-input" id="input-song-original-artist" placeholder="예: 오리지널, Yorushika 등">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">발매일 (YYYY-MM-DD)</label>
+                            <input type="date" class="form-input" id="input-song-published-at" title="발매일 (정렬 기준)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">곡 유형</label>
+                            <select class="form-select" id="select-song-type">
+                                <option value="original">오리지널곡</option>
+                                <option value="cover" selected>커버곡</option>
+                                <option value="featuring">피처링 / 컬래버 / OST</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">곡 분위기 (분위기 추천 연동)</label>
+                            <select class="form-select" id="select-song-mood">
+                                <option value="none" selected>선택 안 함 (자동 분석)</option>
+                                <option value="upbeat">🔥 파워풀 (락/에너지)</option>
+                                <option value="chill">🌙 감성 (새벽/발라드)</option>
+                                <option value="bright">✨ 청량 (상쾌/희망)</option>
+                                <option value="groovy">🎧 그루비 (트렌디/R&B)</option>
+                                <option value="cute">💖 큐트 (깜찍/요정)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 노래방송 세트리스트 전용 타임스탬프 필드 -->
+                    <div class="form-row" id="row-stream-timestamps" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">노래방송 시작 시간 (초)</label>
+                            <input type="number" class="form-input" id="input-stream-start" placeholder="예: 120 (2분)" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">노래방송 종료 시간 (초)</label>
+                            <input type="number" class="form-input" id="input-stream-end" placeholder="예: 360 (6분)" value="240">
+                        </div>
+                    </div>
+                    <div class="form-group member-picker-container">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label class="form-label" style="margin-bottom: 0;">참여 멤버 설정 *</label>
+                            <button type="button" class="btn-detect-chips" id="btn-auto-detect-members" style="font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; background: rgba(124, 92, 252, 0.15); color: #a78bfa; border: 1px solid rgba(124, 92, 252, 0.3); cursor: pointer;">⚡ 제목에서 자동 감지</button>
+                        </div>
+                        <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브 -->
+                        <div class="member-scope-selector" id="add-member-scope-selector">
+                            <label class="member-scope-btn active">
+                                <input type="radio" name="add-member-scope" value="individual" checked>
+                                <span>개인 / 듀엣 / 유닛</span>
+                            </label>
+                            <label class="member-scope-btn">
+                                <input type="radio" name="add-member-scope" value="stellive">
+                                <span>스텔라이브 (단체)</span>
+                            </label>
+                        </div>
+                        <!-- 2분류: 유닛 및 멤버별 체크박스 -->
+                        <div class="member-selection-sub" id="add-member-selection-sub">
+                            <div class="member-unit-group">
+                                <span class="member-picker-sublabel">유닛</span>
+                                <div class="member-chips-container unit-chips">
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
+                                </div>
+                            </div>
+                            <div class="member-individual-group">
+                                <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
+                                <div class="member-chips-container member-chips" id="add-member-chips">
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">사비(후렴구) 시작 (초)</label>
+                            <input type="number" class="form-input" id="input-sabi-start" value="45">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">사비(후렴구) 종료 (초)</label>
+                            <input type="number" class="form-input" id="input-sabi-end" value="80">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-actions">

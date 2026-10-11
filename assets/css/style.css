@@ -604,6 +604,26 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 테마 모드(라이트/다크) 및 전역 컴포넌트 부드러운 전환 */
+.sidebar,
+.topbar,
+.mini-player-bar,
+.modal-card,
+.settings-card,
+.track-row,
+.app-container,
+.main-content,
+.search-input,
+.view-mode-toggle,
+.dropdown-menu,
+.playlist-card,
+.sabi-visual-timeline-container,
+.queue-drawer,
+.mood-chip-card {
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.35s ease, box-shadow 0.4s ease;
 }
 
 /* 은은한 배경 오로라/스타라이트 효과 */
@@ -1274,7 +1294,6 @@ body::after {
 }
 
 .member-major-btn, .member-sub-btn,
-
 .member-text-btn {
     display: inline-flex;
     align-items: center;
@@ -1287,7 +1306,7 @@ body::after {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.04);
     color: var(--text-secondary);
-    transition: all 0.18s ease;
+    transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.4s ease, transform 0.15s ease, filter 0.2s ease;
     white-space: nowrap;
     user-select: none;
     letter-spacing: -0.3px;
@@ -3609,6 +3628,7 @@ body::after {
     flex-shrink: 0;
 }
 
+#modal-add-song .modal-card,
 #modal-edit-song .modal-card {
     max-width: 580px;
 }

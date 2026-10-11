@@ -211,6 +211,44 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-fXoGiuE6e-I",
+        "title": "Loop in June (명조:워더링 웨이브 OST)",
+        "artist": "시라유키 히나",
+        "originalArtist": "명조:워더링 웨이브 OST",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "hina"
+        ],
+        "youtubeId": "fXoGiuE6e-I",
+        "duration": 220,
+        "sabi": {
+            "start": 58,
+            "end": 95,
+            "title": "후렴구: Loop in June"
+        },
+        "publishedAt": "2026-10-11"
+    },
+    {
+        "id": "stel-bmFg-paLaMI",
+        "title": "브레인 롯 (Brain Rot)",
+        "artist": "하나코 나나",
+        "originalArtist": "도쿄 마나카 (Tokyo Manaka) feat. 카사네 테토",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+            "nana"
+        ],
+        "youtubeId": "bmFg-paLaMI",
+        "duration": 125,
+        "sabi": {
+            "start": 28,
+            "end": 65,
+            "title": "후렴구: 브레인 롯"
+        },
+        "publishedAt": "2026-10-11"
+    },
+    {
         "id": "stel-JsnnXkxNGQU",
         "title": "Viva Happy (비바해피)",
         "artist": "에버리스 (사키하네 후야, 아야츠노 유니)",

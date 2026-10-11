@@ -430,6 +430,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. 초기화 (Init)
     // ===================================================================
     async function init() {
+        try {
+            const raw = localStorage.getItem('stellplay_auto_detected_songs');
+            if (raw && (raw.includes('fXoGiuE6e-I') || raw.includes('bmFg-paLaMI'))) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    const cleaned = parsed.filter(s => s.youtubeId !== 'fXoGiuE6e-I' && s.id !== 'auto-fXoGiuE6e-I' && s.youtubeId !== 'bmFg-paLaMI' && s.id !== 'auto-bmFg-paLaMI');
+                    localStorage.setItem('stellplay_auto_detected_songs', JSON.stringify(cleaned));
+                }
+            }
+        } catch (e) {}
+
         // 화면 테마 모드 복원 (다크 / 라이트)
         const savedTheme = (window.StorageManager && typeof window.StorageManager.getSettings === 'function')
             ? (window.StorageManager.getSettings().theme || 'dark')
@@ -2355,17 +2366,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         rules.forEach(rule => {
             for (const kw of rule.keywords) {
-                if (kw.length >= 2) {
-                    if (t.includes(kw)) {
-                        detected.add(rule.id);
-                        break;
-                    }
+                let matched = false;
+                if (/^[a-z0-9_ ]+$/i.test(kw)) {
+                    const re = new RegExp(`\\b${kw.trim()}\\b`, 'i');
+                    matched = re.test(t);
+                } else if (/^[가-힣]$/.test(kw)) {
+                    const re = new RegExp(`(?<![가-힣])${kw}(?![가-힣])`);
+                    matched = re.test(t);
                 } else {
-                    const regex = new RegExp(`(?:^|[\\s\\p{Punctuation}_~xX&+,/ㅣ|「『【\\[(])${kw}(?:[\\s\\p{Punctuation}_~xX&+,/ㅣ|」』】\\])]|$)`, 'u');
-                    if (regex.test(t)) {
-                        detected.add(rule.id);
-                        break;
-                    }
+                    matched = t.includes(kw);
+                }
+                if (matched) {
+                    detected.add(rule.id);
+                    break;
                 }
             }
         });
@@ -2672,7 +2685,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');
 
                         // 2. 제목/업로더 등에서 멤버 자동 감지
-                        const textToAnalyze = `${t.title || ''} ${t.uploader || ''} ${t.channelTitle || ''}`;
+                        const textToAnalyze = `${t.title || ''} ${t.rawTitle || ''} ${t.uploader || ''} ${t.channelTitle || ''}`;
                         let detected = detectMembersFromText(textToAnalyze);
                         if (detected.length === 0 && t.defaultMember && t.defaultMember !== 'group') {
                             detected = [t.defaultMember];

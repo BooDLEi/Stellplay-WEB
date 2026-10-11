@@ -249,6 +249,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initApp() {
+        try {
+            const raw = localStorage.getItem('stellplay_auto_detected_songs');
+            if (raw && (raw.includes('fXoGiuE6e-I') || raw.includes('bmFg-paLaMI'))) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    const cleaned = parsed.filter(s => s.youtubeId !== 'fXoGiuE6e-I' && s.id !== 'auto-fXoGiuE6e-I' && s.youtubeId !== 'bmFg-paLaMI' && s.id !== 'auto-bmFg-paLaMI');
+                    localStorage.setItem('stellplay_auto_detected_songs', JSON.stringify(cleaned));
+                }
+            }
+        } catch (e) {}
+
         const initialSettings = window.StorageManager ? window.StorageManager.getSettings() : {};
         applyThemeMode(initialSettings.theme || 'dark');
         initMemberButtons();
@@ -875,7 +886,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rules.forEach(rule => {
             for (const kw of rule.keywords) {
-                if (t.includes(kw)) {
+                let matched = false;
+                if (/^[a-z0-9_ ]+$/i.test(kw)) {
+                    const re = new RegExp(`\\b${kw.trim()}\\b`, 'i');
+                    matched = re.test(t);
+                } else if (/^[가-힣]$/.test(kw)) {
+                    const re = new RegExp(`(?<![가-힣])${kw}(?![가-힣])`);
+                    matched = re.test(t);
+                } else {
+                    matched = t.includes(kw);
+                }
+                if (matched) {
                     detected.add(rule.id);
                     break;
                 }
@@ -4192,7 +4213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (nonSongKeywords.some(kw => rawTitleLower.includes(kw))) continue;
 
                         const cleanedTitle = cleanAndKoreanizeTitle(t.title || '');
-                        const textToAnalyze = `${t.title || ''} ${t.uploader || ''} ${t.channelTitle || ''}`;
+                        const textToAnalyze = `${t.title || ''} ${t.rawTitle || ''} ${t.uploader || ''} ${t.channelTitle || ''}`;
                         let detected = detectMembersFromText(textToAnalyze);
                         if (detected.length === 0 && t.defaultMember && t.defaultMember !== 'group') {
                             detected = [t.defaultMember];
