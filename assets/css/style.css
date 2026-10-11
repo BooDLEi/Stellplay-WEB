@@ -50,7 +50,6 @@ button,
 }
 
 :root {
-    transition: --theme-color 0.45s ease, --theme-glow 0.45s ease;
     /* 기본 배경 및 베이스 컬러 */
     --bg-base: #090a10;
     --bg-card: rgba(18, 20, 32, 0.75);
@@ -604,29 +603,19 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* 테마 모드(라이트/다크) 및 전역 컴포넌트 부드러운 전환 */
+/* 테마 모드(라이트/다크) 전역 컨테이너 부드러운 전환 (트랙 리스트 제외하여 버벅임 완전 제거) */
 .sidebar,
 .topbar,
 .mini-player-bar,
 .modal-card,
-.settings-card,
-.track-row,
-.app-container,
-.main-content,
-.search-input,
-.view-mode-toggle,
-.dropdown-menu,
-.playlist-card,
-.sabi-visual-timeline-container,
-.queue-drawer,
-.mood-chip-card {
-    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.35s ease, box-shadow 0.4s ease;
+.settings-card {
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* 은은한 배경 오로라/스타라이트 효과 */
+/* 은은한 배경 오로라/스타라이트 효과 (GPU 가속 분리) */
 body::before {
     content: '';
     position: fixed;
@@ -638,7 +627,9 @@ body::before {
     opacity: 0.35;
     pointer-events: none;
     z-index: 0;
-    transition: background 0.6s ease;
+    transform: translateZ(0);
+    will-change: opacity;
+    contain: strict;
 }
 
 body::after {
@@ -1306,7 +1297,7 @@ body::after {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.04);
     color: var(--text-secondary);
-    transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.4s ease, transform 0.15s ease, filter 0.2s ease;
+    transition: background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.12s ease;
     white-space: nowrap;
     user-select: none;
     letter-spacing: -0.3px;
@@ -1334,7 +1325,6 @@ body::after {
 .member-text-btn.btn-white.active {
     background: #ffffff;
     color: #090a10;
-    font-weight: 800;
     border-color: #ffffff;
     box-shadow: 0 0 14px rgba(255, 255, 255, 0.5);
 }
@@ -1352,7 +1342,6 @@ body::after {
 .member-text-btn.btn-gradient-stellive.active {
     background: linear-gradient(135deg, #7c5cfc, #3b82f6);
     color: #ffffff;
-    font-weight: 800;
     border-color: transparent;
     box-shadow: 0 0 16px rgba(124, 92, 252, 0.55);
 }
@@ -1366,7 +1355,6 @@ body::after {
 .member-text-btn.btn-yuni.active {
     background: #fbcfe8;
     color: #090a10;
-    font-weight: 800;
     border-color: #fbcfe8;
     box-shadow: 0 0 14px rgba(251, 207, 232, 0.55);
 }
@@ -1379,7 +1367,6 @@ body::after {
 .member-text-btn.btn-huya.active {
     background: #7e22ce;
     color: #ffffff;
-    font-weight: 800;
     border-color: #7e22ce;
     box-shadow: 0 0 14px rgba(126, 34, 206, 0.6);
 }
@@ -1392,7 +1379,6 @@ body::after {
 .member-text-btn.btn-kanna.active {
     background: #1e40af;
     color: #ffffff;
-    font-weight: 800;
     border-color: #1e40af;
     box-shadow: 0 0 14px rgba(30, 64, 175, 0.65);
 }
@@ -1406,7 +1392,6 @@ body::after {
 .member-text-btn.btn-hina.active {
     background: #fef08a;
     color: #090a10;
-    font-weight: 800;
     border-color: #fef08a;
     box-shadow: 0 0 14px rgba(254, 240, 138, 0.5);
 }
@@ -1419,7 +1404,6 @@ body::after {
 .member-text-btn.btn-mashiro.active {
     background: #94a3b8;
     color: #090a10;
-    font-weight: 800;
     border-color: #94a3b8;
     box-shadow: 0 0 14px rgba(148, 163, 184, 0.45);
 }
@@ -1432,7 +1416,6 @@ body::after {
 .member-text-btn.btn-lize.active {
     background: #ef4444;
     color: #ffffff;
-    font-weight: 800;
     border-color: #ef4444;
     box-shadow: 0 0 14px rgba(239, 68, 68, 0.55);
 }
@@ -1445,7 +1428,6 @@ body::after {
 .member-text-btn.btn-tabi.active {
     background: #38bdf8;
     color: #090a10;
-    font-weight: 800;
     border-color: #38bdf8;
     box-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
 }
@@ -1459,7 +1441,6 @@ body::after {
 .member-text-btn.btn-shibuki.active {
     background: #c084fc;
     color: #090a10;
-    font-weight: 800;
     border-color: #c084fc;
     box-shadow: 0 0 14px rgba(192, 132, 252, 0.5);
 }
@@ -1472,7 +1453,6 @@ body::after {
 .member-text-btn.btn-rin.active {
     background: #3b82f6;
     color: #ffffff;
-    font-weight: 800;
     border-color: #3b82f6;
     box-shadow: 0 0 14px rgba(59, 130, 246, 0.55);
 }
@@ -1485,7 +1465,6 @@ body::after {
 .member-text-btn.btn-nana.active {
     background: #ec4899;
     color: #ffffff;
-    font-weight: 800;
     border-color: #f472b6;
     box-shadow: 0 0 16px rgba(236, 72, 153, 0.6);
 }
@@ -1498,7 +1477,6 @@ body::after {
 .member-text-btn.btn-riko.active {
     background: #84cc16;
     color: #090a10;
-    font-weight: 800;
     border-color: #84cc16;
     box-shadow: 0 0 14px rgba(132, 204, 22, 0.55);
 }
@@ -1512,7 +1490,6 @@ body::after {
 .member-text-btn.btn-toa.active {
     background: #ff1493;
     color: #ffffff;
-    font-weight: 800;
     border-color: #ff69b4;
     box-shadow: 0 0 16px rgba(255, 20, 147, 0.65);
 }
@@ -1525,7 +1502,6 @@ body::after {
 .member-text-btn.btn-rang.active {
     background: #92400e;
     color: #ffffff;
-    font-weight: 800;
     border-color: #b45309;
     box-shadow: 0 0 14px rgba(146, 64, 14, 0.6);
 }
@@ -1538,7 +1514,6 @@ body::after {
 .member-text-btn.btn-hiyori.active {
     background: #f472b6;
     color: #090a10;
-    font-weight: 800;
     border-color: #f472b6;
     box-shadow: 0 0 14px rgba(244, 114, 182, 0.55);
 }
@@ -1551,7 +1526,6 @@ body::after {
 .member-text-btn.btn-mary.active {
     background: #eab308;
     color: #090a10;
-    font-weight: 800;
     border-color: #facc15;
     box-shadow: 0 0 14px rgba(234, 179, 8, 0.6);
 }
@@ -1982,7 +1956,7 @@ body::after {
 
 .tracks-table-header {
     display: grid;
-    grid-template-columns: 66px minmax(200px, 2fr) 130px 170px 75px 125px;
+    grid-template-columns: 66px minmax(200px, 2fr) 130px 170px 75px 175px;
     padding: 12px 20px 12px 0;
     border-bottom: 1px solid var(--border-subtle);
     font-size: 0.75rem;
@@ -1991,7 +1965,7 @@ body::after {
     color: var(--text-muted);
     letter-spacing: 0.05em;
     align-items: center;
-    min-width: 780px;
+    min-width: 820px;
     box-sizing: border-box;
     background: var(--sticky-col-bg);
 }
@@ -2017,14 +1991,14 @@ body::after {
 
 .track-row {
     display: grid;
-    grid-template-columns: 66px minmax(200px, 2fr) 130px 170px 75px 125px;
+    grid-template-columns: 66px minmax(200px, 2fr) 130px 170px 75px 175px;
     padding: 10px 20px 10px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     align-items: center;
     cursor: pointer;
     transition: var(--transition-smooth);
     user-select: none;
-    min-width: 780px;
+    min-width: 820px;
     box-sizing: border-box;
     content-visibility: auto;
     contain-intrinsic-size: 0 68px;
@@ -2281,6 +2255,12 @@ body::after {
     color: #f43f5e;
     background: rgba(244, 63, 94, 0.12);
     border-color: rgba(244, 63, 94, 0.35);
+}
+
+.btn-icon-action.btn-start-station:hover {
+    color: #10b981;
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.12);
 }
 
 .btn-icon-action.btn-add-queue:hover {
@@ -2603,6 +2583,12 @@ body::after {
     flex: 1;
     max-width: 320px;
     flex-shrink: 0;
+}
+
+.ctrl-btn-station:hover {
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.12);
 }
 
 .ctrl-btn-queue {
@@ -3106,6 +3092,12 @@ body::after {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
+#btn-full-queue-station:hover {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.35);
+}
+
 .btn-full-queue-action.active {
     background: var(--theme-gradient-subtle);
     color: var(--theme-color);
@@ -3457,6 +3449,12 @@ body::after {
     background: rgba(244, 63, 94, 0.15);
     color: #f43f5e;
     border-color: rgba(244, 63, 94, 0.3);
+}
+
+#btn-drawer-station:hover {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.35);
 }
 
 .btn-close-drawer {

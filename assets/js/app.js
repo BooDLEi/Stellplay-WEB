@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         muteBtn: document.getElementById('btn-mute'),
         openFullPlayerBtn: document.getElementById('btn-open-fullplayer'),
         miniPlayerLeft: document.getElementById('mini-player-left'),
+        btnMiniStation: document.getElementById('btn-mini-station'),
         btnToggleQueueDrawer: document.getElementById('btn-toggle-queue-drawer'),
         queueBadgeCount: document.getElementById('queue-badge-count'),
 
@@ -127,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fullQueuePanel: document.getElementById('full-queue-panel'),
         fullQueueList: document.getElementById('full-queue-list'),
         fullQueueCount: document.getElementById('full-queue-count'),
+        btnFullQueueStation: document.getElementById('btn-full-queue-station'),
         btnFullQueueSaveAll: document.getElementById('btn-full-queue-save-all'),
         btnFullQueueSelectMode: document.getElementById('btn-full-queue-select-mode'),
         fullQueueSelectBar: document.getElementById('full-queue-select-bar'),
@@ -140,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         queueDrawerBackdrop: document.getElementById('queue-drawer-backdrop'),
         drawerQueueList: document.getElementById('drawer-queue-list'),
         drawerQueueCount: document.getElementById('drawer-queue-count'),
+        btnDrawerStation: document.getElementById('btn-drawer-station'),
         btnDrawerClear: document.getElementById('btn-drawer-clear'),
         btnCloseDrawer: document.getElementById('btn-close-drawer'),
 
@@ -319,7 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderSubFilterRow();
-        refreshTrackList();
+        requestAnimationFrame(() => {
+            refreshTrackList();
+        });
     }
 
     function renderSubFilterRow() {
@@ -367,7 +372,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                refreshTrackList();
+                requestAnimationFrame(() => {
+                    refreshTrackList();
+                });
             });
 
             dom.memberSubRow.appendChild(btn);
@@ -1093,6 +1100,94 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ===================================================================
+    // 뮤직 스테이션 (YouTube Music 스타일 유사곡 기반 무한 추천 대기열 생성)
+    // ===================================================================
+    function buildMusicStationQueue(seedSong, catalog) {
+        if (!seedSong) return [];
+        const all = (catalog && catalog.length > 0) ? catalog : (window.getAllSongs ? window.getAllSongs() : (window.DEFAULT_SONGS || []));
+        if (!all || all.length === 0) return [seedSong];
+
+        // 쇼츠(#shorts) 및 너무 짧은 챌린지 클립 제외
+        const validCandidates = all.filter(s => {
+            if (!s || !s.id || s.id === seedSong.id) return false;
+            const title = s.title || '';
+            if (title.includes('#')) return false;
+            const tl = title.toLowerCase();
+            if (tl.includes('shorts') || tl.includes('#shorts') || tl.includes('chal') || tl.includes('틱톡')) return false;
+            if (s.duration && s.duration > 0 && s.duration < 65) return false;
+            return true;
+        });
+
+        const seedMembers = Array.isArray(seedSong.members) ? seedSong.members : [];
+        const seedArtist = (seedSong.artist || '').trim().toLowerCase();
+        const seedOrigArtist = (seedSong.originalArtist || '').trim().toLowerCase();
+        const seedType = seedSong.type || '';
+        const seedGen = seedSong.gen || '';
+
+        const scored = validCandidates.map(s => {
+            let score = 0;
+            const sMembers = Array.isArray(s.members) ? s.members : [];
+            const sArtist = (s.artist || '').trim().toLowerCase();
+            const sOrigArtist = (s.originalArtist || '').trim().toLowerCase();
+            const sType = s.type || '';
+            const sGen = s.gen || '';
+
+            // 1. 참여 멤버 매칭 (가장 높은 가중치)
+            if (seedMembers.length > 0 && sMembers.length > 0) {
+                const commonMembers = sMembers.filter(m => seedMembers.includes(m));
+                if (commonMembers.length === seedMembers.length && commonMembers.length === sMembers.length) {
+                    score += 65; // 동일 멤버/솔로 곡
+                } else if (commonMembers.length > 0) {
+                    score += 35 * commonMembers.length; // 듀엣/유닛 참여 멤버 교집합
+                }
+            } else if (seedArtist && sArtist && (seedArtist === sArtist || sArtist.includes(seedArtist) || seedArtist.includes(sArtist))) {
+                score += 40;
+            }
+
+            // 2. 곡 형태 (오리지널 / 커버 / OST)
+            if (seedType && sType === seedType) {
+                score += 20;
+            }
+
+            // 3. 기수/소속 유닛 일치도 (1기/2기/3기/단체)
+            if (seedGen && sGen === seedGen) {
+                score += 15;
+            }
+
+            // 4. 원곡자 일치 (예: 같은 보컬로이드/J-POP 작곡가 커버)
+            if (seedOrigArtist && sOrigArtist && seedOrigArtist !== '스텔라이브' && seedOrigArtist === sOrigArtist) {
+                score += 15;
+            }
+
+            // 5. 자연스러운 셔플 지터 (매번 스테이션을 틀 때마다 신선하고 다채로운 순서 제공)
+            score += Math.random() * 8;
+
+            return { song: s, score };
+        });
+
+        // 유사도 점수 내림차순 정렬
+        scored.sort((a, b) => b.score - a.score);
+
+        return [seedSong, ...scored.map(item => item.song)];
+    }
+
+    function startMusicStation(seedSong) {
+        if (!seedSong) return;
+        if (player.isShuffle) {
+            player.toggleShuffle();
+        }
+        const catalog = window.getAllSongs ? window.getAllSongs() : (window.DEFAULT_SONGS || []);
+        const stationQueue = buildMusicStationQueue(seedSong, catalog);
+        player.setQueue(stationQueue, 0, true);
+        if (seedSong.members && seedSong.members[0]) {
+            applyMemberTheme(seedSong.members[0]);
+        }
+        showToast(`📻 '${seedSong.title}' 뮤직 스테이션 연속 재생을 시작합니다.`);
+    }
+    window.startMusicStation = startMusicStation;
+    window.buildMusicStationQueue = buildMusicStationQueue;
+
     function refreshTrackList() {
         const songs = getFilteredSongs();
         if (dom.trackCountText) {
@@ -1193,6 +1288,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="track-col-duration">${durationStr}</div>
                     <div class="track-col-actions" onclick="event.stopPropagation();">
+                        <button class="btn-icon-action btn-start-station" data-id="${song.id}" title="이 곡 기반 뮤직 스테이션 재생 (유사곡 무한 추천)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
+                                <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
+                                <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                            </svg>
+                        </button>
                         <button class="btn-icon-action btn-add-queue" data-id="${song.id}" title="대기열 다음 곡으로 추가">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -1237,6 +1339,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const songId = row.dataset.songId;
                 const clickedSong = songs.find(s => s.id === songId);
                 if (clickedSong) {
+                    const isSearching = !!(state.searchQuery && state.searchQuery.trim().length > 0);
+                    if (isSearching) {
+                        startMusicStation(clickedSong);
+                        return;
+                    }
                     player.setQueue(songs, parseInt(row.dataset.index, 10), true);
                     if (clickedSong.members && clickedSong.members[0]) {
                         applyMemberTheme(clickedSong.members[0]);
@@ -1252,6 +1359,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleSongSelection(songId, chk.checked);
                 const row = chk.closest('.track-row');
                 if (row) row.classList.toggle('selected', chk.checked);
+            });
+        });
+
+        // 뮤직 스테이션 시작 버튼
+        dom.tracksListContainer.querySelectorAll('.btn-start-station').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const songId = btn.dataset.id;
+                const song = songs.find(s => s.id === songId);
+                if (song) startMusicStation(song);
             });
         });
 
@@ -1923,6 +2040,38 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.btnDrawerClear.addEventListener('click', () => {
                 player.clearQueue();
                 showToast('현재 재생 곡을 제외한 대기열이 비워졌습니다.');
+            });
+        }
+
+        // 뮤직 스테이션 버튼 연동 (미니 플레이어, 풀 플레이어 대기열, 슬라이드 서랍장)
+        if (dom.btnMiniStation) {
+            dom.btnMiniStation.addEventListener('click', () => {
+                const cur = player.currentSong;
+                if (!cur) {
+                    showToast('현재 재생 중인 곡이 없습니다.');
+                    return;
+                }
+                startMusicStation(cur);
+            });
+        }
+        if (dom.btnFullQueueStation) {
+            dom.btnFullQueueStation.addEventListener('click', () => {
+                const cur = player.currentSong;
+                if (!cur) {
+                    showToast('현재 재생 중인 곡이 없습니다.');
+                    return;
+                }
+                startMusicStation(cur);
+            });
+        }
+        if (dom.btnDrawerStation) {
+            dom.btnDrawerStation.addEventListener('click', () => {
+                const cur = player.currentSong;
+                if (!cur) {
+                    showToast('현재 재생 중인 곡이 없습니다.');
+                    return;
+                }
+                startMusicStation(cur);
             });
         }
 

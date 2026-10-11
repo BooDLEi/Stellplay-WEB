@@ -18,8 +18,7 @@
 }
 
 :root {
-    transition: --theme-color 0.45s ease, --theme-glow 0.45s ease;
-    --bg-primary: #090a10;
+        --bg-primary: #090a10;
     --bg-surface: rgba(18, 20, 32, 0.85);
     --bg-glass: rgba(26, 29, 46, 0.72);
     --border-glass: rgba(255, 255, 255, 0.08);
@@ -405,7 +404,6 @@ html, body {
 .m-tab-bar,
 .fullscreen-sheet,
 .sheet-topbar,
-.m-track-row,
 .modal-content,
 .actions-sheet-content,
 .queue-sheet-content,
@@ -429,7 +427,9 @@ body::before {
     opacity: 0.35;
     pointer-events: none;
     z-index: 0;
-    transition: background 0.6s ease;
+    transform: translateZ(0);
+    will-change: opacity;
+    contain: strict;
 }
 
 #app-container {
@@ -671,7 +671,7 @@ body::before {
     background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
     cursor: pointer;
-    transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.4s ease, transform 0.15s ease;
+    transition: background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.12s ease;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;

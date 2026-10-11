@@ -594,8 +594,15 @@
             </div>
         </div>
 
-        <!-- 우측: 대기열, 볼륨, 전체화면 버튼 -->
+        <!-- 우측: 스테이션, 대기열, 볼륨, 전체화면 버튼 -->
         <div class="mini-player-right">
+            <button class="ctrl-btn ctrl-btn-station" id="btn-mini-station" title="현재 곡 기반 뮤직 스테이션 시작 (유사곡 무한 추천 재생)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
+                    <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                </svg>
+            </button>
             <button class="ctrl-btn ctrl-btn-queue" id="btn-toggle-queue-drawer" title="현재 재생목록 (대기열) 보기">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
@@ -694,6 +701,14 @@
                             <span class="full-queue-count" id="full-queue-count">총 0곡</span>
                         </div>
                         <div class="full-queue-header-actions">
+                            <button class="btn-full-queue-action" id="btn-full-queue-station" title="현재 재생 중인 곡 기반 뮤직 스테이션 생성 (무한 연속 추천)">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
+                                    <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
+                                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                                </svg>
+                                <span>스테이션</span>
+                            </button>
                             <button class="btn-full-queue-action" id="btn-full-queue-save-all" title="현재 대기열 전체를 플레이리스트로 저장">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                 <span>전체 저장</span>
@@ -1231,6 +1246,7 @@
                 <span class="queue-drawer-badge" id="drawer-queue-count">0곡</span>
             </div>
             <div style="display:flex; align-items:center; gap: 8px;">
+                <button class="btn-drawer-action" id="btn-drawer-station" title="현재 재생 중인 곡 기반 뮤직 스테이션 생성 (무한 추천 재생)">스테이션</button>
                 <button class="btn-drawer-action" id="btn-drawer-clear" title="대기열 비우기">비우기</button>
                 <button class="btn-close-drawer" id="btn-close-drawer" title="닫기">✕</button>
             </div>
