@@ -1101,8 +1101,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ===================================================================
-    // 뮤직 스테이션 (YouTube Music 스타일 유사곡 기반 무한 추천 대기열 생성)
+    // 뮤직 스테이션 (YouTube Music 스타일 유사곡 기반 무한 추천 & 아티스트 다양성 교차 큐 생성)
     // ===================================================================
+    const STATION_MOOD_KEYWORDS = {
+        upbeat: [
+            'hit on shot', 'king', '에고 록', 'ego rock', 'star walkin', 'w●rk', 'apt', '아이덴티티',
+            '역몽', 'joker', '숙명', '언노운 마더구스', 'phony', '히비카세', 'hibikase', '왕가는 이상해',
+            'god-ish', '신인류', '불꽃', 'flame', 'kick back', '괴수', 'rock', 'metal', 'power', 'fire',
+            'unravel', 'vampire', '우타카타', '괴도', '골리앗', '천본앵', '노심융해', '고스트 룰',
+            'ghost rule', '히바나', 'hibana', '판도라', '충동', '질주', '개화', '치사', '괴물', '통증', 'super power'
+        ],
+        chill: [
+            '점묘', '잿빛', '여로', '별자리', '히로인', '그저 네게 맑아라', 'dear my fairy',
+            '마음악보', '8.32', 'leo', 'constel', '사요나라', '산호초', 'melt', '야화', '소녀a',
+            '호시아이', '마음 예보', '편지', '새벽', '달빛', '눈물', '기억', 'acoustic', 'ballad',
+            'snow', '위로', '겨울', '가을', '추억', '어쿠스틱', '잔잔', '위안', '포근', '소나기',
+            '너에게 닿기를', '바람기억', '눈의 꽃', '취중진담', '달밤', '그리움', '회상', 'quiet', 'calm',
+            'dream signal', '푸른 밤', 'planetarium', '첫눈', '너를 보내고', '마음', '밤하늘', '달의 노래'
+        ],
+        bright: [
+            'milky way', 'stars align', 'our tales', '유성우', 'summertime', '보석과 어린 용',
+            '네가 아니면 안 될 것 같아', '꿈의 신호', '봄꿈', 'step back', '달빛천사', '너의 이름은',
+            'summer', '청춘', '바다', '하늘', '바람', '햇살', 'smile', '희망', 'rainbow', 'lulala',
+            'colorful', 'strokes', 'cliché', '기적', 'fly', '날개', 'sparkle', 'spring', '설렘',
+            '청량', 'twinkle', 'starlight', '하늘바라기', '비행기', '여행', 'blue bird', '스마일', '피크닉'
+        ],
+        groovy: [
+            'golden', 'apt', 'beyond the way', 'joker', 'w●rk', '야화', 'jane doe', 'lonely universe',
+            'getcha', 'trash', '분리수거단', '도쿄 플래시', 'groove', 'r&b', 'funk', 'hip hop', 'hiphop',
+            'dance', 'trap', 'bounce', 'city pop', 'club', 'trendy', 'plastic love', 'stay with me',
+            'telecaster b-boy', '오버도즈', 'overdose', '루머', 'rumor', '댄스', 'beat'
+        ],
+        cute: [
+            '팝핀 캔디', 'onegai darling', '오네가이 달링', 'chewing luv', '악마가 아닌걸', '네, 기꺼이',
+            '해피 신디사이저', '텔레파시', '당신의 연인이 되고 싶어', '쿵쿵', 'booo', 'choco', '초코',
+            'cute', 'candy', 'sweet', '귀여운', '요정', '하트', 'magic', 'lulala', '애교', '달콤',
+            'chu', '츄', '냥', '고양이', '토끼', 'strawberry', '딸기', '핑크', 'sugar', 'marshmallow',
+            '마시멜로', '애교송', '큐티', '귀여워', '소악마', '마법소녀', '두근두근', '달링', '아이돌', '러빗'
+        ]
+    };
+
+    const VOCAL_AFFINITIES = {
+        kanna: ['lize', 'tabi', 'rin', 'toa'],
+        lize: ['kanna', 'hina', 'rin', 'tabi', 'shibuki'],
+        hina: ['lize', 'shibuki', 'rin', 'hiyori', 'huya', 'kanna'],
+        tabi: ['kanna', 'lize', 'toa', 'shibuki', 'rang'],
+        mashiro: ['yuni', 'nana', 'mary', 'riko'],
+        yuni: ['mashiro', 'nana', 'mary', 'huya', 'riko'],
+        huya: ['yuni', 'hina', 'hiyori', 'kanna'],
+        shibuki: ['hina', 'rin', 'rang', 'lize', 'toa'],
+        rin: ['kanna', 'lize', 'hina', 'shibuki', 'toa'],
+        nana: ['yuni', 'mashiro', 'mary', 'riko'],
+        riko: ['nana', 'mashiro', 'mary', 'yuni'],
+        toa: ['kanna', 'tabi', 'rin', 'shibuki'],
+        rang: ['shibuki', 'tabi', 'kanna', 'toa'],
+        hiyori: ['hina', 'huya', 'lize', 'rin'],
+        mary: ['yuni', 'mashiro', 'nana', 'riko']
+    };
+
+    function detectSongMood(song) {
+        if (!song) return null;
+        if (song.mood && song.mood !== 'none') return song.mood;
+        const text = `${song.title || ''} ${song.artist || ''} ${song.originalArtist || ''}`.toLowerCase();
+        let bestMood = null;
+        let maxHits = 0;
+        for (const [mood, kws] of Object.entries(STATION_MOOD_KEYWORDS)) {
+            let hits = 0;
+            for (const kw of kws) {
+                if (text.includes(kw)) hits++;
+            }
+            if (hits > maxHits) {
+                maxHits = hits;
+                bestMood = mood;
+            }
+        }
+        return bestMood;
+    }
+
     function buildMusicStationQueue(seedSong, catalog) {
         if (!seedSong) return [];
         const all = (catalog && catalog.length > 0) ? catalog : (window.getAllSongs ? window.getAllSongs() : (window.DEFAULT_SONGS || []));
@@ -1120,56 +1195,111 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const seedMembers = Array.isArray(seedSong.members) ? seedSong.members : [];
+        const seedPrimary = (seedMembers.length > 0) ? seedMembers[0] : (seedSong.artist || 'unknown');
         const seedArtist = (seedSong.artist || '').trim().toLowerCase();
         const seedOrigArtist = (seedSong.originalArtist || '').trim().toLowerCase();
         const seedType = seedSong.type || '';
         const seedGen = seedSong.gen || '';
+        const seedMood = detectSongMood(seedSong);
 
         const scored = validCandidates.map(s => {
             let score = 0;
             const sMembers = Array.isArray(s.members) ? s.members : [];
+            const sPrimary = (sMembers.length > 0) ? sMembers[0] : (s.artist || 'unknown');
             const sArtist = (s.artist || '').trim().toLowerCase();
             const sOrigArtist = (s.originalArtist || '').trim().toLowerCase();
             const sType = s.type || '';
             const sGen = s.gen || '';
+            const sMood = detectSongMood(s);
 
-            // 1. 참여 멤버 매칭 (가장 높은 가중치)
+            // 1. 참여 멤버 매칭: 동일 가수의 큐 독점을 방지하기 위해 24점(적정선)으로 조정
             if (seedMembers.length > 0 && sMembers.length > 0) {
                 const commonMembers = sMembers.filter(m => seedMembers.includes(m));
                 if (commonMembers.length === seedMembers.length && commonMembers.length === sMembers.length) {
-                    score += 65; // 동일 멤버/솔로 곡
+                    score += 24; // 동일 멤버/솔로 곡
                 } else if (commonMembers.length > 0) {
-                    score += 35 * commonMembers.length; // 듀엣/유닛 참여 멤버 교집합
+                    score += 18 * commonMembers.length; // 듀엣/유닛 참여 멤버 교집합
                 }
             } else if (seedArtist && sArtist && (seedArtist === sArtist || sArtist.includes(seedArtist) || seedArtist.includes(sArtist))) {
-                score += 40;
+                score += 18;
             }
 
-            // 2. 곡 형태 (오리지널 / 커버 / OST)
-            if (seedType && sType === seedType) {
-                score += 20;
+            // 2. 분위기 / 음악 스타일 일치도 (핵심 가중치: 다른 가수의 비슷한 느낌 곡 적극 발굴)
+            if (seedMood && sMood && seedMood === sMood) {
+                score += 35;
             }
 
-            // 3. 기수/소속 유닛 일치도 (1기/2기/3기/단체)
-            if (seedGen && sGen === seedGen) {
-                score += 15;
-            }
-
-            // 4. 원곡자 일치 (예: 같은 보컬로이드/J-POP 작곡가 커버)
+            // 3. 원곡자 일치 (예: 같은 보컬로이드/J-POP 작곡가 커버)
             if (seedOrigArtist && sOrigArtist && seedOrigArtist !== '스텔라이브' && seedOrigArtist === sOrigArtist) {
-                score += 15;
+                score += 30;
             }
 
-            // 5. 자연스러운 셔플 지터 (매번 스테이션을 틀 때마다 신선하고 다채로운 순서 제공)
-            score += Math.random() * 8;
+            // 4. 보컬 음색 & 스타일 친화도 (서로 잘 어울리는 다른 가수의 목소리 매칭)
+            if (seedPrimary && sPrimary && seedPrimary !== sPrimary) {
+                const affinities = VOCAL_AFFINITIES[seedPrimary] || [];
+                if (affinities.includes(sPrimary)) {
+                    score += 16;
+                }
+            }
 
-            return { song: s, score };
+            // 5. 곡 형태 (오리지널 / 커버 / OST)
+            if (seedType && sType === seedType) {
+                score += 14;
+            }
+
+            // 6. 기수/소속 유닛 일치도 (1기/2기/3기/단체)
+            if (seedGen && sGen === seedGen) {
+                score += 12;
+            }
+
+            // 7. 자연스러운 셔플 지터 (항상 신선하고 다채로운 믹스)
+            score += Math.random() * 6;
+
+            return { song: s, score, primary: sPrimary };
         });
 
-        // 유사도 점수 내림차순 정렬
+        // 1차 유사도 정렬
         scored.sort((a, b) => b.score - a.score);
 
-        return [seedSong, ...scored.map(item => item.song)];
+        // 2차 지능형 인터리빙 (Artist Cooldown Window = 2: 동일 가수의 연속 재생 방지 및 교차 배치)
+        const queue = [seedSong];
+        const recentPrimaries = [seedPrimary];
+        const pool = [...scored];
+        const COOLDOWN_WINDOW = 2;
+
+        while (pool.length > 0) {
+            // 최근 2곡 동안 등장하지 않은 다른 가수의 최고 유사도 곡 탐색
+            let foundIdx = -1;
+            const recentSlice = recentPrimaries.slice(-COOLDOWN_WINDOW);
+            for (let i = 0; i < pool.length; i++) {
+                if (!recentSlice.includes(pool[i].primary)) {
+                    foundIdx = i;
+                    break;
+                }
+            }
+
+            // 후보가 없으면 직전 1곡만 다른 곡 탐색
+            if (foundIdx === -1) {
+                const last = recentPrimaries[recentPrimaries.length - 1];
+                for (let i = 0; i < pool.length; i++) {
+                    if (pool[i].primary !== last) {
+                        foundIdx = i;
+                        break;
+                    }
+                }
+            }
+
+            // 그래도 없으면 가장 앞선 곡 선택
+            if (foundIdx === -1) {
+                foundIdx = 0;
+            }
+
+            const chosen = pool.splice(foundIdx, 1)[0];
+            queue.push(chosen.song);
+            recentPrimaries.push(chosen.primary);
+        }
+
+        return queue;
     }
 
     function startMusicStation(seedSong) {
