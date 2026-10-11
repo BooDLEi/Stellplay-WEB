@@ -2878,9 +2878,9 @@ body::after {
 }
 
 .pc-yt-player-wrap.docked {
-    z-index: 105 !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+    z-index: 105;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .btn-video-fullscreen-toggle {

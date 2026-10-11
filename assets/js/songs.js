@@ -1678,7 +1678,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "tabi-plover",
-        "title": "千鳥 (치도리)",
+        "title": "물떼새 (千鳥)",
         "artist": "아라하시 타비",
         "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
@@ -2368,9 +2368,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-y1nUYj_D1Es",
-        "title": "千鳥 (치도리)",
+        "title": "물떼새 (千鳥)",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -3094,9 +3094,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-vPFzWl54pt0",
-        "title": "惨生活 (참생활)",
+        "title": "真生活 (참생활)",
         "artist": "아야츠노 유니",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "案山子 (KAKASHI)",
         "type": "cover",
         "gen": "g1",
         "members": [

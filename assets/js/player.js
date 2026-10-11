@@ -471,6 +471,19 @@ class MusicPlayer {
             this.isPlaying = true;
             this.startTimeUpdater();
             window.dispatchEvent(new CustomEvent('stellplay:playStateChanged', { detail: { isPlaying: true } }));
+
+            // 실제 본곡 영상이 재생 시작되면 잔여 광고 쉴드를 닫고 정상 음량 복원
+            try {
+                const vData = (typeof this.activeDeck?.getVideoData === 'function') ? this.activeDeck.getVideoData() : null;
+                const isAd = vData && (vData.isAd === true || (vData.video_id && this.currentSong && vData.video_id !== this.currentSong.youtubeId));
+                if (!isAd && this.isAdShieldActive) {
+                    this.handleAdFinished();
+                }
+            } catch (e) {
+                if (this.isAdShieldActive) {
+                    this.handleAdFinished();
+                }
+            }
         } else if (state === YT.PlayerState.PAUSED) {
             if (!this.isCrossfading) {
                 this.isPlaying = false;
@@ -579,13 +592,16 @@ class MusicPlayer {
 
         if (this.isYtReady && activeDeck && typeof activeDeck.loadVideoById === 'function') {
             try {
-                // 1. Mute-First: 즉시 0 볼륨 및 음소거 강제 (광고 소리 노출 원천 차단)
-                try { activeDeck.mute(); } catch (e) {}
-                try { activeDeck.setVolume(0); } catch (e) {}
+                // 음소거 해제 및 원래 볼륨 유지 (광고가 아닌 곡 전환 시 블랙아웃/음소거 원천 방지)
+                if (!this.isMuted && typeof activeDeck.unMute === 'function') {
+                    try { activeDeck.unMute(); } catch (e) {}
+                    try { activeDeck.setVolume(this.volume); } catch (e) {}
+                }
 
-                // 2. 비주얼 쉴드 즉시 가동 (영상 모드에서도 광고 화면 가림)
-                this.isAdShieldActive = true;
-                window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
+                // 이전 트랙의 잔여 광고 쉴드가 있을 경우 해제
+                if (this.isAdShieldActive) {
+                    this.handleAdFinished();
+                }
 
                 activeDeck.loadVideoById({
                     videoId: song.youtubeId,
@@ -600,7 +616,7 @@ class MusicPlayer {
                     this.isPlaying = false;
                 }
 
-                // 3. 100ms 고빈도 감시로 본곡 시작 확인 즉시 언뮤트 복원
+                // 고빈도 광고 감시 (실제 광고가 탐지될 경우에만 쉴드 작동)
                 this.startAdShieldPolling();
             } catch (e) {
                 console.error('[switchToVideoEngine] Failed to play video', e);
@@ -798,6 +814,7 @@ class MusicPlayer {
 
     playSong(song, index = null, autoPlay = true) {
         if (!song) return;
+        this.isCrossfading = false;
         if (index !== null) {
             this.currentIndex = index;
         } else {

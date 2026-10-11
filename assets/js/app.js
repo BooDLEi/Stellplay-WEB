@@ -1669,7 +1669,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const buildQueueHtml = (isFullQueue = false) => {
             return queue.map((song, idx) => {
                 const isCurrent = idx === curIdx;
-                const isPrev = idx < curIdx;
                 const isNext = idx === curIdx + 1;
                 const isSelected = isFullQueue && state.selectedQueueIndices.has(idx);
 
@@ -1681,8 +1680,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>`;
                 } else if (isNext) {
                     tagHtml = `<span class="queue-item-status-tag status-next">다음 곡</span>`;
-                } else if (isPrev) {
-                    tagHtml = `<span class="queue-item-status-tag status-prev">이전</span>`;
                 }
 
                 const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
@@ -2354,6 +2351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </svg>
                 `;
             }
+            updatePcDockPosition();
         };
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -2681,6 +2679,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 플레이어 커스텀 이벤트 수신
         window.addEventListener('stellplay:trackChanged', () => {
             updatePlayerUIState();
+            if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && state.fullPlayerViewMode === 'video') {
+                dockPcPlayer(true);
+            }
             if (state.activeView === 'playlists') {
                 if (state.currentPlaylistDetailId === 'pl-history') {
                     openPlaylistDetail('pl-history');
@@ -2950,38 +2951,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = document.getElementById('pc-video-dock-target');
         if (!wrap) return;
 
-        const isDocked = wrap.classList.contains('docked') &&
-                         dom.fullPlayerModal &&
+        // 전체화면 중일 때는 fixed 도킹 좌표 오버라이드 방지
+        if (document.fullscreenElement === wrap || document.webkitFullscreenElement === wrap) {
+            return;
+        }
+
+        const shouldDock = dom.fullPlayerModal &&
                          dom.fullPlayerModal.classList.contains('open') &&
                          state.fullPlayerViewMode === 'video' &&
                          target;
 
-        if (isDocked) {
+        if (shouldDock) {
             const rect = target.getBoundingClientRect();
-            wrap.style.position = 'fixed';
-            wrap.style.top = rect.top + 'px';
-            wrap.style.left = rect.left + 'px';
-            wrap.style.width = rect.width + 'px';
-            wrap.style.height = rect.height + 'px';
-            wrap.style.bottom = 'auto';
-            wrap.style.right = 'auto';
-            wrap.style.opacity = '1';
-            wrap.style.pointerEvents = 'auto';
-            wrap.style.zIndex = '105';
-            wrap.style.borderRadius = 'var(--radius-md, 12px)';
-        } else {
-            wrap.style.position = 'fixed';
-            wrap.style.top = 'auto';
-            wrap.style.left = 'auto';
-            wrap.style.bottom = '0';
-            wrap.style.right = '0';
-            wrap.style.width = '240px';
-            wrap.style.height = '135px';
-            wrap.style.opacity = '0.01';
-            wrap.style.pointerEvents = 'none';
-            wrap.style.zIndex = '-10';
-            wrap.style.borderRadius = '0';
+            if (rect.width > 0 && rect.height > 0) {
+                wrap.classList.add('docked');
+                wrap.style.position = 'fixed';
+                wrap.style.top = rect.top + 'px';
+                wrap.style.left = rect.left + 'px';
+                wrap.style.width = rect.width + 'px';
+                wrap.style.height = rect.height + 'px';
+                wrap.style.bottom = 'auto';
+                wrap.style.right = 'auto';
+                wrap.style.opacity = '1';
+                wrap.style.pointerEvents = 'auto';
+                wrap.style.zIndex = '105';
+                wrap.style.borderRadius = 'var(--radius-md, 12px)';
+                return;
+            }
         }
+
+        wrap.classList.remove('docked');
+        wrap.style.position = 'fixed';
+        wrap.style.top = 'auto';
+        wrap.style.left = 'auto';
+        wrap.style.bottom = '0';
+        wrap.style.right = '0';
+        wrap.style.width = '240px';
+        wrap.style.height = '135px';
+        wrap.style.opacity = '0.01';
+        wrap.style.pointerEvents = 'none';
+        wrap.style.zIndex = '-10';
+        wrap.style.borderRadius = '0';
     }
 
     function openFullPlayer() {
