@@ -311,7 +311,7 @@ const DEFAULT_SONGS = [
         "title": "Dance The Night Away [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "TWICE (트와이스)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -1678,7 +1678,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "tabi-plover",
-        "title": "千鳥 (치도리)",
+        "title": "물떼새 (千鳥)",
         "artist": "아라하시 타비",
         "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
@@ -2368,9 +2368,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-y1nUYj_D1Es",
-        "title": "千鳥 (치도리)",
+        "title": "물떼새 (千鳥)",
         "artist": "아오쿠모 린",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
         "gen": "g3",
         "members": [
@@ -3094,9 +3094,9 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-vPFzWl54pt0",
-        "title": "惨生活 (참생활)",
+        "title": "真生活 (참생활)",
         "artist": "아야츠노 유니",
-        "originalArtist": "커버 (Cover)",
+        "originalArtist": "案山子 (KAKASHI)",
         "type": "cover",
         "gen": "g1",
         "members": [
@@ -6800,10 +6800,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-y-rdBQSrzSs",
-        "title": "Dynamite",
+        "title": "Dynamite [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "BTS (방탄소년단)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6819,10 +6819,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-qv_VVUJOt0M",
-        "title": "Catallena (까탈레나)",
+        "title": "Catallena (까탈레나) [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "오렌지캬라멜 (Orange Caramel)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6838,10 +6838,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-npwilOOckxY",
-        "title": "100% for You",
+        "title": "100% for You [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "커버곡",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"

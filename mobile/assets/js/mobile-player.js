@@ -133,6 +133,22 @@ class MobilePlayer {
                     if (this.audioCtx && this.audioCtx.state === 'suspended') {
                         try { this.audioCtx.resume().catch(() => {}); } catch (e) {}
                     }
+                    // 영상 모드 상태에서 앱이 백그라운드로 전환되거나 화면이 꺼질 때:
+                    // 네이티브 오디오 서비스로 인수인계하여 백그라운드에서도 끊김 없이 연속 재생
+                    if (window.AndroidBridge && this.activeEngine === 'youtube') {
+                        const curSec = Math.floor(this.getCurrentTime() || 0);
+                        this._handoverFromVideoToNative = true;
+                        if (this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
+                            try { this.ytPlayer.pauseVideo(); } catch (e) {}
+                        }
+                        if (typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                            try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
+                        }
+                        if (typeof window.AndroidBridge.playIndexWithSeekNative === 'function') {
+                            try { window.AndroidBridge.playIndexWithSeekNative(this.queueIndex, curSec); } catch (e) {}
+                        }
+                        return;
+                    }
                     if (this.activeEngine === 'youtube' && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
                         setTimeout(() => {
                             if (this.isPlaying && !this.isUserPaused) {
@@ -142,7 +158,20 @@ class MobilePlayer {
                     }
                 }
             } else {
-                this.syncFromNative();
+                if (window.AndroidBridge && this._handoverFromVideoToNative && this.playerViewMode === 'video') {
+                    this._handoverFromVideoToNative = false;
+                    const curSec = Math.floor(this.nativeCurrentTime || 0);
+                    if (typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                        try { window.AndroidBridge.setVideoModeNative(true); } catch (e) {}
+                    }
+                    if (typeof window.AndroidBridge.stopNativePlayback === 'function') {
+                        try { window.AndroidBridge.stopNativePlayback(); } catch (e) {}
+                    }
+                    this.activeEngine = 'youtube';
+                    this._playWithYouTubeEngine(this.currentSong, curSec);
+                } else {
+                    this.syncFromNative();
+                }
                 if (this.isPlaying) {
                     this._requestWakeLock();
                 }
@@ -151,7 +180,7 @@ class MobilePlayer {
                         const s = this.ytPlayer.getPlayerState();
                         if (s === window.YT.PlayerState.PAUSED && !this.isUserPaused) {
                             this._applyIframePolicies();
-                this.ytPlayer.playVideo();
+                            this.ytPlayer.playVideo();
                         }
                     } catch (e) {}
                 }
@@ -369,9 +398,17 @@ class MobilePlayer {
                                 } else if (event.data === window.YT.PlayerState.PAUSED) {
                                     // 화면 잠금 또는 백그라운드 전환으로 인해 브라우저에 의해 일시정지되거나 사용자가 일시정지한 경우
                                     if (document.hidden && !this.isUserPaused) {
-                                        // 백그라운드 전환으로 인한 브라우저 강제 일시정지 시:
-                                        // 백그라운드 재생 지원 브라우저(삼성 인터넷 백그라운드 재생 ON, Brave, 웨일 등)에서는
-                                        // 즉각 playVideo()를 재호출하여 백그라운드 연속 재생 유지
+                                        if (window.AndroidBridge && this.activeEngine === 'youtube') {
+                                            const curSec = Math.floor(this.getCurrentTime() || 0);
+                                            this._handoverFromVideoToNative = true;
+                                            if (typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                                                try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
+                                            }
+                                            if (typeof window.AndroidBridge.playIndexWithSeekNative === 'function') {
+                                                try { window.AndroidBridge.playIndexWithSeekNative(this.queueIndex, curSec); } catch (e) {}
+                                            }
+                                            return;
+                                        }
                                         try { this.silentAudio.play().catch(() => {}); } catch (e) {}
                                         setTimeout(() => {
                                             if (this.isPlaying && !this.isUserPaused && this.ytPlayer && typeof this.ytPlayer.playVideo === 'function') {
@@ -1368,16 +1405,37 @@ class MobilePlayer {
             if (this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
                 try { this.ytPlayer.setPlaybackQuality('small'); } catch (e) {}
             }
-            if (window.AndroidBridge && typeof window.AndroidBridge.setVideoModeNative === 'function') {
-                try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
-            }
-            // 앨범 아트 모드 전환:
-            // 만약 유튜브 영상 엔진으로 재생 중이었다면, 곡이 끊기거나 0초로 재시작되는 현상을 방지하기 위해
-            // 현재 곡은 재생 중인 유튜브 플레이어로 무중단 연속 재생합니다 (화면만 앨범 아트로 전환).
-            // 다음 곡 넘김이나 새 곡 선택 시에는 자동으로 네이티브 백그라운드 서비스로 재생됩니다.
             this.isAdShieldActive = false;
             window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: false } }));
             window.dispatchEvent(new CustomEvent('mobileplayer:viewModeChanged', { detail: { mode: 'art' } }));
+
+            // 앨범 아트(음성 모드) 전환:
+            // 유튜브 영상 엔진으로 재생 중이었다면 현재 위치를 유지하며 네이티브 백그라운드 오디오 엔진으로 확실히 전환
+            if (this.activeEngine === 'youtube') {
+                const curSec = Math.floor(this.getCurrentTime() || 0);
+                if (this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
+                    try { this.ytPlayer.pauseVideo(); } catch (e) {}
+                }
+                if (window.AndroidBridge) {
+                    this.activeEngine = 'native';
+                    if (typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                        try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
+                    }
+                    if (typeof window.AndroidBridge.playIndexWithSeekNative === 'function') {
+                        try { window.AndroidBridge.playIndexWithSeekNative(this.queueIndex, curSec); } catch (e) {}
+                    } else if (typeof window.AndroidBridge.playIndexNative === 'function') {
+                        try { window.AndroidBridge.playIndexNative(this.queueIndex); } catch (e) {}
+                    }
+                } else if (this.audio) {
+                    this.activeEngine = 'audio';
+                    try {
+                        this.audio.currentTime = curSec;
+                        if (this.isPlaying) this.audio.play().catch(() => {});
+                    } catch (e) {}
+                }
+            } else if (window.AndroidBridge && typeof window.AndroidBridge.setVideoModeNative === 'function') {
+                try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
+            }
         }
         if (mode === 'video' && this.ytPlayer && typeof this.ytPlayer.setPlaybackQuality === 'function') {
             try { this.ytPlayer.setPlaybackQuality('default'); } catch (e) {}

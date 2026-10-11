@@ -780,6 +780,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let typeBadge = '';
         if (song.type === 'original') typeBadge = '<span class="m-track-type-badge original">ORIGINAL</span>';
         else if (song.type === 'cover') typeBadge = '<span class="m-track-type-badge cover">COVER</span>';
+        else if (song.type === 'live') typeBadge = '<span class="m-track-type-badge live">3D LIVE</span>';
         else if (song.type === 'ost') typeBadge = '<span class="m-track-type-badge ost">OST</span>';
         else if (song.type === 'featuring') typeBadge = '<span class="m-track-type-badge feat">FEAT</span>';
 

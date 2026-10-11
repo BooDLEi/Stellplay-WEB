@@ -80,7 +80,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "live"
     },
     {
       "id": "j_RAn7yvq_0",
@@ -133,7 +133,7 @@
     },
     {
       "id": "uBtFoUXR9Qc",
-      "title": "물떼새 (千鳥 / Plover)",
+      "title": "물떼새 (千鳥)",
       "rawTitle": "Plover [Yorushika - Chidori] | Arahashi Tabi Cover",
       "duration": 255,
       "uploader": "아라하시 타비 ARAHASHI TABI",
@@ -341,7 +341,7 @@
     },
     {
       "id": "y1nUYj_D1Es",
-      "title": "물떼새(ヨルシカ - 千鳥)",
+      "title": "물떼새 (千鳥)",
       "rawTitle": "물떼새(ヨルシカ - 千鳥) / 아오쿠모 린(Aokumo Rin) Cover",
       "duration": 252,
       "uploader": "아오쿠모 린 AOKUMO RIN",
@@ -1044,7 +1044,7 @@
     },
     {
       "id": "y-rdBQSrzSs",
-      "title": "Dynamite - BTS(방탄소년단)",
+      "title": "Dynamite [3D Live]",
       "rawTitle": "[4K] Dynamite - BTS(방탄소년단) / 하나코 나나 3D Cover",
       "duration": 200,
       "uploader": "",
@@ -1052,11 +1052,11 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "live"
     },
     {
       "id": "qv_VVUJOt0M",
-      "title": "Catallena - Orange Caramel",
+      "title": "Catallena (까탈레나) [3D Live]",
       "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
       "duration": 197,
       "uploader": "",
@@ -1064,11 +1064,11 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "live"
     },
     {
       "id": "npwilOOckxY",
-      "title": "100% for You",
+      "title": "100% for You [3D Live]",
       "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
       "duration": 206,
       "uploader": "",
@@ -1076,7 +1076,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "live"
     }
   ]
 }

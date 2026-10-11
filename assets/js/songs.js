@@ -311,7 +311,7 @@ const DEFAULT_SONGS = [
         "title": "Dance The Night Away [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "TWICE (트와이스)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6800,10 +6800,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-y-rdBQSrzSs",
-        "title": "Dynamite",
+        "title": "Dynamite [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "BTS (방탄소년단)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6819,10 +6819,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-qv_VVUJOt0M",
-        "title": "Catallena (까탈레나)",
+        "title": "Catallena (까탈레나) [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "오렌지캬라멜 (Orange Caramel)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6838,10 +6838,10 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-npwilOOckxY",
-        "title": "100% for You",
+        "title": "100% for You [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "커버곡",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"

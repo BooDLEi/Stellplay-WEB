@@ -1373,6 +1373,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (song.type === 'featuring') {
                 badgeClass = 'badge-featuring';
                 badgeText = '피처링';
+            } else if (song.type === 'live') {
+                badgeClass = 'badge-live';
+                badgeText = '3D 라이브';
             } else if (song.type === 'stream') {
                 badgeClass = 'badge-stream';
                 badgeText = '노래방송 Live';
@@ -3467,6 +3470,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (song.type === 'featuring') {
                     plBadgeClass = 'badge-featuring';
                     plBadgeText = '피처링';
+                } else if (song.type === 'live') {
+                    plBadgeClass = 'badge-live';
+                    plBadgeText = '3D 라이브';
                 } else if (song.type === 'stream') {
                     plBadgeClass = 'badge-stream';
                     plBadgeText = '노래방송 Live';
