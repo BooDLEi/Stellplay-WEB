@@ -273,7 +273,7 @@ const DEFAULT_SONGS = [
         "title": "Land of Lola (킹키부츠 OST)",
         "artist": "네네코 마시로",
         "originalArtist": "뮤지컬 킹키부츠 OST",
-        "type": "ost",
+        "type": "live",
         "gen": "g2",
         "members": [
             "mashiro"
@@ -292,7 +292,7 @@ const DEFAULT_SONGS = [
         "title": "Alive 2 (지킬 앤 하이드 OST)",
         "artist": "네네코 마시로",
         "originalArtist": "뮤지컬 지킬 앤 하이드 OST",
-        "type": "ost",
+        "type": "live",
         "gen": "g2",
         "members": [
             "mashiro"
@@ -330,7 +330,7 @@ const DEFAULT_SONGS = [
         "title": "웃는남자 (뮤지컬 웃는남자 OST)",
         "artist": "네네코 마시로",
         "originalArtist": "뮤지컬 웃는남자 OST",
-        "type": "ost",
+        "type": "live",
         "gen": "g2",
         "members": [
             "mashiro"
@@ -368,7 +368,7 @@ const DEFAULT_SONGS = [
         "title": "Confrontation (지킬 앤 하이드 OST)",
         "artist": "네네코 마시로",
         "originalArtist": "뮤지컬 지킬 앤 하이드 OST",
-        "type": "ost",
+        "type": "live",
         "gen": "g2",
         "members": [
             "mashiro"
@@ -1299,7 +1299,7 @@ const DEFAULT_SONGS = [
         "title": "Mela! (메라!)",
         "artist": "시라유키 히나",
         "originalArtist": "녹황색사회 (緑黄色社会)",
-        "type": "cover",
+        "type": "live",
         "gen": "g2",
         "members": [
             "hina"
@@ -1643,7 +1643,7 @@ const DEFAULT_SONGS = [
         "title": "LADY",
         "artist": "아라하시 타비",
         "originalArtist": "요네즈 켄시",
-        "type": "cover",
+        "type": "live",
         "gen": "g2",
         "members": [
             "tabi"
@@ -1757,7 +1757,7 @@ const DEFAULT_SONGS = [
         "title": "START (스타트)",
         "artist": "텐코 시부키",
         "originalArtist": "Mrs. GREEN APPLE",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "shibuki"
@@ -1871,7 +1871,7 @@ const DEFAULT_SONGS = [
         "title": "エゴロック (에고 록)",
         "artist": "아야츠노 유니 & 아오쿠모 린",
         "originalArtist": "Surii (すりぃ)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "rin",
@@ -1891,7 +1891,7 @@ const DEFAULT_SONGS = [
         "title": "完全感覚Dreamer (완전감각 Dreamer)",
         "artist": "아오쿠모 린",
         "originalArtist": "ONE OK ROCK",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "rin"
@@ -2122,7 +2122,7 @@ const DEFAULT_SONGS = [
         "title": "君じゃなきゃダメみたい (네가 아니면 안 될 것 같아)",
         "artist": "유즈하 리코 & 텐코 시부키",
         "originalArtist": "오오이시 마사요시 (노자키군 OP)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko",
@@ -6268,7 +6268,7 @@ const DEFAULT_SONGS = [
         "title": "STAR WALKIN'",
         "artist": "아카네 리제",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g2",
         "members": [
             "lize"
@@ -6287,7 +6287,7 @@ const DEFAULT_SONGS = [
         "title": "うたたね (선잠)",
         "artist": "아카네 리제",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g2",
         "members": [
             "lize"
@@ -6306,7 +6306,7 @@ const DEFAULT_SONGS = [
         "title": "マスカレード (가면무도회)",
         "artist": "아카네 리제",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g2",
         "members": [
             "lize"
@@ -6364,7 +6364,7 @@ const DEFAULT_SONGS = [
         "title": "かくれんぼ (숨바꼭질)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6383,7 +6383,7 @@ const DEFAULT_SONGS = [
         "title": "ヒロイン育成計画 (히로인 육성계획)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6402,7 +6402,7 @@ const DEFAULT_SONGS = [
         "title": "ポッピンキャンディ☆フィーバー! (팝핀 캔디☆피버!)",
         "artist": "아오쿠모 린 x 유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "rin",
@@ -6422,7 +6422,7 @@ const DEFAULT_SONGS = [
         "title": "セカイ (세카이)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6441,7 +6441,7 @@ const DEFAULT_SONGS = [
         "title": "恋はまるで (사랑은 마치)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6460,7 +6460,7 @@ const DEFAULT_SONGS = [
         "title": "Henceforth (헨스포스)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6479,7 +6479,7 @@ const DEFAULT_SONGS = [
         "title": "No title",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6498,7 +6498,7 @@ const DEFAULT_SONGS = [
         "title": "네모네모",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "riko"
@@ -6536,7 +6536,7 @@ const DEFAULT_SONGS = [
         "title": "飛行艇 (비행정)",
         "artist": "하나코 나나",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6555,7 +6555,7 @@ const DEFAULT_SONGS = [
         "title": "Enemy",
         "artist": "하나코 나나",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6574,7 +6574,7 @@ const DEFAULT_SONGS = [
         "title": "オドループ (오도루프)",
         "artist": "하나코 나나",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
@@ -6593,7 +6593,7 @@ const DEFAULT_SONGS = [
         "title": "テレパシ (텔레파시)",
         "artist": "하나코 나나",
         "originalArtist": "커버 (Cover)",
-        "type": "cover",
+        "type": "live",
         "gen": "g3",
         "members": [
             "nana"
