@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 79,
-  "updatedAt": "2026-10-10T03:05:55.086024+00:00",
+  "count": 78,
+  "updatedAt": "2026-10-11T03:06:16.631197+00:00",
   "tracks": [
     {
       "id": "kNzGpNEdBqw",
@@ -942,18 +942,6 @@
       "title": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ]",
       "rawTitle": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ] (4K)",
       "duration": 225,
-      "uploader": "",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "Da77IyHlwao",
-      "title": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ]",
-      "rawTitle": "Mashiro - The Man Who Laughs Bedroom Musical [ The Man Who Laughs ] (4K)",
-      "duration": 222,
       "uploader": "",
       "defaultMember": "mashiro",
       "members": [
