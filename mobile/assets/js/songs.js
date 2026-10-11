@@ -33,8 +33,8 @@ const MEMBERS = {
         nameEn: 'Ayatsuno Yuni',
         gen: 'g1',
         genName: '1기 Everlys',
-        color: '#d946ef',
-        glow: 'rgba(217, 70, 239, 0.5)',
+        color: '#fbcfe8',
+        glow: 'rgba(251, 207, 232, 0.55)',
         desc: '유니콘 요정, 통통 튀는 독보적 음색'
     },
     huya: {
@@ -67,8 +67,8 @@ const MEMBERS = {
         nameEn: 'Shirayuki Hina',
         gen: 'g2',
         genName: '2기 Universe',
-        color: '#eab308',
-        glow: 'rgba(234, 179, 8, 0.5)',
+        color: '#fef08a',
+        glow: 'rgba(254, 240, 138, 0.5)',
         desc: '천상의 목소리, 따스하고 맑은 감성 보컬'
     },
     mashiro: {
@@ -134,8 +134,8 @@ const MEMBERS = {
         nameEn: 'Hanako Nana',
         gen: 'g3',
         genName: '3기 Cliché',
-        color: '#ff2a85',
-        glow: 'rgba(255, 42, 133, 0.5)',
+        color: '#ec4899',
+        glow: 'rgba(236, 72, 153, 0.5)',
         desc: '부드러운 하모니와 파워풀 R&B 보컬'
     },
     riko: {
@@ -148,6 +148,55 @@ const MEMBERS = {
         color: '#84cc16',
         glow: 'rgba(132, 204, 22, 0.5)',
         desc: '싱그럽고 매력적인 팝 보이스'
+    },
+    // 4기 어비스 (Abyss)
+    toa: {
+        id: 'toa',
+        name: '시즈키 토아',
+        initial: '토아',
+        nameEn: 'Shizuki Toa',
+        gen: 'g4',
+        genName: '4기 Abyss',
+        color: '#ff1493',
+        glow: 'rgba(255, 20, 147, 0.5)',
+        desc: '어비스의 핫핑크 보컬, 강렬하고 매혹적인 음색',
+        youtubeUrl: 'https://www.youtube.com/@ShizukiToa'
+    },
+    rang: {
+        id: 'rang',
+        name: '코가네 랑',
+        initial: '랑',
+        nameEn: 'Cogane Rang',
+        gen: 'g4',
+        genName: '4기 Abyss',
+        color: '#92400e',
+        glow: 'rgba(146, 64, 14, 0.5)',
+        desc: '어비스의 브라운 보컬, 깊이 있고 따뜻한 음색',
+        youtubeUrl: 'https://www.youtube.com/@coganerang'
+    },
+    hiyori: {
+        id: 'hiyori',
+        name: '하나요 히요리',
+        initial: '히요리',
+        nameEn: 'Hanayo Hiyori',
+        gen: 'g4',
+        genName: '4기 Abyss',
+        color: '#f472b6',
+        glow: 'rgba(244, 114, 182, 0.5)',
+        desc: '어비스의 파스텔 핑크 보컬, 사랑스럽고 화사한 음색',
+        youtubeUrl: 'https://www.youtube.com/@HanayoHiyori'
+    },
+    mary: {
+        id: 'mary',
+        name: '토키노 메리',
+        initial: '메리',
+        nameEn: 'Tokino Mary',
+        gen: 'g4',
+        genName: '4기 Abyss',
+        color: '#eab308',
+        glow: 'rgba(234, 179, 8, 0.5)',
+        desc: '어비스의 옐로우 보컬, 밝고 빛나는 에너지',
+        youtubeUrl: 'https://www.youtube.com/@TokinoMaryChannel'
     }
 };
 
@@ -156,7 +205,8 @@ const GENERATIONS = [
     { id: 'group', name: '단체 & 유닛' },
     { id: 'g1', name: '1기 Everlys' },
     { id: 'g2', name: '2기 Universe' },
-    { id: 'g3', name: '3기 Cliché' }
+    { id: 'g3', name: '3기 Cliché' },
+    { id: 'g4', name: '4기 Abyss' }
 ];
 
 const DEFAULT_SONGS = [

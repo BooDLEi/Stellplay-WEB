@@ -214,6 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'rin', name: '아오쿠모 린', btnClass: 'btn-rin' },
             { id: 'nana', name: '하나코 나나', btnClass: 'btn-nana' },
             { id: 'riko', name: '유즈하 리코', btnClass: 'btn-riko' }
+        ],
+        g4: [
+            { id: 'abyss', name: '어비스', btnClass: 'btn-white' },
+            { id: 'toa', name: '시즈키 토아', btnClass: 'btn-toa' },
+            { id: 'rang', name: '코가네 랑', btnClass: 'btn-rang' },
+            { id: 'hiyori', name: '하나요 히요리', btnClass: 'btn-hiyori' },
+            { id: 'mary', name: '토키노 메리', btnClass: 'btn-mary' }
         ]
     };
 
@@ -235,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const artist = (s.artist || '').trim();
         if ((artist === '스텔라이브 (STELLIVE)' || artist === '스텔라이브') &&
             !artist.includes('&') && !artist.includes('x') && !artist.includes('X') &&
-            !artist.includes('유니버스') && !artist.includes('클리셰')) {
+            !artist.includes('유니버스') && !artist.includes('클리셰') && !artist.includes('어비스')) {
             return true;
         }
         return false;
@@ -296,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (majorKey === 'g1') label = '1기 컬렉션 라디오';
             else if (majorKey === 'g2') label = '2기 유니버스 라디오';
             else if (majorKey === 'g3') label = '3기 클리셰 라디오';
+            else if (majorKey === 'g4') label = '4기 어비스 라디오';
             dom.memberRadioText.textContent = label;
         }
 
@@ -361,17 +369,22 @@ document.addEventListener('DOMContentLoaded', () => {
         g1: { color: '#a29bfe', glow: 'rgba(162, 155, 254, 0.45)' },
         g2: { color: '#6c5ce7', glow: 'rgba(108, 92, 231, 0.45)' },
         g3: { color: '#00cec9', glow: 'rgba(0, 206, 201, 0.45)' },
-        yuni: { color: '#f472b6', glow: 'rgba(244, 114, 182, 0.5)' },
+        g4: { color: '#ff1493', glow: 'rgba(255, 20, 147, 0.45)' },
+        yuni: { color: '#fbcfe8', glow: 'rgba(251, 207, 232, 0.55)' },
         huya: { color: '#7e22ce', glow: 'rgba(126, 34, 206, 0.55)' },
         kanna: { color: '#1e40af', glow: 'rgba(30, 64, 175, 0.6)' },
-        hina: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' },
+        hina: { color: '#fef08a', glow: 'rgba(254, 240, 138, 0.5)' },
         mashiro: { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.45)' },
         lize: { color: '#ef4444', glow: 'rgba(239, 68, 68, 0.55)' },
         tabi: { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.55)' },
         shibuki: { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.5)' },
         rin: { color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.55)' },
-        nana: { color: '#ff2a85', glow: 'rgba(255, 42, 133, 0.65)' },
-        riko: { color: '#84cc16', glow: 'rgba(132, 204, 22, 0.55)' }
+        nana: { color: '#ec4899', glow: 'rgba(236, 72, 153, 0.5)' },
+        riko: { color: '#84cc16', glow: 'rgba(132, 204, 22, 0.55)' },
+        toa: { color: '#ff1493', glow: 'rgba(255, 20, 147, 0.5)' },
+        rang: { color: '#92400e', glow: 'rgba(146, 64, 14, 0.5)' },
+        hiyori: { color: '#f472b6', glow: 'rgba(244, 114, 182, 0.5)' },
+        mary: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' }
     };
 
     function applyThemeMode(theme) {
@@ -785,7 +798,8 @@ document.addEventListener('DOMContentLoaded', () => {
             [/\bMystic\b/gi, '미스틱'],
             [/\bEverlys\b/gi, '에버리스'],
             [/\bUniverse\b/gi, '유니버스'],
-            [/\bClich[eé]\b/gi, '클리셰']
+            [/\bClich[eé]\b/gi, '클리셰'],
+            [/\bAbyss\b/gi, '어비스']
         ];
 
         nameReplacements.forEach(([pattern, kor]) => {
@@ -798,9 +812,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         t = t.replace(/【(?:MV|Music Video|COVER|Cover|커버|스텔라이브|오피셜|공식|4K)[^】]*】/gi, '');
         t = t.replace(/\[(?:MV|Music Video|COVER|Cover|커버|스텔라이브|4K)[^\]]*\]/gi, '');
-        t = t.replace(/\s*[/ㅣ|]\s*(?:스텔라이브|클리셰|유니버스|미스틱|에버리스|아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|cover|Cover|COVER|MV|Music Video|OFFICIAL MV)[\s\S]*$/i, '');
-        t = t.replace(/^(?:스텔라이브|클리셰|유니버스|미스틱|에버리스)\s*(?:클리셰|유니버스)?\s*[/ㅣ|: -]\s*/i, '');
-        t = t.replace(/^(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코)(?:\s*(?:x|X|&|,)\s*(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코))*\s*[/ㅣ|: -]\s*/i, '');
+        t = t.replace(/\s*[/ㅣ|]\s*(?:스텔라이브|어비스|클리셰|유니버스|미스틱|에버리스|아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리|cover|Cover|COVER|MV|Music Video|OFFICIAL MV)[\s\S]*$/i, '');
+        t = t.replace(/^(?:스텔라이브|어비스|클리셰|유니버스|미스틱|에버리스)\s*(?:어비스|클리셰|유니버스)?\s*[/ㅣ|: -]\s*/i, '');
+        t = t.replace(/^(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리)(?:\s*(?:x|X|&|,)\s*(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리))*\s*[/ㅣ|: -]\s*/i, '');
         t = t.replace(/^['"‘“「『]+|['"’”」』]+$/g, '');
 
         return t.trim();
@@ -822,7 +836,11 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'shibuki', keywords: ['시부키', '텐코', 'tenkoshibuki', 'tenko shibuki', 'shibuki', 'tenko', 'シブキ', '天狐'] },
             { id: 'rin', keywords: ['린', '아오쿠모', 'aokumorin', 'aokumo rin', 'rin', 'aokumo', 'リン', '蒼雲'] },
             { id: 'nana', keywords: ['나나', '하나코', 'hanakonana', 'hanako_nana', 'hanako nana', 'nana', 'hanako', 'ナナ', '花子'] },
-            { id: 'riko', keywords: ['리코', '유즈하', 'yuzuhariko', 'yuzuha riko', 'riko', 'yuzuha', 'リコ', '柚葉'] }
+            { id: 'riko', keywords: ['리코', '유즈하', 'yuzuhariko', 'yuzuha riko', 'riko', 'yuzuha', 'リコ', '柚葉'] },
+            { id: 'toa', keywords: ['토아', '시즈키', 'shizukitoa', 'shizuki toa', 'toa', 'shizuki', 'トア', '静樹'] },
+            { id: 'rang', keywords: ['랑', '코가네', 'coganerang', 'cogane rang', 'koganerang', 'rang', 'cogane', 'kogane', 'ラン', '黄金'] },
+            { id: 'hiyori', keywords: ['히요리', '하나요', 'hanayohiyori', 'hanayo hiyori', 'hiyori', 'hanayo', 'ヒヨリ', '花代', '花夜'] },
+            { id: 'mary', keywords: ['메리', '토키노', 'tokinomary', 'tokino mary', 'mary', 'tokino', 'メリー', '時野'] }
         ];
 
         if (t.includes('스텔라이브') || t.includes('stellive') || t.includes('단체') || t.includes('stellive_official') || t.includes('@stellive')) {
@@ -847,6 +865,12 @@ document.addEventListener('DOMContentLoaded', () => {
             detected.add('rin');
             detected.add('nana');
             detected.add('riko');
+        }
+        if (t.includes('어비스') || t.includes('abyss')) {
+            detected.add('toa');
+            detected.add('rang');
+            detected.add('hiyori');
+            detected.add('mary');
         }
 
         rules.forEach(rule => {
@@ -910,6 +934,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 3기 단체 전용 (클리셰)
                     songs = songs.filter(s => (s.gen === 'g3' && (s.artist && (s.artist.includes('클리셰') || s.artist.includes('Cliché') || s.artist.includes('Cliche')))) ||
                         (s.members && ['shibuki', 'rin', 'nana', 'riko'].every(m => s.members.includes(m))));
+                } else if (sub === 'abyss') {
+                    // 4기 단체 전용 (어비스)
+                    songs = songs.filter(s => (s.gen === 'g4' && (s.artist && (s.artist.includes('어비스') || s.artist.includes('Abyss') || s.artist.includes('abyss')))) ||
+                        (s.members && ['toa', 'rang', 'hiyori', 'mary'].every(m => s.members.includes(m))));
                 } else if (sub === 'full-group') {
                     // 스텔라이브 공식 단체곡
                     songs = songs.filter(s => isStelliveWholeGroupSong(s));
@@ -917,7 +945,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 스텔라이브 유닛 & 듀엣곡 (전체 단체곡 제외)
                     songs = songs.filter(s => {
                         if (isStelliveWholeGroupSong(s)) return false;
-                        const isMultiArtist = s.artist && (s.artist.includes('&') || s.artist.includes('x') || s.artist.includes('X') || s.artist.includes('feat') || s.artist.includes('Feat') || s.artist.includes('유니버스') || s.artist.includes('클리셰'));
+                        const isMultiArtist = s.artist && (s.artist.includes('&') || s.artist.includes('x') || s.artist.includes('X') || s.artist.includes('feat') || s.artist.includes('Feat') || s.artist.includes('유니버스') || s.artist.includes('클리셰') || s.artist.includes('어비스'));
                         const isMultiMember = s.members && s.members.filter(m => m !== 'group').length >= 2;
                         return isMultiArtist || isMultiMember || s.gen === 'group';
                     });
@@ -928,13 +956,15 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // 대분류 전체
                 if (state.selectedMajor === 'group') {
-                    songs = songs.filter(s => isStelliveWholeGroupSong(s) || s.gen === 'group' || (s.members && s.members.filter(m => m !== 'group').length >= 2) || (s.artist && (s.artist.includes('스텔라이브') || s.artist.includes('유니버스') || s.artist.includes('클리셰') || s.artist.includes('&') || s.artist.includes('x'))));
+                    songs = songs.filter(s => isStelliveWholeGroupSong(s) || s.gen === 'group' || (s.members && s.members.filter(m => m !== 'group').length >= 2) || (s.artist && (s.artist.includes('스텔라이브') || s.artist.includes('유니버스') || s.artist.includes('클리셰') || s.artist.includes('어비스') || s.artist.includes('&') || s.artist.includes('x'))));
                 } else if (state.selectedMajor === 'g1') {
                     songs = songs.filter(s => (s.members && s.members.some(m => ['kanna', 'yuni', 'huya'].includes(m))) || s.gen === 'g1');
                 } else if (state.selectedMajor === 'g2') {
                     songs = songs.filter(s => (s.members && s.members.some(m => ['hina', 'mashiro', 'lize', 'tabi'].includes(m))) || s.gen === 'g2');
                 } else if (state.selectedMajor === 'g3') {
                     songs = songs.filter(s => (s.members && s.members.some(m => ['shibuki', 'rin', 'nana', 'riko'].includes(m))) || s.gen === 'g3');
+                } else if (state.selectedMajor === 'g4') {
+                    songs = songs.filter(s => (s.members && s.members.some(m => ['toa', 'rang', 'hiyori', 'mary'].includes(m))) || s.gen === 'g4');
                 }
             }
         }
@@ -2744,13 +2774,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const UNIT_MEMBERS_MAP = {
         everlys: ['yuni', 'huya', 'kanna'],
         universe: ['hina', 'mashiro', 'lize', 'tabi'],
-        cliche: ['shibuki', 'rin', 'nana', 'riko']
+        cliche: ['shibuki', 'rin', 'nana', 'riko'],
+        abyss: ['toa', 'rang', 'hiyori', 'mary']
     };
 
     const UNIT_NAMES_MAP = {
         everlys: '에버리스',
         universe: '유니버스',
-        cliche: '클리셰'
+        cliche: '클리셰',
+        abyss: '어비스'
     };
 
     const MEMBER_NAMES_MAP = {
@@ -2764,7 +2796,11 @@ document.addEventListener('DOMContentLoaded', () => {
         shibuki: '텐코 시부키',
         rin: '아오쿠모 린',
         nana: '하나코 나나',
-        riko: '유즈하 리코'
+        riko: '유즈하 리코',
+        toa: '시즈키 토아',
+        rang: '코가네 랑',
+        hiyori: '하나요 히요리',
+        mary: '토키노 메리'
     };
 
     function setupMemberPicker(prefix, artistInput) {
@@ -2884,19 +2920,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (unit === 'everlys') gen = 'g1';
             else if (unit === 'universe') gen = 'g2';
             else if (unit === 'cliche') gen = 'g3';
+            else if (unit === 'abyss') gen = 'g4';
             finalMembers = UNIT_MEMBERS_MAP[unit] || ['group'];
         } else if (finalMembers.length > 0) {
             const g1 = ['yuni', 'huya', 'kanna'];
             const g2 = ['hina', 'mashiro', 'lize', 'tabi'];
             const g3 = ['shibuki', 'rin', 'nana', 'riko'];
+            const g4 = ['toa', 'rang', 'hiyori', 'mary'];
 
             const allG1 = finalMembers.every(m => g1.includes(m));
             const allG2 = finalMembers.every(m => g2.includes(m));
             const allG3 = finalMembers.every(m => g3.includes(m));
+            const allG4 = finalMembers.every(m => g4.includes(m));
 
             if (allG1) gen = 'g1';
             else if (allG2) gen = 'g2';
             else if (allG3) gen = 'g3';
+            else if (allG4) gen = 'g4';
             else gen = 'group';
         }
 
@@ -3352,11 +3392,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (plAddMemberFilter !== 'all') {
                 const members = song.members || [];
                 if (plAddMemberFilter === 'gen-g1') {
-                    if (!['kanna', 'yuni'].some(m => members.includes(m))) return false;
+                    if (!['kanna', 'yuni', 'huya'].some(m => members.includes(m))) return false;
                 } else if (plAddMemberFilter === 'gen-g2') {
                     if (!['hina', 'mashiro', 'lize', 'tabi'].some(m => members.includes(m))) return false;
                 } else if (plAddMemberFilter === 'gen-g3') {
                     if (!['shibuki', 'rin', 'nana', 'riko'].some(m => members.includes(m))) return false;
+                } else if (plAddMemberFilter === 'gen-g4') {
+                    if (!['toa', 'rang', 'hiyori', 'mary'].some(m => members.includes(m))) return false;
                 } else {
                     if (!members.includes(plAddMemberFilter)) return false;
                 }
@@ -3916,6 +3958,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (song.gen === 'g1' || (song.artist && song.artist.includes('에버리스'))) detectedUnits.push('everlys');
         if (song.gen === 'g2' || (song.artist && song.artist.includes('유니버스'))) detectedUnits.push('universe');
         if (song.gen === 'g3' || (song.artist && song.artist.includes('클리셰'))) detectedUnits.push('cliche');
+        if (song.gen === 'g4' || (song.artist && song.artist.includes('어비스'))) detectedUnits.push('abyss');
 
         const activeMembers = (song.members || []).filter(m => m !== 'group');
 

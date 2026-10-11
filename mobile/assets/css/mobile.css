@@ -759,15 +759,15 @@ body::before {
 .member-text-btn.btn-yuni,
 .member-sub-btn.btn-yuni {
     color: #ffffff;
-    border-color: rgba(168, 85, 247, 0.4);
-    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(251, 207, 232, 0.45);
+    background: rgba(251, 207, 232, 0.15);
 }
 .member-text-btn.btn-yuni.active,
 .member-sub-btn.btn-yuni.active {
-    background: #a855f7;
-    color: #ffffff;
-    border-color: #c084fc;
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    background: #fbcfe8;
+    color: #0f172a;
+    border-color: #fbcfe8;
+    box-shadow: 0 0 12px rgba(251, 207, 232, 0.55);
 }
 
 .member-text-btn.btn-huya,
@@ -788,15 +788,15 @@ body::before {
 .member-text-btn.btn-hina,
 .member-sub-btn.btn-hina {
     color: #ffffff;
-    border-color: rgba(234, 179, 8, 0.4);
-    background: rgba(234, 179, 8, 0.14);
+    border-color: rgba(254, 240, 138, 0.45);
+    background: rgba(254, 240, 138, 0.15);
 }
 .member-text-btn.btn-hina.active,
 .member-sub-btn.btn-hina.active {
-    background: #eab308;
-    color: #000000;
-    border-color: #fde047;
-    box-shadow: 0 0 12px rgba(234, 179, 8, 0.5);
+    background: #fef08a;
+    color: #0f172a;
+    border-color: #fef08a;
+    box-shadow: 0 0 12px rgba(254, 240, 138, 0.5);
 }
 
 .member-text-btn.btn-mashiro,
@@ -873,15 +873,15 @@ body::before {
 .member-text-btn.btn-nana,
 .member-sub-btn.btn-nana {
     color: #ffffff;
-    border-color: rgba(255, 42, 133, 0.45);
-    background: rgba(255, 42, 133, 0.16);
+    border-color: rgba(236, 72, 153, 0.45);
+    background: rgba(236, 72, 153, 0.16);
 }
 .member-text-btn.btn-nana.active,
 .member-sub-btn.btn-nana.active {
-    background: #ff2a85;
+    background: #ec4899;
     color: #ffffff;
-    border-color: #ff60a8;
-    box-shadow: 0 0 14px rgba(255, 42, 133, 0.6);
+    border-color: #f472b6;
+    box-shadow: 0 0 14px rgba(236, 72, 153, 0.6);
 }
 
 .member-text-btn.btn-riko,
@@ -896,6 +896,63 @@ body::before {
     color: #14532d;
     border-color: #a3e635;
     box-shadow: 0 0 12px rgba(132, 204, 22, 0.5);
+}
+
+/* 6. 4기 멤버들: 토아(진한 핫핑크), 랑(갈색), 히요리(파스텔 핑크), 메리(노란색) */
+.member-text-btn.btn-toa,
+.member-sub-btn.btn-toa {
+    color: #ffffff;
+    border-color: rgba(255, 20, 147, 0.5);
+    background: rgba(255, 20, 147, 0.16);
+}
+.member-text-btn.btn-toa.active,
+.member-sub-btn.btn-toa.active {
+    background: #ff1493;
+    color: #ffffff;
+    border-color: #ff69b4;
+    box-shadow: 0 0 14px rgba(255, 20, 147, 0.65);
+}
+
+.member-text-btn.btn-rang,
+.member-sub-btn.btn-rang {
+    color: #ffffff;
+    border-color: rgba(146, 64, 14, 0.5);
+    background: rgba(146, 64, 14, 0.18);
+}
+.member-text-btn.btn-rang.active,
+.member-sub-btn.btn-rang.active {
+    background: #92400e;
+    color: #ffffff;
+    border-color: #b45309;
+    box-shadow: 0 0 12px rgba(146, 64, 14, 0.6);
+}
+
+.member-text-btn.btn-hiyori,
+.member-sub-btn.btn-hiyori {
+    color: #ffffff;
+    border-color: rgba(244, 114, 182, 0.45);
+    background: rgba(244, 114, 182, 0.15);
+}
+.member-text-btn.btn-hiyori.active,
+.member-sub-btn.btn-hiyori.active {
+    background: #f472b6;
+    color: #0f172a;
+    border-color: #f472b6;
+    box-shadow: 0 0 12px rgba(244, 114, 182, 0.55);
+}
+
+.member-text-btn.btn-mary,
+.member-sub-btn.btn-mary {
+    color: #ffffff;
+    border-color: rgba(234, 179, 8, 0.45);
+    background: rgba(234, 179, 8, 0.15);
+}
+.member-text-btn.btn-mary.active,
+.member-sub-btn.btn-mary.active {
+    background: #eab308;
+    color: #0f172a;
+    border-color: #facc15;
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
 }
 
 /* ===================================================================

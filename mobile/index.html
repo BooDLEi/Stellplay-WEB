@@ -111,6 +111,7 @@
                     <button class="member-major-btn btn-white" data-major="g1">1기생</button>
                     <button class="member-major-btn btn-white" data-major="g2">2기생</button>
                     <button class="member-major-btn btn-white" data-major="g3">3기생</button>
+                    <button class="member-major-btn btn-white" data-major="g4">4기생</button>
                 </div>
                 <!-- 2열 (동적 소분류): 1열 선택에 따라 JavaScript로 렌더링 -->
                 <div class="member-sub-row" id="m-members-sub-row"></div>
@@ -217,6 +218,47 @@
                 <div class="mobile-track-list" id="m-track-list-home"></div>
             </section>
 
+            <!-- 2. 오프라인 저장소 뷰 (다운로드된 곡 전용) -->
+            <section class="view-section" id="view-offline">
+                <div class="offline-hero-card">
+                    <div class="offline-stats-row">
+                        <div>
+                            <div style="font-size:1rem; font-weight:800; color:var(--text-primary); margin-bottom:2px;">오프라인 보관함</div>
+                            <div class="offline-count-num" id="offline-stats-count" style="display:none;"></div>
+                        </div>
+                        <div class="offline-size-text" id="offline-stats-size">0.0 MB 사용 중</div>
+                    </div>
+                    <div class="offline-actions-row">
+                        <button class="btn-offline-play-all" id="btn-offline-play-all">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                            전곡 재생
+                        </button>
+                        <button class="btn-offline-action-btn" id="btn-offline-select-mode">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            선택 삭제
+                        </button>
+                        <button class="btn-offline-clear-all" id="btn-offline-clear-all">전체 삭제</button>
+                    </div>
+                </div>
+
+                <div class="m-multiselect-floating-bar offline-delete-bar" id="m-offline-delete-bar" style="display:none;">
+                    <div class="multiselect-bar-info">
+                        <span id="m-offline-delete-count">0곡 선택됨</span>
+                        <button class="btn-select-all-toggle" id="btn-offline-delete-select-all">전체 선택</button>
+                    </div>
+                    <div class="multiselect-bar-actions">
+                        <button class="btn-ms-action btn-ms-danger" id="btn-offline-delete-confirm">선택 삭제</button>
+                        <button class="btn-ms-action btn-ms-cancel" id="btn-offline-delete-cancel">취소</button>
+                    </div>
+                </div>
+
+                <div class="section-info-row">
+                    <span class="section-title">다운로드된 곡</span>
+                    <span class="section-count" id="offline-track-count" style="display:none;"></span>
+                </div>
+                <div class="mobile-track-list" id="m-track-list-offline"></div>
+            </section>
+
             <!-- 3. 재생목록 뷰 -->
             <section class="view-section" id="view-playlists">
                 <!-- 재생목록 메인 목록 화면 -->
@@ -297,6 +339,31 @@
                             숨겨진 곡 모두 다시 복원
                         </button>
                     </div>
+
+                    <!-- 오디오 스트리밍 캐시 데이터 관리 -->
+                    <div class="m-settings-card" style="border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">⚡ 스트리밍 캐시 데이터 관리</div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+                                    음성모드 재생 시 자동으로 누적된 고음질 로컬 캐시입니다.
+                                </div>
+                            </div>
+                            <span id="m-cache-size-badge" style="font-size:0.75rem; padding:3px 8px; border-radius:10px; background:rgba(56,189,248,0.15); color:#38bdf8; font-weight:700; white-space:nowrap;">0.0 MB / 500 MB</span>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-muted); line-height:1.4;">
+                            자주 듣는 곡은 기기에 안전하게 캐시되어 데이터를 다시 소모하지 않고 즉시 재생됩니다.
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:2px;">
+                            <button id="btn-clear-cache-settings" style="flex:1; height:38px; border-radius:8px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#ef4444; font-weight:700; font-size:0.82rem; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                캐시 데이터 비우기
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- 스트리밍 음질 & 데이터 절약 모드 -->
                     <div class="m-settings-card" style="border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -413,6 +480,13 @@
                 </svg>
                 <span class="tab-label">홈</span>
             </button>
+            <button class="tab-btn" data-view="view-offline">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span class="tab-label">다운로드</span>
+                <span class="tab-badge" id="tab-badge-offline" style="display:none;">0</span>
+            </button>
             <button class="tab-btn" data-view="view-playlists">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
@@ -445,6 +519,11 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
                             <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button class="sheet-ctrl-btn" id="sheet-download-btn" title="오프라인 저장">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
                     </button>
                     <button class="sheet-ctrl-btn" id="sheet-menu-btn" title="곡 옵션 더보기">
@@ -543,6 +622,14 @@
                             <span class="queue-sheet-badge" id="m-queue-count">0곡</span>
                         </div>
                         <div class="queue-sheet-actions">
+                            <button class="queue-sheet-action-btn" id="m-btn-station-queue" title="현재 곡 기반 뮤직 스테이션 생성">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
+                                    <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
+                                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                                </svg>
+                                <span>스테이션</span>
+                            </button>
                             <button class="queue-sheet-action-btn" id="m-btn-shuffle-queue" title="대기열 순서 무작위 섞기">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
                                 <span>순서 섞기</span>
@@ -578,6 +665,14 @@
                     <button class="actions-close-btn" id="m-btn-close-actions">✕</button>
                 </div>
                 <div class="actions-list">
+                    <button class="actions-item" id="m-act-station">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
+                            <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
+                            <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                        </svg>
+                        <span>뮤직 스테이션 시작 (유사곡 무한 연속 재생)</span>
+                    </button>
                     <button class="actions-item" id="m-act-edit">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -597,6 +692,14 @@
                             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                         </svg>
                         <span>사비(하이라이트) 구간 설정</span>
+                    </button>
+                    <button class="actions-item" id="m-act-download">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span id="m-act-download-text">오프라인 저장소에 다운로드</span>
                     </button>
                     <button class="actions-item danger" id="m-act-delete">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -684,6 +787,7 @@
                                     <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
                                 </div>
                             </div>
                             <div class="member-individual-group">
@@ -700,6 +804,10 @@
                                     <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
                                 </div>
                             </div>
                         </div>
@@ -791,6 +899,7 @@
                                     <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
                                 </div>
                             </div>
                             <div class="member-individual-group">
@@ -807,6 +916,10 @@
                                     <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
                                     <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
+                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
                                 </div>
                             </div>
                         </div>
@@ -940,8 +1053,10 @@
                     <button type="button" class="m-filter-chip" data-member="gen-g1">1기 Everlys</button>
                     <button type="button" class="m-filter-chip" data-member="gen-g2">2기 Universe</button>
                     <button type="button" class="m-filter-chip" data-member="gen-g3">3기 Cliché</button>
+                    <button type="button" class="m-filter-chip" data-member="gen-g4">4기 Abyss</button>
                     <button type="button" class="m-filter-chip" data-member="kanna">칸나</button>
                     <button type="button" class="m-filter-chip" data-member="yuni">유니</button>
+                    <button type="button" class="m-filter-chip" data-member="huya">후야</button>
                     <button type="button" class="m-filter-chip" data-member="hina">히나</button>
                     <button type="button" class="m-filter-chip" data-member="mashiro">마시로</button>
                     <button type="button" class="m-filter-chip" data-member="lize">리제</button>
@@ -950,6 +1065,10 @@
                     <button type="button" class="m-filter-chip" data-member="rin">린</button>
                     <button type="button" class="m-filter-chip" data-member="nana">나나</button>
                     <button type="button" class="m-filter-chip" data-member="riko">리코</button>
+                    <button type="button" class="m-filter-chip" data-member="toa">토아</button>
+                    <button type="button" class="m-filter-chip" data-member="rang">랑</button>
+                    <button type="button" class="m-filter-chip" data-member="hiyori">히요리</button>
+                    <button type="button" class="m-filter-chip" data-member="mary">메리</button>
                 </div>
 
                 <!-- 선택 상태 바 & 전체 선택/해제 -->

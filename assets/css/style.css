@@ -1340,16 +1340,16 @@ body::after {
 
 /* 3. 1기 에버리스 멤버들 */
 .member-text-btn.btn-yuni {
-    color: #f472b6; /* 연한 분홍 */
-    border-color: rgba(244, 114, 182, 0.3);
-    background: rgba(244, 114, 182, 0.08);
+    color: #fbcfe8; /* 아주 연한 분홍 */
+    border-color: rgba(251, 207, 232, 0.4);
+    background: rgba(251, 207, 232, 0.1);
 }
 .member-text-btn.btn-yuni.active {
-    background: #f472b6;
+    background: #fbcfe8;
     color: #090a10;
     font-weight: 800;
-    border-color: #f472b6;
-    box-shadow: 0 0 14px rgba(244, 114, 182, 0.5);
+    border-color: #fbcfe8;
+    box-shadow: 0 0 14px rgba(251, 207, 232, 0.55);
 }
 
 .member-text-btn.btn-huya {
@@ -1380,16 +1380,16 @@ body::after {
 
 /* 4. 2기 유니버스 멤버들 */
 .member-text-btn.btn-hina {
-    color: #facc15; /* 노란색 */
-    border-color: rgba(250, 204, 21, 0.35);
-    background: rgba(250, 204, 21, 0.08);
+    color: #fef08a; /* 연한 노란색/상아색 */
+    border-color: rgba(254, 240, 138, 0.35);
+    background: rgba(254, 240, 138, 0.08);
 }
 .member-text-btn.btn-hina.active {
-    background: #eab308;
+    background: #fef08a;
     color: #090a10;
     font-weight: 800;
-    border-color: #eab308;
-    box-shadow: 0 0 14px rgba(234, 179, 8, 0.5);
+    border-color: #fef08a;
+    box-shadow: 0 0 14px rgba(254, 240, 138, 0.5);
 }
 
 .member-text-btn.btn-mashiro {
@@ -1459,16 +1459,16 @@ body::after {
 }
 
 .member-text-btn.btn-nana {
-    color: #ff2a85; /* 선명한 핫핑크 */
-    border-color: rgba(255, 42, 133, 0.45);
-    background: rgba(255, 42, 133, 0.12);
+    color: #ec4899; /* 기본 분홍 */
+    border-color: rgba(236, 72, 153, 0.4);
+    background: rgba(236, 72, 153, 0.12);
 }
 .member-text-btn.btn-nana.active {
-    background: #ff2a85;
+    background: #ec4899;
     color: #ffffff;
     font-weight: 800;
-    border-color: #ff60a8;
-    box-shadow: 0 0 16px rgba(255, 42, 133, 0.65);
+    border-color: #f472b6;
+    box-shadow: 0 0 16px rgba(236, 72, 153, 0.6);
 }
 
 .member-text-btn.btn-riko {
@@ -1482,6 +1482,59 @@ body::after {
     font-weight: 800;
     border-color: #84cc16;
     box-shadow: 0 0 14px rgba(132, 204, 22, 0.55);
+}
+
+/* 6. 4기 어비스 멤버들 */
+.member-text-btn.btn-toa {
+    color: #ff1493; /* 진한 핫핑크 */
+    border-color: rgba(255, 20, 147, 0.45);
+    background: rgba(255, 20, 147, 0.12);
+}
+.member-text-btn.btn-toa.active {
+    background: #ff1493;
+    color: #ffffff;
+    font-weight: 800;
+    border-color: #ff69b4;
+    box-shadow: 0 0 16px rgba(255, 20, 147, 0.65);
+}
+
+.member-text-btn.btn-rang {
+    color: #d97706; /* 갈색/앰버 */
+    border-color: rgba(146, 64, 14, 0.45);
+    background: rgba(146, 64, 14, 0.15);
+}
+.member-text-btn.btn-rang.active {
+    background: #92400e;
+    color: #ffffff;
+    font-weight: 800;
+    border-color: #b45309;
+    box-shadow: 0 0 14px rgba(146, 64, 14, 0.6);
+}
+
+.member-text-btn.btn-hiyori {
+    color: #f472b6; /* 파스텔 핑크 */
+    border-color: rgba(244, 114, 182, 0.35);
+    background: rgba(244, 114, 182, 0.1);
+}
+.member-text-btn.btn-hiyori.active {
+    background: #f472b6;
+    color: #090a10;
+    font-weight: 800;
+    border-color: #f472b6;
+    box-shadow: 0 0 14px rgba(244, 114, 182, 0.55);
+}
+
+.member-text-btn.btn-mary {
+    color: #eab308; /* 선명한 노란색 */
+    border-color: rgba(234, 179, 8, 0.4);
+    background: rgba(234, 179, 8, 0.1);
+}
+.member-text-btn.btn-mary.active {
+    background: #eab308;
+    color: #090a10;
+    font-weight: 800;
+    border-color: #facc15;
+    box-shadow: 0 0 14px rgba(234, 179, 8, 0.6);
 }
 
 /* 대기열 드래그앤드롭 스타일 */

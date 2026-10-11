@@ -196,6 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         queueSheetHandle: document.getElementById('m-queue-sheet-handle'),
         queueCount: document.getElementById('m-queue-count'),
         queueList: document.getElementById('m-queue-list'),
+        btnStationQueue: document.getElementById('m-btn-station-queue'),
         btnClearQueue: document.getElementById('m-btn-clear-queue'),
         btnCloseQueue: document.getElementById('m-btn-close-queue'),
 
@@ -211,6 +212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         actionTrackTitle: document.getElementById('m-action-track-title'),
         actionTrackArtist: document.getElementById('m-action-track-artist'),
         btnCloseActions: document.getElementById('m-btn-close-actions'),
+        actStation: document.getElementById('m-act-station'),
         actEdit: document.getElementById('m-act-edit'),
         actPlaylist: document.getElementById('m-act-playlist') || document.getElementById('m-act-fav'),
         actSabi: document.getElementById('m-act-sabi'),
@@ -376,17 +378,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         g1: { color: '#a29bfe', glow: 'rgba(162, 155, 254, 0.45)' },
         g2: { color: '#6c5ce7', glow: 'rgba(108, 92, 231, 0.45)' },
         g3: { color: '#00cec9', glow: 'rgba(0, 206, 201, 0.45)' },
-        yuni: { color: '#f472b6', glow: 'rgba(244, 114, 182, 0.5)' },
+        g4: { color: '#ff1493', glow: 'rgba(255, 20, 147, 0.45)' },
+        yuni: { color: '#fbcfe8', glow: 'rgba(251, 207, 232, 0.55)' },
         huya: { color: '#7e22ce', glow: 'rgba(126, 34, 206, 0.55)' },
         kanna: { color: '#1e40af', glow: 'rgba(30, 64, 175, 0.6)' },
-        hina: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' },
+        hina: { color: '#fef08a', glow: 'rgba(254, 240, 138, 0.5)' },
         mashiro: { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.45)' },
         lize: { color: '#ef4444', glow: 'rgba(239, 68, 68, 0.55)' },
         tabi: { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.55)' },
         shibuki: { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.5)' },
         rin: { color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.55)' },
-        nana: { color: '#ff2a85', glow: 'rgba(255, 42, 133, 0.65)' },
-        riko: { color: '#84cc16', glow: 'rgba(132, 204, 22, 0.55)' }
+        nana: { color: '#ec4899', glow: 'rgba(236, 72, 153, 0.5)' },
+        riko: { color: '#84cc16', glow: 'rgba(132, 204, 22, 0.55)' },
+        toa: { color: '#ff1493', glow: 'rgba(255, 20, 147, 0.5)' },
+        rang: { color: '#92400e', glow: 'rgba(146, 64, 14, 0.5)' },
+        hiyori: { color: '#f472b6', glow: 'rgba(244, 114, 182, 0.5)' },
+        mary: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' }
     };
 
     function applyMemberTheme(memberKey) {
@@ -650,6 +657,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             { id: 'rin', name: '아오쿠모 린', btnClass: 'btn-rin' },
             { id: 'nana', name: '하나코 나나', btnClass: 'btn-nana' },
             { id: 'riko', name: '유즈하 리코', btnClass: 'btn-riko' }
+        ],
+        g4: [
+            { id: 'abyss', name: '어비스', btnClass: 'btn-white' },
+            { id: 'toa', name: '시즈키 토아', btnClass: 'btn-toa' },
+            { id: 'rang', name: '코가네 랑', btnClass: 'btn-rang' },
+            { id: 'hiyori', name: '하나요 히요리', btnClass: 'btn-hiyori' },
+            { id: 'mary', name: '토키노 메리', btnClass: 'btn-mary' }
         ]
     };
 
@@ -883,10 +897,94 @@ document.addEventListener('DOMContentLoaded', async () => {
                 toggleOfflineSongSelection(song.id);
                 return;
             }
+
+            // 검색 상태이거나 단일 곡 목록인 경우:
+            // 검색 결과 소수의 곡만 대기열에 갇히는 현상을 해결하기 위해
+            // 유튜브 뮤직의 "뮤직 스테이션"처럼 선택된 곡을 기반으로 유사곡 및 전체 카탈로그를 유기적으로 추천/배치하여 무한 연속 재생합니다.
+            const isSearching = !!(state.searchQuery && state.searchQuery.trim().length > 0);
+            if (isSearching || (songs && songs.length === 1 && !state.activePlaylistDetailId)) {
+                const stationQueue = buildMusicStationQueue(song);
+                player.setQueue(stationQueue, 0, true);
+                showToast(`📻 '${song.title}' 뮤직 스테이션 연속 재생을 시작합니다.`);
+                return;
+            }
+
             const songsList = (songs && songs.length > 0) ? songs : [song];
             const idx = songsList.findIndex(s => s.id === song.id);
             player.setQueue(songsList, idx >= 0 ? idx : 0, true);
         }
+    }
+
+    // ===================================================================
+    // 뮤직 스테이션 (YouTube Music 스타일 유사곡 기반 무한 추천 대기열 생성)
+    // ===================================================================
+    function buildMusicStationQueue(seedSong, catalog) {
+        if (!seedSong) return [];
+        const all = (catalog && catalog.length > 0) ? catalog : (window.getAllSongs ? window.getAllSongs() : (DEFAULT_SONGS || []));
+        if (!all || all.length === 0) return [seedSong];
+
+        // 쇼츠(#shorts) 및 너무 짧은 챌린지 클립 제외
+        const validCandidates = all.filter(s => {
+            if (!s || !s.id || s.id === seedSong.id) return false;
+            const title = s.title || '';
+            if (title.includes('#')) return false;
+            const tl = title.toLowerCase();
+            if (tl.includes('shorts') || tl.includes('#shorts') || tl.includes('chal') || tl.includes('틱톡')) return false;
+            if (s.duration && s.duration > 0 && s.duration < 65) return false;
+            return true;
+        });
+
+        const seedMembers = Array.isArray(seedSong.members) ? seedSong.members : [];
+        const seedArtist = (seedSong.artist || '').trim().toLowerCase();
+        const seedOrigArtist = (seedSong.originalArtist || '').trim().toLowerCase();
+        const seedType = seedSong.type || '';
+        const seedGen = seedSong.gen || '';
+
+        const scored = validCandidates.map(s => {
+            let score = 0;
+            const sMembers = Array.isArray(s.members) ? s.members : [];
+            const sArtist = (s.artist || '').trim().toLowerCase();
+            const sOrigArtist = (s.originalArtist || '').trim().toLowerCase();
+            const sType = s.type || '';
+            const sGen = s.gen || '';
+
+            // 1. 참여 멤버 매칭 (가장 높은 가중치)
+            if (seedMembers.length > 0 && sMembers.length > 0) {
+                const commonMembers = sMembers.filter(m => seedMembers.includes(m));
+                if (commonMembers.length === seedMembers.length && commonMembers.length === sMembers.length) {
+                    score += 65; // 동일 멤버/솔로 곡
+                } else if (commonMembers.length > 0) {
+                    score += 35 * commonMembers.length; // 듀엣/유닛 참여 멤버 교집합
+                }
+            } else if (seedArtist && sArtist && (seedArtist === sArtist || sArtist.includes(seedArtist) || seedArtist.includes(sArtist))) {
+                score += 40;
+            }
+
+            // 2. 곡 형태 (오리지널 / 커버 / OST)
+            if (seedType && sType === seedType) {
+                score += 20;
+            }
+
+            // 3. 기수/소속 유닛 일치도 (1기/2기/3기/단체)
+            if (seedGen && sGen === seedGen) {
+                score += 15;
+            }
+
+            // 4. 원곡자 일치 (예: 같은 보컬로이드/J-POP 작곡가 커버)
+            if (seedOrigArtist && sOrigArtist && seedOrigArtist !== '스텔라이브' && seedOrigArtist === sOrigArtist) {
+                score += 15;
+            }
+
+            // 5. 자연스러운 셔플 지터 (매번 스테이션을 틀 때마다 신선하고 다채로운 순서 제공)
+            score += Math.random() * 8;
+
+            return { song: s, score };
+        });
+
+        // 유사도 점수 내림차순 정렬
+        scored.sort((a, b) => b.score - a.score);
+
+        return [seedSong, ...scored.map(item => item.song)];
     }
 
     const STELLIVE_WHOLE_GROUP_YOUTUBE_IDS = new Set([
@@ -907,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const artist = (s.artist || '').trim();
         if ((artist === '스텔라이브 (STELLIVE)' || artist === '스텔라이브') &&
             !artist.includes('&') && !artist.includes('x') && !artist.includes('X') &&
-            !artist.includes('유니버스') && !artist.includes('클리셰')) {
+            !artist.includes('유니버스') && !artist.includes('클리셰') && !artist.includes('어비스')) {
             return true;
         }
         return false;
@@ -948,6 +1046,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // 3기 단체 전용 (클리셰)
                     res = res.filter(s => (s.gen === 'g3' && (s.artist && (s.artist.includes('클리셰') || s.artist.includes('Cliché') || s.artist.includes('Cliche')))) ||
                         (s.members && ['shibuki', 'rin', 'nana', 'riko'].every(m => s.members.includes(m))));
+                } else if (sub === 'abyss') {
+                    // 4기 단체 전용 (어비스)
+                    res = res.filter(s => (s.gen === 'g4' && (s.artist && (s.artist.includes('어비스') || s.artist.includes('Abyss') || s.artist.includes('abyss')))) ||
+                        (s.members && ['toa', 'rang', 'hiyori', 'mary'].every(m => s.members.includes(m))));
                 } else if (sub === 'full-group') {
                     // 스텔라이브 공식 단체곡 (전체곡 전용)
                     res = res.filter(s => isStelliveWholeGroupSong(s));
@@ -955,25 +1057,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // 스텔라이브 유닛 & 듀엣곡 (전체 단체곡 제외, 2인 이상 유닛/듀엣)
                     res = res.filter(s => {
                         if (isStelliveWholeGroupSong(s)) return false;
-                        const isMultiArtist = s.artist && (s.artist.includes('&') || s.artist.includes('x') || s.artist.includes('X') || s.artist.includes('feat') || s.artist.includes('Feat') || s.artist.includes('유니버스') || s.artist.includes('클리셰'));
+                        const isMultiArtist = s.artist && (s.artist.includes('&') || s.artist.includes('x') || s.artist.includes('X') || s.artist.includes('feat') || s.artist.includes('Feat') || s.artist.includes('유니버스') || s.artist.includes('클리셰') || s.artist.includes('어비스'));
                         const isMultiMember = s.members && s.members.filter(m => m !== 'group').length >= 2;
                         return isMultiArtist || isMultiMember || s.gen === 'group';
                     });
                 } else {
-                    // 개별 멤버 (칸나, 유니, 후야, 히나, 마시로, 리제, 타비, 시부키, 린, 나나, 리코)
+                    // 개별 멤버 (칸나, 유니, 후야, 히나, 마시로, 리제, 타비, 시부키, 린, 나나, 리코, 토아, 랑, 히요리, 메리)
                     // 해당 멤버가 참여한 모든 곡 (솔로 + 유닛/듀엣 + 단체) 포함!
                     res = res.filter(s => s.members && s.members.includes(sub));
                 }
             } else {
                 // 소분류 미선택 시 대분류 전체 포함
                 if (state.selectedMajor === 'group') {
-                    res = res.filter(s => isStelliveWholeGroupSong(s) || s.gen === 'group' || (s.members && s.members.filter(m => m !== 'group').length >= 2) || (s.artist && (s.artist.includes('스텔라이브') || s.artist.includes('유니버스') || s.artist.includes('클리셰') || s.artist.includes('&') || s.artist.includes('x'))));
+                    res = res.filter(s => isStelliveWholeGroupSong(s) || s.gen === 'group' || (s.members && s.members.filter(m => m !== 'group').length >= 2) || (s.artist && (s.artist.includes('스텔라이브') || s.artist.includes('유니버스') || s.artist.includes('클리셰') || s.artist.includes('어비스') || s.artist.includes('&') || s.artist.includes('x'))));
                 } else if (state.selectedMajor === 'g1') {
                     res = res.filter(s => (s.members && s.members.some(m => ['kanna', 'yuni', 'huya'].includes(m))) || s.gen === 'g1');
                 } else if (state.selectedMajor === 'g2') {
                     res = res.filter(s => (s.members && s.members.some(m => ['hina', 'mashiro', 'lize', 'tabi'].includes(m))) || s.gen === 'g2');
                 } else if (state.selectedMajor === 'g3') {
                     res = res.filter(s => (s.members && s.members.some(m => ['shibuki', 'rin', 'nana', 'riko'].includes(m))) || s.gen === 'g3');
+                } else if (state.selectedMajor === 'g4') {
+                    res = res.filter(s => (s.members && s.members.some(m => ['toa', 'rang', 'hiyori', 'mary'].includes(m))) || s.gen === 'g4');
                 }
             }
         }
@@ -1392,11 +1496,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (mPlAddMemberFilter !== 'all') {
                 const members = song.members || [];
                 if (mPlAddMemberFilter === 'gen-g1') {
-                    if (!['kanna', 'yuni'].some(m => members.includes(m))) return false;
+                    if (!['kanna', 'yuni', 'huya'].some(m => members.includes(m))) return false;
                 } else if (mPlAddMemberFilter === 'gen-g2') {
                     if (!['hina', 'mashiro', 'lize', 'tabi'].some(m => members.includes(m))) return false;
                 } else if (mPlAddMemberFilter === 'gen-g3') {
                     if (!['shibuki', 'rin', 'nana', 'riko'].some(m => members.includes(m))) return false;
+                } else if (mPlAddMemberFilter === 'gen-g4') {
+                    if (!['toa', 'rang', 'hiyori', 'mary'].some(m => members.includes(m))) return false;
                 } else {
                     if (!members.includes(mPlAddMemberFilter)) return false;
                 }
@@ -1923,13 +2029,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const UNIT_MEMBERS_MAP = {
         everlys: ['yuni', 'huya', 'kanna'],
         universe: ['hina', 'mashiro', 'lize', 'tabi'],
-        cliche: ['shibuki', 'rin', 'nana', 'riko']
+        cliche: ['shibuki', 'rin', 'nana', 'riko'],
+        abyss: ['toa', 'rang', 'hiyori', 'mary']
     };
 
     const UNIT_NAMES_MAP = {
         everlys: '에버리스',
         universe: '유니버스',
-        cliche: '클리셰'
+        cliche: '클리셰',
+        abyss: '어비스'
     };
 
     const MEMBER_NAMES_MAP = {
@@ -1943,7 +2051,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         shibuki: '텐코 시부키',
         rin: '아오쿠모 린',
         nana: '하나코 나나',
-        riko: '유즈하 리코'
+        riko: '유즈하 리코',
+        toa: '시즈키 토아',
+        rang: '코가네 랑',
+        hiyori: '하나요 히요리',
+        mary: '토키노 메리'
     };
 
     function setupMemberPicker(prefix, artistInput) {
@@ -2049,9 +2161,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const g1 = ['yuni', 'huya'];
             const g2 = ['hina', 'mashiro', 'lize', 'tabi'];
             const g3 = ['shibuki', 'rin', 'nana', 'riko'];
+            const g4 = ['toa', 'rang', 'hiyori', 'mary'];
             if (g1.every(m => activeMembers.includes(m))) units.push('everlys');
             if (g2.every(m => activeMembers.includes(m))) units.push('universe');
             if (g3.every(m => activeMembers.includes(m))) units.push('cliche');
+            if (g4.every(m => activeMembers.includes(m))) units.push('abyss');
         }
         setMemberPickerState(prefix, {
             isStellive: hasGroup,
@@ -2084,19 +2198,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (unit === 'everlys') gen = 'g1';
             else if (unit === 'universe') gen = 'g2';
             else if (unit === 'cliche') gen = 'g3';
+            else if (unit === 'abyss') gen = 'g4';
             finalMembers = UNIT_MEMBERS_MAP[unit] || ['group'];
         } else if (finalMembers.length > 0) {
             const g1 = ['yuni', 'huya', 'kanna'];
             const g2 = ['hina', 'mashiro', 'lize', 'tabi'];
             const g3 = ['shibuki', 'rin', 'nana', 'riko'];
+            const g4 = ['toa', 'rang', 'hiyori', 'mary'];
 
             const allG1 = finalMembers.every(m => g1.includes(m));
             const allG2 = finalMembers.every(m => g2.includes(m));
             const allG3 = finalMembers.every(m => g3.includes(m));
+            const allG4 = finalMembers.every(m => g4.includes(m));
 
             if (allG1) gen = 'g1';
             else if (allG2) gen = 'g2';
             else if (allG3) gen = 'g3';
+            else if (allG4) gen = 'g4';
             else gen = 'group';
         }
 
@@ -2144,11 +2262,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             [/\bNana\s+Hanako\b/gi, '하나코 나나'],
             [/\bYuzuha\s+Riko\b/gi, '유즈하 리코'],
             [/\bRiko\s+Yuzuha\b/gi, '유즈하 리코'],
+            [/\bShizuki\s+Toa\b/gi, '시즈키 토아'],
+            [/\bToa\s+Shizuki\b/gi, '시즈키 토아'],
+            [/\bCogane\s+Rang\b/gi, '코가네 랑'],
+            [/\bRang\s+Cogane\b/gi, '코가네 랑'],
+            [/\bKogane\s+Rang\b/gi, '코가네 랑'],
+            [/\bRang\s+Kogane\b/gi, '코가네 랑'],
+            [/\bHanayo\s+Hiyori\b/gi, '하나요 히요리'],
+            [/\bHiyori\s+Hanayo\b/gi, '하나요 히요리'],
+            [/\bTokino\s+Mary\b/gi, '토키노 메리'],
+            [/\bMary\s+Tokino\b/gi, '토키노 메리'],
             [/\bStellive\b/gi, '스텔라이브'],
             [/\bMystic\b/gi, '미스틱'],
             [/\bEverlys\b/gi, '에버리스'],
             [/\bUniverse\b/gi, '유니버스'],
-            [/\bClich[eé]\b/gi, '클리셰']
+            [/\bClich[eé]\b/gi, '클리셰'],
+            [/\bAbyss\b/gi, '어비스']
         ];
 
         nameReplacements.forEach(([pattern, kor]) => {
@@ -2163,9 +2292,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Clean artist/symbol clutter (e.g. '스텔라이브 클리셰ㅣ유성우' -> '유성우')
         t = t.replace(/【(?:MV|Music Video|COVER|Cover|커버|스텔라이브|오피셜|공식|4K)[^】]*】/gi, '');
         t = t.replace(/\[(?:MV|Music Video|COVER|Cover|커버|스텔라이브|4K)[^\]]*\]/gi, '');
-        t = t.replace(/\s*[/ㅣ|]\s*(?:스텔라이브|클리셰|유니버스|미스틱|에버리스|아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|cover|Cover|COVER|MV|Music Video|OFFICIAL MV)[\s\S]*$/i, '');
-        t = t.replace(/^(?:스텔라이브|클리셰|유니버스|미스틱|에버리스)\s*(?:클리셰|유니버스)?\s*[/ㅣ|: -]\s*/i, '');
-        t = t.replace(/^(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코)(?:\s*(?:x|X|&|,)\s*(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코))*\s*[/ㅣ|: -]\s*/i, '');
+        t = t.replace(/\s*[/ㅣ|]\s*(?:스텔라이브|어비스|클리셰|유니버스|미스틱|에버리스|아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리|cover|Cover|COVER|MV|Music Video|OFFICIAL MV)[\s\S]*$/i, '');
+        t = t.replace(/^(?:스텔라이브|어비스|클리셰|유니버스|미스틱|에버리스)\s*(?:어비스|클리셰|유니버스)?\s*[/ㅣ|: -]\s*/i, '');
+        t = t.replace(/^(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리)(?:\s*(?:x|X|&|,)\s*(?:아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리))*\s*[/ㅣ|: -]\s*/i, '');
         t = t.replace(/^['"‘“「『]+|['"’”」』]+$/g, '');
 
         return t.trim();
@@ -2187,7 +2316,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             { id: 'shibuki', keywords: ['텐코 시부키', '텐코시부키', '시부키', '텐코', 'shibuki', 'tenko', 'tenkoshibuki', 'シブキ', '天狐', '부키'] },
             { id: 'rin', keywords: ['아오쿠모 린', '아오쿠모린', '아오쿠모', 'aokumo rin', 'aokumo', 'aokumorin', '린', 'rin', 'リン', '蒼雲'] },
             { id: 'nana', keywords: ['하나코 나나', '하나코나나', '하나코', 'hanako nana', 'hanako', 'hanakonana', '나나', 'nana', 'ナナ', '花子'] },
-            { id: 'riko', keywords: ['유즈하 리코', '유즈하리코', '유즈하', 'yuzuha riko', 'yuzuha', 'yuzuhariko', '리코', 'riko', 'リコ', '柚葉'] }
+            { id: 'riko', keywords: ['유즈하 리코', '유즈하리코', '유즈하', 'yuzuha riko', 'yuzuha', 'yuzuhariko', '리코', 'riko', 'リコ', '柚葉'] },
+            { id: 'toa', keywords: ['시즈키 토아', '시즈키토아', '시즈키', '토아', 'toa', 'shizuki', 'shizukitoa', 'トア', '静樹'] },
+            { id: 'rang', keywords: ['코가네 랑', '코가네랑', '코가네', '랑', 'rang', 'cogane', 'coganerang', 'kogane', 'koganerang', 'ラン', '黄金'] },
+            { id: 'hiyori', keywords: ['하나요 히요리', '하나요히요리', '하나요', '히요리', 'hiyori', 'hanayo', 'hanayohiyori', 'ヒヨリ', '花代', '花夜'] },
+            { id: 'mary', keywords: ['토키노 메리', '토키노메리', '토키노', '메리', 'mary', 'tokino', 'tokinomary', 'メリー', '時野'] }
         ];
 
         if (t.includes('스텔라이브') || t.includes('stellive') || t.includes('단체') || t.includes('전체')) {
@@ -2212,6 +2345,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             detected.add('rin');
             detected.add('nana');
             detected.add('riko');
+        }
+        if (t.includes('어비스') || t.includes('abyss')) {
+            detected.add('toa');
+            detected.add('rang');
+            detected.add('hiyori');
+            detected.add('mary');
         }
 
         rules.forEach(rule => {
@@ -2275,6 +2414,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (song.gen === 'g1' || (song.artist && song.artist.includes('에버리스'))) detectedUnits.push('everlys');
         if (song.gen === 'g2' || (song.artist && song.artist.includes('유니버스'))) detectedUnits.push('universe');
         if (song.gen === 'g3' || (song.artist && song.artist.includes('클리셰'))) detectedUnits.push('cliche');
+        if (song.gen === 'g4' || (song.artist && song.artist.includes('어비스'))) detectedUnits.push('abyss');
 
         const activeMembers = (song.members || []).filter(m => m !== 'group');
 
@@ -4120,6 +4260,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        if (dom.btnStationQueue) {
+            dom.btnStationQueue.addEventListener('click', () => {
+                const cur = player.currentSong;
+                if (!cur) {
+                    showToast('현재 재생 중인 곡이 없습니다.');
+                    return;
+                }
+                const stationQueue = buildMusicStationQueue(cur);
+                player.setQueue(stationQueue, 0, true);
+                renderMobileQueue(true);
+                showToast(`📻 '${cur.title}' 기반 뮤직 스테이션으로 대기열이 갱신되었습니다.`);
+            });
+        }
+
         if (dom.btnClearQueue) {
             dom.btnClearQueue.addEventListener('click', () => {
                 player.clearQueue();
@@ -4133,6 +4287,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.actionsBackdrop) dom.actionsBackdrop.addEventListener('click', () => closeTrackActions());
 
         // 트랙 액션 메뉴 항목들
+        if (dom.actStation) {
+            dom.actStation.addEventListener('click', () => {
+                const song = state.selectedActionSong;
+                closeTrackActions();
+                if (song) {
+                    const stationQueue = buildMusicStationQueue(song);
+                    player.setQueue(stationQueue, 0, true);
+                    showToast(`📻 '${song.title}' 뮤직 스테이션 재생을 시작합니다.`);
+                }
+            });
+        }
+
         if (dom.actEdit) {
             dom.actEdit.addEventListener('click', () => {
                 const song = state.selectedActionSong;
