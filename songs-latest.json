@@ -1,31 +1,35 @@
 {
   "success": true,
-  "count": 87,
-  "updatedAt": "2026-09-27T19:16:01.056325+00:00",
+  "count": 79,
+  "updatedAt": "2026-10-12T03:07:52.126293+00:00",
   "tracks": [
     {
-      "id": "fXoGiuE6e-I",
-      "title": "Loop in June (명조:워더링 웨이브 OST)",
-      "rawTitle": "명조:워더링 웨이브 OST - Loop in June『솔라리스: 별을 쫓아서 Season 2』| 시라유키 히나",
-      "duration": 220,
-      "uploader": "시라유키 히나",
-      "defaultMember": "hina",
-      "defaultType": "ost",
-      "publishedAt": "2026-10-11"
+      "id": "kNzGpNEdBqw",
+      "title": "오버라이드 「オーバーライド",
+      "rawTitle": "오버라이드 「オーバーライド / 吉田夜世」 - 아야츠노 유니 Cover",
+      "duration": 139,
+      "uploader": "아야츠노 유니 AYATSUNO YUNI",
+      "defaultMember": "yuni",
+      "members": [
+        "yuni"
+      ],
+      "defaultType": "cover"
     },
     {
-      "id": "bmFg-paLaMI",
-      "title": "브레인 롯 (도쿄 마나카)",
-      "rawTitle": "브레인 롯 (도쿄 마나카) | 불러보았다 (나나 드라이브)",
-      "duration": 125,
-      "uploader": "하나코 나나",
-      "defaultMember": "nana",
-      "defaultType": "cover",
-      "publishedAt": "2026-10-11"
+      "id": "Qi_JLmXBFFo",
+      "title": "불가행력 [不可幸力 / Vaundy ]",
+      "rawTitle": "불가행력 [不可幸力 / Vaundy ] / 아오쿠모 린 (Aokumo Rin) Cover",
+      "duration": 201,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
     },
     {
       "id": "Qngf5HNfl6Q",
-      "title": "소녀레이 (少女レイ)",
+      "title": "소녀레이(少女レイ) - みきとP",
       "rawTitle": "소녀레이(少女レイ) - みきとP | 시라유키 히나 x 유즈하 리코 Cover",
       "duration": 290,
       "uploader": "시라유키 히나 SHIRAYUKI HINA",
@@ -34,139 +38,19 @@
         "hina",
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-27"
-    },
-    {
-      "id": "OlJ-7k9Trm0",
-      "title": "Confrontation (지킬 앤 하이드 OST)",
-      "rawTitle": "마시로 - Confrontation 방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
-      "duration": 224,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-27"
+      "defaultType": "cover"
     },
     {
       "id": "FzefgoF26Ac",
-      "title": "여우의 별자리 「심월과 달의 노래」 (명조 OST)",
+      "title": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)",
       "rawTitle": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)ㅣ아카네 리제(Akane Lize) 【COVER】",
-      "duration": 218,
+      "duration": 219,
       "uploader": "아카네 리제 AKANE LIZE",
       "defaultMember": "lize",
       "members": [
         "lize"
       ],
-      "defaultType": "ost",
-      "publishedAt": "2026-09-26"
-    },
-    {
-      "id": "Da77IyHlwao",
-      "title": "웃는남자 (뮤지컬 웃는남자 OST)",
-      "rawTitle": "마시로 - 웃는남자 방구석 뮤지컬 [ 웃는남자 ] (4k)",
-      "duration": 221,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-26"
-    },
-    {
-      "id": "F7kdEX0VRss",
-      "title": "Dance The Night Away [3D Live]",
-      "rawTitle": "[4K] Dance The Night Away - TWICE(트와이스) / 하나코 나나 3D Cover",
-      "duration": 186,
-      "uploader": "하나코 나나 HANAKO NANA",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-25"
-    },
-    {
-      "id": "j_RAn7yvq_0",
-      "title": "Alive 2 (지킬 앤 하이드 OST)",
-      "rawTitle": "마시로 -  Alive 2  방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
-      "duration": 102,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-25"
-    },
-    {
-      "id": "jHc5yW6iOPk",
-      "title": "Land of Lola (킹키부츠 OST)",
-      "rawTitle": "마시로 - Land of Lola 방구석 뮤지컬 [ 킹키부츠 ] (4k)",
-      "duration": 215,
-      "uploader": "네네코 마시로 NENEKO MASHIRO",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-24"
-    },
-    {
-      "id": "y-rdBQSrzSs",
-      "title": "Dynamite [3D Live]",
-      "rawTitle": "[4K] Dynamite - BTS(방탄소년단) / 하나코 나나 3D Cover",
-      "duration": 200,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-21"
-    },
-    {
-      "id": "JsnnXkxNGQU",
-      "title": "Viva Happy (비바해피)",
-      "rawTitle": "비바해피 [ビバハピ / Mitchie M] l 에버리스 (EVERYS) Cover",
-      "duration": 210,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "huya",
-        "yuni"
-      ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-20"
-    },
-    {
-      "id": "qv_VVUJOt0M",
-      "title": "Catallena (까탈레나) [3D Live]",
-      "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
-      "duration": 197,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-17"
-    },
-    {
-      "id": "npwilOOckxY",
-      "title": "100% for You [3D Live]",
-      "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
-      "duration": 206,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live",
-      "publishedAt": "2026-09-14"
+      "defaultType": "ost"
     },
     {
       "id": "blFr5w6o2jQ",
@@ -178,8 +62,7 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-13"
+      "defaultType": "cover"
     },
     {
       "id": "Zetk77I6_s8",
@@ -192,12 +75,11 @@
         "huya",
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-12"
+      "defaultType": "cover"
     },
     {
       "id": "uBtFoUXR9Qc",
-      "title": "물떼새 (千鳥)",
+      "title": "Plover [Yorushika - Chidori]",
       "rawTitle": "Plover [Yorushika - Chidori] | Arahashi Tabi Cover",
       "duration": 255,
       "uploader": "아라하시 타비 ARAHASHI TABI",
@@ -205,8 +87,7 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-07"
+      "defaultType": "cover"
     },
     {
       "id": "zQp6ZZAT6ew",
@@ -218,8 +99,7 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-02"
+      "defaultType": "cover"
     },
     {
       "id": "yuxa6o1_scc",
@@ -231,8 +111,7 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-02"
+      "defaultType": "cover"
     },
     {
       "id": "ekINzN4PQmo",
@@ -245,8 +124,7 @@
         "hina",
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-01"
+      "defaultType": "cover"
     },
     {
       "id": "SiBzI2htX2o",
@@ -259,8 +137,7 @@
         "mashiro",
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-09-01"
+      "defaultType": "cover"
     },
     {
       "id": "nwqIoe_3zbE",
@@ -272,8 +149,7 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-31"
+      "defaultType": "cover"
     },
     {
       "id": "8shKFjkHabo",
@@ -285,8 +161,7 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-31"
+      "defaultType": "cover"
     },
     {
       "id": "2qEGFmXROQ4",
@@ -299,8 +174,7 @@
         "mashiro",
         "shibuki"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-29"
+      "defaultType": "cover"
     },
     {
       "id": "YXIz7U42pgk",
@@ -312,8 +186,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-16"
+      "defaultType": "cover"
     },
     {
       "id": "9S3if_u5n_Q",
@@ -325,8 +198,7 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-11"
+      "defaultType": "cover"
     },
     {
       "id": "wu2a0AeQOCc",
@@ -338,8 +210,7 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-10"
+      "defaultType": "cover"
     },
     {
       "id": "gkmnG2pWzys",
@@ -351,8 +222,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-08-07"
+      "defaultType": "cover"
     },
     {
       "id": "MhdJaaEhiHc",
@@ -365,60 +235,7 @@
         "rin",
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-07-31"
-    },
-    {
-      "id": "ZYSQLv_L26Y",
-      "title": "Maid My Way",
-      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
-      "duration": 200,
-      "uploader": "아오쿠모 린 AOKUMO RIN",
-      "defaultMember": "rin",
-      "members": [
-        "rin"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-07-27"
-    },
-    {
-      "id": "jvZRK7W7S9Y",
-      "title": "Hush Trap",
-      "rawTitle": "Hanako Nana | 'Hush Trap'",
-      "duration": 201,
-      "uploader": "하나코 나나 HANAKO NANA",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-07-26"
-    },
-    {
-      "id": "nsZmnwC9ukE",
-      "title": "Berry Verry Strawberry",
-      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
-      "duration": 186,
-      "uploader": "텐코 시부키 TENKO SHIBUKI",
-      "defaultMember": "shibuki",
-      "members": [
-        "shibuki"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-07-25"
-    },
-    {
-      "id": "P_oxx3_VpIY",
-      "title": "Villain Alert",
-      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
-      "duration": 187,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "riko",
-      "members": [
-        "riko"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-07-24"
+      "defaultType": "cover"
     },
     {
       "id": "dhudKbeIMJg",
@@ -430,8 +247,7 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-07-15"
+      "defaultType": "cover"
     },
     {
       "id": "VITNdv2ZywY",
@@ -443,8 +259,7 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-07-07"
+      "defaultType": "cover"
     },
     {
       "id": "3Y7Ek6YSGPE",
@@ -456,8 +271,7 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-07-04"
+      "defaultType": "cover"
     },
     {
       "id": "AH8sMk7otKU",
@@ -469,12 +283,11 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-29"
+      "defaultType": "cover"
     },
     {
       "id": "y1nUYj_D1Es",
-      "title": "물떼새 (千鳥)",
+      "title": "물떼새(ヨルシカ - 千鳥)",
       "rawTitle": "물떼새(ヨルシカ - 千鳥) / 아오쿠모 린(Aokumo Rin) Cover",
       "duration": 252,
       "uploader": "아오쿠모 린 AOKUMO RIN",
@@ -482,8 +295,7 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-28"
+      "defaultType": "cover"
     },
     {
       "id": "_pTBkDP1TE0",
@@ -495,8 +307,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-22"
+      "defaultType": "cover"
     },
     {
       "id": "39_zaFVluAw",
@@ -508,8 +319,7 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-20"
+      "defaultType": "cover"
     },
     {
       "id": "4nVjnxK4j0c",
@@ -521,8 +331,7 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-11"
+      "defaultType": "cover"
     },
     {
       "id": "_t4OxKtCHrg",
@@ -534,21 +343,7 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-11"
-    },
-    {
-      "id": "yiprl7-dU04",
-      "title": "마음악보",
-      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
-      "duration": 225,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-06-11"
+      "defaultType": "cover"
     },
     {
       "id": "VTTQJNcmlD0",
@@ -560,8 +355,7 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-10"
+      "defaultType": "cover"
     },
     {
       "id": "f7uaxrWNIdE",
@@ -573,8 +367,7 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-06-10"
+      "defaultType": "cover"
     },
     {
       "id": "xKA5wKYMFhM",
@@ -587,8 +380,7 @@
         "mashiro",
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-28"
+      "defaultType": "cover"
     },
     {
       "id": "yRKJ5-vcMUI",
@@ -600,8 +392,7 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-27"
+      "defaultType": "cover"
     },
     {
       "id": "SUJm8SX87DY",
@@ -613,8 +404,7 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-24"
+      "defaultType": "cover"
     },
     {
       "id": "L-pn_xrqQkQ",
@@ -626,8 +416,7 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-23"
+      "defaultType": "cover"
     },
     {
       "id": "bRa_zAaaCCE",
@@ -640,21 +429,7 @@
         "yuni",
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-21"
-    },
-    {
-      "id": "XR81lQrRceg",
-      "title": "유성우",
-      "rawTitle": "스텔라이브 (StelLive) Cliché | '유성우'",
-      "duration": 210,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-05-19"
+      "defaultType": "cover"
     },
     {
       "id": "xwuVYaJYERo",
@@ -666,8 +441,7 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-18"
+      "defaultType": "cover"
     },
     {
       "id": "KmH0RhhenzE",
@@ -679,34 +453,19 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-10"
+      "defaultType": "cover"
     },
     {
-      "id": "tD9N1BhSrCI",
-      "title": "To You, My Light",
-      "rawTitle": "To You, My Light",
-      "duration": 221,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
+      "id": "6mVByQMyxdY",
+      "title": "Back in the day, a nostalgic Tooniverse medley🎈 [StelLive🎀]",
+      "rawTitle": "Back in the day, a nostalgic Tooniverse medley🎈 [StelLive🎀]",
+      "duration": 1235,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
       "members": [
-        "group"
+        "hina"
       ],
-      "defaultType": "original",
-      "publishedAt": "2026-05-08"
-    },
-    {
-      "id": "v094-E3Pmtk",
-      "title": "STAR TRAIL (스타트레일)",
-      "rawTitle": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
-      "duration": 236,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-05-08"
+      "defaultType": "cover"
     },
     {
       "id": "jTUOSAmCqeI",
@@ -718,8 +477,7 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-05-03"
+      "defaultType": "cover"
     },
     {
       "id": "-RrbCkl3YJo",
@@ -731,8 +489,7 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-04-30"
+      "defaultType": "cover"
     },
     {
       "id": "C0hOHzutBRI",
@@ -744,8 +501,7 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-04-30"
+      "defaultType": "cover"
     },
     {
       "id": "CU8hsIhmkwc",
@@ -757,8 +513,7 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-04-19"
+      "defaultType": "cover"
     },
     {
       "id": "5rQSMZLi5z4",
@@ -770,8 +525,7 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-04-19"
+      "defaultType": "cover"
     },
     {
       "id": "LxqwR1KE81o",
@@ -783,8 +537,7 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-04-18"
+      "defaultType": "cover"
     },
     {
       "id": "fLLX2R-RwVE",
@@ -796,21 +549,7 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-04-13"
-    },
-    {
-      "id": "m-rIYEw5uAs",
-      "title": "히로인이 되고 싶어 (I Want to Be a Heroine)",
-      "rawTitle": "StelLive | 'I Want to Be a Heroine'",
-      "duration": 197,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2026-04-10"
+      "defaultType": "cover"
     },
     {
       "id": "Xo1Q-RPAk2c",
@@ -822,8 +561,7 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-30"
+      "defaultType": "cover"
     },
     {
       "id": "DHG3s8GF1DM",
@@ -835,8 +573,7 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-29"
+      "defaultType": "cover"
     },
     {
       "id": "prBtBX0wGxc",
@@ -848,8 +585,7 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-28"
+      "defaultType": "cover"
     },
     {
       "id": "cWnykOC5b_c",
@@ -861,66 +597,119 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-26"
+      "defaultType": "cover"
     },
     {
-      "id": "RLKm8ymJPlo",
-      "title": "Oh... [타다노 카에데 只野 楓]",
-      "rawTitle": "Oh... [타다노 카에데 只野 楓] / 아오쿠모 린(Aokumo Rin) Cover",
-      "duration": 222,
+      "id": "ZYSQLv_L26Y",
+      "title": "아오쿠모 린(Aokumo Rin)",
+      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
+      "duration": 200,
       "uploader": "아오쿠모 린 AOKUMO RIN",
       "defaultMember": "rin",
       "members": [
         "rin"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-25"
+      "defaultType": "original"
     },
     {
-      "id": "IoBUWPQ3dwc",
-      "title": "One Last Kiss - 『宇多田ヒカル, 신 에반게리온 극장판  𝄇  OST",
-      "rawTitle": "One Last Kiss - 『宇多田ヒカル, 신 에반게리온 극장판  𝄇  OST / 하나코 나나 COVER",
-      "duration": 258,
+      "id": "jvZRK7W7S9Y",
+      "title": "Hanako Nana",
+      "rawTitle": "Hanako Nana | 'Hush Trap'",
+      "duration": 201,
       "uploader": "하나코 나나 HANAKO NANA",
       "defaultMember": "nana",
       "members": [
         "nana"
       ],
-      "defaultType": "ost",
-      "publishedAt": "2026-03-22"
+      "defaultType": "original"
     },
     {
-      "id": "yA25-F9SJh0",
-      "title": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』",
-      "rawTitle": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』 / 텐코 시부키(Tenko Shibuki) cover",
-      "duration": 222,
+      "id": "nsZmnwC9ukE",
+      "title": "Tenko Shibuki",
+      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
+      "duration": 186,
       "uploader": "텐코 시부키 TENKO SHIBUKI",
       "defaultMember": "shibuki",
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-21"
+      "defaultType": "original"
     },
     {
-      "id": "UcFBb927-kU",
-      "title": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN",
-      "rawTitle": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN | Shirayuki Hina x Akane Rize Cover",
-      "duration": 283,
-      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "id": "P_oxx3_VpIY",
+      "title": "Yuzuha Riko",
+      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
+      "duration": 187,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "yiprl7-dU04",
+      "title": "스텔라이브 (STELLIVE) Universe",
+      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
+      "duration": 225,
+      "uploader": "스텔라이브 StelLive Official",
       "defaultMember": "group",
       "members": [
-        "hina",
-        "lize",
-        "rin"
+        "group"
       ],
-      "defaultType": "cover",
-      "publishedAt": "2026-03-17"
+      "defaultType": "original"
+    },
+    {
+      "id": "XR81lQrRceg",
+      "title": "스텔라이브 (StelLive) Cliché",
+      "rawTitle": "스텔라이브 (StelLive) Cliché | '유성우'",
+      "duration": 210,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "tD9N1BhSrCI",
+      "title": "To You, My Light",
+      "rawTitle": "To You, My Light",
+      "duration": 221,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "v094-E3Pmtk",
+      "title": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
+      "rawTitle": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
+      "duration": 236,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
+    },
+    {
+      "id": "m-rIYEw5uAs",
+      "title": "StelLive",
+      "rawTitle": "StelLive | 'I Want to Be a Heroine'",
+      "duration": 197,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original"
     },
     {
       "id": "he2W_4xY5Zo",
-      "title": "Twinkle",
+      "title": "스텔라이브 (StelLive)",
       "rawTitle": "스텔라이브 (StelLive) | Twinkle",
       "duration": 230,
       "uploader": "스텔라이브 StelLive Official",
@@ -928,8 +717,7 @@
       "members": [
         "group"
       ],
-      "defaultType": "original",
-      "publishedAt": "2026-02-23"
+      "defaultType": "original"
     },
     {
       "id": "TDn37k6Ccw0",
@@ -941,12 +729,11 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original",
-      "publishedAt": "2025-11-12"
+      "defaultType": "original"
     },
     {
       "id": "IQbeBUIVmdw",
-      "title": "삐질게 (BBiJilGe)",
+      "title": "아야츠노 유니 ( Ayatsuno Yuni )",
       "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘삐질게 (BBiJilGe)’ Music Video",
       "duration": 144,
       "uploader": "아야츠노 유니 AYATSUNO YUNI",
@@ -954,12 +741,11 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original",
-      "publishedAt": "2025-11-12"
+      "defaultType": "original"
     },
     {
       "id": "G5tTozKJRD4",
-      "title": "여로 (Voyage)",
+      "title": "아라하시 타비 (Arahashi Tabi)",
       "rawTitle": "아라하시 타비 (Arahashi Tabi) | '여로'",
       "duration": 205,
       "uploader": "아라하시 타비 ARAHASHI TABI",
@@ -967,12 +753,11 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-12-11"
+      "defaultType": "original"
     },
     {
       "id": "_8uoathMY0A",
-      "title": "봄꿈",
+      "title": "네네코 마시로(Neneko Mashiro)",
       "rawTitle": "네네코 마시로(Neneko Mashiro) | ‘봄꿈’",
       "duration": 196,
       "uploader": "네네코 마시로 NENEKO MASHIRO",
@@ -980,12 +765,11 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-10-16"
+      "defaultType": "original"
     },
     {
       "id": "3_0Ut2tlxLM",
-      "title": "Festa!",
+      "title": "아카네 리제(Akane Lize)",
       "rawTitle": "아카네 리제(Akane Lize) | ‘Festa!’",
       "duration": 215,
       "uploader": "아카네 리제 AKANE LIZE",
@@ -993,12 +777,11 @@
       "members": [
         "lize"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-09-29"
+      "defaultType": "original"
     },
     {
       "id": "rQaluJS-Tc0",
-      "title": "하나 (夏拏)",
+      "title": "시라유키 히나(Shirayuki Hina)",
       "rawTitle": "시라유키 히나(Shirayuki Hina) | ‘하나(夏拏)’",
       "duration": 255,
       "uploader": "시라유키 히나 SHIRAYUKI HINA",
@@ -1006,12 +789,11 @@
       "members": [
         "hina"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-09-11"
+      "defaultType": "original"
     },
     {
       "id": "GN-rdF8tEpU",
-      "title": "Our Tales",
+      "title": "스텔라이브 (StelLive) Cliché",
       "rawTitle": "스텔라이브 (StelLive) Cliché | ‘Our Tales’",
       "duration": 225,
       "uploader": "스텔라이브 StelLive Official",
@@ -1019,12 +801,11 @@
       "members": [
         "group"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-08-24"
+      "defaultType": "original"
     },
     {
       "id": "gq3gzxPBOK0",
-      "title": "푸른 보석과 어린 용 (青い宝石と竜の子)",
+      "title": "藍璃かんな(Airi Kanna)",
       "rawTitle": "藍璃かんな(Airi Kanna) | ‘青い宝石と竜の子’",
       "duration": 236,
       "uploader": "Airi Kanna",
@@ -1032,12 +813,11 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-07-25"
+      "defaultType": "original"
     },
     {
       "id": "R_RAWjqdgTs",
-      "title": "SUPADOPA",
+      "title": "아야츠노 유니 ( Ayatsuno Yuni )",
       "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘SUPADOPA’ Music Video",
       "duration": 155,
       "uploader": "아야츠노 유니 AYATSUNO YUNI",
@@ -1045,12 +825,11 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-06-19"
+      "defaultType": "original"
     },
     {
       "id": "Jt6UCd7JhAA",
-      "title": "Stars Align",
+      "title": "스텔라이브 (StelLive) Universe",
       "rawTitle": "스텔라이브 (StelLive) Universe | ‘Stars Align’",
       "duration": 283,
       "uploader": "스텔라이브 StelLive Official",
@@ -1058,12 +837,11 @@
       "members": [
         "group"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-04-30"
+      "defaultType": "original"
     },
     {
       "id": "uTj88854gZ0",
-      "title": "Dear my fairy",
+      "title": "시라유키 히나 X 네네코 마시로",
       "rawTitle": "시라유키 히나 X 네네코 마시로 | ‘Dear my fairy’",
       "duration": 250,
       "uploader": "스텔라이브 StelLive Official",
@@ -1072,12 +850,11 @@
         "hina",
         "mashiro"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-04-21"
+      "defaultType": "original"
     },
     {
       "id": "suyhkCwKX48",
-      "title": "Hit On Shot",
+      "title": "아이리 칸나 x 아카네 리제",
       "rawTitle": "아이리 칸나 x 아카네 리제  | ‘Hit On Shot’",
       "duration": 209,
       "uploader": "스텔라이브 StelLive Official",
@@ -1086,12 +863,11 @@
         "kanna",
         "lize"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-04-03"
+      "defaultType": "original"
     },
     {
       "id": "iCCqSFvz9kM",
-      "title": "최종화 (Acoustic Ver.)",
+      "title": "아이리 칸나(Airi Kanna)",
       "rawTitle": "아이리 칸나(Airi Kanna) | 최종화 (Acoustic Ver.)",
       "duration": 247,
       "uploader": "Airi Kanna",
@@ -1099,8 +875,7 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-03-03"
+      "defaultType": "original"
     },
     {
       "id": "YcyDo-jp4YM",
@@ -1112,12 +887,11 @@
       "members": [
         "group"
       ],
-      "defaultType": "original",
-      "publishedAt": "2024-02-24"
+      "defaultType": "original"
     },
     {
       "id": "ajDAmJYPQ-U",
-      "title": "최종화 (最終花)",
+      "title": "藍璃かんな(Airi Kanna)",
       "rawTitle": "藍璃かんな(Airi Kanna) | ‘最終花’",
       "duration": 256,
       "uploader": "Airi Kanna",
@@ -1125,12 +899,11 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original",
-      "publishedAt": "2023-11-09"
+      "defaultType": "original"
     },
     {
       "id": "pkypi5nXSYM",
-      "title": "내꺼 하는 법",
+      "title": "아야츠노 유니 ( Ayatsuno Yuni )",
       "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘내꺼 하는 법’ Music Video",
       "duration": 146,
       "uploader": "아야츠노 유니 AYATSUNO YUNI",
@@ -1138,8 +911,7 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original",
-      "publishedAt": "2023-07-20"
+      "defaultType": "original"
     },
     {
       "id": "AsoPg-h-644",
@@ -1151,12 +923,11 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original",
-      "publishedAt": "2023-07-07"
+      "defaultType": "original"
     },
     {
       "id": "kPdB6iGYBBc",
-      "title": "ADDICT!ON",
+      "title": "藍璃かんな(Airi Kanna)",
       "rawTitle": "藍璃かんな(Airi Kanna) | ‘ADDICT!ON’ Music Video",
       "duration": 217,
       "uploader": "Airi Kanna",
@@ -1164,8 +935,32 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original",
-      "publishedAt": "2023-05-26"
+      "defaultType": "original"
+    },
+    {
+      "id": "fXoGiuE6e-I",
+      "title": "Wuthering Waves OST - Loop in June \"Solaris: Chasing Stars Season 2\"",
+      "rawTitle": "Wuthering Waves OST - Loop in June \"Solaris: Chasing Stars Season 2\" | Shirayuki Hina",
+      "duration": 221,
+      "uploader": "",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "rin"
+      ],
+      "defaultType": "ost"
+    },
+    {
+      "id": "OlJ-7k9Trm0",
+      "title": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ]",
+      "rawTitle": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ] (4K)",
+      "duration": 225,
+      "uploader": "",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover"
     }
   ]
 }
