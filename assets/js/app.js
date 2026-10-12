@@ -1668,7 +1668,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     // 현재 재생목록 (대기열 / Queue) 렌더링 및 조작
     // ===================================================================
-    function renderQueue() {
+    function renderQueue(autoScroll = true) {
         const queue = player.queue || [];
         const curIdx = player.currentIndex;
 
@@ -1830,14 +1830,64 @@ document.addEventListener('DOMContentLoaded', () => {
         attachQueueListeners(dom.fullQueueList);
         attachQueueListeners(dom.drawerQueueList);
 
-        // 재생 중인 트랙으로 스크롤
-        if (dom.fullQueueList) {
-            const activeFull = dom.fullQueueList.querySelector('.queue-item.active');
-            if (activeFull) activeFull.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // 재생 중인 트랙으로 스크롤 (열려있는 서랍 및 전체화면 패널)
+        if (autoScroll) {
+            if (dom.queueDrawer && dom.queueDrawer.classList.contains('open')) {
+                requestAnimationFrame(() => {
+                    scrollPcQueueToActiveTrack('drawer', true);
+                });
+            }
+            if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && !dom.fullPlayerModal.classList.contains('hide-queue')) {
+                requestAnimationFrame(() => {
+                    scrollPcQueueToActiveTrack('full', true);
+                });
+            }
         }
-        if (dom.drawerQueueList) {
-            const activeDrawer = dom.drawerQueueList.querySelector('.queue-item.active');
-            if (activeDrawer) activeDrawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function scrollPcQueueToActiveTrack(target = 'all', smooth = true) {
+        const scrollContainer = (container) => {
+            if (!container) return;
+            const activeItem = container.querySelector('.queue-item.active');
+            if (!activeItem) return;
+
+            let targetTop = 0;
+            const containerHeight = container.clientHeight || 450;
+            const itemHeight = activeItem.clientHeight || 54;
+
+            if (activeItem.offsetParent === container) {
+                targetTop = activeItem.offsetTop - (containerHeight / 2) + (itemHeight / 2);
+            } else {
+                const containerRect = container.getBoundingClientRect();
+                const itemRect = activeItem.getBoundingClientRect();
+                if (containerRect.height > 0) {
+                    const relativeTop = (itemRect.top - containerRect.top) + container.scrollTop;
+                    targetTop = relativeTop - (containerHeight / 2) + (itemHeight / 2);
+                } else {
+                    targetTop = activeItem.offsetTop - (containerHeight / 2) + (itemHeight / 2);
+                }
+            }
+
+            const finalTop = Math.max(0, targetTop);
+            try {
+                container.scrollTo({
+                    top: finalTop,
+                    behavior: smooth ? 'smooth' : 'auto'
+                });
+            } catch (e) {
+                container.scrollTop = finalTop;
+            }
+        };
+
+        if (target === 'all' || target === 'drawer') {
+            if (dom.drawerQueueList) {
+                scrollContainer(dom.drawerQueueList);
+            }
+        }
+        if (target === 'all' || target === 'full') {
+            if (dom.fullQueueList) {
+                scrollContainer(dom.fullQueueList);
+            }
         }
     }
 
@@ -1893,7 +1943,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.queueDrawer) dom.queueDrawer.classList.add('open');
         if (dom.queueDrawerBackdrop) dom.queueDrawerBackdrop.classList.add('open');
         if (dom.btnToggleQueueDrawer) dom.btnToggleQueueDrawer.classList.add('active');
-        renderQueue();
+        renderQueue(false);
+
+        // 재생목록(대기열) 서랍 오픈 시 현재 재생 곡으로 자동 중앙 스크롤
+        requestAnimationFrame(() => {
+            scrollPcQueueToActiveTrack('drawer', false);
+        });
+        setTimeout(() => {
+            scrollPcQueueToActiveTrack('drawer', true);
+        }, 120);
+        setTimeout(() => {
+            scrollPcQueueToActiveTrack('drawer', true);
+        }, 360);
     }
 
     function closeQueueDrawer() {
@@ -2143,6 +2204,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     dom.fullPlayerModal.classList.toggle('hide-queue');
                     updateFullPlayerQueueToggleBtn();
                     syncDockTransition();
+                    if (!dom.fullPlayerModal.classList.contains('hide-queue')) {
+                        requestAnimationFrame(() => scrollPcQueueToActiveTrack('full', false));
+                        setTimeout(() => scrollPcQueueToActiveTrack('full', true), 120);
+                        setTimeout(() => scrollPcQueueToActiveTrack('full', true), 360);
+                    }
                 } else {
                     toggleQueueDrawer();
                 }
@@ -2154,6 +2220,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 dom.fullPlayerModal.classList.toggle('hide-queue');
                 updateFullPlayerQueueToggleBtn();
                 syncDockTransition();
+                if (!dom.fullPlayerModal.classList.contains('hide-queue')) {
+                    requestAnimationFrame(() => scrollPcQueueToActiveTrack('full', false));
+                    setTimeout(() => scrollPcQueueToActiveTrack('full', true), 120);
+                    setTimeout(() => scrollPcQueueToActiveTrack('full', true), 360);
+                }
             });
         }
         if (dom.btnCloseDrawer) {
@@ -3043,6 +3114,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (state.fullPlayerViewMode === 'video') {
             dockPcPlayer(true);
+        }
+
+        // 전체화면 플레이어 오픈 시 큐 패널이 표시되어 있다면 현재 재생 곡으로 자동 스크롤
+        if (!dom.fullPlayerModal.classList.contains('hide-queue')) {
+            requestAnimationFrame(() => {
+                scrollPcQueueToActiveTrack('full', false);
+            });
+            setTimeout(() => {
+                scrollPcQueueToActiveTrack('full', true);
+            }, 120);
+            setTimeout(() => {
+                scrollPcQueueToActiveTrack('full', true);
+            }, 360);
         }
     }
 
