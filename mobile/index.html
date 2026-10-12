@@ -618,9 +618,12 @@
                 <div class="queue-sheet-top-zone" id="m-queue-top-zone" title="아래로 드래그하여 닫기">
                     <div class="queue-sheet-handle" id="m-queue-sheet-handle"></div>
                     <div class="queue-sheet-header">
-                        <div class="queue-sheet-title-row">
-                            <span class="queue-sheet-title">현재 재생목록</span>
-                            <span class="queue-sheet-badge" id="m-queue-count">0곡</span>
+                        <div class="queue-sheet-header-top">
+                            <div class="queue-sheet-title-row">
+                                <span class="queue-sheet-title">현재 재생목록</span>
+                                <span class="queue-sheet-badge" id="m-queue-count">0곡</span>
+                            </div>
+                            <button class="queue-sheet-close-btn" id="m-btn-close-queue" aria-label="재생목록 닫기">✕</button>
                         </div>
                         <div class="queue-sheet-actions">
                             <button class="queue-sheet-action-btn" id="m-btn-station-queue" title="현재 곡 기반 뮤직 스테이션 생성">
@@ -639,8 +642,7 @@
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                                 <span>목록 저장</span>
                             </button>
-                            <button class="queue-sheet-action-btn" id="m-btn-clear-queue">비우기</button>
-                            <button class="queue-sheet-close-btn" id="m-btn-close-queue">✕</button>
+                            <button class="queue-sheet-action-btn" id="m-btn-clear-queue" title="대기열 비우기">비우기</button>
                         </div>
                     </div>
                     <div class="queue-drag-hint">

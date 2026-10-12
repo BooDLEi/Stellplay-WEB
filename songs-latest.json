@@ -10,7 +10,8 @@
       "duration": 220,
       "uploader": "시라유키 히나",
       "defaultMember": "hina",
-      "defaultType": "ost"
+      "defaultType": "ost",
+      "publishedAt": "2026-10-11"
     },
     {
       "id": "bmFg-paLaMI",
@@ -19,7 +20,8 @@
       "duration": 125,
       "uploader": "하나코 나나",
       "defaultMember": "nana",
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-10-11"
     },
     {
       "id": "Qngf5HNfl6Q",
@@ -32,7 +34,8 @@
         "hina",
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-27"
     },
     {
       "id": "OlJ-7k9Trm0",
@@ -44,7 +47,8 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "live"
+      "defaultType": "live",
+      "publishedAt": "2026-09-27"
     },
     {
       "id": "FzefgoF26Ac",
@@ -56,7 +60,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "ost"
+      "defaultType": "ost",
+      "publishedAt": "2026-09-26"
     },
     {
       "id": "Da77IyHlwao",
@@ -68,7 +73,8 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "live"
+      "defaultType": "live",
+      "publishedAt": "2026-09-26"
     },
     {
       "id": "F7kdEX0VRss",
@@ -80,7 +86,8 @@
       "members": [
         "nana"
       ],
-      "defaultType": "live"
+      "defaultType": "live",
+      "publishedAt": "2026-09-25"
     },
     {
       "id": "j_RAn7yvq_0",
@@ -92,7 +99,8 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "live"
+      "defaultType": "live",
+      "publishedAt": "2026-09-25"
     },
     {
       "id": "jHc5yW6iOPk",
@@ -104,7 +112,61 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "live"
+      "defaultType": "live",
+      "publishedAt": "2026-09-24"
+    },
+    {
+      "id": "y-rdBQSrzSs",
+      "title": "Dynamite [3D Live]",
+      "rawTitle": "[4K] Dynamite - BTS(방탄소년단) / 하나코 나나 3D Cover",
+      "duration": 200,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-21"
+    },
+    {
+      "id": "JsnnXkxNGQU",
+      "title": "Viva Happy (비바해피)",
+      "rawTitle": "비바해피 [ビバハピ / Mitchie M] l 에버리스 (EVERYS) Cover",
+      "duration": 210,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "huya",
+        "yuni"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-09-20"
+    },
+    {
+      "id": "qv_VVUJOt0M",
+      "title": "Catallena (까탈레나) [3D Live]",
+      "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
+      "duration": 197,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-17"
+    },
+    {
+      "id": "npwilOOckxY",
+      "title": "100% for You [3D Live]",
+      "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
+      "duration": 206,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-14"
     },
     {
       "id": "blFr5w6o2jQ",
@@ -116,7 +178,8 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-13"
     },
     {
       "id": "Zetk77I6_s8",
@@ -129,7 +192,8 @@
         "huya",
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-12"
     },
     {
       "id": "uBtFoUXR9Qc",
@@ -141,7 +205,8 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-07"
     },
     {
       "id": "zQp6ZZAT6ew",
@@ -153,7 +218,8 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-02"
     },
     {
       "id": "yuxa6o1_scc",
@@ -165,7 +231,8 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-02"
     },
     {
       "id": "ekINzN4PQmo",
@@ -178,7 +245,8 @@
         "hina",
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-01"
     },
     {
       "id": "SiBzI2htX2o",
@@ -191,7 +259,8 @@
         "mashiro",
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-01"
     },
     {
       "id": "nwqIoe_3zbE",
@@ -203,7 +272,8 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-31"
     },
     {
       "id": "8shKFjkHabo",
@@ -215,7 +285,8 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-31"
     },
     {
       "id": "2qEGFmXROQ4",
@@ -228,7 +299,8 @@
         "mashiro",
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-29"
     },
     {
       "id": "YXIz7U42pgk",
@@ -240,7 +312,8 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-16"
     },
     {
       "id": "9S3if_u5n_Q",
@@ -252,7 +325,8 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-11"
     },
     {
       "id": "wu2a0AeQOCc",
@@ -264,7 +338,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-10"
     },
     {
       "id": "gkmnG2pWzys",
@@ -276,7 +351,8 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-07"
     },
     {
       "id": "MhdJaaEhiHc",
@@ -289,7 +365,60 @@
         "rin",
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-31"
+    },
+    {
+      "id": "ZYSQLv_L26Y",
+      "title": "Maid My Way",
+      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
+      "duration": 200,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-27"
+    },
+    {
+      "id": "jvZRK7W7S9Y",
+      "title": "Hush Trap",
+      "rawTitle": "Hanako Nana | 'Hush Trap'",
+      "duration": 201,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-26"
+    },
+    {
+      "id": "nsZmnwC9ukE",
+      "title": "Berry Verry Strawberry",
+      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
+      "duration": 186,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-25"
+    },
+    {
+      "id": "P_oxx3_VpIY",
+      "title": "Villain Alert",
+      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
+      "duration": 187,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-24"
     },
     {
       "id": "dhudKbeIMJg",
@@ -301,7 +430,8 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-15"
     },
     {
       "id": "VITNdv2ZywY",
@@ -313,7 +443,8 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-07"
     },
     {
       "id": "3Y7Ek6YSGPE",
@@ -325,7 +456,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-04"
     },
     {
       "id": "AH8sMk7otKU",
@@ -337,7 +469,8 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-29"
     },
     {
       "id": "y1nUYj_D1Es",
@@ -349,7 +482,8 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-28"
     },
     {
       "id": "_pTBkDP1TE0",
@@ -361,7 +495,8 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-22"
     },
     {
       "id": "39_zaFVluAw",
@@ -373,7 +508,8 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-20"
     },
     {
       "id": "4nVjnxK4j0c",
@@ -385,7 +521,8 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-11"
     },
     {
       "id": "_t4OxKtCHrg",
@@ -397,7 +534,21 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-11"
+    },
+    {
+      "id": "yiprl7-dU04",
+      "title": "마음악보",
+      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
+      "duration": 225,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-06-11"
     },
     {
       "id": "VTTQJNcmlD0",
@@ -409,7 +560,8 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-10"
     },
     {
       "id": "f7uaxrWNIdE",
@@ -421,7 +573,8 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-10"
     },
     {
       "id": "xKA5wKYMFhM",
@@ -434,7 +587,8 @@
         "mashiro",
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-28"
     },
     {
       "id": "yRKJ5-vcMUI",
@@ -446,7 +600,8 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-27"
     },
     {
       "id": "SUJm8SX87DY",
@@ -458,7 +613,8 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-24"
     },
     {
       "id": "L-pn_xrqQkQ",
@@ -470,7 +626,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-23"
     },
     {
       "id": "bRa_zAaaCCE",
@@ -483,7 +640,21 @@
         "yuni",
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-21"
+    },
+    {
+      "id": "XR81lQrRceg",
+      "title": "유성우",
+      "rawTitle": "스텔라이브 (StelLive) Cliché | '유성우'",
+      "duration": 210,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-05-19"
     },
     {
       "id": "xwuVYaJYERo",
@@ -495,7 +666,8 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-18"
     },
     {
       "id": "KmH0RhhenzE",
@@ -507,7 +679,34 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-10"
+    },
+    {
+      "id": "tD9N1BhSrCI",
+      "title": "To You, My Light",
+      "rawTitle": "To You, My Light",
+      "duration": 221,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-05-08"
+    },
+    {
+      "id": "v094-E3Pmtk",
+      "title": "STAR TRAIL (스타트레일)",
+      "rawTitle": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
+      "duration": 236,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-05-08"
     },
     {
       "id": "jTUOSAmCqeI",
@@ -519,7 +718,8 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-03"
     },
     {
       "id": "-RrbCkl3YJo",
@@ -531,7 +731,8 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-04-30"
     },
     {
       "id": "C0hOHzutBRI",
@@ -543,7 +744,8 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-04-30"
     },
     {
       "id": "CU8hsIhmkwc",
@@ -555,7 +757,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-04-19"
     },
     {
       "id": "5rQSMZLi5z4",
@@ -567,7 +770,8 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-04-19"
     },
     {
       "id": "LxqwR1KE81o",
@@ -579,7 +783,8 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-04-18"
     },
     {
       "id": "fLLX2R-RwVE",
@@ -591,7 +796,21 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-04-13"
+    },
+    {
+      "id": "m-rIYEw5uAs",
+      "title": "히로인이 되고 싶어 (I Want to Be a Heroine)",
+      "rawTitle": "StelLive | 'I Want to Be a Heroine'",
+      "duration": 197,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-04-10"
     },
     {
       "id": "Xo1Q-RPAk2c",
@@ -603,7 +822,8 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-30"
     },
     {
       "id": "DHG3s8GF1DM",
@@ -615,7 +835,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-29"
     },
     {
       "id": "prBtBX0wGxc",
@@ -627,7 +848,8 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-28"
     },
     {
       "id": "cWnykOC5b_c",
@@ -639,7 +861,8 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-26"
     },
     {
       "id": "RLKm8ymJPlo",
@@ -651,7 +874,8 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-25"
     },
     {
       "id": "IoBUWPQ3dwc",
@@ -663,7 +887,8 @@
       "members": [
         "nana"
       ],
-      "defaultType": "ost"
+      "defaultType": "ost",
+      "publishedAt": "2026-03-22"
     },
     {
       "id": "yA25-F9SJh0",
@@ -675,7 +900,8 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-21"
     },
     {
       "id": "UcFBb927-kU",
@@ -689,115 +915,8 @@
         "lize",
         "rin"
       ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "ZYSQLv_L26Y",
-      "title": "Maid My Way",
-      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
-      "duration": 200,
-      "uploader": "아오쿠모 린 AOKUMO RIN",
-      "defaultMember": "rin",
-      "members": [
-        "rin"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "jvZRK7W7S9Y",
-      "title": "Hush Trap",
-      "rawTitle": "Hanako Nana | 'Hush Trap'",
-      "duration": 201,
-      "uploader": "하나코 나나 HANAKO NANA",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "nsZmnwC9ukE",
-      "title": "Berry Verry Strawberry",
-      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
-      "duration": 186,
-      "uploader": "텐코 시부키 TENKO SHIBUKI",
-      "defaultMember": "shibuki",
-      "members": [
-        "shibuki"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "P_oxx3_VpIY",
-      "title": "Villain Alert",
-      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
-      "duration": 187,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "riko",
-      "members": [
-        "riko"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "yiprl7-dU04",
-      "title": "마음악보",
-      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
-      "duration": 225,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "XR81lQrRceg",
-      "title": "유성우",
-      "rawTitle": "스텔라이브 (StelLive) Cliché | '유성우'",
-      "duration": 210,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "tD9N1BhSrCI",
-      "title": "To You, My Light",
-      "rawTitle": "To You, My Light",
-      "duration": 221,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "v094-E3Pmtk",
-      "title": "STAR TRAIL (스타트레일)",
-      "rawTitle": "스텔라이브 (StelLive) I 'STAR TRAIL (스타트레일)'",
-      "duration": 236,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "m-rIYEw5uAs",
-      "title": "히로인이 되고 싶어 (I Want to Be a Heroine)",
-      "rawTitle": "StelLive | 'I Want to Be a Heroine'",
-      "duration": 197,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
+      "defaultType": "cover",
+      "publishedAt": "2026-03-17"
     },
     {
       "id": "he2W_4xY5Zo",
@@ -809,7 +928,8 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2026-02-23"
     },
     {
       "id": "TDn37k6Ccw0",
@@ -821,7 +941,8 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2025-11-12"
     },
     {
       "id": "IQbeBUIVmdw",
@@ -833,7 +954,8 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2025-11-12"
     },
     {
       "id": "G5tTozKJRD4",
@@ -845,7 +967,8 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-12-11"
     },
     {
       "id": "_8uoathMY0A",
@@ -857,7 +980,8 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-10-16"
     },
     {
       "id": "3_0Ut2tlxLM",
@@ -869,7 +993,8 @@
       "members": [
         "lize"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-09-29"
     },
     {
       "id": "rQaluJS-Tc0",
@@ -881,7 +1006,8 @@
       "members": [
         "hina"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-09-11"
     },
     {
       "id": "GN-rdF8tEpU",
@@ -893,7 +1019,8 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-08-24"
     },
     {
       "id": "gq3gzxPBOK0",
@@ -905,7 +1032,8 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-07-25"
     },
     {
       "id": "R_RAWjqdgTs",
@@ -917,7 +1045,8 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-06-19"
     },
     {
       "id": "Jt6UCd7JhAA",
@@ -929,7 +1058,8 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-04-30"
     },
     {
       "id": "uTj88854gZ0",
@@ -942,7 +1072,8 @@
         "hina",
         "mashiro"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-04-21"
     },
     {
       "id": "suyhkCwKX48",
@@ -955,7 +1086,8 @@
         "kanna",
         "lize"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-04-03"
     },
     {
       "id": "iCCqSFvz9kM",
@@ -967,7 +1099,8 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-03-03"
     },
     {
       "id": "YcyDo-jp4YM",
@@ -979,7 +1112,8 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-02-24"
     },
     {
       "id": "ajDAmJYPQ-U",
@@ -991,7 +1125,8 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2023-11-09"
     },
     {
       "id": "pkypi5nXSYM",
@@ -1003,7 +1138,8 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2023-07-20"
     },
     {
       "id": "AsoPg-h-644",
@@ -1015,7 +1151,8 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2023-07-07"
     },
     {
       "id": "kPdB6iGYBBc",
@@ -1027,56 +1164,8 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
-    },
-    {
-      "id": "JsnnXkxNGQU",
-      "title": "Viva Happy (비바해피)",
-      "rawTitle": "비바해피 [ビバハピ / Mitchie M] l 에버리스 (EVERYS) Cover",
-      "duration": 210,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "huya",
-        "yuni"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "y-rdBQSrzSs",
-      "title": "Dynamite [3D Live]",
-      "rawTitle": "[4K] Dynamite - BTS(방탄소년단) / 하나코 나나 3D Cover",
-      "duration": 200,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live"
-    },
-    {
-      "id": "qv_VVUJOt0M",
-      "title": "Catallena (까탈레나) [3D Live]",
-      "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
-      "duration": 197,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live"
-    },
-    {
-      "id": "npwilOOckxY",
-      "title": "100% for You [3D Live]",
-      "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
-      "duration": 206,
-      "uploader": "",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "live"
+      "defaultType": "original",
+      "publishedAt": "2023-05-26"
     }
   ]
 }

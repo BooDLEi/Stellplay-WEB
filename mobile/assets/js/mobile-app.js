@@ -408,7 +408,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 화면 테마 설정 (라이트 / 다크 모드)
     function applyMobileTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
+        if (!theme) return;
+        state.theme = theme;
+        if (theme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
         if (dom.btnThemeDark) dom.btnThemeDark.classList.toggle('active', theme === 'dark');
         if (dom.btnThemeLight) dom.btnThemeLight.classList.toggle('active', theme === 'light');
         if (dom.topThemeIcon) {
@@ -416,6 +423,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (dom.btnTopTheme) {
             dom.btnTopTheme.setAttribute('title', theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환');
+            dom.btnTopTheme.setAttribute('aria-checked', theme === 'light' ? 'true' : 'false');
         }
         const currentMember = (state && (state.selectedSub || state.selectedMajor)) || 'all';
         applyMemberTheme(currentMember);
@@ -1937,9 +1945,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===================================================================
     // 5. 대기열(재생목록) 슬라이드 시트 & 드래그 재배치
     // ===================================================================
+    function scrollQueueToActiveTrack(smooth = true) {
+        if (!dom.queueList) return;
+        const activeItem = dom.queueList.querySelector('.m-queue-item.active');
+        if (!activeItem) return;
+        const listHeight = dom.queueList.clientHeight || 450;
+        const targetTop = activeItem.offsetTop - (listHeight / 2) + (activeItem.clientHeight / 2);
+        const finalTop = Math.max(0, targetTop);
+        try {
+            dom.queueList.scrollTo({
+                top: finalTop,
+                behavior: smooth ? 'smooth' : 'auto'
+            });
+        } catch (e) {
+            dom.queueList.scrollTop = finalTop;
+        }
+    }
+
     function openQueueSheet() {
-        renderMobileQueue(true); // scrollToActive = true on first open
+        renderMobileQueue(false);
         dom.queueSheet.classList.add('open');
+        // 바텀시트 슬라이드 오픈 애니메이션 중 및 완료 후 현재 재생곡 위치로 정확히 중앙 스크롤
+        requestAnimationFrame(() => {
+            scrollQueueToActiveTrack(false);
+        });
+        setTimeout(() => {
+            scrollQueueToActiveTrack(true);
+        }, 120);
+        setTimeout(() => {
+            scrollQueueToActiveTrack(true);
+        }, 340);
     }
 
     function closeQueueSheet() {
@@ -2108,13 +2143,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         dom.queueList.appendChild(frag);
 
-        // 큐 시트를 처음 열 때만 현재 재생 중인 항목으로 스크롤 (사용자 스크롤 중 강제 이동 방지)
+        // 큐 시트 렌더링 시 현재 재생 중인 항목으로 스크롤 요청이 있을 때
         if (scrollToActive) {
             requestAnimationFrame(() => {
-                const activeItem = dom.queueList.querySelector('.m-queue-item.active');
-                if (activeItem) {
-                    activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                scrollQueueToActiveTrack(true);
             });
         }
     }
@@ -3809,8 +3841,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
         if (dom.btnTopTheme) {
-            dom.btnTopTheme.addEventListener('click', () => {
-                const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+            let lastThemeToggle = 0;
+            dom.btnTopTheme.addEventListener('click', (e) => {
+                e.preventDefault();
+                const now = Date.now();
+                if (now - lastThemeToggle < 200) return; // 빠른 연타 시 테마 충돌/꼬임 방지
+                lastThemeToggle = now;
+                const cur = (state && state.theme) ? state.theme : (document.documentElement.getAttribute('data-theme') || 'dark');
                 const nextTheme = cur === 'dark' ? 'light' : 'dark';
                 applyMobileTheme(nextTheme);
             });
