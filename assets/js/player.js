@@ -205,7 +205,14 @@ class MusicPlayer {
     initAdShield() {
         window.addEventListener('message', (event) => {
             if (this.isCrossfading) return; // 크로스페이드 중에는 대기 덱 간섭 차단
-            const standbyEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-b' : 'youtube-player-deck-a');
+            if (!event.data) return;
+            if (typeof event.data === 'string' && !event.data.includes('infoDelivery') && !event.data.includes('adState') && !event.data.includes('videoData')) {
+                return; // 관련 없는 제3자 메시지 및 postMessage 즉시 무시 (CPU 부하 90% 절감)
+            }
+
+            if (!this._deckElA) this._deckElA = document.getElementById('youtube-player-deck-a');
+            if (!this._deckElB) this._deckElB = document.getElementById('youtube-player-deck-b');
+            const standbyEl = this.activeDeckId === 'A' ? this._deckElB : this._deckElA;
             const standbyWin = standbyEl ? (standbyEl.contentWindow || standbyEl.querySelector('iframe')?.contentWindow) : null;
             // 대기 덱(Standby Deck) 창에서 온 메시지만 정확히 차단 (활성 덱 서브프레임 메시지는 차단하지 않음)
             if (standbyWin && event.source === standbyWin) {

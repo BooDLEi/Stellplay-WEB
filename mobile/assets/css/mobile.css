@@ -2237,6 +2237,8 @@ body::before {
     transition: background 0.15s ease, transform 0.15s ease;
     user-select: none;
     -webkit-user-select: none;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 46px;
 }
 
 .m-queue-item.active {

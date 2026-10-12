@@ -669,6 +669,9 @@ class MobilePlayer {
 
             try {
                 const cur = this.ytPlayer.getCurrentTime() || 0;
+                if (cur > 0) {
+                    this.lastYtCurrentTime = cur;
+                }
                 const dur = this.ytPlayer.getDuration() || this.currentSong?.duration || 0;
                 const progress = dur > 0 ? (cur / dur) * 100 : 0;
 
@@ -904,7 +907,20 @@ class MobilePlayer {
 
     getCurrentTime() {
         if (this.activeEngine === 'youtube' && this.ytPlayer && this.ytPlayer.getCurrentTime) {
-            try { return this.ytPlayer.getCurrentTime() || 0; } catch (e) { return 0; }
+            try {
+                const t = this.ytPlayer.getCurrentTime();
+                if (t && t > 0) {
+                    this.lastYtCurrentTime = t;
+                    return t;
+                }
+                if (this.lastYtCurrentTime > 0) return this.lastYtCurrentTime;
+            } catch (e) {
+                if (this.lastYtCurrentTime > 0) return this.lastYtCurrentTime;
+                return 0;
+            }
+        }
+        if (this.activeEngine === 'native') {
+            return this.nativeCurrentTime || 0;
         }
         return this.audio.currentTime || 0;
     }
@@ -1137,12 +1153,10 @@ class MobilePlayer {
             return;
         }
 
-        // PC 서버 IP 또는 현재 호스팅 서버 오리진을 통한 고음질 yt-dlp 스트림 시도 (백그라운드 영구 재생 및 광고 0% 보장)
+        // PC 서버 IP(설정에서 지정) 또는 로컬 파이썬 서버(localhost:8888)가 명시되어 있을 때만 /api/audio 스트림 시도
         const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
-        const serverOrigin = (window.location.protocol.startsWith('http') && !['localhost', '127.0.0.1', 'appassets.androidplatform.net'].includes(window.location.hostname))
-            ? window.location.origin
-            : '';
-        const effectiveServer = pcServer || serverOrigin;
+        const isLocalApi = ['localhost', '127.0.0.1'].includes(window.location.hostname) && (window.location.port === '8888' || window.location.port === '8000');
+        const effectiveServer = pcServer || (isLocalApi ? window.location.origin : '');
         if (effectiveServer) {
             this.activeEngine = 'audio';
             sourceUrl = `${effectiveServer}/api/audio?id=${song.youtubeId}`;
@@ -1412,7 +1426,17 @@ class MobilePlayer {
             // 앨범 아트(음성 모드) 전환:
             // 유튜브 영상 엔진으로 재생 중이었다면 현재 위치를 유지하며 네이티브 백그라운드 오디오 엔진으로 확실히 전환
             if (this.activeEngine === 'youtube') {
-                const curSec = Math.floor(this.getCurrentTime() || 0);
+                let curSec = 0;
+                if (this.ytPlayer && typeof this.ytPlayer.getCurrentTime === 'function') {
+                    try { curSec = Math.floor(this.ytPlayer.getCurrentTime() || 0); } catch (e) {}
+                }
+                if (curSec <= 0 && this.lastYtCurrentTime > 0) {
+                    curSec = Math.floor(this.lastYtCurrentTime);
+                }
+                if (curSec <= 0) {
+                    curSec = Math.floor(this.getCurrentTime() || 0);
+                }
+                this.nativeCurrentTime = curSec;
                 if (this.ytPlayer && typeof this.ytPlayer.pauseVideo === 'function') {
                     try { this.ytPlayer.pauseVideo(); } catch (e) {}
                 }

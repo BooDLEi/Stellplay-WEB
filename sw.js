@@ -1,4 +1,4 @@
-﻿// StellPlay PC Web - Service Worker (v1 Network-First)
+// StellPlay PC Web - Service Worker (v1 Network-First)
 const CACHE_NAME = 'stellplay-pc-web-v1';
 const SHELL_ASSETS = [
   './',
@@ -33,7 +33,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  if (url.pathname.startsWith('/api/')) {
+  // API 요청 및 외부 도메인(유튜브 썸네일, 비디오 스트림 등)은 서비스 워커 우회하여 브라우저 네이티브 직접 처리
+  if (url.pathname.startsWith('/api/') || url.origin !== self.location.origin) {
     return;
   }
 

@@ -792,7 +792,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div class="m-track-left">
                 <div class="m-track-thumb-wrap">
-                    <img class="m-track-thumb" src="${thumbUrl}" alt="" loading="lazy">
+                    <img class="m-track-thumb" src="${thumbUrl}" alt="" width="44" height="44" loading="lazy">
                     <div class="m-track-playing-indicator">
                         <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
                     </div>
@@ -1964,6 +1964,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        const frag = document.createDocumentFragment();
         queue.forEach((song, idx) => {
             const isCurrent = idx === player.queueIndex;
             const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
@@ -1976,7 +1977,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             item.innerHTML = `
                 <div class="m-queue-left">
                     <span class="m-queue-index">${idx + 1}</span>
-                    <img class="m-queue-thumb" src="${thumbUrl}" alt="" loading="lazy">
+                    <img class="m-queue-thumb" src="${thumbUrl}" alt="" width="38" height="38" loading="lazy">
                     <div class="m-queue-meta">
                         <div class="m-queue-title-row">
                             <span class="m-queue-title">${song.title}</span>
@@ -2103,8 +2104,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentTargetItem = null;
             });
 
-            dom.queueList.appendChild(item);
+            frag.appendChild(item);
         });
+        dom.queueList.appendChild(frag);
 
         // 큐 시트를 처음 열 때만 현재 재생 중인 항목으로 스크롤 (사용자 스크롤 중 강제 이동 방지)
         if (scrollToActive) {
@@ -3086,14 +3088,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.sheetDownloadBtn.style.color = isDownloaded ? '#10b981' : 'var(--text-secondary)';
         }
 
-        // 활성 행 스타일 갱신
-        document.querySelectorAll('.m-track-row').forEach(row => {
-            row.classList.toggle('playing', row.dataset.songId === song.id);
+        // 활성 행 스타일 갱신 (전체 346개 순회 대신 이전 행과 대상 행만 선별 갱신)
+        const prevPlayingRows = document.querySelectorAll('.m-track-row.playing');
+        prevPlayingRows.forEach(row => {
+            if (row.dataset.songId !== song.id) row.classList.remove('playing');
         });
+        const targetPlayingRows = document.querySelectorAll(`.m-track-row[data-song-id="${song.id}"]`);
+        targetPlayingRows.forEach(row => row.classList.add('playing'));
 
-        // 대기열 목록이 열려있거나 태블릿 2분할 모드인 경우 상태 갱신
+        // 대기열 목록이 열려있거나 태블릿 2분할 모드인 경우 상태 갱신 (전체 재생성 대신 active 클래스만 토글)
         if (dom.queueSheet.classList.contains('open') || (dom.fullscreenSheet.classList.contains('open') && window.innerWidth >= 650)) {
-            renderMobileQueue();
+            const currentActiveQ = dom.queueList.querySelectorAll('.m-queue-item.active');
+            currentActiveQ.forEach(el => el.classList.remove('active'));
+            const targetQ = dom.queueList.querySelector(`.m-queue-item[data-index="${player.queueIndex}"]`);
+            if (targetQ) {
+                targetQ.classList.add('active');
+            } else {
+                renderMobileQueue();
+            }
         }
     }
 
@@ -3927,6 +3939,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 dom.btnViewVideo.style.removeProperty('color');
             }
 
+            if (player && typeof player.switchViewMode === 'function') {
+                player.switchViewMode(mode);
+            }
+
             if (mode === 'video') {
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'none';
                 dockYouTubePlayer(true);
@@ -3940,10 +3956,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const mOverlay = document.getElementById('m-ad-shield-overlay');
                 if (mOverlay) mOverlay.style.display = 'none';
                 if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
-            }
-
-            if (player && typeof player.switchViewMode === 'function') {
-                player.switchViewMode(mode);
             }
         }
 

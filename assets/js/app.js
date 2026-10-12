@@ -1396,7 +1396,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="track-col-info">
                         <div class="track-thumb-box">
-                            <img class="track-thumb-img" src="${thumbUrl}" alt="${song.title}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'46\' height=\'46\' viewBox=\'0 0 24 24\' fill=\'%236c5ce7\'><rect width=\'24\' height=\'24\' fill=\'%231e202e\'/><polygon points=\'10,8 16,12 10,16\' fill=\'%238b5cf6\'/></svg>'">
+                            <img class="track-thumb-img" src="${thumbUrl}" alt="${song.title}" width="46" height="46" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'46\' height=\'46\' viewBox=\'0 0 24 24\' fill=\'%236c5ce7\'><rect width=\'24\' height=\'24\' fill=\'%231e202e\'/><polygon points=\'10,8 16,12 10,16\' fill=\'%238b5cf6\'/></svg>'">
                             <div class="track-thumb-play-overlay">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                             </div>
@@ -1420,7 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${isCustomSabi ? '<span class="track-sabi-custom-tag">MY</span>' : ''}
                     </div>
                     <div class="track-col-duration">${durationStr}</div>
-                    <div class="track-col-actions" onclick="event.stopPropagation();">
+                    <div class="track-col-actions">
                         <button class="btn-icon-action btn-start-station" data-id="${song.id}" title="이 곡 기반 뮤직 스테이션 재생 (유사곡 무한 추천)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
@@ -1455,11 +1455,70 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
+        currentRenderedSongs = songs;
         dom.tracksListContainer.innerHTML = html;
+        initTracksListDelegation();
 
-        // 트랙 행 클릭 이벤트 (재생 또는 선택 모드 시 선택)
-        dom.tracksListContainer.querySelectorAll('.track-row').forEach(row => {
-            row.addEventListener('click', () => {
+        if (window.syncHomeTopScrollbar) {
+            setTimeout(window.syncHomeTopScrollbar, 20);
+        }
+    }
+
+    let currentRenderedSongs = [];
+    let isTracksListDelegationInitialized = false;
+
+    function initTracksListDelegation() {
+        if (isTracksListDelegationInitialized || !dom.tracksListContainer) return;
+        isTracksListDelegationInitialized = true;
+
+        dom.tracksListContainer.addEventListener('click', (e) => {
+            const btnStation = e.target.closest('.btn-start-station');
+            if (btnStation) {
+                e.stopPropagation();
+                const song = currentRenderedSongs.find(s => s.id === btnStation.dataset.id);
+                if (song) startMusicStation(song);
+                return;
+            }
+
+            const btnQueue = e.target.closest('.btn-add-queue');
+            if (btnQueue) {
+                e.stopPropagation();
+                const songToAdd = currentRenderedSongs.find(s => s.id === btnQueue.dataset.id);
+                if (songToAdd) {
+                    player.addToQueueNext(songToAdd);
+                    showToast(`[${songToAdd.title}] 다음 재생 대기열에 추가되었습니다!`);
+                }
+                return;
+            }
+
+            const btnPl = e.target.closest('.btn-add-pl');
+            if (btnPl) {
+                e.stopPropagation();
+                openSelectPlaylistModal([btnPl.dataset.id]);
+                return;
+            }
+
+            const btnSabi = e.target.closest('.track-col-sabi, .btn-edit-sabi');
+            if (btnSabi) {
+                e.stopPropagation();
+                const song = currentRenderedSongs.find(s => s.id === btnSabi.dataset.id);
+                if (song) openSabiEditor(song);
+                return;
+            }
+
+            const btnEdit = e.target.closest('.btn-edit-song');
+            if (btnEdit) {
+                e.stopPropagation();
+                openEditSongModal(btnEdit.dataset.id);
+                return;
+            }
+
+            if (e.target.closest('.track-select-chk') || (e.target.closest('.track-col-actions') && !e.target.closest('button'))) {
+                return;
+            }
+
+            const row = e.target.closest('.track-row');
+            if (row) {
                 if (isMultiSelectMode) {
                     const songId = row.dataset.songId;
                     const chk = row.querySelector('.track-select-chk');
@@ -1470,84 +1529,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 const songId = row.dataset.songId;
-                const clickedSong = songs.find(s => s.id === songId);
+                const clickedSong = currentRenderedSongs.find(s => s.id === songId);
                 if (clickedSong) {
                     const isSearching = !!(state.searchQuery && state.searchQuery.trim().length > 0);
                     if (isSearching) {
                         startMusicStation(clickedSong);
                         return;
                     }
-                    player.setQueue(songs, parseInt(row.dataset.index, 10), true);
+                    player.setQueue(currentRenderedSongs, parseInt(row.dataset.index, 10), true);
                     if (clickedSong.members && clickedSong.members[0]) {
                         applyMemberTheme(clickedSong.members[0]);
                     }
                 }
-            });
+            }
         });
 
-        // 다중 선택 체크박스 변경
-        dom.tracksListContainer.querySelectorAll('.track-select-chk').forEach(chk => {
-            chk.addEventListener('change', () => {
+        dom.tracksListContainer.addEventListener('change', (e) => {
+            const chk = e.target.closest('.track-select-chk');
+            if (chk) {
                 const songId = chk.dataset.songId;
                 toggleSongSelection(songId, chk.checked);
                 const row = chk.closest('.track-row');
                 if (row) row.classList.toggle('selected', chk.checked);
-            });
+            }
         });
-
-        // 뮤직 스테이션 시작 버튼
-        dom.tracksListContainer.querySelectorAll('.btn-start-station').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const songId = btn.dataset.id;
-                const song = songs.find(s => s.id === songId);
-                if (song) startMusicStation(song);
-            });
-        });
-
-        // 1클릭 대기열 추가 버튼
-        dom.tracksListContainer.querySelectorAll('.btn-add-queue').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const songId = btn.dataset.id;
-                const songToAdd = songs.find(s => s.id === songId);
-                if (songToAdd) {
-                    player.addToQueueNext(songToAdd);
-                    showToast(`[${songToAdd.title}] 다음 재생 대기열에 추가되었습니다!`);
-                }
-            });
-        });
-
-        // 플레이리스트 추가 버튼
-        dom.tracksListContainer.querySelectorAll('.btn-add-pl').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const songId = btn.dataset.id;
-                openSelectPlaylistModal([songId]);
-            });
-        });
-
-        // 사비 편집 모달 버튼 (컬럼 또는 아이콘 버튼)
-        dom.tracksListContainer.querySelectorAll('.track-col-sabi, .btn-edit-sabi').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const songId = el.dataset.id;
-                const song = songs.find(s => s.id === songId);
-                if (song) openSabiEditor(song);
-            });
-        });
-
-        // 곡 정보 직접 수정 버튼
-        dom.tracksListContainer.querySelectorAll('.btn-edit-song').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openEditSongModal(btn.dataset.id);
-            });
-        });
-
-        if (window.syncHomeTopScrollbar) {
-            setTimeout(window.syncHomeTopScrollbar, 20);
-        }
     }
 
     // ===================================================================
@@ -1644,11 +1649,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function refreshTrackListRowActive() {
-        document.querySelectorAll('.track-row').forEach(row => {
-            const isCurrent = row.dataset.songId === player.currentSong?.id;
-            row.classList.toggle('active', isCurrent);
-            row.classList.toggle('playing', isCurrent && player.isPlaying);
+        const curId = player.currentSong?.id;
+        const currentActiveRows = document.querySelectorAll('.track-row.active, .track-row.playing');
+        currentActiveRows.forEach(row => {
+            if (row.dataset.songId !== curId) {
+                row.classList.remove('active', 'playing');
+            }
         });
+        if (curId) {
+            const targetRows = document.querySelectorAll(`.track-row[data-song-id="${curId}"]`);
+            targetRows.forEach(row => {
+                row.classList.add('active');
+                row.classList.toggle('playing', !!player.isPlaying);
+            });
+        }
     }
 
     // ===================================================================
@@ -2111,18 +2125,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        function updateFullPlayerQueueToggleBtn() {
-            if (!dom.fullPlayerModal) return;
-            const isHidden = dom.fullPlayerModal.classList.contains('hide-queue');
-            if (dom.btnFullToggleQueue) {
-                dom.btnFullToggleQueue.title = isHidden ? '재생목록 표시' : '재생목록 숨기기';
-                dom.btnFullToggleQueue.classList.toggle('active', isHidden);
-            }
-            if (dom.btnToggleQueueDrawer) {
-                dom.btnToggleQueueDrawer.classList.toggle('active', !isHidden);
-            }
-        }
-
         function syncDockTransition() {
             let start = performance.now();
             function step() {
@@ -2229,8 +2231,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        window.addEventListener('resize', updatePcDockPosition);
-        window.addEventListener('scroll', updatePcDockPosition);
+        let dockRafPending = false;
+        const throttledUpdatePcDockPosition = () => {
+            if (dockRafPending) return;
+            dockRafPending = true;
+            requestAnimationFrame(() => {
+                dockRafPending = false;
+                updatePcDockPosition();
+            });
+        };
+        window.addEventListener('resize', throttledUpdatePcDockPosition, { passive: true });
+        window.addEventListener('scroll', () => {
+            if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && state.fullPlayerViewMode === 'video') {
+                throttledUpdatePcDockPosition();
+            }
+        }, { passive: true });
 
         // 검색 (150ms 디바운스로 UI 렌더링 부하 최적화)
         let pcSearchDebounceTimer = null;
@@ -2983,6 +2998,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        if (!wrap.classList.contains('docked')) return;
+
         wrap.classList.remove('docked');
         wrap.style.position = 'fixed';
         wrap.style.top = 'auto';
@@ -2995,6 +3012,18 @@ document.addEventListener('DOMContentLoaded', () => {
         wrap.style.pointerEvents = 'none';
         wrap.style.zIndex = '-10';
         wrap.style.borderRadius = '0';
+    }
+
+    function updateFullPlayerQueueToggleBtn() {
+        if (!dom.fullPlayerModal) return;
+        const isHidden = dom.fullPlayerModal.classList.contains('hide-queue');
+        if (dom.btnFullToggleQueue) {
+            dom.btnFullToggleQueue.title = isHidden ? '재생목록 표시' : '재생목록 숨기기';
+            dom.btnFullToggleQueue.classList.toggle('active', isHidden);
+        }
+        if (dom.btnToggleQueueDrawer) {
+            dom.btnToggleQueueDrawer.classList.toggle('active', !isHidden);
+        }
     }
 
     function openFullPlayer() {
@@ -3504,7 +3533,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span>${sabiStr}</span>
                         </div>
                         <div class="track-col-duration">${durationStr}</div>
-                        <div class="track-col-actions" onclick="event.stopPropagation();">
+                        <div class="track-col-actions">
                             <button class="btn-icon-action btn-remove-from-pl" data-song-id="${song.id}" title="${pl.isHistory ? '감상 기록에서 삭제' : '이 플레이리스트에서 제거'}" style="color: #f87171;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -3517,7 +3546,8 @@ document.addEventListener('DOMContentLoaded', () => {
             trackListEl.innerHTML = html;
 
             trackListEl.querySelectorAll('.track-row').forEach(row => {
-                row.addEventListener('click', () => {
+                row.addEventListener('click', (e) => {
+                    if (e.target.closest('.track-col-actions')) return;
                     const idx = parseInt(row.dataset.index, 10);
                     player.setQueue(plSongs, idx, true);
                 });
