@@ -195,6 +195,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         queueTopZone: document.getElementById('m-queue-top-zone'),
         queueSheetHandle: document.getElementById('m-queue-sheet-handle'),
         queueCount: document.getElementById('m-queue-count'),
+        queuePosBtn: document.getElementById('m-queue-pos-btn'),
+        queuePosText: document.getElementById('m-queue-pos-text'),
         queueList: document.getElementById('m-queue-list'),
         btnStationQueue: document.getElementById('m-btn-station-queue'),
         btnClearQueue: document.getElementById('m-btn-clear-queue'),
@@ -644,6 +646,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (dom.queueCount) {
             dom.queueCount.textContent = `${count}곡`;
+        }
+        if (dom.queuePosBtn && dom.queuePosText) {
+            if (count > 0 && player.queueIndex >= 0 && player.queueIndex < count) {
+                const currentNum = player.queueIndex + 1;
+                dom.queuePosBtn.style.display = 'inline-flex';
+                dom.queuePosText.textContent = `현재 ${currentNum}번째 (${currentNum} / ${count})`;
+            } else {
+                dom.queuePosBtn.style.display = 'none';
+            }
         }
     }
 
@@ -1262,7 +1273,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const timeA = dateA ? new Date(dateA).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0));
                 const timeB = dateB ? new Date(dateB).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0));
                 if (timeA !== timeB) return timeB - timeA;
-                return (b._catalogIndex || 0) - (a._catalogIndex || 0);
+                return (a._catalogIndex || 0) - (b._catalogIndex || 0);
             });
         } else if (sortOrder === 'oldest') {
             res.sort((a, b) => {
@@ -1949,16 +1960,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!dom.queueList) return;
         const activeItem = dom.queueList.querySelector('.m-queue-item.active');
         if (!activeItem) return;
+
         const listHeight = dom.queueList.clientHeight || 450;
-        const targetTop = activeItem.offsetTop - (listHeight / 2) + (activeItem.clientHeight / 2);
-        const finalTop = Math.max(0, targetTop);
+        const itemHeight = activeItem.offsetHeight || 54;
+        let targetTop = 0;
+
+        if (activeItem.offsetParent === dom.queueList) {
+            targetTop = activeItem.offsetTop - (listHeight / 2) + (itemHeight / 2);
+        } else {
+            const itemRect = activeItem.getBoundingClientRect();
+            const listRect = dom.queueList.getBoundingClientRect();
+            targetTop = (itemRect.top - listRect.top) + dom.queueList.scrollTop - (listHeight / 2) + (itemHeight / 2);
+        }
+
+        const maxScroll = Math.max(0, dom.queueList.scrollHeight - listHeight);
+        const finalTop = Math.max(0, Math.min(targetTop, maxScroll));
+
         try {
             dom.queueList.scrollTo({
-                top: finalTop,
+                top: Math.round(finalTop),
                 behavior: smooth ? 'smooth' : 'auto'
             });
         } catch (e) {
-            dom.queueList.scrollTop = finalTop;
+            dom.queueList.scrollTop = Math.round(finalTop);
         }
     }
 
@@ -1970,11 +1994,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             scrollQueueToActiveTrack(false);
         });
         setTimeout(() => {
-            scrollQueueToActiveTrack(true);
-        }, 120);
+            scrollQueueToActiveTrack(false);
+        }, 80);
         setTimeout(() => {
             scrollQueueToActiveTrack(true);
-        }, 340);
+        }, 250);
+        setTimeout(() => {
+            scrollQueueToActiveTrack(false);
+        }, 450);
     }
 
     function closeQueueSheet() {
@@ -4242,6 +4269,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (dom.btnCloseQueue) dom.btnCloseQueue.addEventListener('click', () => closeQueueSheet());
         if (dom.queueBackdrop) dom.queueBackdrop.addEventListener('click', () => closeQueueSheet());
+        if (dom.queuePosBtn) {
+            dom.queuePosBtn.addEventListener('click', () => {
+                scrollQueueToActiveTrack(true);
+            });
+        }
 
         // ===================================================================
         // 13. 재생화면(Now Playing) & 재생목록(대기열) 전역 스크롤/스와이프 제스처

@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeA = dateA ? new Date(dateA).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0));
                 const timeB = dateB ? new Date(dateB).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0));
                 if (timeA !== timeB) return timeB - timeA;
-                return (b._catalogIndex || 0) - (a._catalogIndex || 0);
+                return (a._catalogIndex || 0) - (b._catalogIndex || 0);
             });
         } else if (sortOrder === 'oldest') {
             songs.sort((a, b) => {

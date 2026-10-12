@@ -6977,6 +6977,12 @@ function getAllSongs() {
             if (song.title) {
                 song.title = cleanAndKoreanizeTitle(song.title);
             }
+            if (!song.releaseDate && song.publishedAt) {
+                song.releaseDate = song.publishedAt;
+            }
+            if (!song.publishedAt && song.releaseDate) {
+                song.publishedAt = song.releaseDate;
+            }
             // 곡 제목(또는 원제목/원곡 정보/ID)에 OST가 포함된 경우 무조건 OST로 분류
             if (OST_DETECTION_REGEX.test(song.title || '') ||
                 OST_DETECTION_REGEX.test(song.rawTitle || '') ||
