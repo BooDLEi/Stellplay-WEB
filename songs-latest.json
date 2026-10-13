@@ -1,8 +1,20 @@
 {
   "success": true,
   "count": 79,
-  "updatedAt": "2026-10-12T03:07:52.126293+00:00",
+  "updatedAt": "2026-10-13T03:07:41.683074+00:00",
   "tracks": [
+    {
+      "id": "JLM7z8afU4s",
+      "title": "아 프리오리 (Mrs. GREEN APPLE 「ア・プリオリ」)",
+      "rawTitle": "아 프리오리 (Mrs. GREEN APPLE 「ア・プリオリ」) / 아오쿠모 린(Aokumo Rin) Cover",
+      "duration": 207,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover"
+    },
     {
       "id": "kNzGpNEdBqw",
       "title": "오버라이드 「オーバーライド",
@@ -584,18 +596,6 @@
       "defaultMember": "tabi",
       "members": [
         "tabi"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "cWnykOC5b_c",
-      "title": "phony [포니 / ツミキ]",
-      "rawTitle": "phony [포니 / ツミキ] / 유즈하 리코 Yuzuha Riko cover",
-      "duration": 190,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "riko",
-      "members": [
-        "riko"
       ],
       "defaultType": "cover"
     },
