@@ -1,7 +1,7 @@
 {
   "success": true,
-  "count": 79,
-  "updatedAt": "2026-10-14T03:18:14.092622+00:00",
+  "count": 78,
+  "updatedAt": "2026-10-15T03:18:01.855995+00:00",
   "tracks": [
     {
       "id": "JLM7z8afU4s",
@@ -949,18 +949,6 @@
         "rin"
       ],
       "defaultType": "ost"
-    },
-    {
-      "id": "OlJ-7k9Trm0",
-      "title": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ]",
-      "rawTitle": "Mashiro - Confrontation Bedroom Musical [ Jekyll & Hyde ] (4K)",
-      "duration": 225,
-      "uploader": "",
-      "defaultMember": "mashiro",
-      "members": [
-        "mashiro"
-      ],
-      "defaultType": "cover"
     }
   ]
 }
