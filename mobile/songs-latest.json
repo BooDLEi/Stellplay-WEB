@@ -1,8 +1,32 @@
 {
   "success": true,
   "count": 78,
-  "updatedAt": "2026-10-15T03:18:01.855995+00:00",
+  "updatedAt": "2026-10-16T03:17:54.154100+00:00",
   "tracks": [
+    {
+      "id": "iAoU1UGPoXc",
+      "title": "호랑풍류가 [나와 호랑이님 OST]",
+      "rawTitle": "호랑풍류가 [나와 호랑이님 OST] / 코가네 랑 (Cogane Rang) Cover",
+      "duration": 253,
+      "uploader": "코가네 랑 COGANE RANG",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "ost"
+    },
+    {
+      "id": "MZNKiadMo3U",
+      "title": "제육감 [第六感 l Reol]",
+      "rawTitle": "제육감 [第六感 l Reol] / 시즈키 토아(Shizuki Toa) Cover",
+      "duration": 195,
+      "uploader": "시즈키 토아 SHIZUKI TOA",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "cover"
+    },
     {
       "id": "JLM7z8afU4s",
       "title": "아 프리오리 (Mrs. GREEN APPLE 「ア・プリオリ」)",
@@ -572,30 +596,6 @@
       "defaultMember": "huya",
       "members": [
         "huya"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "DHG3s8GF1DM",
-      "title": "Stellar Stellar - [星街すいせい]",
-      "rawTitle": "Stellar Stellar - [星街すいせい] ㅣAkane Lize 【COVER】",
-      "duration": 303,
-      "uploader": "아카네 리제 AKANE LIZE",
-      "defaultMember": "lize",
-      "members": [
-        "lize"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "prBtBX0wGxc",
-      "title": "Carried on a Love Cold [恋風邪にのせて - Vaundy]",
-      "rawTitle": "Carried on a Love Cold [恋風邪にのせて - Vaundy] | Arahashi Tabi Cover",
-      "duration": 256,
-      "uploader": "아라하시 타비 ARAHASHI TABI",
-      "defaultMember": "tabi",
-      "members": [
-        "tabi"
       ],
       "defaultType": "cover"
     },
