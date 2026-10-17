@@ -1,8 +1,32 @@
 {
   "success": true,
   "count": 78,
-  "updatedAt": "2026-10-16T03:17:54.154100+00:00",
+  "updatedAt": "2026-10-17T07:20:42.349252+00:00",
   "tracks": [
+    {
+      "id": "rKQptWhAvO0",
+      "title": "도쿄 테디베어 [東京テディベア l Neru]",
+      "rawTitle": "도쿄 테디베어 [東京テディベア l Neru] / 토키노 메리 (Tokino Mary) Cover",
+      "duration": 195,
+      "uploader": "토키노 메리 TOKINO MARY",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "cover"
+    },
+    {
+      "id": "ouKcRBeyKbk",
+      "title": "유령이 되고싶어 [ゆうれいになりたい / 유이카]",
+      "rawTitle": "유령이 되고싶어 [ゆうれいになりたい / 유이카] / 하나요 히요리 (Hanayo Hiyori) Cover",
+      "duration": 243,
+      "uploader": "하나요 히요리 HANAYO HIYORI",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "cover"
+    },
     {
       "id": "iAoU1UGPoXc",
       "title": "호랑풍류가 [나와 호랑이님 OST]",
@@ -572,30 +596,6 @@
       "defaultMember": "hina",
       "members": [
         "hina"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "fLLX2R-RwVE",
-      "title": "숨바꼭질 [ かくれんぼ",
-      "rawTitle": "숨바꼭질 [ かくれんぼㅣAliA ] / 유즈하 리코 Yuzuha Riko cover",
-      "duration": 300,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "riko",
-      "members": [
-        "riko"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "Xo1Q-RPAk2c",
-      "title": "푸른 하늘의 랩소디 [青空のラプソディ",
-      "rawTitle": "푸른 하늘의 랩소디 [青空のラプソディ/ 코바야시네 메이드래곤 OP] l 사키하네 후야(Sakihane Huya) Cover",
-      "duration": 278,
-      "uploader": "사키하네 후야 SAKIHANE HUYA",
-      "defaultMember": "huya",
-      "members": [
-        "huya"
       ],
       "defaultType": "cover"
     },
