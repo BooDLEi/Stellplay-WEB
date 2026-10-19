@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFilterGen: 'all',
         currentFilterMember: 'all',
         currentFilterType: 'all', // 'all', 'original', 'cover', 'featuring', 'stream'
+        selectedTypes: new Set(),
         sortOrder: 'latest', // 'latest', 'oldest', 'title'
         searchQuery: '',
         activeView: 'home', // 'home', 'sabi', 'favorites', 'playlist'
@@ -175,6 +176,15 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCloseEditSong: document.getElementById('btn-close-edit-song'),
         btnCancelEditSong: document.getElementById('btn-cancel-edit-song'),
         btnResetSongEdit: document.getElementById('btn-reset-song-edit'),
+        btnTodayAdd: document.getElementById('btn-today-add'),
+        btnTodayEdit: document.getElementById('btn-today-edit'),
+        btnSettingsRestoreHidden: document.getElementById('btn-settings-restore-hidden'),
+        modalHiddenSongs: document.getElementById('modal-hidden-songs'),
+        hiddenSongsCount: document.getElementById('hidden-songs-count'),
+        hiddenSongsList: document.getElementById('hidden-songs-list'),
+        btnCloseHiddenSongs: document.getElementById('btn-close-hidden-songs'),
+        btnCancelHiddenSongs: document.getElementById('btn-cancel-hidden-songs'),
+        btnRestoreAllHidden: document.getElementById('btn-restore-all-hidden'),
 
         // 플레이리스트 모달
         modalPlaylist: document.getElementById('modal-playlist'),
@@ -783,7 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     // 3. 한국어 표준 제목 정규화 & 멤버 자동 감지 유틸리티
     // ===================================================================
-    function cleanAndKoreanizeTitle(title) {
+    function cleanAndKoreanizeTitle(title, rawTitle = '') {
         if (!title) return '';
         let t = title;
         t = t.replace(/\s*-\s*YouTube$/i, '');
@@ -824,8 +834,9 @@ document.addEventListener('DOMContentLoaded', () => {
             t = t.replace(pattern, kor);
         });
 
-        if (t.toLowerCase().includes('universe') && (t.toLowerCase().includes('유니버스') || t.trim() === 'Universe')) {
-            return 'Universe (유니버스)';
+        // Delegate to standard cleanAndKoreanizeTitle for complete Japanese/English/Korean standardization
+        if (typeof window.cleanAndKoreanizeTitle === 'function' && window.cleanAndKoreanizeTitle !== cleanAndKoreanizeTitle) {
+            return window.cleanAndKoreanizeTitle(t, rawTitle);
         }
 
         t = t.replace(/【(?:MV|Music Video|COVER|Cover|커버|스텔라이브|오피셜|공식|4K)[^】]*】/gi, '');
@@ -997,12 +1008,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 3. 타입 필터 (오리지널 / 커버 / 피처링 & OST)
-        if (state.currentFilterType !== 'all') {
+        // 3. 타입 필터 (다중 토글 카테고리 지원)
+        const typeSet = state.selectedTypes;
+        if (typeSet && typeSet.size > 0) {
+            songs = songs.filter(s => {
+                for (const t of typeSet) {
+                    if (t === 'featuring' && (s.type === 'featuring' || s.type === 'ost')) return true;
+                    if (t === 'ost' && s.type === 'ost') return true;
+                    if (s.type === t) return true;
+                }
+                return false;
+            });
+        } else if (state.currentFilterType !== 'all') {
             if (state.currentFilterType === 'featuring') {
                 songs = songs.filter(s => s.type === 'featuring' || s.type === 'ost');
             } else if (state.currentFilterType === 'ost') {
                 songs = songs.filter(s => s.type === 'ost');
+            } else if (state.currentFilterType === 'live') {
+                songs = songs.filter(s => s.type === 'live');
             } else {
                 songs = songs.filter(s => s.type === state.currentFilterType);
             }
@@ -1313,7 +1336,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (seedSong.members && seedSong.members[0]) {
             applyMemberTheme(seedSong.members[0]);
         }
-        showToast(`📻 '${seedSong.title}' 뮤직 스테이션 연속 재생을 시작합니다.`);
+
+        // 대기열 자동 표시 (전체화면 열려있으면 대기열 탭으로, 아니면 대기열 서랍 오픈)
+        if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open')) {
+            if (typeof switchFullPlayerTab === 'function') switchFullPlayerTab('queue');
+        } else {
+            openQueueDrawer();
+        }
     }
     window.startMusicStation = startMusicStation;
     window.buildMusicStationQueue = buildMusicStationQueue;
@@ -1421,7 +1450,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="track-col-duration">${durationStr}</div>
                     <div class="track-col-actions">
-                        <button class="btn-icon-action btn-start-station" data-id="${song.id}" title="이 곡 기반 뮤직 스테이션 재생 (유사곡 무한 추천)">
+                        <button class="btn-icon-action btn-start-station" data-id="${song.id}" title="이 곡 기반 뮤직 스테이션 재생">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
                                 <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
@@ -1767,7 +1796,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // 마우스 드래그앤드롭(Drag & Drop) 순서 실시간 재배치 (핸들 ☰ 전용)
+            // 마우스 드래그앤드롭(Drag & Drop) 순서 실시간 재배치 (핸들 ☰ 전용 & Edge 연속 자동 스크롤)
+            let queueAutoScrollInterval = null;
+            const stopQueueAutoScroll = () => {
+                if (queueAutoScrollInterval) {
+                    clearInterval(queueAutoScrollInterval);
+                    queueAutoScrollInterval = null;
+                }
+            };
+
             container.querySelectorAll('.queue-item').forEach(item => {
                 const handle = item.querySelector('.queue-handle');
                 if (handle) {
@@ -1781,6 +1818,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     handle.addEventListener('dragend', () => {
+                        stopQueueAutoScroll();
                         container.querySelectorAll('.queue-item').forEach(el => {
                             el.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging');
                         });
@@ -1799,6 +1837,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         item.classList.add('drag-over-bottom');
                         item.classList.remove('drag-over-top');
                     }
+
+                    // 가장자리(Edge) 연속 자동 스크롤 (상단/하단 60px 내 유지 시)
+                    const cRect = container.getBoundingClientRect();
+                    const edgeThreshold = 60;
+                    if (e.clientY < cRect.top + edgeThreshold) {
+                        if (!queueAutoScrollInterval) {
+                            queueAutoScrollInterval = setInterval(() => {
+                                container.scrollTop -= 12;
+                            }, 16);
+                        }
+                    } else if (e.clientY > cRect.bottom - edgeThreshold) {
+                        if (!queueAutoScrollInterval) {
+                            queueAutoScrollInterval = setInterval(() => {
+                                container.scrollTop += 12;
+                            }, 16);
+                        }
+                    } else {
+                        stopQueueAutoScroll();
+                    }
                 });
 
                 item.addEventListener('dragleave', () => {
@@ -1807,6 +1864,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 item.addEventListener('drop', (e) => {
                     e.preventDefault();
+                    stopQueueAutoScroll();
                     item.classList.remove('drag-over-top', 'drag-over-bottom');
                     const toIdx = parseInt(item.dataset.index, 10);
                     const fromIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
@@ -2311,7 +2369,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 updatePcDockPosition();
             });
         };
-        window.addEventListener('resize', throttledUpdatePcDockPosition, { passive: true });
+        window.addEventListener('resize', () => {
+            if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && state.fullPlayerViewMode === 'video') {
+                throttledUpdatePcDockPosition();
+            } else {
+                undockPcPlayer();
+            }
+        }, { passive: true });
         window.addEventListener('scroll', () => {
             if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && state.fullPlayerViewMode === 'video') {
                 throttledUpdatePcDockPosition();
@@ -2336,12 +2400,40 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshTrackList();
         });
 
-        // 곡 유형 필터 (전체 / 오리지널 / 커버 / 피처링 / 노래방송)
+        // 곡 유형 필터 (다중 카테고리 스위치 토글 방식)
         dom.typeFilterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                dom.typeFilterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                state.currentFilterType = btn.dataset.type;
+                const type = btn.dataset.type;
+                if (!state.selectedTypes) state.selectedTypes = new Set();
+
+                if (type === 'all') {
+                    // 전체 버튼 클릭: 모든 개별 필터 끄고 전체 모드로 리셋
+                    state.selectedTypes.clear();
+                    state.currentFilterType = 'all';
+                    dom.typeFilterBtns.forEach(b => b.classList.toggle('active', b.dataset.type === 'all'));
+                } else {
+                    // 개별 카테고리 클릭: 스위치 온/오프
+                    if (state.selectedTypes.has(type)) {
+                        state.selectedTypes.delete(type);
+                    } else {
+                        state.selectedTypes.add(type);
+                    }
+
+                    if (state.selectedTypes.size === 0) {
+                        // 모든 개별 필터가 꺼지면 기본값인 '전체'로 복귀
+                        state.currentFilterType = 'all';
+                        dom.typeFilterBtns.forEach(b => b.classList.toggle('active', b.dataset.type === 'all'));
+                    } else {
+                        state.currentFilterType = 'custom';
+                        dom.typeFilterBtns.forEach(b => {
+                            if (b.dataset.type === 'all') {
+                                b.classList.remove('active');
+                            } else {
+                                b.classList.toggle('active', state.selectedTypes.has(b.dataset.type));
+                            }
+                        });
+                    }
+                }
                 refreshTrackList();
             });
         });
@@ -2761,6 +2853,53 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // 인앱 알약 셀렉터 및 오늘 날짜 퀵 버튼 초기화
+        setupPillSelector('add-type-pills', 'select-song-type');
+        setupPillSelector('add-mood-pills', 'select-song-mood');
+        setupPillSelector('edit-type-pills', 'edit-song-type');
+        setupPillSelector('edit-mood-pills', 'edit-song-mood');
+
+        if (dom.btnTodayAdd) {
+            dom.btnTodayAdd.addEventListener('click', () => {
+                const input = document.getElementById('input-song-published-at');
+                if (input) input.value = new Date().toISOString().slice(0, 10);
+            });
+        }
+        if (dom.btnTodayEdit) {
+            dom.btnTodayEdit.addEventListener('click', () => {
+                const input = document.getElementById('edit-song-published-at');
+                if (input) input.value = new Date().toISOString().slice(0, 10);
+            });
+        }
+
+        // 숨긴 곡 보관함 모달 이벤트
+        if (dom.btnSettingsRestoreHidden) {
+            dom.btnSettingsRestoreHidden.addEventListener('click', () => openHiddenSongsModal());
+        }
+        if (dom.btnCloseHiddenSongs) {
+            dom.btnCloseHiddenSongs.addEventListener('click', () => closeHiddenSongsModal());
+        }
+        if (dom.btnCancelHiddenSongs) {
+            dom.btnCancelHiddenSongs.addEventListener('click', () => closeHiddenSongsModal());
+        }
+        if (dom.modalHiddenSongs) {
+            dom.modalHiddenSongs.addEventListener('click', (e) => {
+                if (e.target === dom.modalHiddenSongs) closeHiddenSongsModal();
+            });
+        }
+        if (dom.btnRestoreAllHidden) {
+            dom.btnRestoreAllHidden.addEventListener('click', () => {
+                const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+                if (hiddenIds.length === 0) return;
+                if (confirm(`숨겨졌던 ${hiddenIds.length}개 곡을 모두 라이브러리에 복원하시겠습니까?`)) {
+                    window.StorageManager.restoreAllHiddenSongs();
+                    refreshTrackList();
+                    showToast('🎉 모든 숨긴 곡이 정상 복원되었습니다!');
+                    closeHiddenSongsModal();
+                }
+            });
+        }
+
         // 플레이리스트 모달 (레거시 안전 처리)
         if (dom.btnClosePlaylistModal) dom.btnClosePlaylistModal.addEventListener('click', () => closePlaylistModal());
         if (dom.formCreatePlaylist) dom.formCreatePlaylist.addEventListener('submit', (e) => handleCreatePlaylist(e));
@@ -2770,6 +2909,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePlayerUIState();
             if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && state.fullPlayerViewMode === 'video') {
                 dockPcPlayer(true);
+            } else {
+                dockPcPlayer(false);
             }
             if (state.activeView === 'playlists') {
                 if (state.currentPlaylistDetailId === 'pl-history') {
@@ -2831,7 +2972,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const isAd = !!e.detail?.isAd;
             const pcOverlay = document.getElementById('pc-ad-shield-overlay');
             if (pcOverlay) {
-                pcOverlay.style.display = isAd ? 'flex' : 'none';
+                const wrap = document.getElementById('pc-youtube-player-wrap');
+                const isDocked = wrap && wrap.classList.contains('docked');
+                const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+                pcOverlay.style.display = (isAd && (isDocked || isFs)) ? 'flex' : 'none';
             }
         });
 
@@ -3012,6 +3156,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. 뷰 전환 및 모달 제어
     // ===================================================================
     function switchNavView(viewName, activeBtn) {
+        if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open')) {
+            closeFullPlayer();
+        }
         state.activeView = viewName;
         document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
         if (activeBtn) activeBtn.parentElement.classList.add('active');
@@ -3032,6 +3179,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (viewName === 'home') {
             refreshTrackList();
+        }
+    }
+
+    function undockPcPlayer() {
+        const wrap = document.getElementById('pc-youtube-player-wrap');
+        if (!wrap) return;
+
+        // 전체화면 중일 경우 안전하게 전체화면 해제
+        if (document.fullscreenElement === wrap || document.webkitFullscreenElement === wrap) {
+            try {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            } catch (_) {}
+        }
+
+        wrap.classList.remove('docked');
+        wrap.style.position = 'fixed';
+        wrap.style.top = 'auto';
+        wrap.style.left = 'auto';
+        wrap.style.bottom = '0';
+        wrap.style.right = '0';
+        wrap.style.width = '240px';
+        wrap.style.height = '135px';
+        wrap.style.opacity = '0.001';
+        wrap.style.pointerEvents = 'none';
+        wrap.style.zIndex = '-9999';
+        wrap.style.borderRadius = '0';
+
+        const fsBtn = document.getElementById('btn-video-fullscreen');
+        if (fsBtn) {
+            fsBtn.style.display = 'none';
+            fsBtn.style.pointerEvents = 'none';
+        }
+
+        const pcOverlay = document.getElementById('pc-ad-shield-overlay');
+        if (pcOverlay) {
+            pcOverlay.style.display = 'none';
         }
     }
 
@@ -3065,24 +3252,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 wrap.style.pointerEvents = 'auto';
                 wrap.style.zIndex = '105';
                 wrap.style.borderRadius = 'var(--radius-md, 12px)';
+
+                const fsBtn = document.getElementById('btn-video-fullscreen');
+                if (fsBtn) {
+                    fsBtn.style.display = 'flex';
+                    fsBtn.style.pointerEvents = 'auto';
+                }
                 return;
             }
         }
 
-        if (!wrap.classList.contains('docked')) return;
-
-        wrap.classList.remove('docked');
-        wrap.style.position = 'fixed';
-        wrap.style.top = 'auto';
-        wrap.style.left = 'auto';
-        wrap.style.bottom = '0';
-        wrap.style.right = '0';
-        wrap.style.width = '240px';
-        wrap.style.height = '135px';
-        wrap.style.opacity = '0.01';
-        wrap.style.pointerEvents = 'none';
-        wrap.style.zIndex = '-10';
-        wrap.style.borderRadius = '0';
+        // 도킹 조건이 아니면 완전 언독 및 은폐
+        undockPcPlayer();
     }
 
     function updateFullPlayerQueueToggleBtn() {
@@ -3112,8 +3293,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.btnToggleQueueDrawer) {
             updateFullPlayerQueueToggleBtn();
         }
+
+        const artBox = document.getElementById('full-art-box');
         if (state.fullPlayerViewMode === 'video') {
+            if (artBox) artBox.style.display = 'none';
+            if (dom.fullVideoContainer) {
+                dom.fullVideoContainer.classList.add('active');
+                dom.fullVideoContainer.style.display = 'block';
+            }
             dockPcPlayer(true);
+        } else {
+            if (dom.fullVideoContainer) {
+                dom.fullVideoContainer.classList.remove('active');
+                dom.fullVideoContainer.style.display = 'none';
+            }
+            if (artBox) artBox.style.display = 'flex';
+            dockPcPlayer(false);
         }
 
         // 전체화면 플레이어 오픈 시 큐 패널이 표시되어 있다면 현재 재생 곡으로 자동 스크롤
@@ -3134,19 +3329,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrap = document.getElementById('pc-youtube-player-wrap');
         if (!wrap) return;
 
-        if (isDocked) {
+        const canDock = !!isDocked &&
+                        dom.fullPlayerModal &&
+                        dom.fullPlayerModal.classList.contains('open') &&
+                        state.fullPlayerViewMode === 'video';
+
+        if (canDock) {
             wrap.classList.add('docked');
+            const fsBtn = document.getElementById('btn-video-fullscreen');
+            if (fsBtn) {
+                fsBtn.style.display = 'flex';
+                fsBtn.style.pointerEvents = 'auto';
+            }
             let start = performance.now();
             function sync() {
                 updatePcDockPosition();
-                if (performance.now() - start < 450 && dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open')) {
+                if (performance.now() - start < 450 && dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && state.fullPlayerViewMode === 'video') {
                     requestAnimationFrame(sync);
                 }
             }
             requestAnimationFrame(sync);
         } else {
-            wrap.classList.remove('docked');
-            updatePcDockPosition();
+            undockPcPlayer();
         }
     }
 
@@ -3154,6 +3358,10 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.fullPlayerModal.classList.remove('open');
         document.body.style.overflow = '';
         dockPcPlayer(false);
+        if (dom.fullVideoContainer) {
+            dom.fullVideoContainer.classList.remove('active');
+            dom.fullVideoContainer.style.display = 'none';
+        }
         if (dom.openFullPlayerBtn) {
             dom.openFullPlayerBtn.innerHTML = `
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3183,11 +3391,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const artBox = document.getElementById('full-art-box');
         if (mode === 'video') {
             if (artBox) artBox.style.display = 'none';
-            dom.fullVideoContainer.classList.add('active');
+            if (dom.fullVideoContainer) {
+                dom.fullVideoContainer.classList.add('active');
+                dom.fullVideoContainer.style.display = 'block';
+            }
             dockPcPlayer(true);
             player.setEngineMode('video');
         } else {
-            dom.fullVideoContainer.classList.remove('active');
+            if (dom.fullVideoContainer) {
+                dom.fullVideoContainer.classList.remove('active');
+                dom.fullVideoContainer.style.display = 'none';
+            }
             if (artBox) artBox.style.display = 'flex';
             dockPcPlayer(false);
             player.setEngineMode('audio');
@@ -3383,6 +3597,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function openAddSongModal() {
         dom.modalAddSong.classList.add('open');
         setMemberPickerState('add', { isStellive: false, units: [], members: [] }, document.getElementById('input-song-artist'));
+        setPillSelectValue('add-type-pills', 'select-song-type', 'cover');
+        setPillSelectValue('add-mood-pills', 'select-song-mood', 'none');
         if (dom.selectSongType) {
             dom.selectSongType.onchange = (e) => {
                 if (dom.rowStreamTimestamps) {
@@ -3623,6 +3839,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                 </svg>
                             </button>
+                            ${!pl.isHistory ? `
+                            <div class="playlist-drag-handle" data-index="${idx}" draggable="true" title="핸들을 잡고 드래그하여 순서 변경">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+                                </svg>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -3646,6 +3869,87 @@ document.addEventListener('DOMContentLoaded', () => {
                     openPlaylistDetail(playlistId);
                 });
             });
+
+            // 플레이리스트 곡 순서 변경 (Drag & Drop 및 가장자리 Edge 연속 자동 스크롤)
+            if (!pl.isHistory) {
+                let plAutoScrollInterval = null;
+                const stopPlAutoScroll = () => {
+                    if (plAutoScrollInterval) {
+                        clearInterval(plAutoScrollInterval);
+                        plAutoScrollInterval = null;
+                    }
+                };
+
+                trackListEl.querySelectorAll('.track-row').forEach(row => {
+                    const handle = row.querySelector('.playlist-drag-handle');
+                    if (handle) {
+                        handle.setAttribute('draggable', 'true');
+                        handle.addEventListener('dragstart', (e) => {
+                            const fromIdx = parseInt(row.dataset.index, 10);
+                            row.classList.add('dragging');
+                            e.dataTransfer.effectAllowed = 'move';
+                            e.dataTransfer.setData('text/plain', String(fromIdx));
+                        });
+                        handle.addEventListener('dragend', () => {
+                            stopPlAutoScroll();
+                            trackListEl.querySelectorAll('.track-row').forEach(el => {
+                                el.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging');
+                            });
+                        });
+                    }
+
+                    row.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        const rect = row.getBoundingClientRect();
+                        const midY = rect.top + rect.height / 2;
+                        if (e.clientY < midY) {
+                            row.classList.add('drag-over-top');
+                            row.classList.remove('drag-over-bottom');
+                        } else {
+                            row.classList.add('drag-over-bottom');
+                            row.classList.remove('drag-over-top');
+                        }
+
+                        // Edge 연속 자동 스크롤 (화면 상단/하단 80px 내 유지 시)
+                        const edgeThreshold = 80;
+                        if (e.clientY < edgeThreshold) {
+                            if (!plAutoScrollInterval) {
+                                plAutoScrollInterval = setInterval(() => {
+                                    window.scrollBy(0, -14);
+                                }, 16);
+                            }
+                        } else if (e.clientY > window.innerHeight - edgeThreshold) {
+                            if (!plAutoScrollInterval) {
+                                plAutoScrollInterval = setInterval(() => {
+                                    window.scrollBy(0, 14);
+                                }, 16);
+                            }
+                        } else {
+                            stopPlAutoScroll();
+                        }
+                    });
+
+                    row.addEventListener('dragleave', (e) => {
+                        if (!row.contains(e.relatedTarget)) {
+                            row.classList.remove('drag-over-top', 'drag-over-bottom');
+                        }
+                    });
+
+                    row.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        stopPlAutoScroll();
+                        row.classList.remove('drag-over-top', 'drag-over-bottom');
+                        const fromIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                        const toIdx = parseInt(row.dataset.index, 10);
+
+                        if (!isNaN(fromIdx) && !isNaN(toIdx) && fromIdx !== toIdx) {
+                            window.StorageManager.reorderPlaylistSongs(playlistId, fromIdx, toIdx);
+                            openPlaylistDetail(playlistId);
+                        }
+                    });
+                });
+            }
         }
         if (window.syncPlDetailTopScrollbar) {
             setTimeout(window.syncPlDetailTopScrollbar, 20);
@@ -4357,10 +4661,108 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ===================================================================
+    // 인앱 커스텀 알약 선택기 헬퍼 (Custom Pill Selector)
+    // ===================================================================
+    function setupPillSelector(containerId, hiddenInputId) {
+        const container = document.getElementById(containerId);
+        const hidden = document.getElementById(hiddenInputId);
+        if (!container || !hidden) return;
+
+        container.querySelectorAll('.form-pill-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                container.querySelectorAll('.form-pill-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                hidden.value = btn.dataset.value;
+            });
+        });
+    }
+
+    function setPillSelectValue(containerId, hiddenInputId, value) {
+        const container = document.getElementById(containerId);
+        const hidden = document.getElementById(hiddenInputId);
+        if (!container) return;
+        const targetVal = value || 'none';
+        if (hidden) hidden.value = targetVal;
+        container.querySelectorAll('.form-pill-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.value === targetVal);
+        });
+    }
+
+    // ===================================================================
+    // 숨긴 곡 보관함 및 선택 복원 모달 (Hidden Songs Modal)
+    // ===================================================================
+    function openHiddenSongsModal() {
+        const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+        if (!hiddenIds || hiddenIds.length === 0) {
+            showToast('현재 숨겨진 곡이 없습니다.');
+            return;
+        }
+        renderHiddenSongsList();
+        if (dom.modalHiddenSongs) dom.modalHiddenSongs.classList.add('open');
+    }
+
+    function closeHiddenSongsModal() {
+        if (dom.modalHiddenSongs) dom.modalHiddenSongs.classList.remove('open');
+    }
+
+    function renderHiddenSongsList() {
+        const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+        if (dom.hiddenSongsCount) {
+            dom.hiddenSongsCount.textContent = `숨긴 곡 ${hiddenIds.length}곡`;
+        }
+        if (!dom.hiddenSongsList) return;
+        dom.hiddenSongsList.innerHTML = '';
+
+        if (hiddenIds.length === 0) {
+            dom.hiddenSongsList.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:0.85rem;">숨겨진 곡이 없습니다.</div>';
+            return;
+        }
+
+        const allSongs = window.getAllSongs ? window.getAllSongs() : (window.DEFAULT_SONGS || []);
+        const songMap = new Map(allSongs.map(s => [s.id, s]));
+
+        const frag = document.createDocumentFragment();
+        hiddenIds.forEach(id => {
+            const song = songMap.get(id) || { id, title: '알 수 없는 곡', artist: '스텔라이브' };
+            const item = document.createElement('div');
+            item.className = 'hidden-song-item';
+            const thumbUrl = song.youtubeId ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg` : '';
+
+            item.innerHTML = `
+                <div class="hidden-song-left">
+                    ${thumbUrl ? `<img class="hidden-song-thumb" src="${thumbUrl}" alt="" loading="lazy">` : ''}
+                    <div class="hidden-song-meta">
+                        <div class="hidden-song-title">${song.title}</div>
+                        <div class="hidden-song-artist">${song.artist}</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-restore-single" data-id="${id}" title="이 곡 복원">복원</button>
+            `;
+
+            const btnRestore = item.querySelector('.btn-restore-single');
+            btnRestore.addEventListener('click', () => {
+                window.StorageManager.unhideSong(id);
+                showToast(`'${song.title}' 곡이 복원되었습니다.`);
+                refreshTrackList();
+                const curLeft = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+                if (curLeft.length === 0) {
+                    closeHiddenSongsModal();
+                } else {
+                    renderHiddenSongsList();
+                }
+            });
+
+            frag.appendChild(item);
+        });
+        dom.hiddenSongsList.appendChild(frag);
+    }
+
+    // ===================================================================
     // 5.1 곡 정보 직접 수정 (Metadata Editor)
     // ===================================================================
     function openEditSongModal(songId) {
-        const song = window.getSongById(songId);
+        const song = window.getSongById ? window.getSongById(songId) : null;
         if (!song) {
             showToast('곡 정보를 찾을 수 없습니다.');
             return;
@@ -4370,10 +4772,22 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.editSongTitle.value = song.title || '';
         dom.editSongArtist.value = song.artist || '';
         dom.editSongOriginalArtist.value = song.originalArtist || '';
-        dom.editSongType.value = song.type || 'cover';
-        if (dom.editSongMood) {
-            dom.editSongMood.value = song.mood || 'none';
+        
+        let sType = song.type || 'cover';
+        if (sType === 'ost') sType = 'featuring';
+        dom.editSongType.value = sType;
+        setPillSelectValue('edit-type-pills', 'edit-song-type', sType);
+
+        let sMood = song.mood;
+        if (!sMood || sMood === 'none') {
+            if (typeof detectSongMood === 'function') {
+                sMood = detectSongMood(song);
+            }
         }
+        if (!sMood) sMood = 'none';
+        if (dom.editSongMood) dom.editSongMood.value = sMood;
+        setPillSelectValue('edit-mood-pills', 'edit-song-mood', sMood);
+
         dom.editSabiStart.value = song.sabi?.start ?? 45;
         dom.editSabiEnd.value = song.sabi?.end ?? 80;
         if (dom.editSongPublishedAt) {
@@ -4457,6 +4871,21 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePlayerUIState();
         }
 
+        // 대기열 내 트랙 실시간 갱신
+        if (player.queue) {
+            player.queue.forEach(qSong => {
+                if (qSong.id === songId) {
+                    Object.assign(qSong, overrideData);
+                }
+            });
+            renderQueue(false);
+        }
+
+        // 열려있는 플레이리스트 상세 뷰 실시간 갱신
+        if (state.activeView === 'playlists' && state.currentPlaylistDetailId) {
+            openPlaylistDetail(state.currentPlaylistDetailId);
+        }
+
         closeEditSongModal();
         refreshTrackList();
         showToast(`"${updatedTitle}" 곡 정보가 저장되었습니다.`);
@@ -4465,12 +4894,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleDeleteSong() {
         const songId = dom.editSongId.value;
         if (!songId) return;
-        const song = window.getSongById(songId);
+        const song = window.getSongById ? window.getSongById(songId) : null;
         const title = song ? song.title : '이 곡';
 
-        if (confirm(`정말로 "${title}" 곡을 라이브러리에서 완전히 삭제하시겠습니까?\n(삭제 후 재생 대기열 및 목록에서 모두 제외됩니다)`)) {
+        if (confirm(`[${title}] 곡을 라이브러리에서 숨기시겠습니까?\n(설정 탭의 '숨긴 곡 보관함'에서 언제든 다시 복원할 수 있습니다)`)) {
             window.StorageManager.hideSong(songId);
-            window.StorageManager.deleteCustomSong(songId);
 
             // 대기열에서 제거
             if (player.queue) {
@@ -4483,12 +4911,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         player.stop();
                     }
                 }
-                updateQueueUI();
+                renderQueue(false);
             }
 
             closeEditSongModal();
             refreshTrackList();
-            showToast(`"${title}" 곡이 라이브러리에서 삭제되었습니다.`);
+            if (state.activeView === 'playlists' && state.currentPlaylistDetailId) {
+                openPlaylistDetail(state.currentPlaylistDetailId);
+            }
+            showToast(`[${title}] 곡이 라이브러리에서 숨김 처리되었습니다.`);
         }
     }
 
@@ -4499,17 +4930,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('이 곡의 수정한 정보를 초기화하고 원래 정규 기본값으로 되돌리시겠습니까?')) {
             window.StorageManager.resetSongOverride(songId);
 
-            // 현재 재생 중인 곡이면 정규 기본 데이터로 갱신
-            if (player.currentSong && player.currentSong.id === songId) {
-                const freshSong = window.getSongById(songId);
-                if (freshSong) {
+            const freshSong = window.getSongById ? window.getSongById(songId) : null;
+            if (freshSong) {
+                if (player.currentSong && player.currentSong.id === songId) {
                     player.currentSong = { ...freshSong };
                     updatePlayerUIState();
+                }
+                if (player.queue) {
+                    player.queue.forEach(qSong => {
+                        if (qSong.id === songId) {
+                            Object.assign(qSong, freshSong);
+                        }
+                    });
+                    renderQueue(false);
                 }
             }
 
             closeEditSongModal();
             refreshTrackList();
+            if (state.activeView === 'playlists' && state.currentPlaylistDetailId) {
+                openPlaylistDetail(state.currentPlaylistDetailId);
+            }
             showToast('곡 정보가 기본값으로 복원되었습니다.');
         }
     }
@@ -4651,11 +5092,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         const sEnd = Math.min(finalDur - 5, sStart + 35);
                         const publishedAt = t.publishedAt || (t.upload_date ? `${t.upload_date.slice(0,4)}-${t.upload_date.slice(4,6)}-${t.upload_date.slice(6,8)}` : new Date().toISOString().split('T')[0]);
 
-                        const isOst = (t.defaultType === 'ost') ||
+                        const isLive = (t.defaultType === 'live') ||
+                            /(?:방구석\s*뮤지컬|3D\s*Live|4K\s*3D|3D\s*Cover|3D\s*라이브)/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
+                            (artistName.includes('마시로') && /(?:뮤지컬|지킬|웃는남자|킹키부츠)/i.test(`${t.title || ''} ${t.rawTitle || ''}`));
+
+                        const isOst = !isLive && ((t.defaultType === 'ost') ||
                             /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
-                            (t.id && t.id.startsWith('ost-'));
-                        const trackType = isOst ? 'ost' : (t.defaultType || 'cover');
-                        const origArtistText = isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡');
+                            (t.id && t.id.startsWith('ost-')));
+                        const trackType = isLive ? 'live' : (isOst ? 'ost' : (t.defaultType || 'cover'));
+                        const origArtistText = isLive ? '3D 라이브' : (isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡'));
+
+                        const trackMood = t.mood || (typeof detectSongMood === 'function' ? detectSongMood({
+                            title: cleanedTitle,
+                            artist: artistName,
+                            originalArtist: origArtistText,
+                            members: detected
+                        }) : null) || 'bright';
 
                         newTracks.push({
                             id: `auto-${ytId}`,
@@ -4663,6 +5115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             artist: artistName,
                             originalArtist: origArtistText,
                             type: trackType,
+                            mood: trackMood,
                             members: detected,
                             gen: genKey,
                             youtubeId: ytId,

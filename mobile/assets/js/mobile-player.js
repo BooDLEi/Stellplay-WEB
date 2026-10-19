@@ -1550,6 +1550,23 @@ class MobilePlayer {
         }
     }
 
+    addToQueueNext(song) {
+        if (!song) return;
+        if (!this.queue || this.queue.length === 0) {
+            this.setQueue([song], 0, true);
+            return;
+        }
+        const insertIndex = Math.min(this.queue.length, this.queueIndex + 1);
+        this.queue.splice(insertIndex, 0, song);
+        if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
+            try { window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex); } catch (e) {}
+        }
+        this._saveState();
+        window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
+            detail: { queue: this.queue, index: this.queueIndex }
+        }));
+    }
+
     moveQueueItem(fromIndex, toIndex) {
         if (fromIndex < 0 || fromIndex >= this.queue.length || toIndex < 0 || toIndex >= this.queue.length) return;
         const currentPlaying = this.queue[this.queueIndex];

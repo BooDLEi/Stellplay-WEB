@@ -553,8 +553,14 @@ body::before {
 .header-sabi-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
-    padding: 5px 11px;
+    width: 78px;
+    min-width: 78px;
+    max-width: 78px;
+    height: 28px;
+    box-sizing: border-box;
+    padding: 0 8px;
     border-radius: 20px;
     border: 1px solid var(--border-glass);
     background: rgba(255, 255, 255, 0.05);
@@ -567,6 +573,13 @@ body::before {
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+}
+
+#m-header-sabi-text {
+    display: inline-block;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
 .header-sabi-btn svg {
@@ -1023,6 +1036,30 @@ body::before {
     background: var(--theme-color);
     border-color: var(--theme-color);
     color: #fff;
+}
+.type-pill[data-type="original"].active {
+    background: rgba(124, 92, 252, 0.28);
+    border-color: #a78bfa;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(124, 92, 252, 0.35);
+}
+.type-pill[data-type="cover"].active {
+    background: rgba(239, 68, 68, 0.28);
+    border-color: #f87171;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+}
+.type-pill[data-type="live"].active {
+    background: rgba(236, 72, 153, 0.28);
+    border-color: #f472b6;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(236, 72, 153, 0.35);
+}
+.type-pill[data-type="featuring"].active {
+    background: rgba(14, 165, 233, 0.28);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35);
 }
 
 .section-info-row {
@@ -1782,6 +1819,8 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    max-width: 100%;
     background: rgba(9, 10, 16, 0.98);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
@@ -1942,7 +1981,18 @@ body::before {
     cursor: pointer;
 }
 .sheet-ctrl-btn.active {
-    color: var(--theme-color);
+    color: var(--theme-color) !important;
+    background: rgba(124, 92, 252, 0.18) !important;
+    border-radius: 50%;
+}
+#sheet-sabi-btn.active {
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.18) !important;
+    border-radius: 50%;
+}
+#sheet-sabi-btn.active svg {
+    fill: #f59e0b;
+    stroke: #f59e0b;
 }
 
 .sheet-main-play-btn {
@@ -2176,21 +2226,30 @@ body::before {
 }
 
 .queue-sheet-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    line-height: 1;
     font-size: 0.72rem;
     font-weight: 700;
-    padding: 2px 7px;
+    padding: 0 8px;
     border-radius: 10px;
     background: rgba(124, 92, 252, 0.15);
     color: var(--theme-color);
     border: 1px solid var(--border-active);
     white-space: nowrap;
+    box-sizing: border-box;
 }
 
 .queue-sheet-pos-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    height: 22px;
+    line-height: 1;
     gap: 6px;
-    padding: 3px 9px;
+    padding: 0 9px;
     font-size: 0.72rem;
     font-weight: 700;
     color: var(--theme-color);
@@ -2202,6 +2261,7 @@ body::before {
     white-space: nowrap;
     user-select: none;
     -webkit-user-select: none;
+    box-sizing: border-box;
 }
 .queue-sheet-pos-btn:active {
     transform: scale(0.95);
@@ -2289,6 +2349,21 @@ body::before {
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+.queue-select-bar {
+    position: static !important;
+    transform: none !important;
+    width: auto !important;
+    margin: 8px 12px 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.2s ease;
+    z-index: 10;
+}
+
+.m-queue-item .m-custom-checkbox {
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
 .queue-sheet-list {
     position: relative;
     flex: 1;
@@ -2352,11 +2427,17 @@ body::before {
 }
 
 .m-queue-index {
-    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--text-muted);
-    min-width: 20px;
+    min-width: 24px;
+    height: 38px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .m-queue-thumb {
@@ -2465,6 +2546,40 @@ body::before {
 
 .m-queue-item.drag-over-bottom {
     border-bottom: 2px solid var(--theme-color) !important;
+}
+
+.m-track-row.dragging {
+    opacity: 0.45;
+    background: rgba(124, 92, 252, 0.15);
+    border: 1px dashed var(--theme-color);
+}
+
+.m-track-row.drag-over-top {
+    border-top: 2px solid var(--theme-color) !important;
+    background: rgba(124, 92, 252, 0.1);
+}
+
+.m-track-row.drag-over-bottom {
+    border-bottom: 2px solid var(--theme-color) !important;
+    background: rgba(124, 92, 252, 0.1);
+}
+
+.m-playlist-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    cursor: grab;
+    touch-action: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.m-playlist-handle:active {
+    color: var(--theme-color);
+    cursor: grabbing;
 }
 
 /* 홈 상단 퀵 액션 바 */
@@ -2793,6 +2908,162 @@ body::before {
     color: #ffffff;
 }
 
+/* 인앱 커스텀 알약 선택기 (시스템 팝업 대체) */
+.custom-pill-select {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+.form-pill-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.form-pill-btn:active {
+    transform: scale(0.96);
+}
+.form-pill-btn.active {
+    background: var(--theme-color);
+    border-color: var(--theme-color);
+    color: #ffffff;
+    box-shadow: 0 2px 10px var(--theme-glow);
+}
+#m-add-type-pills .form-pill-btn[data-value="cover"].active,
+#m-edit-type-pills .form-pill-btn[data-value="cover"].active {
+    background: rgba(239, 68, 68, 0.28);
+    border-color: #f87171;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+}
+#m-add-type-pills .form-pill-btn[data-value="original"].active,
+#m-edit-type-pills .form-pill-btn[data-value="original"].active {
+    background: rgba(124, 92, 252, 0.28);
+    border-color: #a78bfa;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(124, 92, 252, 0.35);
+}
+#m-add-type-pills .form-pill-btn[data-value="live"].active,
+#m-edit-type-pills .form-pill-btn[data-value="live"].active {
+    background: rgba(236, 72, 153, 0.28);
+    border-color: #f472b6;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(236, 72, 153, 0.35);
+}
+#m-add-type-pills .form-pill-btn[data-value="featuring"].active,
+#m-edit-type-pills .form-pill-btn[data-value="featuring"].active {
+    background: rgba(14, 165, 233, 0.28);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35);
+}
+
+.custom-date-input-wrap {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.custom-date-input {
+    flex: 1;
+}
+.btn-quick-date {
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 8px;
+    background: rgba(124, 92, 252, 0.15);
+    border: 1px solid rgba(124, 92, 252, 0.35);
+    color: var(--theme-color);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+.btn-quick-date:active {
+    transform: scale(0.95);
+    background: rgba(124, 92, 252, 0.3);
+}
+
+/* 숨겨진 곡 모달 아이템 스타일 */
+.hidden-song-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-glass);
+    gap: 10px;
+}
+.hidden-song-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+.hidden-song-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.hidden-song-meta {
+    flex: 1;
+    min-width: 0;
+}
+.hidden-song-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hidden-song-artist {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.btn-restore-single {
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: rgba(124, 92, 252, 0.16);
+    border: 1px solid rgba(124, 92, 252, 0.38);
+    color: var(--theme-color);
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+.btn-restore-single:active {
+    transform: scale(0.95);
+    background: rgba(124, 92, 252, 0.3);
+}
+.btn-restore-all-hidden {
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--theme-color), #ec4899);
+    border: none;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 10px var(--theme-glow);
+}
+
 .form-row {
     display: flex;
     gap: 10px;
@@ -2858,10 +3129,11 @@ body::before {
 }
 
 /* ===================================================================
-   태블릿 및 갤럭시 폴드(펼침) 대화면 전용 2분할 뷰 (@media min-width: 650px)
+   태블릿 및 갤럭시 폴드(펼침) 대화면 전용 2분할 뷰 (@media min-width: 650px and min-height: 550px)
+   - 일반 스마트폰(가로모드 포함)은 제외하고 실제 태블릿/폴더블 펼침 화면만 적용
    - 재생중 창 오픈 시, 좌측 50% = 플레이어, 우측 50% = 현재 재생목록 상시 표시
 =================================================================== */
-@media (min-width: 650px), (orientation: landscape) and (min-width: 480px) {
+@media (min-width: 650px) and (min-height: 550px) {
     /* 기본 분할 모드: 전체화면 재생 창 좌측 50% 분할 패널 */
     body:not(.tablet-queue-collapsed) .fullscreen-sheet.open {
         width: 50% !important;
@@ -3125,8 +3397,14 @@ body::before {
 }
 
 body.multiselect-active .m-track-select-box,
-body.offline-select-active .m-track-select-box {
+body.offline-select-active .m-track-select-box,
+body.playlist-select-active .m-track-select-box {
     display: flex;
+}
+
+body.playlist-select-active #m-playlist-detail-tracks .m-playlist-handle,
+body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist {
+    display: none !important;
 }
 
 .m-custom-checkbox {
@@ -3210,15 +3488,18 @@ body.offline-select-active .m-track-select-box {
 
 .btn-ms-action {
     flex: 1;
+    min-width: 0;
     height: 38px;
     border-radius: 10px;
     border: none;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
+    padding: 0 4px;
     transition: opacity 0.15s;
 }
 
@@ -3236,6 +3517,12 @@ body.offline-select-active .m-track-select-box {
     background: rgba(255, 255, 255, 0.12);
     border: 1px solid var(--border-glass);
     color: #ffffff;
+}
+
+.btn-ms-download {
+    background: rgba(56, 189, 248, 0.18);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
 }
 
 .btn-ms-cancel {
@@ -3450,41 +3737,72 @@ body.offline-select-active .m-track-select-box {
 
 .btn-playlist-play-all {
     flex: 1;
+    min-width: 0;
     height: 42px;
     border-radius: 12px;
     background: linear-gradient(135deg, var(--theme-color), #ec4899);
     border: none;
     color: #ffffff;
     font-weight: 700;
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
     cursor: pointer;
     box-shadow: 0 4px 15px var(--theme-glow);
+    white-space: nowrap;
+    padding: 0 6px;
 }
 
 .btn-playlist-add-tracks {
     flex: 1;
+    min-width: 0;
     height: 42px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border-glass);
     color: var(--text-primary);
     font-weight: 700;
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
     cursor: pointer;
     transition: background 0.2s;
+    white-space: nowrap;
+    padding: 0 6px;
 }
 
 .btn-playlist-add-tracks:active {
     background: rgba(124, 92, 252, 0.2);
     border-color: var(--theme-color);
+}
+
+.btn-playlist-download {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+    font-weight: 700;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    padding: 0 6px;
+}
+
+.btn-playlist-download:active {
+    background: rgba(56, 189, 248, 0.25);
+    transform: scale(0.98);
 }
 
 .modal-playlist-item {
@@ -3880,18 +4198,27 @@ body.offline-select-active .m-track-select-box {
 [data-theme="light"] .sheet-ctrl-btn {
     color: #334155 !important;
 }
+[data-theme="light"] .sheet-ctrl-btn.active {
+    color: #7c3aed !important;
+    background: rgba(124, 58, 237, 0.16) !important;
+    border-radius: 50%;
+}
 [data-theme="light"] .sheet-close-btn {
     color: #334155 !important;
 }
 [data-theme="light"] .sheet-sabi-btn {
     color: #475569 !important;
-    background: rgba(0, 0, 0, 0.05) !important;
-    border-color: rgba(0, 0, 0, 0.1) !important;
+    background: none !important;
+    border: none !important;
 }
 [data-theme="light"] .sheet-sabi-btn.active {
-    color: #7c3aed !important;
-    background: rgba(124, 58, 237, 0.12) !important;
-    border-color: rgba(124, 58, 237, 0.3) !important;
+    color: #d97706 !important;
+    background: rgba(217, 119, 6, 0.16) !important;
+    border-radius: 50%;
+}
+[data-theme="light"] .sheet-sabi-btn.active svg {
+    fill: #d97706;
+    stroke: #d97706;
 }
 [data-theme="light"] .m-view-mode-toggle {
     background: rgba(0, 0, 0, 0.05) !important;
@@ -4050,8 +4377,13 @@ body.offline-select-active .m-track-select-box {
     box-shadow: 0 0 6px rgba(92, 53, 235, 0.5) !important;
 }
 [data-theme="light"] #sheet-queue-btn,
-[data-theme="light"] .sheet-ctrl-btn {
+[data-theme="light"] .sheet-ctrl-btn:not(.active) {
     color: #0f172a !important;
+}
+[data-theme="light"] .sheet-ctrl-btn.active {
+    color: #7c3aed !important;
+    background: rgba(124, 58, 237, 0.16) !important;
+    border-radius: 50%;
 }
 [data-theme="light"] .m-queue-index {
     color: #64748b !important;

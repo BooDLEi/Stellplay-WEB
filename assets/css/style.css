@@ -2868,6 +2868,11 @@ body::after {
     height: 180px;
     z-index: -100;
     margin: 0;
+    display: none;
+}
+
+.youtube-view-box:not(.active) {
+    display: none !important;
 }
 
 .youtube-view-box.active {
@@ -2880,7 +2885,7 @@ body::after {
     max-width: 500px;
     height: auto;
     z-index: 1;
-    display: block;
+    display: block !important;
 }
 
 .youtube-view-box iframe,
@@ -2891,10 +2896,38 @@ body::after {
     border: none;
 }
 
+.pc-yt-player-wrap {
+    overflow: hidden;
+}
+
 .pc-yt-player-wrap.docked {
-    z-index: 105;
-    opacity: 1;
-    pointer-events: auto;
+    z-index: 105 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* 언독 상태: 화면 및 레이아웃에서 완전 격리 */
+.pc-yt-player-wrap:not(.docked):not(:fullscreen):not(:-webkit-full-screen) {
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    width: 240px !important;
+    height: 135px !important;
+    opacity: 0.001 !important;
+    pointer-events: none !important;
+    z-index: -9999 !important;
+    border-radius: 0 !important;
+}
+
+/* 언독 상태에서는 전체화면 버튼 및 광고 쉴드 절대 노출 금지 */
+.pc-yt-player-wrap:not(.docked):not(:fullscreen):not(:-webkit-full-screen) .btn-video-fullscreen-toggle,
+.pc-yt-player-wrap:not(.docked):not(:fullscreen):not(:-webkit-full-screen) #pc-ad-shield-overlay {
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 .btn-video-fullscreen-toggle {
@@ -4464,4 +4497,239 @@ body.multiselect-active .track-number {
 #topbar-btn-switch-mobile {
     display: none !important;
 }
+
+/* ===================================================================
+   PC 버전 7대 기능 개선 스타일 (Playlist Drag, Multi Category, Pills, Hidden Songs)
+=================================================================== */
+
+/* 플레이리스트 상세 드래그 핸들 및 순서 변경 */
+.playlist-drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: grab;
+    transition: color 0.15s, background 0.15s;
+    user-select: none;
+    -webkit-user-drag: element;
+    margin-left: 4px;
+}
+.playlist-drag-handle:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+.playlist-drag-handle:active {
+    cursor: grabbing;
+}
+.track-row.dragging {
+    opacity: 0.45;
+    background: rgba(255, 255, 255, 0.05);
+}
+.track-row.drag-over-top {
+    border-top: 2.5px solid var(--theme-color) !important;
+    background: rgba(124, 92, 252, 0.08) !important;
+}
+.track-row.drag-over-bottom {
+    border-bottom: 2.5px solid var(--theme-color) !important;
+    background: rgba(124, 92, 252, 0.08) !important;
+}
+
+/* 메인 화면 카테고리 필터링 다중 토글 스위치 및 고유 테마 컬러 */
+.type-filter-btn {
+    transition: all 0.2s ease;
+    user-select: none;
+}
+.type-filter-btn[data-type="original"].active {
+    background: rgba(124, 92, 252, 0.28) !important;
+    border: 1px solid #a78bfa !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(124, 92, 252, 0.35) !important;
+}
+.type-filter-btn[data-type="cover"].active {
+    background: rgba(239, 68, 68, 0.28) !important;
+    border: 1px solid #f87171 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35) !important;
+}
+.type-filter-btn[data-type="live"].active {
+    background: rgba(236, 72, 153, 0.28) !important;
+    border: 1px solid #f472b6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(236, 72, 153, 0.35) !important;
+}
+.type-filter-btn[data-type="featuring"].active {
+    background: rgba(14, 165, 233, 0.28) !important;
+    border: 1px solid #38bdf8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35) !important;
+}
+/* 라이트 모드 카테고리 고유 테마 */
+[data-theme="light"] .type-filter-btn[data-type="original"].active {
+    background: rgba(124, 92, 252, 0.15) !important;
+    border: 1px solid #7c3aed !important;
+    color: #7c3aed !important;
+}
+[data-theme="light"] .type-filter-btn[data-type="cover"].active {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border: 1px solid #dc2626 !important;
+    color: #dc2626 !important;
+}
+[data-theme="light"] .type-filter-btn[data-type="live"].active {
+    background: rgba(236, 72, 153, 0.15) !important;
+    border: 1px solid #db2777 !important;
+    color: #db2777 !important;
+}
+[data-theme="light"] .type-filter-btn[data-type="featuring"].active {
+    background: rgba(14, 165, 233, 0.15) !important;
+    border: 1px solid #0284c7 !important;
+    color: #0284c7 !important;
+}
+
+/* 인앱 커스텀 알약 선택기 & 날짜 입력 (시스템 UI 대체) */
+.custom-pill-select {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+.form-pill-btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+}
+.form-pill-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+.form-pill-btn.active {
+    background: var(--theme-color);
+    border-color: var(--theme-color);
+    color: #ffffff;
+    box-shadow: 0 2px 10px var(--theme-glow);
+}
+#add-type-pills .form-pill-btn[data-value="cover"].active,
+#edit-type-pills .form-pill-btn[data-value="cover"].active {
+    background: rgba(239, 68, 68, 0.28);
+    border-color: #f87171;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+}
+#add-type-pills .form-pill-btn[data-value="original"].active,
+#edit-type-pills .form-pill-btn[data-value="original"].active {
+    background: rgba(124, 92, 252, 0.28);
+    border-color: #a78bfa;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(124, 92, 252, 0.35);
+}
+#add-type-pills .form-pill-btn[data-value="live"].active,
+#edit-type-pills .form-pill-btn[data-value="live"].active {
+    background: rgba(236, 72, 153, 0.28);
+    border-color: #f472b6;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(236, 72, 153, 0.35);
+}
+#add-type-pills .form-pill-btn[data-value="featuring"].active,
+#edit-type-pills .form-pill-btn[data-value="featuring"].active {
+    background: rgba(14, 165, 233, 0.28);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35);
+}
+.custom-date-input-wrap {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.custom-date-input {
+    flex: 1;
+}
+.btn-quick-date {
+    height: 38px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(124, 92, 252, 0.15);
+    border: 1px solid rgba(124, 92, 252, 0.35);
+    color: var(--theme-color);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+.btn-quick-date:hover {
+    background: rgba(124, 92, 252, 0.25);
+}
+
+/* 숨긴 곡 모달 아이템 */
+.hidden-song-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.hidden-song-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+.hidden-song-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.hidden-song-meta {
+    flex: 1;
+    min-width: 0;
+}
+.hidden-song-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hidden-song-artist {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.btn-restore-single {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(124, 92, 252, 0.16);
+    border: 1px solid rgba(124, 92, 252, 0.4);
+    color: var(--theme-color);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+}
+.btn-restore-single:hover {
+    background: rgba(124, 92, 252, 0.3);
+    color: #ffffff;
+}
+
 

@@ -189,6 +189,33 @@ const StorageManager = {
         return false;
     },
 
+    reorderPlaylistSongs(playlistId, fromIndex, toIndex) {
+        if (playlistId === 'pl-favorites' || playlistId === 'card-playlist-favorites') {
+            const favs = this.getFavorites();
+            if (fromIndex >= 0 && fromIndex < favs.length && toIndex >= 0 && toIndex < favs.length) {
+                const [moved] = favs.splice(fromIndex, 1);
+                favs.splice(toIndex, 0, moved);
+                localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favs));
+                window.dispatchEvent(new CustomEvent('stellplay:favoritesUpdated'));
+                this.triggerServerBackup();
+                return true;
+            }
+            return false;
+        }
+        const playlists = this.getPlaylists(false);
+        const pl = playlists.find(p => p.id === playlistId);
+        if (!pl || !Array.isArray(pl.songIds)) return false;
+        if (fromIndex >= 0 && fromIndex < pl.songIds.length && toIndex >= 0 && toIndex < pl.songIds.length) {
+            const [moved] = pl.songIds.splice(fromIndex, 1);
+            pl.songIds.splice(toIndex, 0, moved);
+            localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(playlists));
+            window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
+            this.triggerServerBackup();
+            return true;
+        }
+        return false;
+    },
+
     // --- 최근 재생 기록 (History, 최대 100곡) ---
     getHistory() {
         try {

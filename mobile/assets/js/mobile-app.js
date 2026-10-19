@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         selectedSub: null,
         sortOrder: 'latest',
         selectedType: 'all',
+        selectedTypes: new Set(),
         searchQuery: '',
         downloadingIds: new Set(),
         offlineSongIds: new Set(),
@@ -32,7 +33,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         isMultiSelectHome: false,
         offlineSelectedSongIds: new Set(),
         isOfflineSelectMode: false,
-        activePlaylistDetailId: null
+        isQueueSelectMode: false,
+        queueSelectedIndices: new Set(),
+        selectedOfflineTypes: new Set(),
+        activePlaylistDetailId: null,
+        isPlaylistSelectMode: false,
+        playlistSelectedSongIds: new Set()
     };
 
     // DOM 캐싱
@@ -73,6 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnMultiselectAll: document.getElementById('btn-multiselect-all'),
         btnMultiselectPlay: document.getElementById('btn-multiselect-play'),
         btnMultiselectAddPlaylist: document.getElementById('btn-multiselect-add-playlist'),
+        btnMultiselectDownload: document.getElementById('btn-multiselect-download'),
         btnMultiselectCancel: document.getElementById('btn-multiselect-cancel'),
 
         // 오프라인
@@ -103,6 +110,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnPlaylistDetailDelete: document.getElementById('btn-playlist-detail-delete'),
         btnPlaylistDetailClearHistory: document.getElementById('btn-playlist-detail-clear-history'),
         btnPlaylistDetailAddTracks: document.getElementById('btn-playlist-detail-add-tracks'),
+        btnPlaylistDetailDownload: document.getElementById('btn-playlist-detail-download'),
+        playlistSelectBar: document.getElementById('m-playlist-select-bar'),
+        playlistSelectCount: document.getElementById('m-playlist-select-count'),
+        btnPlaylistSelectAll: document.getElementById('btn-playlist-select-all'),
+        btnPlaylistSelectDownload: document.getElementById('btn-playlist-select-download'),
+        btnPlaylistSelectCancel: document.getElementById('btn-playlist-select-cancel'),
         detailPlaylistTitle: document.getElementById('detail-playlist-title'),
         detailPlaylistCount: document.getElementById('detail-playlist-count'),
         detailPlaylistIcon: document.getElementById('detail-playlist-icon'),
@@ -179,6 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         sheetPrevBtn: document.getElementById('sheet-prev-btn'),
         sheetPlayBtn: document.getElementById('sheet-play-btn'),
         sheetNextBtn: document.getElementById('sheet-next-btn'),
+        sheetRepeatBtn: document.getElementById('sheet-repeat-btn'),
         sheetSabiBtn: document.getElementById('sheet-sabi-btn'),
         sheetModeBadge: document.getElementById('sheet-mode-badge'),
         btnViewArt: document.getElementById('m-btn-view-art'),
@@ -200,7 +214,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         queueList: document.getElementById('m-queue-list'),
         btnStationQueue: document.getElementById('m-btn-station-queue'),
         btnClearQueue: document.getElementById('m-btn-clear-queue'),
+        btnDownloadQueue: document.getElementById('m-btn-download-queue'),
         btnCloseQueue: document.getElementById('m-btn-close-queue'),
+        queueSelectBar: document.getElementById('m-queue-select-bar'),
+        queueSelectCount: document.getElementById('m-queue-select-count'),
+        btnQueueSelectAll: document.getElementById('btn-queue-select-all'),
+        btnQueueSelectDownload: document.getElementById('btn-queue-select-download'),
+        btnQueueSelectCancel: document.getElementById('btn-queue-select-cancel'),
+        offlineTypePills: document.querySelectorAll('#m-offline-type-pills .type-pill'),
 
         // PC 서버 연동 설정
         pcServerInput: document.getElementById('m-pc-server-input'),
@@ -236,6 +257,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         addArtist: document.getElementById('m-add-artist'),
         addType: document.getElementById('m-add-type'),
         addMood: document.getElementById('m-add-mood'),
+        addPublishedAt: document.getElementById('m-add-published-at'),
+        btnTodayAdd: document.getElementById('m-btn-today-add'),
         addMember: document.getElementById('m-add-member'),
         addSabiStart: document.getElementById('m-add-sabi-start'),
         addSabiEnd: document.getElementById('m-add-sabi-end'),
@@ -252,10 +275,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         editType: document.getElementById('m-edit-type'),
         editMood: document.getElementById('m-edit-mood'),
         editPublishedAt: document.getElementById('m-edit-published-at'),
+        btnTodayEdit: document.getElementById('m-btn-today-edit'),
         editMember: document.getElementById('m-edit-member'),
         editSabiStart: document.getElementById('m-edit-sabi-start'),
         editSabiEnd: document.getElementById('m-edit-sabi-end'),
         btnResetSongEdit: document.getElementById('m-btn-reset-song-edit'),
+
+        // 숨겨진 곡 모달
+        modalHiddenSongs: document.getElementById('m-modal-hidden-songs'),
+        hiddenSongsList: document.getElementById('m-hidden-songs-list'),
+        hiddenSongsCount: document.getElementById('m-hidden-songs-count'),
+        btnRestoreAllHidden: document.getElementById('m-btn-restore-all-hidden'),
+        btnCloseHiddenModal: document.getElementById('m-btn-close-hidden-modal'),
 
         // 사비 에디터 모달
         modalSabiEditor: document.getElementById('m-modal-sabi-editor'),
@@ -486,6 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 dom.sheetShuffleBtn.classList.toggle('active', !!player.isShuffle);
                 dom.sheetShuffleBtn.style.color = player.isShuffle ? 'var(--theme-color)' : 'var(--text-muted)';
             }
+            updateSheetRepeatUI(player.repeatMode);
         }
 
         if (hasPlayedBefore && player) {
@@ -536,8 +568,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 3000);
     }
 
-    // 갤럭시 Z 폴드 등 화면 접기/펼침(Configuration 변경) 시 UI 리렌더링 및 네이티브 재생상태 동기화
+    // 태블릿 및 폴더블 대화면 판별 헬퍼 (일반 스마트폰 가로모드 오인 방지: min-width: 650px & min-height: 550px)
+    function isTabletLayout() {
+        return window.innerWidth >= 650 && window.innerHeight >= 550;
+    }
+    window.isTabletLayout = isTabletLayout;
+
+    // 모바일 뷰포트 및 렌더링 엔진(Blink) 100% 레이아웃 복구 헬퍼 (전체화면 종료/회전 시 쏠림 방지)
+    function resetMobileViewport() {
+        try {
+            const vp = document.querySelector('meta[name="viewport"]');
+            if (vp) {
+                vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+            }
+            window.scrollTo(0, 0);
+            if (document.documentElement) {
+                document.documentElement.style.width = '100%';
+                document.documentElement.style.height = '100%';
+            }
+            if (document.body) {
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+            }
+
+            // Blink 렌더링 엔진의 레이아웃 캐시 무효화 강제 트리거
+            const prevZoom = document.body ? document.body.style.zoom : '';
+            if (document.body) document.body.style.zoom = '99.9%';
+            setTimeout(() => {
+                if (document.body) document.body.style.zoom = prevZoom || '';
+                window.dispatchEvent(new Event('resize'));
+            }, 50);
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 180);
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 350);
+        } catch (e) {
+            console.warn('resetMobileViewport error:', e);
+        }
+    }
+    window.resetMobileViewport = resetMobileViewport;
+
+    // 갤럭시 Z 폴드 등 화면 접기/펼침(Configuration 변경) 및 화면 회전 시 UI 리렌더링 및 네이티브 재생상태 동기화
     window.onFoldConfigurationChanged = function() {
+        resetMobileViewport();
         renderAllViews();
         if (player && typeof player.syncFromNative === 'function') {
             player.syncFromNative();
@@ -794,7 +869,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
-        const isSelected = state.isMultiSelectHome ? state.selectedSongIds.has(song.id) : (state.isOfflineSelectMode ? state.offlineSelectedSongIds.has(song.id) : false);
+        const isSelected = state.isMultiSelectHome ? state.selectedSongIds.has(song.id) : (state.isOfflineSelectMode ? state.offlineSelectedSongIds.has(song.id) : (state.isPlaylistSelectMode ? state.playlistSelectedSongIds.has(song.id) : false));
 
         let typeBadge = '';
         if (song.type === 'original') typeBadge = '<span class="m-track-type-badge original">ORIGINAL</span>';
@@ -837,9 +912,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                           )
                     }
                 </button>
-                <button class="m-btn-action btn-add-to-playlist" data-id="${song.id}" title="재생목록에 추가">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                <button class="m-btn-action btn-play-next" data-id="${song.id}" title="대기열 다음 곡으로 재생">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/>
+                        <line x1="19" y1="5" x2="19" y2="19"/>
                     </svg>
                 </button>
                 <button class="m-btn-action m-btn-track-menu" data-id="${song.id}" title="추가 옵션">
@@ -875,6 +951,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 toggleSongSelection(song.id);
             } else if (state.isOfflineSelectMode) {
                 toggleOfflineSongSelection(song.id);
+            } else if (state.isPlaylistSelectMode) {
+                togglePlaylistSongSelection(song.id);
             }
             return;
         }
@@ -887,7 +965,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // 3. 재생목록에 추가 버튼 (+)
+        // 3. 대기열 다음 곡으로 재생 버튼 (▶|)
+        const playNextBtn = e.target.closest('.btn-play-next');
+        if (playNextBtn) {
+            e.stopPropagation();
+            if (player && typeof player.addToQueueNext === 'function') {
+                player.addToQueueNext(song);
+                showToast(`'${song.title}' 곡을 다음 재생 대기열에 추가했습니다.`);
+            }
+            return;
+        }
+
+        // 재생목록에 추가 버튼 (+) - 하위 호환
         const addPl = e.target.closest('.btn-add-to-playlist');
         if (addPl) {
             e.stopPropagation();
@@ -928,6 +1017,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 toggleOfflineSongSelection(song.id);
                 return;
             }
+            if (state.isPlaylistSelectMode) {
+                togglePlaylistSongSelection(song.id);
+                return;
+            }
 
             // 검색 상태이거나 단일 곡 목록인 경우:
             // 검색 결과 소수의 곡만 대기열에 갇히는 현상을 해결하기 위해
@@ -936,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (isSearching || (songs && songs.length === 1 && !state.activePlaylistDetailId)) {
                 const stationQueue = buildMusicStationQueue(song);
                 player.setQueue(stationQueue, 0, true);
-                showToast(`📻 '${song.title}' 뮤직 스테이션 연속 재생을 시작합니다.`);
+                openQueueSheet();
                 return;
             }
 
@@ -1175,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===================================================================
     // 4. 각 뷰별 목록 렌더러 및 공통 필터
     // ===================================================================
-    function filterSongList(list, applyType = true) {
+    function filterSongList(list, applyType = true, customTypeSet = null) {
         if (!list || !Array.isArray(list)) return [];
         let res = [...list];
 
@@ -1243,8 +1336,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 2. 타입 필터 (홈 뷰 등에서 적용)
-        if (applyType && state.selectedType !== 'all') {
+        // 2. 타입 필터 (다중 토글 카테고리 지원)
+        const typeSet = customTypeSet || state.selectedTypes;
+        if (applyType && typeSet && typeSet.size > 0) {
+            res = res.filter(s => {
+                for (const t of typeSet) {
+                    if (t === 'featuring' && (s.type === 'featuring' || s.type === 'ost')) return true;
+                    if (t === 'ost' && s.type === 'ost') return true;
+                    if (s.type === t) return true;
+                }
+                return false;
+            });
+        } else if (applyType && !customTypeSet && state.selectedType && state.selectedType !== 'all') {
             if (state.selectedType === 'featuring') {
                 res = res.filter(s => s.type === 'featuring' || s.type === 'ost');
             } else if (state.selectedType === 'ost') {
@@ -1368,8 +1471,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const records = await window.OfflineDB.getAllTracks();
         const allOfflineSongs = records.map(r => r.song);
 
-        // 멤버 필터 및 검색 적용
-        const filteredSongs = filterSongList(allOfflineSongs, false);
+        // 멤버 필터, 카테고리 필터 및 검색 적용
+        const filteredSongs = filterSongList(allOfflineSongs, true, state.selectedOfflineTypes);
         if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '';
         dom.trackListOffline.innerHTML = '';
 
@@ -1528,6 +1631,156 @@ document.addEventListener('DOMContentLoaded', async () => {
                         openPlaylistDetail(playlistId);
                     });
                     actionsDiv.appendChild(removeBtn);
+
+                    if (!isHistory) {
+                        const dragHandle = document.createElement('div');
+                        dragHandle.className = 'm-queue-handle m-playlist-handle';
+                        dragHandle.setAttribute('draggable', 'true');
+                        dragHandle.title = '핸들을 눌러 드래그하여 순서 변경';
+                        dragHandle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>';
+                        actionsDiv.appendChild(dragHandle);
+
+                        // 마우스 드래그 (HTML5)
+                        dragHandle.addEventListener('dragstart', (e) => {
+                            row.classList.add('dragging');
+                            e.dataTransfer.effectAllowed = 'move';
+                            e.dataTransfer.setData('text/plain', String(idx));
+                        });
+                        row.addEventListener('dragover', (e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
+                            const rect = row.getBoundingClientRect();
+                            const midY = rect.top + rect.height / 2;
+                            if (e.clientY < midY) {
+                                row.classList.add('drag-over-top');
+                                row.classList.remove('drag-over-bottom');
+                            } else {
+                                row.classList.add('drag-over-bottom');
+                                row.classList.remove('drag-over-top');
+                            }
+                            if (e.clientY < 90) window.scrollBy(0, -12);
+                            else if (e.clientY > window.innerHeight - 90) window.scrollBy(0, 12);
+                        });
+                        row.addEventListener('dragleave', () => {
+                            row.classList.remove('drag-over-top', 'drag-over-bottom');
+                        });
+                        row.addEventListener('drop', (e) => {
+                            e.preventDefault();
+                            row.classList.remove('drag-over-top', 'drag-over-bottom');
+                            const fromIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                            const toIdx = idx;
+                            if (!isNaN(fromIdx) && !isNaN(toIdx) && fromIdx !== toIdx) {
+                                StorageManager.reorderPlaylistSongs(playlistId, fromIdx, toIdx);
+                                openPlaylistDetail(playlistId);
+                            }
+                        });
+                        dragHandle.addEventListener('dragend', () => {
+                            dom.detailPlaylistTracks.querySelectorAll('.m-track-row').forEach(el => {
+                                el.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging');
+                            });
+                        });
+
+                        // 모바일 터치 드래그앤드롭 & 엣지 연속 자동 스크롤
+                        let currentTargetRow = null;
+                        let autoScrollInterval = null;
+                        let lastTouchX = 0;
+                        let lastTouchY = 0;
+
+                        function updateTargetFromPoint(x, y) {
+                            const elem = document.elementFromPoint(x, y);
+                            if (!elem) return;
+                            const targetRow = elem.closest('.m-track-row');
+                            dom.detailPlaylistTracks.querySelectorAll('.m-track-row').forEach(el => {
+                                if (el !== targetRow) el.classList.remove('drag-over-top', 'drag-over-bottom');
+                            });
+                            if (targetRow && targetRow !== row) {
+                                currentTargetRow = targetRow;
+                                const rect = targetRow.getBoundingClientRect();
+                                const midY = rect.top + rect.height / 2;
+                                if (y < midY) {
+                                    targetRow.classList.add('drag-over-top');
+                                    targetRow.classList.remove('drag-over-bottom');
+                                } else {
+                                    targetRow.classList.add('drag-over-bottom');
+                                    targetRow.classList.remove('drag-over-top');
+                                }
+                            } else {
+                                currentTargetRow = null;
+                            }
+                        }
+
+                        function startAutoScroll() {
+                            if (autoScrollInterval) return;
+                            autoScrollInterval = setInterval(() => {
+                                const edgeThreshold = 100;
+                                let scrollDelta = 0;
+                                if (lastTouchY < edgeThreshold) {
+                                    const ratio = 1 - Math.max(0, lastTouchY) / edgeThreshold;
+                                    scrollDelta = -Math.round(ratio * 16 + 6);
+                                } else if (lastTouchY > window.innerHeight - edgeThreshold) {
+                                    const ratio = 1 - Math.max(0, window.innerHeight - lastTouchY) / edgeThreshold;
+                                    scrollDelta = Math.round(ratio * 16 + 6);
+                                }
+
+                                if (scrollDelta !== 0) {
+                                    window.scrollBy(0, scrollDelta);
+                                    if (document.scrollingElement) {
+                                        document.scrollingElement.scrollTop += scrollDelta;
+                                    }
+                                    if (lastTouchX && lastTouchY) {
+                                        updateTargetFromPoint(lastTouchX, lastTouchY);
+                                    }
+                                }
+                            }, 16);
+                        }
+
+                        function stopAutoScroll() {
+                            if (autoScrollInterval) {
+                                clearInterval(autoScrollInterval);
+                                autoScrollInterval = null;
+                            }
+                        }
+
+                        dragHandle.addEventListener('touchstart', (e) => {
+                            e.stopPropagation();
+                            row.classList.add('dragging');
+                            const touch = e.touches[0];
+                            lastTouchX = touch.clientX;
+                            lastTouchY = touch.clientY;
+                            startAutoScroll();
+                        }, { passive: false });
+
+                        dragHandle.addEventListener('touchmove', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const touch = e.touches[0];
+                            lastTouchX = touch.clientX;
+                            lastTouchY = touch.clientY;
+                            updateTargetFromPoint(lastTouchX, lastTouchY);
+                        }, { passive: false });
+
+                        const finishDrag = (e) => {
+                            if (e) e.stopPropagation();
+                            stopAutoScroll();
+                            row.classList.remove('dragging');
+                            if (currentTargetRow) {
+                                const fromIndex = idx;
+                                const toIndex = parseInt(currentTargetRow.dataset.index, 10);
+                                currentTargetRow.classList.remove('drag-over-top', 'drag-over-bottom');
+                                if (!isNaN(toIndex) && fromIndex !== toIndex) {
+                                    StorageManager.reorderPlaylistSongs(playlistId, fromIndex, toIndex);
+                                    openPlaylistDetail(playlistId);
+                                }
+                            }
+                            dom.detailPlaylistTracks.querySelectorAll('.m-track-row').forEach(el => {
+                                el.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging');
+                            });
+                            currentTargetRow = null;
+                        };
+
+                        dragHandle.addEventListener('touchend', finishDrag);
+                        dragHandle.addEventListener('touchcancel', finishDrag);
+                    }
                 }
                 frag.appendChild(row);
             });
@@ -1540,6 +1793,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.openPlaylistDetail = openPlaylistDetail;
 
     function closePlaylistDetail() {
+        togglePlaylistSelectMode(false);
         state.activePlaylistDetailId = null;
         if (dom.playlistsListContainer) dom.playlistsListContainer.style.display = 'block';
         if (dom.playlistDetailContainer) dom.playlistDetailContainer.style.display = 'none';
@@ -1953,6 +2207,49 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function togglePlaylistSelectMode(forceState) {
+        state.isPlaylistSelectMode = (forceState !== undefined) ? forceState : !state.isPlaylistSelectMode;
+        if (!state.isPlaylistSelectMode) {
+            state.playlistSelectedSongIds.clear();
+        }
+        document.body.classList.toggle('playlist-select-active', state.isPlaylistSelectMode);
+        if (dom.playlistSelectBar) {
+            dom.playlistSelectBar.style.display = state.isPlaylistSelectMode ? 'flex' : 'none';
+        }
+        if (dom.btnPlaylistDetailDownload) {
+            dom.btnPlaylistDetailDownload.classList.toggle('active', state.isPlaylistSelectMode);
+        }
+        updatePlaylistSelectUI();
+        if (state.activePlaylistDetailId) {
+            openPlaylistDetail(state.activePlaylistDetailId);
+        }
+    }
+
+    function togglePlaylistSongSelection(songId) {
+        if (state.playlistSelectedSongIds.has(songId)) {
+            state.playlistSelectedSongIds.delete(songId);
+        } else {
+            state.playlistSelectedSongIds.add(songId);
+        }
+        updatePlaylistSelectUI();
+    }
+
+    function updatePlaylistSelectUI() {
+        if (dom.playlistSelectCount) {
+            dom.playlistSelectCount.textContent = `${state.playlistSelectedSongIds.size}곡 선택됨`;
+        }
+        const tracks = state.currentPlaylistTracks || [];
+        if (dom.btnPlaylistSelectAll) {
+            const allSelected = tracks.length > 0 && tracks.every(s => state.playlistSelectedSongIds.has(s.id));
+            dom.btnPlaylistSelectAll.textContent = allSelected ? '선택 해제' : '전체 선택';
+        }
+        const checkboxes = dom.detailPlaylistTracks?.querySelectorAll('.m-custom-checkbox') || [];
+        checkboxes.forEach(chk => {
+            const id = chk.dataset.id;
+            chk.classList.toggle('checked', state.playlistSelectedSongIds.has(id));
+        });
+    }
+
     // ===================================================================
     // 5. 대기열(재생목록) 슬라이드 시트 & 드래그 재배치
     // ===================================================================
@@ -2004,7 +2301,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 450);
     }
 
+    function toggleQueueSelectMode(forceState) {
+        state.isQueueSelectMode = (forceState !== undefined) ? forceState : !state.isQueueSelectMode;
+        if (!state.isQueueSelectMode) {
+            state.queueSelectedIndices.clear();
+        }
+        if (dom.queueSelectBar) {
+            dom.queueSelectBar.style.display = state.isQueueSelectMode ? 'flex' : 'none';
+        }
+        if (dom.btnDownloadQueue) {
+            dom.btnDownloadQueue.classList.toggle('active', state.isQueueSelectMode);
+        }
+        updateQueueSelectUI();
+        renderMobileQueue(false);
+    }
+
+    function toggleQueueItemSelection(idx) {
+        if (state.queueSelectedIndices.has(idx)) {
+            state.queueSelectedIndices.delete(idx);
+        } else {
+            state.queueSelectedIndices.add(idx);
+        }
+        updateQueueSelectUI();
+    }
+
+    function updateQueueSelectUI() {
+        if (dom.queueSelectCount) {
+            dom.queueSelectCount.textContent = `${state.queueSelectedIndices.size}곡 선택됨`;
+        }
+        const queue = player.queue || [];
+        if (dom.btnQueueSelectAll) {
+            const allSelected = queue.length > 0 && state.queueSelectedIndices.size === queue.length;
+            dom.btnQueueSelectAll.textContent = allSelected ? '선택 해제' : '전체 선택';
+        }
+        if (dom.queueList) {
+            dom.queueList.querySelectorAll('.m-queue-item').forEach(el => {
+                const idx = parseInt(el.dataset.index, 10);
+                const chk = el.querySelector('.m-custom-checkbox');
+                if (chk) {
+                    chk.classList.toggle('checked', state.queueSelectedIndices.has(idx));
+                }
+            });
+        }
+    }
+
     function closeQueueSheet() {
+        toggleQueueSelectMode(false);
         dom.queueSheet.classList.remove('open');
     }
 
@@ -2019,6 +2361,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderMobileQueue(scrollToActive) {
         const queue = player.queue || [];
         updateQueueBadge();
+        updateQueueSelectUI();
         dom.queueList.innerHTML = '';
 
         if (queue.length === 0) {
@@ -2030,15 +2373,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         queue.forEach((song, idx) => {
             const isCurrent = idx === player.queueIndex;
             const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
+            const isSelected = state.queueSelectedIndices.has(idx);
 
             const item = document.createElement('div');
-            item.className = `m-queue-item ${isCurrent ? 'active' : ''}`;
+            item.className = `m-queue-item ${isCurrent ? 'active' : ''} ${state.isQueueSelectMode ? 'select-mode' : ''}`;
             item.dataset.index = idx;
             item.setAttribute('draggable', 'false'); // 본체는 드래그되지 않음 (실수 방지)
 
+            const leftPrefix = state.isQueueSelectMode
+                ? `<span class="m-custom-checkbox ${isSelected ? 'checked' : ''}" data-index="${idx}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>`
+                : `<span class="m-queue-index">${idx + 1}</span>`;
+
+            const actionsHtml = state.isQueueSelectMode
+                ? ''
+                : `
+                <div class="m-queue-actions">
+                    <button class="m-queue-del" title="대기열에서 제거">✕</button>
+                    <div class="m-queue-handle" title="핸들을 눌러 드래그하여 순서 변경">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+                        </svg>
+                    </div>
+                </div>`;
+
             item.innerHTML = `
                 <div class="m-queue-left">
-                    <span class="m-queue-index">${idx + 1}</span>
+                    ${leftPrefix}
                     <img class="m-queue-thumb" src="${thumbUrl}" alt="" width="38" height="38" loading="lazy">
                     <div class="m-queue-meta">
                         <div class="m-queue-title-row">
@@ -2048,30 +2408,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="m-queue-artist">${song.artist}</span>
                     </div>
                 </div>
-                <div class="m-queue-actions">
-                    <button class="m-queue-del" title="대기열에서 제거">✕</button>
-                    <div class="m-queue-handle" title="핸들을 눌러 드래그하여 순서 변경">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
-                        </svg>
-                    </div>
-                </div>
+                ${actionsHtml}
             `;
 
-            // 탭하여 즉시 해당 곡 재생
-            item.querySelector('.m-queue-left').addEventListener('click', () => {
-                player.playQueueIndex(idx);
-            });
+            if (state.isQueueSelectMode) {
+                item.addEventListener('click', () => {
+                    toggleQueueItemSelection(idx);
+                });
+            } else {
+                // 탭하여 즉시 해당 곡 재생
+                item.querySelector('.m-queue-left').addEventListener('click', () => {
+                    player.playQueueIndex(idx);
+                });
 
-            // 개별 삭제 버튼
-            item.querySelector('.m-queue-del').addEventListener('click', (e) => {
-                e.stopPropagation();
-                player.removeFromQueue(idx);
-            });
+                // 개별 삭제 버튼
+                const delBtn = item.querySelector('.m-queue-del');
+                if (delBtn) {
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        player.removeFromQueue(idx);
+                    });
+                }
 
-            // 오직 핸들(☰)만을 통한 드래그 순서 재배치 (HTML5 Mouse Drag)
-            const handle = item.querySelector('.m-queue-handle');
-            handle.setAttribute('draggable', 'true');
+                // 오직 핸들(☰)만을 통한 드래그 순서 재배치 (HTML5 Mouse Drag)
+                const handle = item.querySelector('.m-queue-handle');
+                if (handle) {
+                    handle.setAttribute('draggable', 'true');
 
             handle.addEventListener('dragstart', (e) => {
                 item.classList.add('dragging');
@@ -2090,6 +2452,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     item.classList.add('drag-over-bottom');
                     item.classList.remove('drag-over-top');
+                }
+                if (dom.queueList) {
+                    const listRect = dom.queueList.getBoundingClientRect();
+                    const edgeThreshold = 50;
+                    if (e.clientY < listRect.top + edgeThreshold) {
+                        dom.queueList.scrollTop -= 10;
+                    } else if (e.clientY > listRect.bottom - edgeThreshold) {
+                        dom.queueList.scrollTop += 10;
+                    }
                 }
             });
 
@@ -2147,24 +2518,39 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     currentTargetItem = null;
                 }
-            }, { passive: false });
 
-            handle.addEventListener('touchend', (e) => {
-                e.stopPropagation();
-                item.classList.remove('dragging');
-                if (currentTargetItem) {
-                    const fromIndex = idx;
-                    const toIndex = parseInt(currentTargetItem.dataset.index, 10);
-                    currentTargetItem.classList.remove('drag-over-top', 'drag-over-bottom');
-                    if (!isNaN(toIndex) && fromIndex !== toIndex) {
-                        player.moveQueueItem(fromIndex, toIndex);
+                // 큐 목록 상단/하단 경계 접근 시 자동 스크롤
+                if (dom.queueList) {
+                    const listRect = dom.queueList.getBoundingClientRect();
+                    const edgeThreshold = 60;
+                    if (touch.clientY < listRect.top + edgeThreshold) {
+                        const ratio = 1 - Math.max(0, touch.clientY - listRect.top) / edgeThreshold;
+                        dom.queueList.scrollTop -= Math.round(ratio * 16 + 4);
+                    } else if (touch.clientY > listRect.bottom - edgeThreshold) {
+                        const ratio = 1 - Math.max(0, listRect.bottom - touch.clientY) / edgeThreshold;
+                        dom.queueList.scrollTop += Math.round(ratio * 16 + 4);
                     }
                 }
-                dom.queueList.querySelectorAll('.m-queue-item').forEach(el => {
-                    el.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging');
+            }, { passive: false });
+
+                handle.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    item.classList.remove('dragging');
+                    if (currentTargetItem) {
+                        const fromIndex = idx;
+                        const toIndex = parseInt(currentTargetItem.dataset.index, 10);
+                        currentTargetItem.classList.remove('drag-over-top', 'drag-over-bottom');
+                        if (!isNaN(toIndex) && fromIndex !== toIndex) {
+                            player.moveQueueItem(fromIndex, toIndex);
+                        }
+                    }
+                    dom.queueList.querySelectorAll('.m-queue-item').forEach(el => {
+                        el.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging');
+                    });
+                    currentTargetItem = null;
                 });
-                currentTargetItem = null;
-            });
+                }
+            }
 
             frag.appendChild(item);
         });
@@ -2434,13 +2820,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
-    function cleanAndKoreanizeTitle(title) {
+    function cleanAndKoreanizeTitle(title, rawTitle = '') {
         if (!title) return '';
         let t = title;
-        // YouTube metadata cleanup
         t = t.replace(/\s*-\s*YouTube$/i, '');
 
-        // English / Romaji member names to Korean standard
         const nameReplacements = [
             [/\bAiri\s+Kanna\b/gi, '아이리 칸나'],
             [/\bKanna\s+Airi\b/gi, '아이리 칸나'],
@@ -2465,16 +2849,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             [/\bNana\s+Hanako\b/gi, '하나코 나나'],
             [/\bYuzuha\s+Riko\b/gi, '유즈하 리코'],
             [/\bRiko\s+Yuzuha\b/gi, '유즈하 리코'],
-            [/\bShizuki\s+Toa\b/gi, '시즈키 토아'],
-            [/\bToa\s+Shizuki\b/gi, '시즈키 토아'],
-            [/\bCogane\s+Rang\b/gi, '코가네 랑'],
-            [/\bRang\s+Cogane\b/gi, '코가네 랑'],
-            [/\bKogane\s+Rang\b/gi, '코가네 랑'],
-            [/\bRang\s+Kogane\b/gi, '코가네 랑'],
-            [/\bHanayo\s+Hiyori\b/gi, '하나요 히요리'],
-            [/\bHiyori\s+Hanayo\b/gi, '하나요 히요리'],
-            [/\bTokino\s+Mary\b/gi, '토키노 메리'],
-            [/\bMary\s+Tokino\b/gi, '토키노 메리'],
             [/\bStellive\b/gi, '스텔라이브'],
             [/\bMystic\b/gi, '미스틱'],
             [/\bEverlys\b/gi, '에버리스'],
@@ -2487,12 +2861,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             t = t.replace(pattern, kor);
         });
 
-        // Exception: Universe
-        if (t.toLowerCase().includes('universe') && (t.toLowerCase().includes('유니버스') || t.trim() === 'Universe')) {
-            return 'Universe (유니버스)';
+        // Delegate to standard cleanAndKoreanizeTitle for complete Japanese/English/Korean standardization
+        if (typeof window.cleanAndKoreanizeTitle === 'function' && window.cleanAndKoreanizeTitle !== cleanAndKoreanizeTitle) {
+            return window.cleanAndKoreanizeTitle(t, rawTitle);
         }
 
-        // Clean artist/symbol clutter (e.g. '스텔라이브 클리셰ㅣ유성우' -> '유성우')
         t = t.replace(/【(?:MV|Music Video|COVER|Cover|커버|스텔라이브|오피셜|공식|4K)[^】]*】/gi, '');
         t = t.replace(/\[(?:MV|Music Video|COVER|Cover|커버|스텔라이브|4K)[^\]]*\]/gi, '');
         t = t.replace(/\s*[/ㅣ|]\s*(?:스텔라이브|어비스|클리셰|유니버스|미스틱|에버리스|아이리 칸나|아야츠노 유니|사키하네 후야|시라유키 히나|네네코 마시로|아카네 리제|아라하시 타비|텐코 시부키|아오쿠모 린|하나코 나나|유즈하 리코|시즈키 토아|코가네 랑|하나요 히요리|토키노 메리|cover|Cover|COVER|MV|Music Video|OFFICIAL MV)[\s\S]*$/i, '');
@@ -2581,6 +2954,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.cleanAndKoreanizeTitle = cleanAndKoreanizeTitle;
     window.detectMembersFromText = detectMembersFromText;
 
+    function setPillSelectValue(containerId, hiddenInputId, value) {
+        const targetVal = value || 'none';
+        const hidden = document.getElementById(hiddenInputId);
+        if (hidden) hidden.value = targetVal;
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.querySelectorAll('.form-pill-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === targetVal);
+            });
+        }
+    }
+
     function openAddSongModal() {
         if (dom.formAddSong) dom.formAddSong.reset();
         setMemberPickerState('m-add', { isStellive: false, units: [], members: [] }, dom.addArtist);
@@ -2588,6 +2973,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (origInput) origInput.value = '';
         const pubInput = document.getElementById('m-add-published-at');
         if (pubInput) pubInput.value = new Date().toISOString().split('T')[0];
+        setPillSelectValue('m-add-type-pills', 'm-add-type', 'cover');
+        setPillSelectValue('m-add-mood-pills', 'm-add-mood', 'none');
         if (dom.addSabiStart) dom.addSabiStart.value = '45';
         if (dom.addSabiEnd) dom.addSabiEnd.value = '75';
         if (dom.modalAddSong) dom.modalAddSong.classList.add('open');
@@ -2599,29 +2986,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function openEditSongModal(song) {
         if (!song) return;
-        dom.editSongId.value = song.id;
-        dom.editTitle.value = song.title || '';
-        dom.editArtist.value = song.artist || '';
-        dom.editOriginalArtist.value = song.originalArtist || '';
-        dom.editType.value = song.type || 'cover';
-        if (dom.editMood) {
-            dom.editMood.value = song.mood || 'none';
-        }
+        const all = window.getAllSongs ? window.getAllSongs() : [];
+        const freshSong = all.find(s => s.id === song.id) || song;
+        const sType = (freshSong.type === 'ost' || freshSong.type === 'featuring') ? 'featuring' : (freshSong.type || 'cover');
+        const sMood = (freshSong.mood && freshSong.mood !== 'none') ? freshSong.mood : (detectSongMood(freshSong) || 'none');
+
+        dom.editSongId.value = freshSong.id;
+        dom.editTitle.value = freshSong.title || '';
+        dom.editArtist.value = freshSong.artist || '';
+        dom.editOriginalArtist.value = freshSong.originalArtist || '';
+        setPillSelectValue('m-edit-type-pills', 'm-edit-type', sType);
+        setPillSelectValue('m-edit-mood-pills', 'm-edit-mood', sMood);
         if (dom.editPublishedAt) {
-            dom.editPublishedAt.value = song.publishedAt || song.releaseDate || '';
+            dom.editPublishedAt.value = freshSong.publishedAt || freshSong.releaseDate || '';
         }
 
         // 1분류/2분류 상태 판별
-        const isStelliveGroup = (song.members && song.members.length === 1 && song.members[0] === 'group' && (!song.gen || song.gen === 'group')) ||
-                               (song.artist && song.artist.includes('스텔라이브') && (!song.members || song.members.length === 0 || (song.members.length === 1 && song.members[0] === 'group')));
+        const isStelliveGroup = (freshSong.members && freshSong.members.length === 1 && freshSong.members[0] === 'group' && (!freshSong.gen || freshSong.gen === 'group')) ||
+                               (freshSong.artist && freshSong.artist.includes('스텔라이브') && (!freshSong.members || freshSong.members.length === 0 || (freshSong.members.length === 1 && freshSong.members[0] === 'group')));
 
         let detectedUnits = [];
-        if (song.gen === 'g1' || (song.artist && song.artist.includes('에버리스'))) detectedUnits.push('everlys');
-        if (song.gen === 'g2' || (song.artist && song.artist.includes('유니버스'))) detectedUnits.push('universe');
-        if (song.gen === 'g3' || (song.artist && song.artist.includes('클리셰'))) detectedUnits.push('cliche');
-        if (song.gen === 'g4' || (song.artist && song.artist.includes('어비스'))) detectedUnits.push('abyss');
+        if (freshSong.gen === 'g1' || (freshSong.artist && freshSong.artist.includes('에버리스'))) detectedUnits.push('everlys');
+        if (freshSong.gen === 'g2' || (freshSong.artist && freshSong.artist.includes('유니버스'))) detectedUnits.push('universe');
+        if (freshSong.gen === 'g3' || (freshSong.artist && freshSong.artist.includes('클리셰'))) detectedUnits.push('cliche');
+        if (freshSong.gen === 'g4' || (freshSong.artist && freshSong.artist.includes('어비스'))) detectedUnits.push('abyss');
 
-        const activeMembers = (song.members || []).filter(m => m !== 'group');
+        const activeMembers = (freshSong.members || []).filter(m => m !== 'group');
 
         setMemberPickerState('m-edit', {
             isStellive: isStelliveGroup && detectedUnits.length === 0 && activeMembers.length === 0,
@@ -2630,10 +3020,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, dom.editArtist);
 
         // 기존 저장된 아티스트명 텍스트 필드에 보존
-        dom.editArtist.value = song.artist || '';
+        dom.editArtist.value = freshSong.artist || '';
 
-        dom.editSabiStart.value = song.sabi?.start ?? 45;
-        dom.editSabiEnd.value = song.sabi?.end ?? 75;
+        dom.editSabiStart.value = freshSong.sabi?.start ?? 45;
+        dom.editSabiEnd.value = freshSong.sabi?.end ?? 75;
 
         dom.modalEditSong.classList.add('open');
     }
@@ -2907,11 +3297,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const sEnd = Math.min(finalDur - 5, sStart + 35);
                         const publishedAt = t.publishedAt || (t.upload_date ? `${t.upload_date.slice(0,4)}-${t.upload_date.slice(4,6)}-${t.upload_date.slice(6,8)}` : new Date().toISOString().split('T')[0]);
 
-                        const isOst = (t.defaultType === 'ost') ||
+                        const isLive = (t.defaultType === 'live') ||
+                            /(?:방구석\s*뮤지컬|3D\s*Live|4K\s*3D|3D\s*Cover|3D\s*라이브)/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
+                            (artistName.includes('마시로') && /(?:뮤지컬|지킬|웃는남자|킹키부츠)/i.test(`${t.title || ''} ${t.rawTitle || ''}`));
+
+                        const isOst = !isLive && ((t.defaultType === 'ost') ||
                             /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
-                            (t.id && t.id.startsWith('ost-'));
-                        const trackType = isOst ? 'ost' : (t.defaultType || 'cover');
-                        const origArtistText = isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡');
+                            (t.id && t.id.startsWith('ost-')));
+                        const trackType = isLive ? 'live' : (isOst ? 'ost' : (t.defaultType || 'cover'));
+                        const origArtistText = isLive ? '3D 라이브' : (isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡'));
+
+                        const trackMood = t.mood || (typeof detectSongMood === 'function' ? detectSongMood({
+                            title: cleanedTitle,
+                            artist: artistName,
+                            originalArtist: origArtistText,
+                            members: detected
+                        }) : null) || 'bright';
 
                         newTracks.push({
                             id: `auto-${ytId}`,
@@ -2919,6 +3320,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             artist: artistName,
                             originalArtist: origArtistText,
                             type: trackType,
+                            mood: trackMood,
                             members: detected,
                             gen: genKey,
                             youtubeId: ytId,
@@ -3092,6 +3494,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    async function downloadSongsBatch(songs) {
+        if (!songs || songs.length === 0) {
+            showToast('다운로드할 곡이 없습니다.');
+            return;
+        }
+        const toDownload = songs.filter(s => s && s.id && !state.offlineSongIds.has(s.id) && !state.downloadingIds.has(s.id));
+        if (toDownload.length === 0) {
+            showToast('선택한 모든 곡이 이미 오프라인 보관함에 있습니다.');
+            return;
+        }
+
+        showToast(`${toDownload.length}곡 오프라인 다운로드를 시작합니다...`);
+        let successCount = 0;
+        let failCount = 0;
+        for (let i = 0; i < toDownload.length; i++) {
+            const song = toDownload[i];
+            state.downloadingIds.add(song.id);
+            renderAllViews();
+            try {
+                await window.OfflineDB.downloadSong(song, () => {});
+                successCount++;
+            } catch (e) {
+                failCount++;
+            } finally {
+                state.downloadingIds.delete(song.id);
+            }
+        }
+        await refreshOfflineCacheState();
+        renderAllViews();
+        if (failCount === 0) {
+            showToast(`🎉 ${successCount}곡 오프라인 다운로드가 완료되었습니다!`);
+        } else {
+            showToast(`다운로드 완료: ${successCount}곡 성공, ${failCount}곡 실패`);
+        }
+    }
+
     function handleFavoriteToggle(songId) {
         const idx = state.favorites.indexOf(songId);
         if (idx > -1) {
@@ -3156,7 +3594,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         targetPlayingRows.forEach(row => row.classList.add('playing'));
 
         // 대기열 목록이 열려있거나 태블릿 2분할 모드인 경우 상태 갱신 (전체 재생성 대신 active 클래스만 토글)
-        if (dom.queueSheet.classList.contains('open') || (dom.fullscreenSheet.classList.contains('open') && window.innerWidth >= 650)) {
+        if (dom.queueSheet.classList.contains('open') || (dom.fullscreenSheet.classList.contains('open') && isTabletLayout())) {
             const currentActiveQ = dom.queueList.querySelectorAll('.m-queue-item.active');
             currentActiveQ.forEach(el => el.classList.remove('active'));
             const targetQ = dom.queueList.querySelector(`.m-queue-item[data-index="${player.queueIndex}"]`);
@@ -3190,6 +3628,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         dom.sheetPlayBtn.innerHTML = isPlaying ? sheetPauseIcon : sheetPlayIcon;
 
         dom.sheetVinylDisc.classList.toggle('spinning', isPlaying);
+    }
+
+    const REPEAT_ALL_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+    </svg>`;
+    const REPEAT_ONE_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+        <text x="12" y="14.5" font-size="8.5" font-weight="900" text-anchor="middle" fill="currentColor" stroke="none">1</text>
+    </svg>`;
+
+    function updateSheetRepeatUI(mode) {
+        if (!dom.sheetRepeatBtn) return;
+        const rMode = mode || (player ? player.repeatMode : 'all') || 'all';
+        if (rMode === 'off') {
+            dom.sheetRepeatBtn.classList.remove('active');
+            dom.sheetRepeatBtn.style.color = 'var(--text-muted)';
+            dom.sheetRepeatBtn.innerHTML = REPEAT_ALL_SVG;
+            dom.sheetRepeatBtn.title = '반복 재생: 끔';
+        } else if (rMode === 'one') {
+            dom.sheetRepeatBtn.classList.add('active');
+            dom.sheetRepeatBtn.style.color = 'var(--theme-color)';
+            dom.sheetRepeatBtn.innerHTML = REPEAT_ONE_SVG;
+            dom.sheetRepeatBtn.title = '반복 재생: 한곡 반복';
+        } else {
+            dom.sheetRepeatBtn.classList.add('active');
+            dom.sheetRepeatBtn.style.color = 'var(--theme-color)';
+            dom.sheetRepeatBtn.innerHTML = REPEAT_ALL_SVG;
+            dom.sheetRepeatBtn.title = '반복 재생: 전체 반복';
+        }
     }
 
     // ===================================================================
@@ -3623,6 +4090,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 openAddToPlaylistModal(Array.from(state.selectedSongIds));
             });
         }
+        if (dom.btnMultiselectDownload) {
+            dom.btnMultiselectDownload.addEventListener('click', async () => {
+                if (state.selectedSongIds.size === 0) {
+                    showToast('다운로드할 곡을 선택해주세요.');
+                    return;
+                }
+                const allSongs = window.getAllSongs ? window.getAllSongs() : [];
+                const songMap = new Map(allSongs.map(s => [s.id, s]));
+                const songsToDownload = Array.from(state.selectedSongIds).map(id => songMap.get(id)).filter(Boolean);
+                toggleHomeMultiSelect(false);
+                await downloadSongsBatch(songsToDownload);
+            });
+        }
         if (dom.btnMultiselectCancel) {
             dom.btnMultiselectCancel.addEventListener('click', () => toggleHomeMultiSelect(false));
         }
@@ -3712,6 +4192,48 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (state.activePlaylistDetailId) {
                     openMobilePlaylistAddTracksModal(state.activePlaylistDetailId);
                 }
+            });
+        }
+
+        // 재생목록 상세 오프라인 다운로드 다중 선택 버튼
+        if (dom.btnPlaylistDetailDownload) {
+            dom.btnPlaylistDetailDownload.addEventListener('click', () => {
+                if (!state.activePlaylistDetailId) return;
+                const tracks = state.currentPlaylistTracks || [];
+                if (tracks.length === 0) {
+                    showToast('재생목록에 다운로드할 곡이 없습니다.');
+                    return;
+                }
+                togglePlaylistSelectMode();
+            });
+        }
+        if (dom.btnPlaylistSelectAll) {
+            dom.btnPlaylistSelectAll.addEventListener('click', () => {
+                const tracks = state.currentPlaylistTracks || [];
+                const allSelected = tracks.length > 0 && tracks.every(s => state.playlistSelectedSongIds.has(s.id));
+                if (allSelected) {
+                    state.playlistSelectedSongIds.clear();
+                } else {
+                    tracks.forEach(s => state.playlistSelectedSongIds.add(s.id));
+                }
+                updatePlaylistSelectUI();
+            });
+        }
+        if (dom.btnPlaylistSelectDownload) {
+            dom.btnPlaylistSelectDownload.addEventListener('click', async () => {
+                if (state.playlistSelectedSongIds.size === 0) {
+                    showToast('다운로드할 곡을 선택해주세요.');
+                    return;
+                }
+                const tracks = state.currentPlaylistTracks || [];
+                const toDownload = tracks.filter(s => state.playlistSelectedSongIds.has(s.id));
+                togglePlaylistSelectMode(false);
+                await downloadSongsBatch(toDownload);
+            });
+        }
+        if (dom.btnPlaylistSelectCancel) {
+            dom.btnPlaylistSelectCancel.addEventListener('click', () => {
+                togglePlaylistSelectMode(false);
             });
         }
 
@@ -3924,18 +4446,98 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.addEventListener('click', () => syncNewSongs(true));
+        function openHiddenSongsModal() {
+            const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+            if (!hiddenIds || hiddenIds.length === 0) {
+                showToast('현재 숨겨진 곡이 없습니다.');
+                return;
+            }
+            renderHiddenSongsList();
+            if (dom.modalHiddenSongs) dom.modalHiddenSongs.classList.add('open');
+        }
+
+        function closeHiddenSongsModal() {
+            if (dom.modalHiddenSongs) dom.modalHiddenSongs.classList.remove('open');
+        }
+
+        function renderHiddenSongsList() {
+            const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+            if (dom.hiddenSongsCount) {
+                dom.hiddenSongsCount.textContent = `숨긴 곡 ${hiddenIds.length}곡`;
+            }
+            if (!dom.hiddenSongsList) return;
+            dom.hiddenSongsList.innerHTML = '';
+
+            if (hiddenIds.length === 0) {
+                dom.hiddenSongsList.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:0.85rem;">숨겨진 곡이 없습니다.</div>';
+                return;
+            }
+
+            const allSongs = (window.getAllSongs ? window.getAllSongs() : (window.rawSongs || []));
+            const songMap = new Map(allSongs.map(s => [s.id, s]));
+
+            const frag = document.createDocumentFragment();
+            hiddenIds.forEach(id => {
+                const song = songMap.get(id) || { id, title: id, artist: '알 수 없음', youtubeId: '' };
+                const item = document.createElement('div');
+                item.className = 'hidden-song-item';
+                const thumbUrl = song.youtubeId ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg` : '';
+                item.innerHTML = `
+                    <div class="hidden-song-left">
+                        ${thumbUrl ? `<img class="hidden-song-thumb" src="${thumbUrl}" alt="" loading="lazy">` : ''}
+                        <div class="hidden-song-meta">
+                            <div class="hidden-song-title">${escapeHtml(song.title)}</div>
+                            <div class="hidden-song-artist">${escapeHtml(song.artist)}</div>
+                        </div>
+                    </div>
+                    <button class="btn-restore-single" data-id="${id}" title="이 곡 복원">복원</button>
+                `;
+                item.querySelector('.btn-restore-single').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.StorageManager) {
+                        window.StorageManager.unhideSong(id);
+                    }
+                    showToast(`'${song.title}' 곡이 복원되었습니다.`);
+                    renderAllViews();
+                    const curLeft = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+                    if (curLeft.length === 0) {
+                        closeHiddenSongsModal();
+                    } else {
+                        renderHiddenSongsList();
+                    }
+                });
+                frag.appendChild(item);
+            });
+            dom.hiddenSongsList.appendChild(frag);
+        }
+
         if (dom.btnRestoreHiddenSettings) {
             dom.btnRestoreHiddenSettings.addEventListener('click', () => {
+                openHiddenSongsModal();
+            });
+        }
+        if (dom.btnCloseHiddenModal) {
+            dom.btnCloseHiddenModal.addEventListener('click', () => closeHiddenSongsModal());
+        }
+        if (dom.modalHiddenSongs) {
+            const backdrop = dom.modalHiddenSongs.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.addEventListener('click', () => closeHiddenSongsModal());
+        }
+        if (dom.btnRestoreAllHidden) {
+            dom.btnRestoreAllHidden.addEventListener('click', () => {
+                const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
+                if (hiddenIds.length === 0) return;
                 showAppConfirmModal({
-                    title: '숨긴 곡 복원',
-                    message: '숨겨졌던 모든 곡을 라이브러리에 다시 복원하시겠습니까?',
-                    confirmText: '복원',
+                    title: '숨긴 곡 전체 복원',
+                    message: `숨겨졌던 ${hiddenIds.length}개 곡을 모두 라이브러리에 복원하시겠습니까?`,
+                    confirmText: '전체 복원',
                     onConfirm: () => {
                         if (window.StorageManager) {
                             window.StorageManager.restoreAllHiddenSongs();
                         }
                         renderAllViews();
-                        showToast('🎉 숨겨졌던 모든 곡이 정상 복원되었습니다!');
+                        showToast('🎉 모든 숨긴 곡이 정상 복원되었습니다!');
+                        closeHiddenSongsModal();
                     }
                 });
             });
@@ -3955,11 +4557,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderAllViews();
         });
 
-        // 타입 필터 탭
+        // 타입 필터 탭 (다중 카테고리 스위치 토글 방식)
         dom.typePills.forEach(pill => {
             pill.addEventListener('click', () => {
-                state.selectedType = pill.dataset.type;
-                dom.typePills.forEach(p => p.classList.toggle('active', p === pill));
+                const type = pill.dataset.type;
+                if (!state.selectedTypes) state.selectedTypes = new Set();
+
+                if (type === 'all') {
+                    // 전체 버튼 클릭: 모든 개별 필터 끄고 전체 모드로 리셋
+                    state.selectedTypes.clear();
+                    state.selectedType = 'all';
+                    dom.typePills.forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
+                } else {
+                    // 개별 카테고리 클릭: 스위치 온/오프
+                    if (state.selectedTypes.has(type)) {
+                        state.selectedTypes.delete(type);
+                    } else {
+                        state.selectedTypes.add(type);
+                    }
+
+                    if (state.selectedTypes.size === 0) {
+                        // 모든 개별 필터가 꺼지면 기본값인 '전체'로 복귀
+                        state.selectedType = 'all';
+                        dom.typePills.forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
+                    } else {
+                        state.selectedType = 'custom';
+                        dom.typePills.forEach(p => {
+                            if (p.dataset.type === 'all') {
+                                p.classList.remove('active');
+                            } else {
+                                p.classList.toggle('active', state.selectedTypes.has(p.dataset.type));
+                            }
+                        });
+                    }
+                }
                 renderHomeTracks();
             });
         });
@@ -4073,14 +4704,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 target.classList.add('video-fullscreen-active');
                 if (window.AndroidBridge && typeof window.AndroidBridge.setFullscreenNative === 'function') {
                     try { window.AndroidBridge.setFullscreenNative(true); } catch (e) {}
-                }
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                }
-                if (target.requestFullscreen) {
-                    target.requestFullscreen().catch(() => {});
-                } else if (target.webkitRequestFullscreen) {
-                    try { target.webkitRequestFullscreen(); } catch (e) {}
+                } else {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    }
+                    if (target.requestFullscreen) {
+                        target.requestFullscreen().catch(() => {});
+                    } else if (target.webkitRequestFullscreen) {
+                        try { target.webkitRequestFullscreen(); } catch (e) {}
+                    }
                 }
                 if (mBtnVideoFs) {
                     mBtnVideoFs.title = "전체화면 종료";
@@ -4094,16 +4726,39 @@ document.addEventListener('DOMContentLoaded', async () => {
                 target.classList.remove('video-fullscreen-active');
                 if (window.AndroidBridge && typeof window.AndroidBridge.setFullscreenNative === 'function') {
                     try { window.AndroidBridge.setFullscreenNative(false); } catch (e) {}
-                }
-                if (screen.orientation && screen.orientation.unlock) {
-                    try { screen.orientation.unlock(); } catch (e) {}
-                }
-                if (document.fullscreenElement || document.webkitFullscreenElement) {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen().catch(() => {});
-                    } else if (document.webkitExitFullscreen) {
-                        try { document.webkitExitFullscreen(); } catch (e) {}
+                } else {
+                    if (screen.orientation) {
+                        if (screen.orientation.lock && !isTabletLayout()) {
+                            screen.orientation.lock('portrait').then(() => {
+                                if (screen.orientation.unlock) {
+                                    try { screen.orientation.unlock(); } catch (e) {}
+                                }
+                            }).catch(() => {
+                                if (screen.orientation.unlock) {
+                                    try { screen.orientation.unlock(); } catch (e) {}
+                                }
+                            });
+                        } else if (screen.orientation.unlock) {
+                            try { screen.orientation.unlock(); } catch (e) {}
+                        }
                     }
+                    if (document.fullscreenElement || document.webkitFullscreenElement) {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen().catch(() => {});
+                        } else if (document.webkitExitFullscreen) {
+                            try { document.webkitExitFullscreen(); } catch (e) {}
+                        }
+                    }
+                }
+                target.style.width = '';
+                target.style.height = '';
+                target.style.aspectRatio = '';
+                if (typeof window.resetMobileViewport === 'function') {
+                    window.resetMobileViewport();
+                } else {
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('resize'));
+                    }, 100);
                 }
                 if (mBtnVideoFs) {
                     mBtnVideoFs.title = "전체화면 전환";
@@ -4210,14 +4865,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.4) {
                         miniIsSwiped = true;
                         if (dx > 0) {
-                            // 오른쪽 슬라이드: 이전곡
-                            if (player && typeof player.playPrev === 'function') {
-                                player.playPrev();
-                            }
-                        } else {
-                            // 왼쪽 슬라이드: 다음곡
+                            // 오른쪽 슬라이드 (왼쪽->오른쪽): 다음곡
                             if (player && typeof player.playNext === 'function') {
                                 player.playNext();
+                            }
+                        } else {
+                            // 왼쪽 슬라이드 (오른쪽->왼쪽): 이전곡
+                            if (player && typeof player.playPrev === 'function') {
+                                player.playPrev();
                             }
                         }
                         // 탭 시트 열림 방지 타이머
@@ -4238,20 +4893,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (mobilePlayerViewMode === 'video') {
                     dockYouTubePlayer(true);
                 }
-                if (window.innerWidth >= 650) {
+                if (isTabletLayout()) {
                     renderMobileQueue(true);
                 }
             });
         }
-        dom.sheetCloseBtn.addEventListener('click', () => {
+        function closeMobilePlayerSheet() {
+            if (typeof toggleVideoFullscreen === 'function') {
+                toggleVideoFullscreen(false);
+            }
             dom.fullscreenSheet.classList.remove('open');
+            dockYouTubePlayer(false);
+        }
+        dom.sheetCloseBtn.addEventListener('click', () => {
+            closeMobilePlayerSheet();
         });
 
         // 대기열 열기/닫기 및 메뉴 버튼
         if (dom.miniQueueBtn) dom.miniQueueBtn.addEventListener('click', () => toggleQueueSheet());
         if (dom.sheetQueueBtn) {
             dom.sheetQueueBtn.addEventListener('click', () => {
-                if (window.innerWidth >= 650) {
+                if (isTabletLayout()) {
                     document.body.classList.toggle('tablet-queue-collapsed');
                 } else {
                     toggleQueueSheet();
@@ -4308,7 +4970,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const deltaY = clientY - sheetStartY;
                 const deltaX = clientX - sheetStartX;
 
-                const isTablet = window.innerWidth >= 650;
+                const isTablet = isTabletLayout();
 
                 if (isTablet) {
                     // 태블릿 전용 제스처
@@ -4326,7 +4988,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 40) {
                         // 재생창 영역에서 내리면: 메인화면으로 바로 내려가기
-                        dom.fullscreenSheet.classList.remove('open');
+                        closeMobilePlayerSheet();
                         return;
                     }
                 } else {
@@ -4334,7 +4996,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 40) {
                         if (deltaY > 40) {
                             // 내리면: 메인화면으로 복귀
-                            dom.fullscreenSheet.classList.remove('open');
+                            closeMobilePlayerSheet();
                         } else if (deltaY < -40) {
                             // 올리면: 재생목록(대기열) 열기
                             openQueueSheet();
@@ -4495,7 +5157,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const stationQueue = buildMusicStationQueue(cur);
                 player.setQueue(stationQueue, 0, true);
                 renderMobileQueue(true);
-                showToast(`📻 '${cur.title}' 기반 뮤직 스테이션으로 대기열이 갱신되었습니다.`);
             });
         }
 
@@ -4506,6 +5167,82 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showToast('대기열이 비워졌습니다.');
             });
         }
+
+        if (dom.btnDownloadQueue) {
+            dom.btnDownloadQueue.addEventListener('click', () => {
+                const queue = player.queue || [];
+                if (queue.length === 0) {
+                    showToast('현재 재생 대기열이 비어있습니다.');
+                    return;
+                }
+                toggleQueueSelectMode();
+            });
+        }
+
+        if (dom.btnQueueSelectAll) {
+            dom.btnQueueSelectAll.addEventListener('click', () => {
+                const queue = player.queue || [];
+                const allSelected = queue.length > 0 && state.queueSelectedIndices.size === queue.length;
+                if (allSelected) {
+                    state.queueSelectedIndices.clear();
+                } else {
+                    queue.forEach((_, i) => state.queueSelectedIndices.add(i));
+                }
+                updateQueueSelectUI();
+            });
+        }
+
+        if (dom.btnQueueSelectDownload) {
+            dom.btnQueueSelectDownload.addEventListener('click', async () => {
+                if (state.queueSelectedIndices.size === 0) {
+                    showToast('다운로드할 곡을 선택해주세요.');
+                    return;
+                }
+                const queue = player.queue || [];
+                const selectedSongs = Array.from(state.queueSelectedIndices).map(i => queue[i]).filter(Boolean);
+                toggleQueueSelectMode(false);
+                await downloadSongsBatch(selectedSongs);
+            });
+        }
+
+        if (dom.btnQueueSelectCancel) {
+            dom.btnQueueSelectCancel.addEventListener('click', () => {
+                toggleQueueSelectMode(false);
+            });
+        }
+
+        // 오프라인 보관함 카테고리 필터 탭 (다중 토글 카테고리)
+        const offlinePills = document.querySelectorAll('#m-offline-type-pills .type-pill');
+        offlinePills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                const type = pill.dataset.type;
+                if (!state.selectedOfflineTypes) state.selectedOfflineTypes = new Set();
+
+                if (type === 'all') {
+                    state.selectedOfflineTypes.clear();
+                    offlinePills.forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
+                } else {
+                    if (state.selectedOfflineTypes.has(type)) {
+                        state.selectedOfflineTypes.delete(type);
+                    } else {
+                        state.selectedOfflineTypes.add(type);
+                    }
+
+                    if (state.selectedOfflineTypes.size === 0) {
+                        offlinePills.forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
+                    } else {
+                        offlinePills.forEach(p => {
+                            if (p.dataset.type === 'all') {
+                                p.classList.remove('active');
+                            } else {
+                                p.classList.toggle('active', state.selectedOfflineTypes.has(p.dataset.type));
+                            }
+                        });
+                    }
+                }
+                renderOfflineTracks();
+            });
+        });
 
         // 트랙 액션 바텀시트 닫기
         if (dom.btnCloseActions) dom.btnCloseActions.addEventListener('click', () => closeTrackActions());
@@ -4519,7 +5256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (song) {
                     const stationQueue = buildMusicStationQueue(song);
                     player.setQueue(stationQueue, 0, true);
-                    showToast(`📻 '${song.title}' 뮤직 스테이션 재생을 시작합니다.`);
+                    openQueueSheet();
                 }
             });
         }
@@ -4883,6 +5620,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     window.StorageManager.saveSongOverride(songId, overrideData);
                 }
 
+                // 현재 대기열 내의 곡들도 즉시 업데이트
+                if (player.queue && player.queue.length > 0) {
+                    player.queue.forEach(qSong => {
+                        if (qSong && qSong.id === songId) {
+                            Object.assign(qSong, overrideData);
+                        }
+                    });
+                }
+
                 // 현재 재생 중인 곡이면 즉시 반영
                 if (player.currentSong && player.currentSong.id === songId) {
                     Object.assign(player.currentSong, overrideData);
@@ -4892,6 +5638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showToast(`[${title}] 곡 정보가 성공적으로 수정되었습니다.`);
                 closeEditSongModal();
                 renderAllViews();
+                renderMobileQueue(false);
             });
         }
 
@@ -4916,6 +5663,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        // 앱 내 스타일 분류/분위기 탭 버튼 및 오늘 날짜 퀵 입력 바인딩
+        function setupPillSelector(containerId, hiddenInputId) {
+            const container = document.getElementById(containerId);
+            const hidden = document.getElementById(hiddenInputId);
+            if (!container || !hidden) return;
+            container.querySelectorAll('.form-pill-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    container.querySelectorAll('.form-pill-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    hidden.value = btn.dataset.value;
+                });
+            });
+        }
+        setupPillSelector('m-add-type-pills', 'm-add-type');
+        setupPillSelector('m-add-mood-pills', 'm-add-mood');
+        setupPillSelector('m-edit-type-pills', 'm-edit-type');
+        setupPillSelector('m-edit-mood-pills', 'm-edit-mood');
+
+        if (dom.btnTodayAdd && dom.addPublishedAt) {
+            dom.btnTodayAdd.addEventListener('click', () => {
+                dom.addPublishedAt.value = new Date().toISOString().split('T')[0];
+            });
+        }
+        if (dom.btnTodayEdit && dom.editPublishedAt) {
+            dom.btnTodayEdit.addEventListener('click', () => {
+                dom.editPublishedAt.value = new Date().toISOString().split('T')[0];
+            });
+        }
+
         // 재생/일시정지
         dom.miniPlayBtn.addEventListener('click', () => player.togglePlay());
         dom.miniNextBtn.addEventListener('click', () => player.playNext());
@@ -4932,11 +5708,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 사비 모드 토글 핸들러 (헤더 버튼 및 시트 버튼 동시 연동)
+        // 사비 모드 토글 핸들러 (헤더 버튼 및 시트 버튼 동시 연동 - 무음 토글)
         function handleToggleSabi() {
             const isSabi = player.toggleSabiMode();
             syncSabiUI();
-            showToast(isSabi ? '⚡ 사비 메들리 모드 ON' : '사비 메들리 모드 OFF');
         }
 
         if (dom.sheetSabiBtn) dom.sheetSabiBtn.addEventListener('click', handleToggleSabi);
@@ -4970,12 +5745,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 셔플 토글
-        dom.sheetShuffleBtn.addEventListener('click', () => {
-            const isShuf = player.toggleShuffle();
-            dom.sheetShuffleBtn.classList.toggle('active', isShuf);
-            showToast(isShuf ? '셔플 재생 ON' : '순차 재생 ON');
-        });
+        // 셔플 토글 (토스트 알림 제거, 버튼 시각적 활성화)
+        if (dom.sheetShuffleBtn) {
+            dom.sheetShuffleBtn.addEventListener('click', () => {
+                const isShuf = player.toggleShuffle();
+                dom.sheetShuffleBtn.classList.toggle('active', isShuf);
+                dom.sheetShuffleBtn.style.color = isShuf ? 'var(--theme-color)' : 'var(--text-muted)';
+            });
+        }
+
+        // 반복 모드 토글 (토스트 알림 제거, 전체/한곡/끔 버튼 시각적 활성화)
+        if (dom.sheetRepeatBtn) {
+            dom.sheetRepeatBtn.addEventListener('click', () => {
+                const newMode = player.toggleRepeat();
+                updateSheetRepeatUI(newMode);
+            });
+        }
 
         // 시크 슬라이더 안전 제어 (드래그 중 실시간 UI 반응 & 손 뗐을 때 1회만 시크)
         let isDraggingSeekSlider = false;
@@ -5178,6 +5963,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.addEventListener('mobileplayer:error', (e) => {
             showToast(e.detail.message);
         });
+
+        window.addEventListener('mobileplayer:repeatChanged', (e) => {
+            updateSheetRepeatUI(e.detail?.repeatMode);
+        });
+
+        window.addEventListener('mobileplayer:shuffleChanged', (e) => {
+            if (dom.sheetShuffleBtn) {
+                const isShuf = !!e.detail?.isShuffle;
+                dom.sheetShuffleBtn.classList.toggle('active', isShuf);
+                dom.sheetShuffleBtn.style.color = isShuf ? 'var(--theme-color)' : 'var(--text-muted)';
+            }
+        });
     }
 
     // ===================================================================
@@ -5236,6 +6033,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeEditSongModal();
             return true;
         }
+        if (dom.modalHiddenSongs && dom.modalHiddenSongs.classList.contains('open')) {
+            closeHiddenSongsModal();
+            return true;
+        }
 
         // 2. 트랙 액션 바텀시트가 열려있는 경우 -> 시트 닫기
         if (dom.sheetTrackActions && dom.sheetTrackActions.classList.contains('open')) {
@@ -5250,6 +6051,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (state.isOfflineSelectMode) {
             toggleOfflineSelectMode(false);
+            return true;
+        }
+        if (state.isPlaylistSelectMode) {
+            togglePlaylistSelectMode(false);
             return true;
         }
 
@@ -5267,7 +6072,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 6. 전체화면 재생 시트가 열려있는 경우 -> 시트 닫고 메인으로 복귀
         if (dom.fullscreenSheet && dom.fullscreenSheet.classList.contains('open')) {
-            dom.fullscreenSheet.classList.remove('open');
+            closeMobilePlayerSheet();
             return true;
         }
 

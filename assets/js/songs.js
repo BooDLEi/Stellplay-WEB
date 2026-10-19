@@ -211,6 +211,132 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-MZNKiadMo3U",
+        "title": "第六感 (제육감)",
+        "artist": "시즈키 토아",
+        "originalArtist": "Reol",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["toa"],
+        "youtubeId": "MZNKiadMo3U",
+        "duration": 195,
+        "sabi": {
+            "start": 40,
+            "end": 80,
+            "title": "후렴구: 제육감"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "upbeat"
+    },
+    {
+        "id": "stel-iAoU1UGPoXc",
+        "title": "호랑풍류가 (나와 호랑이님 OST)",
+        "artist": "코가네 랑",
+        "originalArtist": "나와 호랑이님 OST",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["rang"],
+        "youtubeId": "iAoU1UGPoXc",
+        "duration": 253,
+        "sabi": {
+            "start": 55,
+            "end": 95,
+            "title": "후렴구: 호랑풍류가"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "bright"
+    },
+    {
+        "id": "stel-ouKcRBeyKbk",
+        "title": "ゆうれいになりたい (유령이 되고싶어)",
+        "artist": "하나요 히요리",
+        "originalArtist": "유이카 (Yuika)",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["hiyori"],
+        "youtubeId": "ouKcRBeyKbk",
+        "duration": 243,
+        "sabi": {
+            "start": 50,
+            "end": 90,
+            "title": "후렴구: 유령이 되고싶어"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "chill"
+    },
+    {
+        "id": "stel-rKQptWhAvO0",
+        "title": "東京テディベア (도쿄 테디베어)",
+        "artist": "토키노 메리",
+        "originalArtist": "Neru",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["mary"],
+        "youtubeId": "rKQptWhAvO0",
+        "duration": 194,
+        "sabi": {
+            "start": 48,
+            "end": 88,
+            "title": "후렴구: 도쿄 테디베어"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "upbeat"
+    },
+    {
+        "id": "stel-JLM7z8afU4s",
+        "title": "ア・プリオリ (아 프리오리)",
+        "artist": "아오쿠모 린",
+        "originalArtist": "Mrs. GREEN APPLE",
+        "type": "cover",
+        "gen": "g3",
+        "members": ["rin"],
+        "youtubeId": "JLM7z8afU4s",
+        "duration": 206,
+        "sabi": {
+            "start": 45,
+            "end": 85,
+            "title": "후렴구: 아 프리오리"
+        },
+        "publishedAt": "2026-10-12",
+        "mood": "upbeat"
+    },
+    {
+        "id": "stel-kNzGpNEdBqw",
+        "title": "オーバーライド (오버라이드)",
+        "artist": "아야츠노 유니",
+        "originalArtist": "吉田夜世 (요시다 야세이)",
+        "type": "cover",
+        "gen": "g1",
+        "members": ["yuni"],
+        "youtubeId": "kNzGpNEdBqw",
+        "duration": 139,
+        "sabi": {
+            "start": 32,
+            "end": 72,
+            "title": "후렴구: 오버라이드"
+        },
+        "publishedAt": "2026-10-09",
+        "mood": "cute"
+    },
+    {
+        "id": "stel-Qi_JLmXBFFo",
+        "title": "不可幸力 (불가행력)",
+        "artist": "아오쿠모 린",
+        "originalArtist": "Vaundy",
+        "type": "cover",
+        "gen": "g3",
+        "members": ["rin"],
+        "youtubeId": "Qi_JLmXBFFo",
+        "duration": 201,
+        "sabi": {
+            "start": 42,
+            "end": 82,
+            "title": "후렴구: 불가행력"
+        },
+        "publishedAt": "2026-09-30",
+        "mood": "chill"
+    },
+    {
         "id": "stel-fXoGiuE6e-I",
         "title": "Loop in June (명조:워더링 웨이브 OST)",
         "artist": "시라유키 히나",
@@ -227,11 +353,12 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: Loop in June"
         },
-        "publishedAt": "2026-10-11"
+        "publishedAt": "2026-10-11",
+        "mood": "bright"
     },
     {
         "id": "stel-bmFg-paLaMI",
-        "title": "브레인 롯 (Brain Rot)",
+        "title": "ブレインロット (브레인 롯)",
         "artist": "하나코 나나",
         "originalArtist": "도쿄 마나카 (Tokyo Manaka) feat. 카사네 테토",
         "type": "cover",
@@ -246,7 +373,8 @@ const DEFAULT_SONGS = [
             "end": 65,
             "title": "후렴구: 브레인 롯"
         },
-        "publishedAt": "2026-10-11"
+        "publishedAt": "2026-10-11",
+        "mood": "cute"
     },
     {
         "id": "stel-OlJ-7k9Trm0",
@@ -265,11 +393,12 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: Confrontation"
         },
-        "publishedAt": "2026-09-27"
+        "publishedAt": "2026-09-27",
+        "mood": "upbeat"
     },
     {
         "id": "stel-Qngf5HNfl6Q",
-        "title": "소녀레이 (少女レイ)",
+        "title": "少女レイ (소녀레이)",
         "artist": "시라유키 히나 x 유즈하 리코",
         "originalArtist": "みきとP (MikitoP)",
         "type": "cover",
@@ -285,7 +414,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 소녀레이"
         },
-        "publishedAt": "2026-09-27"
+        "publishedAt": "2026-09-27",
+        "mood": "chill"
     },
     {
         "id": "stel-Da77IyHlwao",
@@ -304,7 +434,8 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: 웃는남자"
         },
-        "publishedAt": "2026-09-26"
+        "publishedAt": "2026-09-26",
+        "mood": "chill"
     },
     {
         "id": "stel-FzefgoF26Ac",
@@ -323,7 +454,8 @@ const DEFAULT_SONGS = [
             "end": 105,
             "title": "후렴구: 여우의 별자리 「심월과 달의 노래」"
         },
-        "publishedAt": "2026-09-26"
+        "publishedAt": "2026-09-26",
+        "mood": "chill"
     },
     {
         "id": "stel-j_RAn7yvq_0",
@@ -342,7 +474,8 @@ const DEFAULT_SONGS = [
             "end": 65,
             "title": "후렴구: Alive 2"
         },
-        "publishedAt": "2026-09-25"
+        "publishedAt": "2026-09-25",
+        "mood": "upbeat"
     },
     {
         "id": "stel-F7kdEX0VRss",
@@ -361,7 +494,8 @@ const DEFAULT_SONGS = [
             "end": 85,
             "title": "후렴구: Dance The Night Away"
         },
-        "publishedAt": "2026-09-25"
+        "publishedAt": "2026-09-25",
+        "mood": "groovy"
     },
     {
         "id": "stel-jHc5yW6iOPk",
@@ -380,7 +514,8 @@ const DEFAULT_SONGS = [
             "end": 90,
             "title": "후렴구: Land of Lola"
         },
-        "publishedAt": "2026-09-24"
+        "publishedAt": "2026-09-24",
+        "mood": "upbeat"
     },
     {
         "id": "stel-y-rdBQSrzSs",
@@ -399,11 +534,12 @@ const DEFAULT_SONGS = [
             "end": 85,
             "title": "후렴구: Shining through the city with a little funk and soul"
         },
-        "publishedAt": "2026-09-21"
+        "publishedAt": "2026-09-21",
+        "mood": "groovy"
     },
     {
         "id": "stel-JsnnXkxNGQU",
-        "title": "Viva Happy (비바해피)",
+        "title": "ビバハピ (비바해피)",
         "artist": "에버리스 (사키하네 후야, 아야츠노 유니)",
         "originalArtist": "Mitchie M",
         "type": "cover",
@@ -419,11 +555,12 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 비바 비바 해피"
         },
-        "publishedAt": "2026-09-20"
+        "publishedAt": "2026-09-20",
+        "mood": "cute"
     },
     {
         "id": "stel-qv_VVUJOt0M",
-        "title": "Catallena (까탈레나) [3D Live]",
+        "title": "까탈레나 [3D Live]",
         "artist": "하나코 나나",
         "originalArtist": "오렌지캬라멜 (Orange Caramel)",
         "type": "live",
@@ -438,7 +575,8 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: 까탈레나"
         },
-        "publishedAt": "2026-09-17"
+        "publishedAt": "2026-09-17",
+        "mood": "cute"
     },
     {
         "id": "stel-npwilOOckxY",
@@ -457,11 +595,12 @@ const DEFAULT_SONGS = [
             "end": 86,
             "title": "후렴구: 100% for You"
         },
-        "publishedAt": "2026-09-14"
+        "publishedAt": "2026-09-14",
+        "mood": "bright"
     },
     {
         "id": "stel-blFr5w6o2jQ",
-        "title": "My Sea (아이와 나의 바다) [IU]",
+        "title": "아이와 나의 바다",
         "artist": "유즈하 리코",
         "originalArtist": "아이유 (IU)",
         "type": "cover",
@@ -476,11 +615,12 @@ const DEFAULT_SONGS = [
             "end": 114,
             "title": "후렴구: 아이와 나의 바다"
         },
-        "publishedAt": "2026-09-13"
+        "publishedAt": "2026-09-13",
+        "mood": "bright"
     },
     {
         "id": "stel-Zetk77I6_s8",
-        "title": "Otsukare Summer [おつかれsummer]",
+        "title": "おつかれsummer (오츠카레 서머)",
         "artist": "하나코 나나, 사키하네 후야",
         "originalArtist": "HALCALI",
         "type": "cover",
@@ -496,11 +636,12 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: Otsukare Summer"
         },
-        "publishedAt": "2026-09-12"
+        "publishedAt": "2026-09-12",
+        "mood": "bright"
     },
     {
         "id": "tabi-plover",
-        "title": "물떼새 (千鳥)",
+        "title": "千鳥 (물떼새)",
         "artist": "아라하시 타비",
         "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
@@ -515,7 +656,8 @@ const DEFAULT_SONGS = [
             "end": 92,
             "title": "후렴구: 물떼새의 날갯짓처럼 감미로운 멜로디"
         },
-        "publishedAt": "2026-09-07"
+        "publishedAt": "2026-09-07",
+        "mood": "chill"
     },
     {
         "id": "stel-Rkd03AguDJ4",
@@ -534,7 +676,8 @@ const DEFAULT_SONGS = [
             "end": 144,
             "title": "후렴구: 飛行艇(비행정) - King Gnu"
         },
-        "publishedAt": "2026-09-07"
+        "publishedAt": "2026-09-07",
+        "mood": "upbeat"
     },
     {
         "id": "feat-lize-sync100",
@@ -553,7 +696,8 @@ const DEFAULT_SONGS = [
             "end": 78,
             "title": "후렴구: 심장 박동과 싱크되는 비트"
         },
-        "publishedAt": "2026-09-04"
+        "publishedAt": "2026-09-04",
+        "mood": "bright"
     },
     {
         "id": "riko-lilac",
@@ -572,11 +716,12 @@ const DEFAULT_SONGS = [
             "end": 90,
             "title": "후렴구: 청량하고 맑은 리코의 라이락"
         },
-        "publishedAt": "2026-09-02"
+        "publishedAt": "2026-09-02",
+        "mood": "upbeat"
     },
     {
         "id": "stel-zQp6ZZAT6ew",
-        "title": "mosi mosi? (모시모시?)",
+        "title": "もしもし？ (모시모시?)",
         "artist": "텐코 시부키",
         "originalArtist": "楽音 (사사네)",
         "type": "cover",
@@ -591,7 +736,8 @@ const DEFAULT_SONGS = [
             "end": 92,
             "title": "후렴구: mosi mosi? (楽音 / 사사네"
         },
-        "publishedAt": "2026-09-02"
+        "publishedAt": "2026-09-02",
+        "mood": "groovy"
     },
     {
         "id": "hina-atlantis-princess",
@@ -610,7 +756,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: 청량한 여름 바다 감성"
         },
-        "publishedAt": "2026-09-01"
+        "publishedAt": "2026-09-01",
+        "mood": "chill"
     },
     {
         "id": "stel-SiBzI2htX2o",
@@ -629,7 +776,8 @@ const DEFAULT_SONGS = [
             "end": 130,
             "title": "후렴구: 구르는 바위, 네게 아침이 내린다 ["
         },
-        "publishedAt": "2026-09-01"
+        "publishedAt": "2026-09-01",
+        "mood": "upbeat"
     },
     {
         "id": "tabi-high-hopes",
@@ -648,7 +796,8 @@ const DEFAULT_SONGS = [
             "end": 82,
             "title": "후렴구: 긍정의 힘 High Hopes"
         },
-        "publishedAt": "2026-08-31"
+        "publishedAt": "2026-08-31",
+        "mood": "upbeat"
     },
     {
         "id": "stel-8shKFjkHabo",
@@ -667,11 +816,12 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: 푸른 산호초(青い珊瑚礁) - 松田 聖"
         },
-        "publishedAt": "2026-08-31"
+        "publishedAt": "2026-08-31",
+        "mood": "chill"
     },
     {
         "id": "duet-mashiro-shibuki-gladly",
-        "title": "はいよろんで (네, 기꺼이)",
+        "title": "はいよろこんで (네, 기꺼이)",
         "artist": "네네코 마시로 & 텐코 시부키",
         "originalArtist": "콧치노 켄토",
         "type": "cover",
@@ -687,7 +837,8 @@ const DEFAULT_SONGS = [
             "end": 76,
             "title": "후렴구: 마시로x시부키의 신나는 에너지"
         },
-        "publishedAt": "2026-08-29"
+        "publishedAt": "2026-08-29",
+        "mood": "cute"
     },
     {
         "id": "stel-rRMDL8lcSOY",
@@ -706,7 +857,8 @@ const DEFAULT_SONGS = [
             "end": 142,
             "title": "후렴구: 07/26/22 Yuzuha Riko"
         },
-        "publishedAt": "2026-08-22"
+        "publishedAt": "2026-08-22",
+        "mood": "chill"
     },
     {
         "id": "stel-YXIz7U42pgk",
@@ -725,7 +877,8 @@ const DEFAULT_SONGS = [
             "end": 109,
             "title": "후렴구: 논브레스 오블리주 [ノンブレス・オブリ"
         },
-        "publishedAt": "2026-08-16"
+        "publishedAt": "2026-08-16",
+        "mood": "upbeat"
     },
     {
         "id": "duet-riko-shibuki-you",
@@ -745,11 +898,12 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 리코x시부키의 상큼한 듀엣 하모니"
         },
-        "publishedAt": "2026-08-11"
+        "publishedAt": "2026-08-11",
+        "mood": "bright"
     },
     {
         "id": "stel-9S3if_u5n_Q",
-        "title": "少女レイ (소녀 레이)",
+        "title": "少女レイ (소녀레이)",
         "artist": "아오쿠모 린",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -764,11 +918,12 @@ const DEFAULT_SONGS = [
             "end": 136,
             "title": "후렴구: 소녀레이"
         },
-        "publishedAt": "2026-08-11"
+        "publishedAt": "2026-08-11",
+        "mood": "chill"
     },
     {
         "id": "stel-wu2a0AeQOCc",
-        "title": "미랫빛 라이더 (Mirairo Rider)",
+        "title": "미랫빛 라이더",
         "artist": "아카네 리제",
         "originalArtist": "명일방주: 엔드필드 EP",
         "type": "cover",
@@ -783,7 +938,8 @@ const DEFAULT_SONGS = [
             "end": 117,
             "title": "후렴구: 「명일방주: 엔드필드」 리노 EP -"
         },
-        "publishedAt": "2026-08-10"
+        "publishedAt": "2026-08-10",
+        "mood": "upbeat"
     },
     {
         "id": "stel-gkmnG2pWzys",
@@ -802,7 +958,8 @@ const DEFAULT_SONGS = [
             "end": 116,
             "title": "후렴구: 희극 (Comedy) [喜劇 / 호시"
         },
-        "publishedAt": "2026-08-07"
+        "publishedAt": "2026-08-07",
+        "mood": "chill"
     },
     {
         "id": "stel-SeDPbIKzmmI",
@@ -821,11 +978,12 @@ const DEFAULT_SONGS = [
             "end": 115,
             "title": "후렴구: Heroine Training Pla"
         },
-        "publishedAt": "2026-08-04"
+        "publishedAt": "2026-08-04",
+        "mood": "chill"
     },
     {
         "id": "duet-rin-riko-waste-sorting",
-        "title": "我ら！ゴミ分別団 (우리! 쓰레기 분리수거단)",
+        "title": "われら！ゴミ分別隊 (우리! 쓰레기 분리수거단)",
         "artist": "아오쿠모 린 & 유즈하 리코",
         "originalArtist": "Giga & TeddyLoid",
         "type": "cover",
@@ -841,7 +999,8 @@ const DEFAULT_SONGS = [
             "end": 80,
             "title": "후렴구: 린x리코의 귀엽고 힙한 랩 케미"
         },
-        "publishedAt": "2026-07-31"
+        "publishedAt": "2026-07-31",
+        "mood": "groovy"
     },
     {
         "id": "stel-_g29-2fUPSA",
@@ -861,7 +1020,8 @@ const DEFAULT_SONGS = [
             "end": 109,
             "title": "후렴구: 팝핀 캔디☆피버! (Poppin' C"
         },
-        "publishedAt": "2026-07-28"
+        "publishedAt": "2026-07-28",
+        "mood": "cute"
     },
     {
         "id": "cliche-rin-maid-my-way",
@@ -880,7 +1040,8 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: 당당하고 매력적인 메이드 마이 웨이"
         },
-        "publishedAt": "2026-07-27"
+        "publishedAt": "2026-07-27",
+        "mood": "cute"
     },
     {
         "id": "cliche-nana-hush-trap",
@@ -899,11 +1060,12 @@ const DEFAULT_SONGS = [
             "end": 80,
             "title": "후렴구: 빠져드는 감각의 허쉬 트랩"
         },
-        "publishedAt": "2026-07-26"
+        "publishedAt": "2026-07-26",
+        "mood": "groovy"
     },
     {
         "id": "cliche-shibuki-strawberry",
-        "title": "베리베리스트로베리",
+        "title": "Berry Verry Strawberry",
         "artist": "텐코 시부키",
         "originalArtist": "오리지널 (1st EP Colorful Strokes)",
         "type": "original",
@@ -918,11 +1080,12 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 상큼발랄 베리베리 스트로베리"
         },
-        "publishedAt": "2026-07-25"
+        "publishedAt": "2026-07-25",
+        "mood": "cute"
     },
     {
         "id": "cliche-riko-villain-alert",
-        "title": "악당주의보",
+        "title": "Villain Alert",
         "artist": "유즈하 리코",
         "originalArtist": "오리지널 (1st EP Colorful Strokes)",
         "type": "original",
@@ -937,7 +1100,8 @@ const DEFAULT_SONGS = [
             "end": 86,
             "title": "후렴구: 경고! 매력적인 악당주의보 발령"
         },
-        "publishedAt": "2026-07-24"
+        "publishedAt": "2026-07-24",
+        "mood": "bright"
     },
     {
         "id": "stel-Akx45HCYgf0",
@@ -956,7 +1120,8 @@ const DEFAULT_SONGS = [
             "end": 126,
             "title": "후렴구: セカイ(SEKAI) - DECO*27"
         },
-        "publishedAt": "2026-07-21"
+        "publishedAt": "2026-07-21",
+        "mood": "bright"
     },
     {
         "id": "stel-CokAlegAnsM",
@@ -975,7 +1140,8 @@ const DEFAULT_SONGS = [
             "end": 83,
             "title": "후렴구: Love Is Like - Music"
         },
-        "publishedAt": "2026-07-19"
+        "publishedAt": "2026-07-19",
+        "mood": "bright"
     },
     {
         "id": "stel-dhudKbeIMJg",
@@ -994,7 +1160,8 @@ const DEFAULT_SONGS = [
             "end": 131,
             "title": "후렴구: 서머타임레코드 [サマータイムレコード"
         },
-        "publishedAt": "2026-07-15"
+        "publishedAt": "2026-07-15",
+        "mood": "bright"
     },
     {
         "id": "huya-booo",
@@ -1013,11 +1180,12 @@ const DEFAULT_SONGS = [
             "end": 82,
             "title": "후렴구: 후야의 통통 튀는 보컬"
         },
-        "publishedAt": "2026-07-07"
+        "publishedAt": "2026-07-07",
+        "mood": "cute"
     },
     {
         "id": "lize-blue-green",
-        "title": "청록 [Blue Rock]",
+        "title": "青緑 (청록)",
         "artist": "아카네 리제",
         "originalArtist": "it's",
         "type": "cover",
@@ -1032,11 +1200,12 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: 푸르게 물드는 락 감성"
         },
-        "publishedAt": "2026-07-04"
+        "publishedAt": "2026-07-04",
+        "mood": "upbeat"
     },
     {
         "id": "shibuki-dear-boy",
-        "title": "拝啓、少年よ (친애하는 소년이여)",
+        "title": "拝啓、少年よ (삼가 아룁니다, 소년이여)",
         "artist": "텐코 시부키",
         "originalArtist": "Hump Back",
         "type": "cover",
@@ -1051,11 +1220,12 @@ const DEFAULT_SONGS = [
             "end": 80,
             "title": "후렴구: 직진하는 청춘의 응원가"
         },
-        "publishedAt": "2026-06-29"
+        "publishedAt": "2026-06-29",
+        "mood": "groovy"
     },
     {
         "id": "stel-y1nUYj_D1Es",
-        "title": "물떼새 (千鳥)",
+        "title": "千鳥 (물떼새)",
         "artist": "아오쿠모 린",
         "originalArtist": "Yorushika (ヨルシカ)",
         "type": "cover",
@@ -1070,11 +1240,12 @@ const DEFAULT_SONGS = [
             "end": 123,
             "title": "후렴구: 물떼새(ヨルシカ - 千鳥)"
         },
-        "publishedAt": "2026-06-28"
+        "publishedAt": "2026-06-28",
+        "mood": "chill"
     },
     {
         "id": "stel-_pTBkDP1TE0",
-        "title": "Loveit? (러빗)",
+        "title": "Loveit?",
         "artist": "하나코 나나",
         "originalArtist": "biz×ZERA",
         "type": "cover",
@@ -1089,11 +1260,12 @@ const DEFAULT_SONGS = [
             "end": 86,
             "title": "후렴구: Loveit? - biz×ZERA(f"
         },
-        "publishedAt": "2026-06-22"
+        "publishedAt": "2026-06-22",
+        "mood": "bright"
     },
     {
         "id": "tabi-night-thinking",
-        "title": "밤새도록 널 생각해",
+        "title": "夜もすがら君想ふ (밤새도록 널 생각해)",
         "artist": "아라하시 타비",
         "originalArtist": "TOKOTOKO (西沢さんP)",
         "type": "cover",
@@ -1108,7 +1280,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 밤새도록 널 생각하는 밤"
         },
-        "publishedAt": "2026-06-20"
+        "publishedAt": "2026-06-20",
+        "mood": "groovy"
     },
     {
         "id": "stel-heart-score",
@@ -1130,7 +1303,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 마음을 담아 연주하는 악보"
         },
-        "publishedAt": "2026-06-11"
+        "publishedAt": "2026-06-11",
+        "mood": "chill"
     },
     {
         "id": "tabi-wish-me-luck",
@@ -1149,7 +1323,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: 행운을 빌어 줘"
         },
-        "publishedAt": "2026-06-11"
+        "publishedAt": "2026-06-11",
+        "mood": "groovy"
     },
     {
         "id": "stel-_t4OxKtCHrg",
@@ -1168,11 +1343,12 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: Standing on the Stag"
         },
-        "publishedAt": "2026-06-11"
+        "publishedAt": "2026-06-11",
+        "mood": "upbeat"
     },
     {
         "id": "stel-VTTQJNcmlD0",
-        "title": "また明日 (내일 또 보자)",
+        "title": "またあした (내일 또 보자)",
         "artist": "시라유키 히나",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -1187,7 +1363,8 @@ const DEFAULT_SONGS = [
             "end": 151,
             "title": "후렴구: 내일 또 보자(またあした) - ふわり"
         },
-        "publishedAt": "2026-06-10"
+        "publishedAt": "2026-06-10",
+        "mood": "chill"
     },
     {
         "id": "stel-f7uaxrWNIdE",
@@ -1206,11 +1383,12 @@ const DEFAULT_SONGS = [
             "end": 87,
             "title": "후렴구: Delusional Aspartame"
         },
-        "publishedAt": "2026-06-10"
+        "publishedAt": "2026-06-10",
+        "mood": "cute"
     },
     {
         "id": "shibuki-start",
-        "title": "START (스타트)",
+        "title": "START",
         "artist": "텐코 시부키",
         "originalArtist": "Mrs. GREEN APPLE",
         "type": "live",
@@ -1225,7 +1403,8 @@ const DEFAULT_SONGS = [
             "end": 92,
             "title": "후렴구: 시부키의 활기찬 에너지 StaRt"
         },
-        "publishedAt": "2026-06-09"
+        "publishedAt": "2026-06-09",
+        "mood": "groovy"
     },
     {
         "id": "rin-one-ok-rock",
@@ -1244,7 +1423,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 폭발적인 린의 락 샤우팅"
         },
-        "publishedAt": "2026-06-07"
+        "publishedAt": "2026-06-07",
+        "mood": "upbeat"
     },
     {
         "id": "duet-yuni-rin-ego-rock",
@@ -1264,11 +1444,12 @@ const DEFAULT_SONGS = [
             "end": 74,
             "title": "후렴구: 유니x린의 신나는 에고 록"
         },
-        "publishedAt": "2026-06-03"
+        "publishedAt": "2026-06-03",
+        "mood": "upbeat"
     },
     {
         "id": "duet-mashiro-riko-not-devil",
-        "title": "悪魔じゃないもん (악마가 아닌걸)",
+        "title": "デビルじゃないもん (악마가 아닌걸)",
         "artist": "유즈하 리코 & 네네코 마시로",
         "originalArtist": "DECO*27 x 피노키오피",
         "type": "cover",
@@ -1284,7 +1465,8 @@ const DEFAULT_SONGS = [
             "end": 86,
             "title": "후렴구: 마시로x리코의 통통 튀는 보컬"
         },
-        "publishedAt": "2026-05-28"
+        "publishedAt": "2026-05-28",
+        "mood": "cute"
     },
     {
         "id": "stel-yRKJ5-vcMUI",
@@ -1303,7 +1485,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: Mrs. GREEN APPLE - 춘"
         },
-        "publishedAt": "2026-05-27"
+        "publishedAt": "2026-05-27",
+        "mood": "chill"
     },
     {
         "id": "stel-SUJm8SX87DY",
@@ -1322,11 +1505,12 @@ const DEFAULT_SONGS = [
             "end": 120,
             "title": "후렴구: drivers license - Ol"
         },
-        "publishedAt": "2026-05-24"
+        "publishedAt": "2026-05-24",
+        "mood": "chill"
     },
     {
         "id": "stel-L-pn_xrqQkQ",
-        "title": "Hollowness (할로우니스)",
+        "title": "Hollowness",
         "artist": "아카네 리제",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -1341,7 +1525,8 @@ const DEFAULT_SONGS = [
             "end": 147,
             "title": "후렴구: Hollowness - 「 美波」ㅣA"
         },
-        "publishedAt": "2026-05-23"
+        "publishedAt": "2026-05-23",
+        "mood": "upbeat"
     },
     {
         "id": "stel-bRa_zAaaCCE",
@@ -1361,7 +1546,8 @@ const DEFAULT_SONGS = [
             "end": 103,
             "title": "후렴구: Onegai Darling \"Oneg"
         },
-        "publishedAt": "2026-05-21"
+        "publishedAt": "2026-05-21",
+        "mood": "cute"
     },
     {
         "id": "stel-meteor-shower",
@@ -1383,11 +1569,12 @@ const DEFAULT_SONGS = [
             "end": 86,
             "title": "유성우"
         },
-        "publishedAt": "2026-05-19"
+        "publishedAt": "2026-05-19",
+        "mood": "bright"
     },
     {
         "id": "stel-xwuVYaJYERo",
-        "title": "私に花束 (나에게 꽃다발)",
+        "title": "わたしに花束 (나에게 꽃다발)",
         "artist": "텐코 시부키",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -1402,7 +1589,8 @@ const DEFAULT_SONGS = [
             "end": 114,
             "title": "후렴구: 나에게 꽃다발 [わたしに花束 - Ad"
         },
-        "publishedAt": "2026-05-18"
+        "publishedAt": "2026-05-18",
+        "mood": "groovy"
     },
     {
         "id": "stel-NGyCzUHjorI",
@@ -1422,7 +1610,8 @@ const DEFAULT_SONGS = [
             "start": 55,
             "end": 85,
             "title": "사비: 가슴속 타오르는 불꽃"
-        }
+        },
+        "mood": "upbeat"
     },
     {
         "id": "stel-KmH0RhhenzE",
@@ -1441,11 +1630,12 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: Deja vu (Olivia Rodr"
         },
-        "publishedAt": "2026-05-10"
+        "publishedAt": "2026-05-10",
+        "mood": "bright"
     },
     {
         "id": "stel-tD9N1BhSrCI",
-        "title": "너에게, 나의 빛",
+        "title": "To You, My Light",
         "artist": "스텔라이브 (STELLIVE)",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -1460,11 +1650,12 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: To You, My Light"
         },
-        "publishedAt": "2026-05-08"
+        "publishedAt": "2026-05-08",
+        "mood": "bright"
     },
     {
         "id": "stel-v094-E3Pmtk",
-        "title": "스타트레일",
+        "title": "STAR TRAIL",
         "artist": "스텔라이브 (STELLIVE)",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -1479,7 +1670,8 @@ const DEFAULT_SONGS = [
             "end": 117,
             "title": "후렴구: 스텔라이브 (StelLive) I"
         },
-        "publishedAt": "2026-05-08"
+        "publishedAt": "2026-05-08",
+        "mood": "bright"
     },
     {
         "id": "stel-6mVByQMyxdY",
@@ -1504,11 +1696,12 @@ const DEFAULT_SONGS = [
             "end": 160,
             "title": "후렴구: 그때 그 시절, 추억의 투니버스 메들리"
         },
-        "publishedAt": "2026-05-05"
+        "publishedAt": "2026-05-05",
+        "mood": "bright"
     },
     {
         "id": "stel-jTUOSAmCqeI",
-        "title": "ダンスホール (댄스홀)",
+        "title": "Dancehall",
         "artist": "아오쿠모 린",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -1523,7 +1716,8 @@ const DEFAULT_SONGS = [
             "end": 105,
             "title": "후렴구: Dancehall (Mrs. GREE"
         },
-        "publishedAt": "2026-05-03"
+        "publishedAt": "2026-05-03",
+        "mood": "groovy"
     },
     {
         "id": "stel--RrbCkl3YJo",
@@ -1542,7 +1736,8 @@ const DEFAULT_SONGS = [
             "end": 129,
             "title": "후렴구: Melt CPK! Remix (初音ミ"
         },
-        "publishedAt": "2026-04-30"
+        "publishedAt": "2026-04-30",
+        "mood": "bright"
     },
     {
         "id": "stel-C0hOHzutBRI",
@@ -1561,11 +1756,12 @@ const DEFAULT_SONGS = [
             "end": 158,
             "title": "후렴구: Orange [ オレンジ / Your"
         },
-        "publishedAt": "2026-04-30"
+        "publishedAt": "2026-04-30",
+        "mood": "bright"
     },
     {
         "id": "stel-CU8hsIhmkwc",
-        "title": "orion (오리온)",
+        "title": "orion",
         "artist": "아카네 리제",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -1580,7 +1776,8 @@ const DEFAULT_SONGS = [
             "end": 135,
             "title": "후렴구: orion - [Kenshi Yone"
         },
-        "publishedAt": "2026-04-19"
+        "publishedAt": "2026-04-19",
+        "mood": "upbeat"
     },
     {
         "id": "stel-5rQSMZLi5z4",
@@ -1599,7 +1796,8 @@ const DEFAULT_SONGS = [
             "end": 136,
             "title": "후렴구: Eine Kleine (アイネクライネ"
         },
-        "publishedAt": "2026-04-19"
+        "publishedAt": "2026-04-19",
+        "mood": "bright"
     },
     {
         "id": "stel-LxqwR1KE81o",
@@ -1618,7 +1816,8 @@ const DEFAULT_SONGS = [
             "end": 127,
             "title": "후렴구: Acacia (BUMP OF CHIC"
         },
-        "publishedAt": "2026-04-18"
+        "publishedAt": "2026-04-18",
+        "mood": "chill"
     },
     {
         "id": "stel-fLLX2R-RwVE",
@@ -1637,7 +1836,8 @@ const DEFAULT_SONGS = [
             "end": 140,
             "title": "후렴구: 숨바꼭질"
         },
-        "publishedAt": "2026-04-13"
+        "publishedAt": "2026-04-13",
+        "mood": "chill"
     },
     {
         "id": "stel-m-rIYEw5uAs",
@@ -1656,7 +1856,8 @@ const DEFAULT_SONGS = [
             "end": 103,
             "title": "후렴구: StelLive | 'I Want t"
         },
-        "publishedAt": "2026-04-10"
+        "publishedAt": "2026-04-10",
+        "mood": "chill"
     },
     {
         "id": "huya-blue-sky",
@@ -1675,7 +1876,8 @@ const DEFAULT_SONGS = [
             "end": 94,
             "title": "후렴구: 마음을 울리는 푸른 하늘의 랩소디"
         },
-        "publishedAt": "2026-03-30"
+        "publishedAt": "2026-03-30",
+        "mood": "upbeat"
     },
     {
         "id": "stel-DHG3s8GF1DM",
@@ -1694,7 +1896,8 @@ const DEFAULT_SONGS = [
             "end": 141,
             "title": "후렴구: Stellar Stellar - [星"
         },
-        "publishedAt": "2026-03-29"
+        "publishedAt": "2026-03-29",
+        "mood": "upbeat"
     },
     {
         "id": "stel-prBtBX0wGxc",
@@ -1713,11 +1916,12 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: Carried on a Love Co"
         },
-        "publishedAt": "2026-03-28"
+        "publishedAt": "2026-03-28",
+        "mood": "groovy"
     },
     {
         "id": "stel-cWnykOC5b_c",
-        "title": "phony (포니)",
+        "title": "フォニイ (포니)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -1732,7 +1936,8 @@ const DEFAULT_SONGS = [
             "end": 101,
             "title": "후렴구: phony"
         },
-        "publishedAt": "2026-03-26"
+        "publishedAt": "2026-03-26",
+        "mood": "bright"
     },
     {
         "id": "stel-RLKm8ymJPlo",
@@ -1751,11 +1956,12 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: Oh..."
         },
-        "publishedAt": "2026-03-25"
+        "publishedAt": "2026-03-25",
+        "mood": "bright"
     },
     {
         "id": "stel-IoBUWPQ3dwc",
-        "title": "One Last Kiss (신 에반게리온 극장판 OST)",
+        "title": "One Last Kiss",
         "artist": "하나코 나나",
         "originalArtist": "우타다 히카루 (신 에반게리온 극장판 𝄇 OST)",
         "type": "ost",
@@ -1770,7 +1976,8 @@ const DEFAULT_SONGS = [
             "end": 125,
             "title": "후렴구: One Last Kiss - 『宇多田"
         },
-        "publishedAt": "2026-03-22"
+        "publishedAt": "2026-03-22",
+        "mood": "chill"
     },
     {
         "id": "shibuki-happy-thought",
@@ -1789,11 +1996,12 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: 마음에 스며드는 시부키의 노래"
         },
-        "publishedAt": "2026-03-21"
+        "publishedAt": "2026-03-21",
+        "mood": "bright"
     },
     {
         "id": "duet-hina-lize-ray",
-        "title": "ray (레이)",
+        "title": "ray",
         "artist": "시라유키 히나 & 아카네 리제",
         "originalArtist": "BUMP OF CHICKEN",
         "type": "cover",
@@ -1809,7 +2017,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 히나x리제의 감동적인 듀엣 하모니"
         },
-        "publishedAt": "2026-03-17"
+        "publishedAt": "2026-03-17",
+        "mood": "upbeat"
     },
     {
         "id": "stel-5uOxZswwBx4",
@@ -1829,7 +2038,8 @@ const DEFAULT_SONGS = [
             "end": 87,
             "title": "후렴구: Maid Supremacy [メイド☆"
         },
-        "publishedAt": "2026-03-14"
+        "publishedAt": "2026-03-14",
+        "mood": "cute"
     },
     {
         "id": "stel-LOpOiL7S_0I",
@@ -1848,11 +2058,12 @@ const DEFAULT_SONGS = [
             "end": 131,
             "title": "후렴구: 주름 맞추기 [しわあわせ - Vaun"
         },
-        "publishedAt": "2026-02-27"
+        "publishedAt": "2026-02-27",
+        "mood": "upbeat"
     },
     {
         "id": "stel-QXUxnxoOIOI",
-        "title": "AIZO (아이조)",
+        "title": "AIZO",
         "artist": "아오쿠모 린",
         "originalArtist": "King Gnu",
         "type": "cover",
@@ -1867,11 +2078,12 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: AIZO"
         },
-        "publishedAt": "2026-02-24"
+        "publishedAt": "2026-02-24",
+        "mood": "upbeat"
     },
     {
         "id": "stel-he2W_4xY5Zo",
-        "title": "트윙클",
+        "title": "Twinkle",
         "artist": "스텔라이브 (STELLIVE)",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -1886,7 +2098,8 @@ const DEFAULT_SONGS = [
             "end": 115,
             "title": "후렴구: 스텔라이브 (StelLive) | T"
         },
-        "publishedAt": "2026-02-23"
+        "publishedAt": "2026-02-23",
+        "mood": "bright"
     },
     {
         "id": "tabi-lady",
@@ -1905,7 +2118,8 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 부드러운 타비의 시티팝 감성"
         },
-        "publishedAt": "2026-02-18"
+        "publishedAt": "2026-02-18",
+        "mood": "groovy"
     },
     {
         "id": "stel-noKfckxJ2PU",
@@ -1924,7 +2138,8 @@ const DEFAULT_SONGS = [
             "end": 135,
             "title": "후렴구: 죄와 벌(罪と罰) [椎名林檎(시이나"
         },
-        "publishedAt": "2026-02-17"
+        "publishedAt": "2026-02-17",
+        "mood": "bright"
     },
     {
         "id": "stel-NAu_CVmP-bw",
@@ -1943,7 +2158,8 @@ const DEFAULT_SONGS = [
             "end": 117,
             "title": "후렴구: 바다의 유령 (海の幽霊) - Kens"
         },
-        "publishedAt": "2026-02-16"
+        "publishedAt": "2026-02-16",
+        "mood": "chill"
     },
     {
         "id": "hina-mela",
@@ -1962,7 +2178,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 시원하고 힘찬 멜라 사비"
         },
-        "publishedAt": "2026-02-15"
+        "publishedAt": "2026-02-15",
+        "mood": "bright"
     },
     {
         "id": "duet-tabi-tsuna-one-page",
@@ -1981,7 +2198,8 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 청춘의 한 페이지가 될 수 있게"
         },
-        "publishedAt": "2026-02-14"
+        "publishedAt": "2026-02-14",
+        "mood": "upbeat"
     },
     {
         "id": "stel-9a_qB79ntPQ",
@@ -2001,11 +2219,12 @@ const DEFAULT_SONGS = [
             "end": 118,
             "title": "후렴구: choco"
         },
-        "publishedAt": "2026-02-14"
+        "publishedAt": "2026-02-14",
+        "mood": "cute"
     },
     {
         "id": "stel-Sj51pWOnW1o",
-        "title": "Chewing Love",
+        "title": "CHEWING LUV",
         "artist": "아야츠노 유니 x 사키하네 후야",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -2021,7 +2240,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: CHEWING LUV [아야츠노 유니"
         },
-        "publishedAt": "2026-02-14"
+        "publishedAt": "2026-02-14",
+        "mood": "cute"
     },
     {
         "id": "stel-vD5g9qVz4zg",
@@ -2040,11 +2260,12 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: ラブレター (YOASOBI)"
         },
-        "publishedAt": "2026-02-14"
+        "publishedAt": "2026-02-14",
+        "mood": "groovy"
     },
     {
         "id": "stel-sekai-group",
-        "title": "セカイ (SEKAI)",
+        "title": "セカイ (세카이)",
         "artist": "스텔라이브 (STELLIVE)",
         "originalArtist": "DECO*27 x 堀江晶太",
         "type": "cover",
@@ -2064,11 +2285,12 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: 끝없이 펼쳐진 세카이"
         },
-        "publishedAt": "2026-02-01"
+        "publishedAt": "2026-02-01",
+        "mood": "bright"
     },
     {
         "id": "hina-season-crime",
-        "title": "계절범죄 (Season Crime)",
+        "title": "계절범죄",
         "artist": "시라유키 히나",
         "originalArtist": "Miiro (미로)",
         "type": "cover",
@@ -2083,11 +2305,12 @@ const DEFAULT_SONGS = [
             "end": 92,
             "title": "후렴구: 계절을 넘어 퍼지는 목소리"
         },
-        "publishedAt": "2026-01-31"
+        "publishedAt": "2026-01-31",
+        "mood": "chill"
     },
     {
         "id": "shibuki-daybreak-frontline",
-        "title": "DAYBREAK FRONTLINE (데이브레이크 프론트라인)",
+        "title": "DAYBREAK FRONTLINE",
         "artist": "텐코 시부키",
         "originalArtist": "Orangestar",
         "type": "cover",
@@ -2102,7 +2325,8 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 새벽을 가르는 질주 보컬"
         },
-        "publishedAt": "2026-01-31"
+        "publishedAt": "2026-01-31",
+        "mood": "groovy"
     },
     {
         "id": "stel-lBtlpVXmbYY",
@@ -2121,7 +2345,8 @@ const DEFAULT_SONGS = [
             "end": 126,
             "title": "후렴구: 밤을 달리다 夜に駆ける - YOASO"
         },
-        "publishedAt": "2026-01-25"
+        "publishedAt": "2026-01-25",
+        "mood": "bright"
     },
     {
         "id": "stel-Nmkp68aUw1o",
@@ -2140,7 +2365,8 @@ const DEFAULT_SONGS = [
             "end": 143,
             "title": "후렴구: 카가리비토 [カガリビト - mills"
         },
-        "publishedAt": "2026-01-24"
+        "publishedAt": "2026-01-24",
+        "mood": "bright"
     },
     {
         "id": "nana-rain",
@@ -2159,7 +2385,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: 가슴을 파고드는 나나의 비장한 보컬"
         },
-        "publishedAt": "2026-01-19"
+        "publishedAt": "2026-01-19",
+        "mood": "chill"
     },
     {
         "id": "stel-WykYeuqGxh8",
@@ -2178,7 +2405,8 @@ const DEFAULT_SONGS = [
             "end": 127,
             "title": "후렴구: Melt (メルト/supercell"
         },
-        "publishedAt": "2026-01-05"
+        "publishedAt": "2026-01-05",
+        "mood": "chill"
     },
     {
         "id": "stel-jyU6GkzD2CA",
@@ -2197,7 +2425,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 사신 (요네즈 켄시)"
         },
-        "publishedAt": "2025-12-30"
+        "publishedAt": "2025-12-30",
+        "mood": "groovy"
     },
     {
         "id": "riko-heroine",
@@ -2216,7 +2445,8 @@ const DEFAULT_SONGS = [
             "end": 118,
             "title": "후렴구: 겨울 눈꽃처럼 내려앉는 감성"
         },
-        "publishedAt": "2025-12-25"
+        "publishedAt": "2025-12-25",
+        "mood": "chill"
     },
     {
         "id": "stel-YorjOBy85ck",
@@ -2235,7 +2465,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 크리스마스 송(クリスマスソング)"
         },
-        "publishedAt": "2025-12-25"
+        "publishedAt": "2025-12-25",
+        "mood": "chill"
     },
     {
         "id": "stel-30dd8K_i-38",
@@ -2254,7 +2485,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 메리크리(メリクリ) BoA"
         },
-        "publishedAt": "2025-12-25"
+        "publishedAt": "2025-12-25",
+        "mood": "groovy"
     },
     {
         "id": "stel-e2Jn_8JWtNw",
@@ -2273,7 +2505,8 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: Number one rockstar"
         },
-        "publishedAt": "2025-12-25"
+        "publishedAt": "2025-12-25",
+        "mood": "upbeat"
     },
     {
         "id": "stel-vPFzWl54pt0",
@@ -2292,7 +2525,8 @@ const DEFAULT_SONGS = [
             "end": 120,
             "title": "후렴구: 참생활 「真生活」 (KAKASHI)"
         },
-        "publishedAt": "2025-12-25"
+        "publishedAt": "2025-12-25",
+        "mood": "cute"
     },
     {
         "id": "stel-zHbh6KO1dFo",
@@ -2311,7 +2545,8 @@ const DEFAULT_SONGS = [
             "end": 81,
             "title": "후렴구: All I Want For Chris"
         },
-        "publishedAt": "2025-12-24"
+        "publishedAt": "2025-12-24",
+        "mood": "bright"
     },
     {
         "id": "stel-rRvumOvx21Y",
@@ -2330,7 +2565,8 @@ const DEFAULT_SONGS = [
             "end": 142,
             "title": "후렴구: 케세라세라 [Mrs. GREEN AP"
         },
-        "publishedAt": "2025-12-18"
+        "publishedAt": "2025-12-18",
+        "mood": "upbeat"
     },
     {
         "id": "duet-nana-hina-joker",
@@ -2350,11 +2586,12 @@ const DEFAULT_SONGS = [
             "end": 82,
             "title": "후렴구: 나나x히나의 감각적인 R&B 조화"
         },
-        "publishedAt": "2025-12-14"
+        "publishedAt": "2025-12-14",
+        "mood": "groovy"
     },
     {
         "id": "stel-6RKyMwilHJ0",
-        "title": "개화 (Blooming)",
+        "title": "개화",
         "artist": "시라유키 히나",
         "originalArtist": "명조: 워더링 웨이브 선약 방송국 OST",
         "type": "ost",
@@ -2369,7 +2606,8 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: 피어나는 꽃처럼 개화"
         },
-        "publishedAt": "2025-12-07"
+        "publishedAt": "2025-12-07",
+        "mood": "chill"
     },
     {
         "id": "stel-td73oLSQug0",
@@ -2388,7 +2626,8 @@ const DEFAULT_SONGS = [
             "end": 97,
             "title": "후렴구: 토도로키 하지메 (轟はじめ) x 하나"
         },
-        "publishedAt": "2025-12-05"
+        "publishedAt": "2025-12-05",
+        "mood": "upbeat"
     },
     {
         "id": "stel-R_B4tmy2DVA",
@@ -2407,7 +2646,8 @@ const DEFAULT_SONGS = [
             "end": 107,
             "title": "후렴구: Weigh Anchor [抜錨 (Ba"
         },
-        "publishedAt": "2025-12-04"
+        "publishedAt": "2025-12-04",
+        "mood": "upbeat"
     },
     {
         "id": "stel-eYaX9aDtlmA",
@@ -2426,7 +2666,8 @@ const DEFAULT_SONGS = [
             "end": 123,
             "title": "후렴구: 목마름을 외치다 (美波 - カワキヲア"
         },
-        "publishedAt": "2025-11-27"
+        "publishedAt": "2025-11-27",
+        "mood": "bright"
     },
     {
         "id": "duet-yuni-huya-poppin",
@@ -2446,7 +2687,8 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 유니x후야의 달콤한 듀엣 피버"
         },
-        "publishedAt": "2025-11-25"
+        "publishedAt": "2025-11-25",
+        "mood": "cute"
     },
     {
         "id": "stel-9kvoxFiYmWU",
@@ -2465,7 +2707,8 @@ const DEFAULT_SONGS = [
             "end": 149,
             "title": "후렴구: 깜빡임 (瞬き, back number"
         },
-        "publishedAt": "2025-11-21"
+        "publishedAt": "2025-11-21",
+        "mood": "chill"
     },
     {
         "id": "stel-bJqdy8925Oc",
@@ -2484,7 +2727,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 생명에게 미움받고 있어 (命に嫌われて"
         },
-        "publishedAt": "2025-11-14"
+        "publishedAt": "2025-11-14",
+        "mood": "groovy"
     },
     {
         "id": "stel-lZHyUw7LWSw",
@@ -2503,11 +2747,12 @@ const DEFAULT_SONGS = [
             "end": 135,
             "title": "후렴구: 수평선 (水平線, back numbe"
         },
-        "publishedAt": "2025-11-13"
+        "publishedAt": "2025-11-13",
+        "mood": "chill"
     },
     {
         "id": "stel-TDn37k6Ccw0",
-        "title": "Chewing Love",
+        "title": "CHEWING LUV",
         "artist": "아야츠노 유니",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -2522,7 +2767,8 @@ const DEFAULT_SONGS = [
             "end": 97,
             "title": "후렴구: CHEWING LUV"
         },
-        "publishedAt": "2025-11-12"
+        "publishedAt": "2025-11-12",
+        "mood": "cute"
     },
     {
         "id": "stel-IQbeBUIVmdw",
@@ -2541,7 +2787,8 @@ const DEFAULT_SONGS = [
             "end": 85,
             "title": "후렴구: 아야츠노 유니 ( Ayatsuno Y"
         },
-        "publishedAt": "2025-11-12"
+        "publishedAt": "2025-11-12",
+        "mood": "cute"
     },
     {
         "id": "rin-stay",
@@ -2560,7 +2807,8 @@ const DEFAULT_SONGS = [
             "end": 68,
             "title": "후렴구: 린의 리드미컬한 팝 스타일"
         },
-        "publishedAt": "2025-11-11"
+        "publishedAt": "2025-11-11",
+        "mood": "bright"
     },
     {
         "id": "stel-Ip25Jhh5zU0",
@@ -2579,7 +2827,8 @@ const DEFAULT_SONGS = [
             "end": 86,
             "title": "후렴구: IRIS OUT (요네즈 켄시)"
         },
-        "publishedAt": "2025-11-09"
+        "publishedAt": "2025-11-09",
+        "mood": "bright"
     },
     {
         "id": "stel-bEgwL-XL05U",
@@ -2598,7 +2847,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: Lil Nas X - Star Wal"
         },
-        "publishedAt": "2025-11-09"
+        "publishedAt": "2025-11-09",
+        "mood": "upbeat"
     },
     {
         "id": "stel-dxsiVSbpm8k",
@@ -2617,7 +2867,8 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: Utatane (Leina) / Ak"
         },
-        "publishedAt": "2025-10-30"
+        "publishedAt": "2025-10-30",
+        "mood": "upbeat"
     },
     {
         "id": "stel-EIii4EXsfsU",
@@ -2637,7 +2888,8 @@ const DEFAULT_SONGS = [
             "end": 117,
             "title": "후렴구: JANE DOE (Kenshi Yon"
         },
-        "publishedAt": "2025-10-27"
+        "publishedAt": "2025-10-27",
+        "mood": "groovy"
     },
     {
         "id": "stel-eHiPI6fybFo",
@@ -2656,7 +2908,8 @@ const DEFAULT_SONGS = [
             "end": 105,
             "title": "후렴구: Nerissa Ravencroft x"
         },
-        "publishedAt": "2025-10-26"
+        "publishedAt": "2025-10-26",
+        "mood": "groovy"
     },
     {
         "id": "stel-nknH0KshgpY",
@@ -2675,7 +2928,8 @@ const DEFAULT_SONGS = [
             "end": 134,
             "title": "후렴구: 숙명 (Official髭男dism -"
         },
-        "publishedAt": "2025-10-25"
+        "publishedAt": "2025-10-25",
+        "mood": "bright"
     },
     {
         "id": "stel-aH8Io8klASU",
@@ -2694,11 +2948,12 @@ const DEFAULT_SONGS = [
             "end": 117,
             "title": "후렴구: JANE DOE (Kenshi Yon"
         },
-        "publishedAt": "2025-10-23"
+        "publishedAt": "2025-10-23",
+        "mood": "groovy"
     },
     {
         "id": "stel-6gEc7lUi6xs",
-        "title": "울려퍼져라 (ヒビカセ / Hibikase)",
+        "title": "ヒビカセ (울려퍼져라)",
         "artist": "텐코 시부키 x 하나코 나나",
         "originalArtist": "Giga",
         "type": "cover",
@@ -2714,7 +2969,8 @@ const DEFAULT_SONGS = [
             "end": 126,
             "title": "후렴구: 울려퍼져라 (Hibikase ヒビカセ"
         },
-        "publishedAt": "2025-10-21"
+        "publishedAt": "2025-10-21",
+        "mood": "groovy"
     },
     {
         "id": "stel-rxarDgejkZg",
@@ -2733,7 +2989,8 @@ const DEFAULT_SONGS = [
             "end": 87,
             "title": "후렴구: IRIS OUT (요네즈 켄시)"
         },
-        "publishedAt": "2025-10-19"
+        "publishedAt": "2025-10-19",
+        "mood": "bright"
     },
     {
         "id": "stel-5iYsqcKaQuw",
@@ -2752,7 +3009,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: Enemy - Imagine Drag"
         },
-        "publishedAt": "2025-10-19"
+        "publishedAt": "2025-10-19",
+        "mood": "bright"
     },
     {
         "id": "stel-O8p_SsnHGhM",
@@ -2771,7 +3029,8 @@ const DEFAULT_SONGS = [
             "end": 120,
             "title": "후렴구: Animal Farm (BIBI) /"
         },
-        "publishedAt": "2025-10-18"
+        "publishedAt": "2025-10-18",
+        "mood": "upbeat"
     },
     {
         "id": "stel-c_xvBZNKa9g",
@@ -2790,7 +3049,8 @@ const DEFAULT_SONGS = [
             "end": 126,
             "title": "후렴구: オドループ(Oddloop) - フレデ"
         },
-        "publishedAt": "2025-10-13"
+        "publishedAt": "2025-10-13",
+        "mood": "bright"
     },
     {
         "id": "stel-fc8eV7D-ANs",
@@ -2809,11 +3069,12 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: テレパシ(텔레파시) - DECO*27"
         },
-        "publishedAt": "2025-10-12"
+        "publishedAt": "2025-10-12",
+        "mood": "bright"
     },
     {
         "id": "stel-QgqiJKX0yq0",
-        "title": "Henceforth (헨스포스)",
+        "title": "Henceforth",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
         "type": "live",
@@ -2828,7 +3089,8 @@ const DEFAULT_SONGS = [
             "end": 119,
             "title": "후렴구: Henceforth - Oranges"
         },
-        "publishedAt": "2025-10-11"
+        "publishedAt": "2025-10-11",
+        "mood": "bright"
     },
     {
         "id": "stel-P51Wh7FO28I",
@@ -2847,7 +3109,8 @@ const DEFAULT_SONGS = [
             "end": 121,
             "title": "후렴구: No title - REOL"
         },
-        "publishedAt": "2025-10-08"
+        "publishedAt": "2025-10-08",
+        "mood": "bright"
     },
     {
         "id": "stel-xn1sosP6kKw",
@@ -2866,7 +3129,8 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: 네모네모(NEMONEMO) - YEN"
         },
-        "publishedAt": "2025-10-05"
+        "publishedAt": "2025-10-05",
+        "mood": "bright"
     },
     {
         "id": "stel-SIBtVNjRois",
@@ -2885,7 +3149,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: Bunny Girl (AKASAKI)"
         },
-        "publishedAt": "2025-10-01"
+        "publishedAt": "2025-10-01",
+        "mood": "upbeat"
     },
     {
         "id": "stel-PlbkHHlKO7U",
@@ -2904,7 +3169,8 @@ const DEFAULT_SONGS = [
             "end": 78,
             "title": "후렴구: Dive to Fight"
         },
-        "publishedAt": "2025-09-29"
+        "publishedAt": "2025-09-29",
+        "mood": "upbeat"
     },
     {
         "id": "hina-love-me",
@@ -2923,7 +3189,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 히나의 독보적인 감성 보컬"
         },
-        "publishedAt": "2025-09-28"
+        "publishedAt": "2025-09-28",
+        "mood": "chill"
     },
     {
         "id": "stel-aUZPqPyLD9s",
@@ -2942,7 +3209,8 @@ const DEFAULT_SONGS = [
             "end": 68,
             "title": "후렴구: とんとんまーえ！(쿵쿵 앞-으로!) -"
         },
-        "publishedAt": "2025-09-28"
+        "publishedAt": "2025-09-28",
+        "mood": "bright"
     },
     {
         "id": "stel-icR-Tg7YZwY",
@@ -2961,7 +3229,8 @@ const DEFAULT_SONGS = [
             "end": 119,
             "title": "후렴구: 프로포즈(プロポーズ)ㅣ아카네 리"
         },
-        "publishedAt": "2025-09-27"
+        "publishedAt": "2025-09-27",
+        "mood": "upbeat"
     },
     {
         "id": "stel-1rPwUSi_1SA",
@@ -2980,7 +3249,8 @@ const DEFAULT_SONGS = [
             "end": 87,
             "title": "후렴구: SODA POP"
         },
-        "publishedAt": "2025-09-27"
+        "publishedAt": "2025-09-27",
+        "mood": "groovy"
     },
     {
         "id": "stel-Tejq1P1TF-M",
@@ -2999,11 +3269,12 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: 미소녀무죄♡파이레츠 (美少女無罪♡パイ"
         },
-        "publishedAt": "2025-09-21"
+        "publishedAt": "2025-09-21",
+        "mood": "chill"
     },
     {
         "id": "lize-surges",
-        "title": "Surges (서지스)",
+        "title": "Surges",
         "artist": "아카네 리제",
         "originalArtist": "Orangestar",
         "type": "cover",
@@ -3018,7 +3289,8 @@ const DEFAULT_SONGS = [
             "end": 80,
             "title": "후렴구: 청춘의 파도처럼 벅차오르는 Surges"
         },
-        "publishedAt": "2025-09-20"
+        "publishedAt": "2025-09-20",
+        "mood": "upbeat"
     },
     {
         "id": "huya-constellation",
@@ -3037,7 +3309,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 별자리가 될 수 있다면"
         },
-        "publishedAt": "2025-09-19"
+        "publishedAt": "2025-09-19",
+        "mood": "chill"
     },
     {
         "id": "yuni-lilac",
@@ -3056,11 +3329,12 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 찬란하게 만개하는 라이락"
         },
-        "publishedAt": "2025-09-18"
+        "publishedAt": "2025-09-18",
+        "mood": "upbeat"
     },
     {
         "id": "nana-summer",
-        "title": "Summer (서머)",
+        "title": "Summer",
         "artist": "하나코 나나",
         "originalArtist": "Paul Blanco Feat. BE'O",
         "type": "cover",
@@ -3075,7 +3349,8 @@ const DEFAULT_SONGS = [
             "end": 78,
             "title": "후렴구: 그루비한 서머 멜로디"
         },
-        "publishedAt": "2025-09-18"
+        "publishedAt": "2025-09-18",
+        "mood": "bright"
     },
     {
         "id": "stel-B5tz8rOMPlU",
@@ -3094,7 +3369,8 @@ const DEFAULT_SONGS = [
             "end": 116,
             "title": "후렴구: 악마의 아이 (悪魔の子)"
         },
-        "publishedAt": "2025-09-18"
+        "publishedAt": "2025-09-18",
+        "mood": "chill"
     },
     {
         "id": "stel-Dy90S1wHTpM",
@@ -3113,7 +3389,8 @@ const DEFAULT_SONGS = [
             "end": 80,
             "title": "후렴구: 전방향 미소녀 (全方向美少女 / no"
         },
-        "publishedAt": "2025-09-17"
+        "publishedAt": "2025-09-17",
+        "mood": "chill"
     },
     {
         "id": "stel-8gDsaqNwUbo",
@@ -3132,7 +3409,8 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: Ready to Fire!"
         },
-        "publishedAt": "2025-09-15"
+        "publishedAt": "2025-09-15",
+        "mood": "upbeat"
     },
     {
         "id": "stel--uRxUMJ-exw",
@@ -3151,7 +3429,8 @@ const DEFAULT_SONGS = [
             "end": 114,
             "title": "후렴구: Healer"
         },
-        "publishedAt": "2025-09-07"
+        "publishedAt": "2025-09-07",
+        "mood": "groovy"
     },
     {
         "id": "stel-AXfEu8_-d-k",
@@ -3170,7 +3449,8 @@ const DEFAULT_SONGS = [
             "end": 94,
             "title": "후렴구: シャンティ(SHANTI) [wotak"
         },
-        "publishedAt": "2025-08-31"
+        "publishedAt": "2025-08-31",
+        "mood": "upbeat"
     },
     {
         "id": "stel-WICzT2lsQa8",
@@ -3191,7 +3471,8 @@ const DEFAULT_SONGS = [
             "end": 128,
             "title": "후렴구: POP IN 2 (최애의 아이 OST"
         },
-        "publishedAt": "2025-08-30"
+        "publishedAt": "2025-08-30",
+        "mood": "cute"
     },
     {
         "id": "stel-m0Db3CAxzsE",
@@ -3210,11 +3491,12 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: YOASOBI - 군청(群青)"
         },
-        "publishedAt": "2025-08-27"
+        "publishedAt": "2025-08-27",
+        "mood": "chill"
     },
     {
         "id": "stel-1HCo6-YL9AY",
-        "title": "Refrain (리프레인)",
+        "title": "Refrain",
         "artist": "아라하시 타비",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -3229,7 +3511,8 @@ const DEFAULT_SONGS = [
             "end": 136,
             "title": "후렴구: Ref:rain - Aimer"
         },
-        "publishedAt": "2025-08-26"
+        "publishedAt": "2025-08-26",
+        "mood": "chill"
     },
     {
         "id": "stel-Nt9LQLycIZk",
@@ -3249,7 +3532,8 @@ const DEFAULT_SONGS = [
             "end": 82,
             "title": "후렴구: KING (Kanaria)"
         },
-        "publishedAt": "2025-08-24"
+        "publishedAt": "2025-08-24",
+        "mood": "upbeat"
     },
     {
         "id": "rin-play",
@@ -3268,7 +3552,8 @@ const DEFAULT_SONGS = [
             "end": 80,
             "title": "후렴구: 비트를 지배하는 린의 랩&보컬"
         },
-        "publishedAt": "2025-08-21"
+        "publishedAt": "2025-08-21",
+        "mood": "bright"
     },
     {
         "id": "stel-HgHP9deY17g",
@@ -3288,7 +3573,8 @@ const DEFAULT_SONGS = [
             "end": 151,
             "title": "후렴구: 잿빛과 푸름 (灰色と青)"
         },
-        "publishedAt": "2025-08-17"
+        "publishedAt": "2025-08-17",
+        "mood": "chill"
     },
     {
         "id": "stel-qCUeBAUMv80",
@@ -3307,7 +3593,8 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: 체리 팝 (チェリーポップ)"
         },
-        "publishedAt": "2025-08-14"
+        "publishedAt": "2025-08-14",
+        "mood": "bright"
     },
     {
         "id": "stel-d281GlN0nWo",
@@ -3326,7 +3613,8 @@ const DEFAULT_SONGS = [
             "end": 131,
             "title": "후렴구: 푸름과 여름 (Mrs. GREEN A"
         },
-        "publishedAt": "2025-08-09"
+        "publishedAt": "2025-08-09",
+        "mood": "groovy"
     },
     {
         "id": "stel-5u6yVIVXF60",
@@ -3345,7 +3633,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: Shinunoga E-Wa [Fuji"
         },
-        "publishedAt": "2025-08-07"
+        "publishedAt": "2025-08-07",
+        "mood": "bright"
     },
     {
         "id": "stel-m5XU_4r1yV0",
@@ -3364,7 +3653,8 @@ const DEFAULT_SONGS = [
             "end": 118,
             "title": "후렴구: 하나 둘 팬클럽 (いーあるふぁんくらぶ"
         },
-        "publishedAt": "2025-08-06"
+        "publishedAt": "2025-08-06",
+        "mood": "cute"
     },
     {
         "id": "stel-cu9oCSWGFIM",
@@ -3383,7 +3673,8 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: 걘 아니야 Pt.2 [페노메코 (PE"
         },
-        "publishedAt": "2025-08-05"
+        "publishedAt": "2025-08-05",
+        "mood": "bright"
     },
     {
         "id": "stel-KJzmhOkm4-E",
@@ -3402,7 +3693,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: 걘 아니야 Pt.1 [지코 (ZICO"
         },
-        "publishedAt": "2025-08-05"
+        "publishedAt": "2025-08-05",
+        "mood": "bright"
     },
     {
         "id": "stel-JarYu85ctNY",
@@ -3423,7 +3715,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: Golden - HUNTR/X (KP"
         },
-        "publishedAt": "2025-08-01"
+        "publishedAt": "2025-08-01",
+        "mood": "groovy"
     },
     {
         "id": "stel-WKY-KFCvm-A",
@@ -3443,7 +3736,8 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: Summertime (cinnamon"
         },
-        "publishedAt": "2025-07-30"
+        "publishedAt": "2025-07-30",
+        "mood": "bright"
     },
     {
         "id": "stel-wfZANe71KcM",
@@ -3463,11 +3757,12 @@ const DEFAULT_SONGS = [
             "end": 105,
             "title": "후렴구: Ｗ●ＲＫ (ꉈꀧ꒒꒒ꁄꍈꍈꀧ꒦ꉈ ꉣꅔꎡ"
         },
-        "publishedAt": "2025-07-24"
+        "publishedAt": "2025-07-24",
+        "mood": "upbeat"
     },
     {
         "id": "ost-hina-arknights",
-        "title": "불꽃 (Seed of Hope)",
+        "title": "불꽃",
         "artist": "시라유키 히나",
         "originalArtist": "명일방주 (Arknights) 5.5주년 공식 OST",
         "type": "ost",
@@ -3482,7 +3777,8 @@ const DEFAULT_SONGS = [
             "end": 114,
             "title": "후렴구: 희망의 씨앗 불꽃"
         },
-        "publishedAt": "2025-07-17"
+        "publishedAt": "2025-07-17",
+        "mood": "upbeat"
     },
     {
         "id": "lize-drunken",
@@ -3501,7 +3797,8 @@ const DEFAULT_SONGS = [
             "end": 70,
             "title": "후렴구: 매혹적인 리제의 그루브"
         },
-        "publishedAt": "2025-07-13"
+        "publishedAt": "2025-07-13",
+        "mood": "upbeat"
     },
     {
         "id": "stel-hasPSCi2Q0g",
@@ -3521,7 +3818,8 @@ const DEFAULT_SONGS = [
             "end": 68,
             "title": "후렴구: とんとんまーえ！(쿵쿵 앞-으로!)"
         },
-        "publishedAt": "2025-07-13"
+        "publishedAt": "2025-07-13",
+        "mood": "bright"
     },
     {
         "id": "stel-i5ZEIsWt0Fk",
@@ -3540,7 +3838,8 @@ const DEFAULT_SONGS = [
             "end": 113,
             "title": "후렴구: Summertime [이터널 리턴 O"
         },
-        "publishedAt": "2025-07-11"
+        "publishedAt": "2025-07-11",
+        "mood": "bright"
     },
     {
         "id": "nana-enemy",
@@ -3559,7 +3858,8 @@ const DEFAULT_SONGS = [
             "end": 74,
             "title": "후렴구: 나나의 파워풀한 영어 랩&보컬"
         },
-        "publishedAt": "2025-07-06"
+        "publishedAt": "2025-07-06",
+        "mood": "bright"
     },
     {
         "id": "stel-ZJ7TFaFyYwc",
@@ -3578,7 +3878,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 도쿄 섄디 랑데부 (トウキョウ・シャン"
         },
-        "publishedAt": "2025-07-06"
+        "publishedAt": "2025-07-06",
+        "mood": "bright"
     },
     {
         "id": "stel-1HSTjpAEgVY",
@@ -3597,7 +3898,8 @@ const DEFAULT_SONGS = [
             "end": 126,
             "title": "후렴구: If I could be a cons"
         },
-        "publishedAt": "2025-07-05"
+        "publishedAt": "2025-07-05",
+        "mood": "chill"
     },
     {
         "id": "stel-9KFsI34I1bs",
@@ -3616,7 +3918,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: UNDEAD (YOASOBI)"
         },
-        "publishedAt": "2025-07-05"
+        "publishedAt": "2025-07-05",
+        "mood": "groovy"
     },
     {
         "id": "stel-fAgAE9JmnOs",
@@ -3635,7 +3938,8 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: LADY - KenshiYonezu("
         },
-        "publishedAt": "2025-06-30"
+        "publishedAt": "2025-06-30",
+        "mood": "groovy"
     },
     {
         "id": "stel-PdiTCYldc6k",
@@ -3655,7 +3959,8 @@ const DEFAULT_SONGS = [
             "end": 89,
             "title": "후렴구: That's Right Frank!"
         },
-        "publishedAt": "2025-06-25"
+        "publishedAt": "2025-06-25",
+        "mood": "cute"
     },
     {
         "id": "stel-DLFDx_CZwf8",
@@ -3674,11 +3979,12 @@ const DEFAULT_SONGS = [
             "end": 75,
             "title": "후렴구: Colorful Tempo"
         },
-        "publishedAt": "2025-06-21"
+        "publishedAt": "2025-06-21",
+        "mood": "bright"
     },
     {
         "id": "stel-3qRN6mQJ4K4",
-        "title": "야화 (Night Flower)",
+        "title": "야화",
         "artist": "아라하시 타비 x 하나코 나나",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -3692,9 +3998,10 @@ const DEFAULT_SONGS = [
         "sabi": {
             "start": 92,
             "end": 127,
-            "title": "후렴구: 야화(Night Flower)"
+            "title": "후렴구: 야화"
         },
-        "publishedAt": "2025-06-15"
+        "publishedAt": "2025-06-15",
+        "mood": "groovy"
     },
     {
         "id": "stel-VsRyh2LOtBk",
@@ -3713,7 +4020,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 晩餐歌 (tuki.)"
         },
-        "publishedAt": "2025-06-14"
+        "publishedAt": "2025-06-14",
+        "mood": "bright"
     },
     {
         "id": "stel-xDsvYAnq324",
@@ -3732,7 +4040,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 뱀파이어 (ヴァンパイア)ㅣ아카네 리제"
         },
-        "publishedAt": "2025-06-11"
+        "publishedAt": "2025-06-11",
+        "mood": "upbeat"
     },
     {
         "id": "stel-x534cEGwAEA",
@@ -3751,7 +4060,8 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: 새봄의 노래 (Beginning)"
         },
-        "publishedAt": "2025-06-11"
+        "publishedAt": "2025-06-11",
+        "mood": "groovy"
     },
     {
         "id": "stel-bW_htBZ_emA",
@@ -3770,7 +4080,8 @@ const DEFAULT_SONGS = [
             "end": 125,
             "title": "후렴구: 병명 상사병(病名恋ワズライ)"
         },
-        "publishedAt": "2025-06-10"
+        "publishedAt": "2025-06-10",
+        "mood": "bright"
     },
     {
         "id": "stel-CbuiRlGeA-g",
@@ -3792,11 +4103,12 @@ const DEFAULT_SONGS = [
             "end": 123,
             "title": "후렴구: 스텔라이브 (StelLive) Uni"
         },
-        "publishedAt": "2025-06-10"
+        "publishedAt": "2025-06-10",
+        "mood": "bright"
     },
     {
         "id": "riko-henceforth",
-        "title": "Henceforth (헨스포스)",
+        "title": "Henceforth",
         "artist": "유즈하 리코",
         "originalArtist": "Orangestar",
         "type": "cover",
@@ -3811,11 +4123,12 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 여름 하늘을 날아오르는 청량 보컬"
         },
-        "publishedAt": "2025-06-07"
+        "publishedAt": "2025-06-07",
+        "mood": "bright"
     },
     {
         "id": "stel-ffF1XHKR5Ug",
-        "title": "눈싸움",
+        "title": "睨めっ娘 (눈싸움)",
         "artist": "텐코 시부키",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -3830,7 +4143,8 @@ const DEFAULT_SONGS = [
             "end": 91,
             "title": "후렴구: 눈싸움 (睨めっ娘)"
         },
-        "publishedAt": "2025-06-01"
+        "publishedAt": "2025-06-01",
+        "mood": "groovy"
     },
     {
         "id": "feat-lize-blood",
@@ -3849,7 +4163,8 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 폭발적인 리제의 고음 샤우팅"
         },
-        "publishedAt": "2025-05-30"
+        "publishedAt": "2025-05-30",
+        "mood": "upbeat"
     },
     {
         "id": "stel-obS6uOy8vGs",
@@ -3868,7 +4183,8 @@ const DEFAULT_SONGS = [
             "start": 50,
             "end": 82,
             "title": "사비: Lulala! Lululala!"
-        }
+        },
+        "mood": "bright"
     },
     {
         "id": "stel-YVplo9mgtcs",
@@ -3888,7 +4204,8 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: Lonely Universe(ロンリー"
         },
-        "publishedAt": "2025-05-23"
+        "publishedAt": "2025-05-23",
+        "mood": "chill"
     },
     {
         "id": "stel-_iNHQuaKuig",
@@ -3907,11 +4224,12 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 연애 서큘레이션 (恋愛サーキュレーショ"
         },
-        "publishedAt": "2025-05-20"
+        "publishedAt": "2025-05-20",
+        "mood": "cute"
     },
     {
         "id": "stel-7gYDCoiV7cc",
-        "title": "그 나라의 왕가는 이상해 (어린애 전쟁)",
+        "title": "おこちゃま戦争 (어린애 전쟁)",
         "artist": "네네코 마시로 x 아카네 리제",
         "originalArtist": "Giga",
         "type": "cover",
@@ -3927,7 +4245,8 @@ const DEFAULT_SONGS = [
             "end": 60,
             "title": "후렴구: 마시로"
         },
-        "publishedAt": "2025-05-20"
+        "publishedAt": "2025-05-20",
+        "mood": "upbeat"
     },
     {
         "id": "cliche-mother-goose",
@@ -3949,11 +4268,12 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: 사랑을 노래해줘 마더구스"
         },
-        "publishedAt": "2025-05-18"
+        "publishedAt": "2025-05-18",
+        "mood": "bright"
     },
     {
         "id": "nana-grand-escape",
-        "title": "그랜드 이스케이프 (날씨의 아이 OST)",
+        "title": "グランドエスケープ (그랜드 이스케이프)",
         "artist": "하나코 나나 (feat. Cliché)",
         "originalArtist": "RADWIMPS (날씨의 아이 OST)",
         "type": "ost",
@@ -3971,7 +4291,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 하늘을 향해 날아오르는 그랜드 이스케이프"
         },
-        "publishedAt": "2025-05-10"
+        "publishedAt": "2025-05-10",
+        "mood": "bright"
     },
     {
         "id": "stel-5kTp7SQCR_Y",
@@ -3990,7 +4311,8 @@ const DEFAULT_SONGS = [
             "end": 127,
             "title": "후렴구: STELLIVE  | ' Tell Y"
         },
-        "publishedAt": "2025-05-05"
+        "publishedAt": "2025-05-05",
+        "mood": "bright"
     },
     {
         "id": "stel-RpX0r_l7FzI",
@@ -4009,7 +4331,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: Stand By You (Offici"
         },
-        "publishedAt": "2025-05-03"
+        "publishedAt": "2025-05-03",
+        "mood": "bright"
     },
     {
         "id": "stel-zVNbcnSQrCU",
@@ -4028,7 +4351,8 @@ const DEFAULT_SONGS = [
             "end": 114,
             "title": "후렴구: Unbreakable Sphere ("
         },
-        "publishedAt": "2025-05-01"
+        "publishedAt": "2025-05-01",
+        "mood": "bright"
     },
     {
         "id": "stel-DzSb5b8ehdg",
@@ -4047,11 +4371,12 @@ const DEFAULT_SONGS = [
             "end": 160,
             "title": "후렴구: 「Orange(オレンジ) / 4월은"
         },
-        "publishedAt": "2025-04-27"
+        "publishedAt": "2025-04-27",
+        "mood": "bright"
     },
     {
         "id": "stel-4OzmA6a8sqY",
-        "title": "있잖아 있잖아 있잖아 (ねぇねぇねぇ。)",
+        "title": "ねぇねぇねぇ。 (있잖아 있잖아 있잖아)",
         "artist": "텐코 시부키 x 유즈하 리코",
         "originalArtist": "피노키오피",
         "type": "cover",
@@ -4067,7 +4392,8 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: 있잖아 있잖아 있잖아 (ねぇねぇねぇ。"
         },
-        "publishedAt": "2025-04-26"
+        "publishedAt": "2025-04-26",
+        "mood": "groovy"
     },
     {
         "id": "hina-dream-signal",
@@ -4086,11 +4412,12 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 꿈의 신호가 닿는 곳으로"
         },
-        "publishedAt": "2025-04-23"
+        "publishedAt": "2025-04-23",
+        "mood": "bright"
     },
     {
         "id": "stel-N_vYUNEktsA",
-        "title": "도깨비 꽃 (DKBK)",
+        "title": "도깨비 꽃",
         "artist": "TAK (feat. 텐코 시부키)",
         "originalArtist": "TAK",
         "type": "featuring",
@@ -4105,7 +4432,8 @@ const DEFAULT_SONGS = [
             "end": 90,
             "title": "후렴구: 피어나는 도깨비 꽃"
         },
-        "publishedAt": "2025-04-15"
+        "publishedAt": "2025-04-15",
+        "mood": "groovy"
     },
     {
         "id": "stel-vT3xY5UE4Q4",
@@ -4124,7 +4452,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 모니터링 [モニタリング - DECO*"
         },
-        "publishedAt": "2025-04-14"
+        "publishedAt": "2025-04-14",
+        "mood": "bright"
     },
     {
         "id": "stel-EPRYt6d8oEY",
@@ -4143,7 +4472,8 @@ const DEFAULT_SONGS = [
             "end": 135,
             "title": "후렴구: 증표(シルシ)"
         },
-        "publishedAt": "2025-04-13"
+        "publishedAt": "2025-04-13",
+        "mood": "bright"
     },
     {
         "id": "stel-TFkPG0r-W5U",
@@ -4162,7 +4492,8 @@ const DEFAULT_SONGS = [
             "end": 105,
             "title": "후렴구: 슈가로스(シュガーロス)"
         },
-        "publishedAt": "2025-04-11"
+        "publishedAt": "2025-04-11",
+        "mood": "cute"
     },
     {
         "id": "stel-76CJ6U2nxeY",
@@ -4181,7 +4512,8 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: BOW AND ARROW (Yonez"
         },
-        "publishedAt": "2025-04-05"
+        "publishedAt": "2025-04-05",
+        "mood": "bright"
     },
     {
         "id": "stel-8m8xom23aDY",
@@ -4200,7 +4532,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: シックス・フィート・アンダー (식스 피"
         },
-        "publishedAt": "2025-04-01"
+        "publishedAt": "2025-04-01",
+        "mood": "bright"
     },
     {
         "id": "stel-Ho-tW7OsO54",
@@ -4219,7 +4552,8 @@ const DEFAULT_SONGS = [
             "end": 119,
             "title": "후렴구: SOS (마유즈미 후유코)"
         },
-        "publishedAt": "2025-03-21"
+        "publishedAt": "2025-03-21",
+        "mood": "groovy"
     },
     {
         "id": "stel-lsshc8umnE4",
@@ -4239,7 +4573,8 @@ const DEFAULT_SONGS = [
             "end": 144,
             "title": "후렴구: 역몽 (逆夢, King Gnu) -"
         },
-        "publishedAt": "2025-03-17"
+        "publishedAt": "2025-03-17",
+        "mood": "bright"
     },
     {
         "id": "stel-y84L-0bz4zo",
@@ -4258,7 +4593,8 @@ const DEFAULT_SONGS = [
             "end": 90,
             "title": "후렴구: ラビットホール(래빗 홀)"
         },
-        "publishedAt": "2025-03-11"
+        "publishedAt": "2025-03-11",
+        "mood": "bright"
     },
     {
         "id": "stel-f3bB5GgEZxw",
@@ -4277,7 +4613,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: Sakura kimi watashi"
         },
-        "publishedAt": "2025-03-09"
+        "publishedAt": "2025-03-09",
+        "mood": "upbeat"
     },
     {
         "id": "rin-wxy",
@@ -4296,7 +4633,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 감미로운 R&B 보컬"
         },
-        "publishedAt": "2025-03-08"
+        "publishedAt": "2025-03-08",
+        "mood": "bright"
     },
     {
         "id": "stel-QQYjoOGbUSQ",
@@ -4315,7 +4653,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: ももいろの鍵 (복숭아색 열쇠)"
         },
-        "publishedAt": "2025-03-03"
+        "publishedAt": "2025-03-03",
+        "mood": "bright"
     },
     {
         "id": "stel-Nse1CbmfIj4",
@@ -4334,7 +4673,8 @@ const DEFAULT_SONGS = [
             "end": 107,
             "title": "후렴구: 연예인 (PSY)"
         },
-        "publishedAt": "2025-02-22"
+        "publishedAt": "2025-02-22",
+        "mood": "bright"
     },
     {
         "id": "stel-JTMAVnFAff0",
@@ -4355,7 +4695,8 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: Beyond the way"
         },
-        "publishedAt": "2025-02-20"
+        "publishedAt": "2025-02-20",
+        "mood": "groovy"
     },
     {
         "id": "rin-to-x",
@@ -4374,7 +4715,8 @@ const DEFAULT_SONGS = [
             "end": 78,
             "title": "후렴구: 섬세하고 감각적인 To. X"
         },
-        "publishedAt": "2025-02-15"
+        "publishedAt": "2025-02-15",
+        "mood": "bright"
     },
     {
         "id": "stel-HVBL6xHcMRY",
@@ -4393,7 +4735,8 @@ const DEFAULT_SONGS = [
             "end": 105,
             "title": "후렴구: 心予報(마음 예보)"
         },
-        "publishedAt": "2025-02-14"
+        "publishedAt": "2025-02-14",
+        "mood": "chill"
     },
     {
         "id": "stel-TqQFF_wLlR4",
@@ -4412,7 +4755,8 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 모니터링 (モニタリング - DECO*"
         },
-        "publishedAt": "2025-02-06"
+        "publishedAt": "2025-02-06",
+        "mood": "bright"
     },
     {
         "id": "lize-asu-no-yozora",
@@ -4431,7 +4775,8 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 하늘을 찌르는 사이다 고음"
         },
-        "publishedAt": "2025-02-04"
+        "publishedAt": "2025-02-04",
+        "mood": "upbeat"
     },
     {
         "id": "stel-PBh8a0GaNFs",
@@ -4451,7 +4796,8 @@ const DEFAULT_SONGS = [
             "end": 92,
             "title": "후렴구: 절대적대완전싫어"
         },
-        "publishedAt": "2025-01-28"
+        "publishedAt": "2025-01-28",
+        "mood": "groovy"
     },
     {
         "id": "nana-flight-boat",
@@ -4470,7 +4816,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: 거침없이 나아가는 비행정"
         },
-        "publishedAt": "2025-01-27"
+        "publishedAt": "2025-01-27",
+        "mood": "upbeat"
     },
     {
         "id": "stel-lXB628gwlzs",
@@ -4489,7 +4836,8 @@ const DEFAULT_SONGS = [
             "end": 103,
             "title": "후렴구: 꿈의 카니발 (Grand Feast"
         },
-        "publishedAt": "2025-01-23"
+        "publishedAt": "2025-01-23",
+        "mood": "bright"
     },
     {
         "id": "stel-EtkolJZEmpg",
@@ -4508,7 +4856,8 @@ const DEFAULT_SONGS = [
             "end": 132,
             "title": "후렴구: 꽃의 탑 (花の塔"
         },
-        "publishedAt": "2025-01-10"
+        "publishedAt": "2025-01-10",
+        "mood": "bright"
     },
     {
         "id": "stel-L1haw5kPB7Q",
@@ -4527,7 +4876,8 @@ const DEFAULT_SONGS = [
             "end": 114,
             "title": "후렴구: 만찬가『晩餐歌"
         },
-        "publishedAt": "2025-01-05"
+        "publishedAt": "2025-01-05",
+        "mood": "chill"
     },
     {
         "id": "stel-vCHNh5E4eDU",
@@ -4546,7 +4896,8 @@ const DEFAULT_SONGS = [
             "end": 117,
             "title": "후렴구: SPECIALZ(King Gnu)"
         },
-        "publishedAt": "2025-01-04"
+        "publishedAt": "2025-01-04",
+        "mood": "bright"
     },
     {
         "id": "stel-JCJyXMJMLRM",
@@ -4565,7 +4916,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: シル・ヴ・プレジデント (실・부・프레지"
         },
-        "publishedAt": "2024-12-31"
+        "publishedAt": "2024-12-31",
+        "mood": "bright"
     },
     {
         "id": "stel-QbSMSvVMHqU",
@@ -4584,7 +4936,8 @@ const DEFAULT_SONGS = [
             "end": 140,
             "title": "후렴구: 겨울의 선물 (冬のプレゼント)"
         },
-        "publishedAt": "2024-12-25"
+        "publishedAt": "2024-12-25",
+        "mood": "chill"
     },
     {
         "id": "stel-gXJMNur50m8",
@@ -4603,7 +4956,8 @@ const DEFAULT_SONGS = [
             "end": 154,
             "title": "후렴구: 크리스마스송(クリスマスソング/back"
         },
-        "publishedAt": "2024-12-25"
+        "publishedAt": "2024-12-25",
+        "mood": "chill"
     },
     {
         "id": "stel-ebnM6X6B1Yg",
@@ -4622,7 +4976,8 @@ const DEFAULT_SONGS = [
             "end": 147,
             "title": "후렴구: ハッピーエンド (back number"
         },
-        "publishedAt": "2024-12-19"
+        "publishedAt": "2024-12-19",
+        "mood": "bright"
     },
     {
         "id": "stel-cGjgCLuyAro",
@@ -4641,7 +4996,8 @@ const DEFAULT_SONGS = [
             "end": 130,
             "title": "후렴구: 주름맞추기 (しわあわせ / Vaund"
         },
-        "publishedAt": "2024-12-13"
+        "publishedAt": "2024-12-13",
+        "mood": "bright"
     },
     {
         "id": "stel-H4T4ihraPic",
@@ -4660,7 +5016,8 @@ const DEFAULT_SONGS = [
             "end": 65,
             "title": "후렴구: Born to run"
         },
-        "publishedAt": "2024-12-12"
+        "publishedAt": "2024-12-12",
+        "mood": "bright"
     },
     {
         "id": "tabi-journey",
@@ -4679,7 +5036,8 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 발걸음이 닿는 여로"
         },
-        "publishedAt": "2024-12-11"
+        "publishedAt": "2024-12-11",
+        "mood": "chill"
     },
     {
         "id": "stel-3EPEqL_ap-M",
@@ -4699,7 +5057,8 @@ const DEFAULT_SONGS = [
             "end": 116,
             "title": "후렴구:"
         },
-        "publishedAt": "2024-12-06"
+        "publishedAt": "2024-12-06",
+        "mood": "bright"
     },
     {
         "id": "stel-6cv-HiNVgqA",
@@ -4718,7 +5077,8 @@ const DEFAULT_SONGS = [
             "end": 120,
             "title": "후렴구: Sabotage (緑黄色社会)"
         },
-        "publishedAt": "2024-12-06"
+        "publishedAt": "2024-12-06",
+        "mood": "groovy"
     },
     {
         "id": "duet-yuni-kanna-point",
@@ -4738,7 +5098,8 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: 유니x칸나의 감미로운 듀엣 화음"
         },
-        "publishedAt": "2024-12-01"
+        "publishedAt": "2024-12-01",
+        "mood": "chill"
     },
     {
         "id": "stel-lqU0yh_u7Qo",
@@ -4758,7 +5119,8 @@ const DEFAULT_SONGS = [
             "end": 95,
             "title": "후렴구: APT. (ROSÉ & Bruno"
         },
-        "publishedAt": "2024-12-01"
+        "publishedAt": "2024-12-01",
+        "mood": "groovy"
     },
     {
         "id": "stel-CmaLZo-DTlU",
@@ -4778,7 +5140,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: さよーならまたいつか！(안녕, 또 언젠"
         },
-        "publishedAt": "2024-11-30"
+        "publishedAt": "2024-11-30",
+        "mood": "bright"
     },
     {
         "id": "stel-_C4t1yi0WDQ",
@@ -4797,7 +5160,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: 神っぽいな(신 같네)"
         },
-        "publishedAt": "2024-11-26"
+        "publishedAt": "2024-11-26",
+        "mood": "bright"
     },
     {
         "id": "stel-DMk4_4Xytz4",
@@ -4822,7 +5186,8 @@ const DEFAULT_SONGS = [
             "end": 253,
             "title": "후렴구: ✧Alice in Musicland✧"
         },
-        "publishedAt": "2024-11-24"
+        "publishedAt": "2024-11-24",
+        "mood": "bright"
     },
     {
         "id": "stel-c6G7vRuJyhs",
@@ -4841,7 +5206,8 @@ const DEFAULT_SONGS = [
             "end": 128,
             "title": "후렴구: 경화수월(鏡花水月)"
         },
-        "publishedAt": "2024-11-21"
+        "publishedAt": "2024-11-21",
+        "mood": "bright"
     },
     {
         "id": "stel-pM8_wnJ7JsE",
@@ -4860,7 +5226,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: Overdose (なとり)"
         },
-        "publishedAt": "2024-11-17"
+        "publishedAt": "2024-11-17",
+        "mood": "groovy"
     },
     {
         "id": "stel-9hLbsRU2neM",
@@ -4879,7 +5246,8 @@ const DEFAULT_SONGS = [
             "end": 121,
             "title": "후렴구: 하루카「ハルカ"
         },
-        "publishedAt": "2024-11-16"
+        "publishedAt": "2024-11-16",
+        "mood": "chill"
     },
     {
         "id": "lize-jpop-mashup",
@@ -4898,7 +5266,8 @@ const DEFAULT_SONGS = [
             "end": 136,
             "title": "후렴구: 환상적인 J-POP 킬링파트 메들리"
         },
-        "publishedAt": "2024-11-09"
+        "publishedAt": "2024-11-09",
+        "mood": "upbeat"
     },
     {
         "id": "stel-J49wnPBsyrU",
@@ -4917,7 +5286,8 @@ const DEFAULT_SONGS = [
             "end": 132,
             "title": "후렴구: 케세라세라 (Mrs. GREEN AP"
         },
-        "publishedAt": "2024-11-01"
+        "publishedAt": "2024-11-01",
+        "mood": "upbeat"
     },
     {
         "id": "stel-Pgd_XVwBVU0",
@@ -4936,7 +5306,8 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: 死神(사신)"
         },
-        "publishedAt": "2024-10-31"
+        "publishedAt": "2024-10-31",
+        "mood": "groovy"
     },
     {
         "id": "stel-D938bjFYmII",
@@ -4955,7 +5326,8 @@ const DEFAULT_SONGS = [
             "end": 144,
             "title": "후렴구: 새벽과 반딧불이(夜明けと蛍)"
         },
-        "publishedAt": "2024-10-26"
+        "publishedAt": "2024-10-26",
+        "mood": "chill"
     },
     {
         "id": "stel--yY4Ijb06zg",
@@ -4975,7 +5347,8 @@ const DEFAULT_SONGS = [
             "end": 90,
             "title": "후렴구: アイデンティティ(아이덴티티) - 아오"
         },
-        "publishedAt": "2024-10-26"
+        "publishedAt": "2024-10-26",
+        "mood": "groovy"
     },
     {
         "id": "stel-DrZMMirj4zo",
@@ -4994,7 +5367,8 @@ const DEFAULT_SONGS = [
             "end": 123,
             "title": "후렴구: An Unfinished Song ("
         },
-        "publishedAt": "2024-10-22"
+        "publishedAt": "2024-10-22",
+        "mood": "upbeat"
     },
     {
         "id": "stel-dglNAGJiDT8",
@@ -5013,7 +5387,8 @@ const DEFAULT_SONGS = [
             "end": 103,
             "title": "후렴구: 톤데모 원더즈『トンデモワンダーズ"
         },
-        "publishedAt": "2024-10-18"
+        "publishedAt": "2024-10-18",
+        "mood": "bright"
     },
     {
         "id": "mashiro-spring-dream",
@@ -5032,7 +5407,8 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 따스하게 스며드는 봄꿈"
         },
-        "publishedAt": "2024-10-16"
+        "publishedAt": "2024-10-16",
+        "mood": "bright"
     },
     {
         "id": "rin-love-cold",
@@ -5051,7 +5427,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 감각적인 린의 그루브"
         },
-        "publishedAt": "2024-10-12"
+        "publishedAt": "2024-10-12",
+        "mood": "groovy"
     },
     {
         "id": "stel-qpBCZ6kYVb4",
@@ -5070,7 +5447,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: サムライハート(Some Like It"
         },
-        "publishedAt": "2024-10-05"
+        "publishedAt": "2024-10-05",
+        "mood": "upbeat"
     },
     {
         "id": "stel-7CQuc6Jf4UE",
@@ -5090,7 +5468,8 @@ const DEFAULT_SONGS = [
             "end": 116,
             "title": "후렴구: GETCHA! (Giga & KIRA"
         },
-        "publishedAt": "2024-10-04"
+        "publishedAt": "2024-10-04",
+        "mood": "groovy"
     },
     {
         "id": "stel-7zsY6Ex9dMI",
@@ -5109,7 +5488,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 밀월 Un・Deux・Trois (蜜月"
         },
-        "publishedAt": "2024-10-01"
+        "publishedAt": "2024-10-01",
+        "mood": "upbeat"
     },
     {
         "id": "stel-G5A-UDCxUiI",
@@ -5128,7 +5508,8 @@ const DEFAULT_SONGS = [
             "end": 118,
             "title": "후렴구: Leo (レオ)"
         },
-        "publishedAt": "2024-09-30"
+        "publishedAt": "2024-09-30",
+        "mood": "groovy"
     },
     {
         "id": "stel-3_0Ut2tlxLM",
@@ -5147,7 +5528,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 아카네 리제(Akane Lize) |"
         },
-        "publishedAt": "2024-09-29"
+        "publishedAt": "2024-09-29",
+        "mood": "upbeat"
     },
     {
         "id": "stel-Rr2GjXAgJ9E",
@@ -5166,7 +5548,8 @@ const DEFAULT_SONGS = [
             "end": 131,
             "title": "후렴구: 맑은 날(ヨルシカ - 晴る)"
         },
-        "publishedAt": "2024-09-23"
+        "publishedAt": "2024-09-23",
+        "mood": "bright"
     },
     {
         "id": "stel-O1MqvWf7q58",
@@ -5185,11 +5568,12 @@ const DEFAULT_SONGS = [
             "end": 115,
             "title": "후렴구: 무희 (Vaundy)"
         },
-        "publishedAt": "2024-09-15"
+        "publishedAt": "2024-09-15",
+        "mood": "bright"
     },
     {
         "id": "stel-rQaluJS-Tc0",
-        "title": "HANA",
+        "title": "하나",
         "artist": "시라유키 히나",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -5204,7 +5588,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 시라유키 히나(Shirayuki Hi"
         },
-        "publishedAt": "2024-09-11"
+        "publishedAt": "2024-09-11",
+        "mood": "chill"
     },
     {
         "id": "stel-PybjJ4CUDF8",
@@ -5223,11 +5608,12 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: BE SOMEBODY (육성재)"
         },
-        "publishedAt": "2024-09-07"
+        "publishedAt": "2024-09-07",
+        "mood": "groovy"
     },
     {
         "id": "stel-6A04OifrfR0",
-        "title": "공상열차 (空奏列車 / 쿠소렛샤)",
+        "title": "空奏列車 (공상열차)",
         "artist": "아이리 칸나",
         "originalArtist": "Orangestar",
         "type": "cover",
@@ -5242,7 +5628,8 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: 空奏列車 (Orangestar) Co"
         },
-        "publishedAt": "2024-09-06"
+        "publishedAt": "2024-09-06",
+        "mood": "upbeat"
     },
     {
         "id": "stel-Pag28N1mzxg",
@@ -5261,7 +5648,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 8.32 feat.flower - *"
         },
-        "publishedAt": "2024-09-01"
+        "publishedAt": "2024-09-01",
+        "mood": "chill"
     },
     {
         "id": "stel-OzncrMNY7cw",
@@ -5280,7 +5668,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: Viva La Vida (Coldpl"
         },
-        "publishedAt": "2024-08-31"
+        "publishedAt": "2024-08-31",
+        "mood": "upbeat"
     },
     {
         "id": "stel-vM_XT3MeLrc",
@@ -5299,7 +5688,8 @@ const DEFAULT_SONGS = [
             "end": 113,
             "title": "후렴구: 푸른 산호초 (青い珊瑚礁)"
         },
-        "publishedAt": "2024-08-30"
+        "publishedAt": "2024-08-30",
+        "mood": "chill"
     },
     {
         "id": "stel-our-tales",
@@ -5321,11 +5711,12 @@ const DEFAULT_SONGS = [
             "end": 88,
             "title": "후렴구: 우리가 함께 써 내려갈 이야기"
         },
-        "publishedAt": "2024-08-24"
+        "publishedAt": "2024-08-24",
+        "mood": "bright"
     },
     {
         "id": "stel-T10fmu7T4eA",
-        "title": "지구를 줄게",
+        "title": "地球をあげる (지구를 줄게)",
         "artist": "유즈하 리코",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -5340,7 +5731,8 @@ const DEFAULT_SONGS = [
             "end": 132,
             "title": "후렴구: 지구를 줄게 (地球をあげる)"
         },
-        "publishedAt": "2024-08-23"
+        "publishedAt": "2024-08-23",
+        "mood": "bright"
     },
     {
         "id": "stel-Nr3AhMP1lVg",
@@ -5359,7 +5751,8 @@ const DEFAULT_SONGS = [
             "end": 129,
             "title": "후렴구: Love wins all (IU)"
         },
-        "publishedAt": "2024-08-18"
+        "publishedAt": "2024-08-18",
+        "mood": "upbeat"
     },
     {
         "id": "stel-oAa_PoRopSs",
@@ -5378,7 +5771,8 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: Rumor ルーマー (Police P"
         },
-        "publishedAt": "2024-08-11"
+        "publishedAt": "2024-08-11",
+        "mood": "groovy"
     },
     {
         "id": "stel-CGYa8wsbii4",
@@ -5397,7 +5791,8 @@ const DEFAULT_SONGS = [
             "end": 58,
             "title": "후렴구: SUPERPOWER (2024 발로란"
         },
-        "publishedAt": "2024-08-11"
+        "publishedAt": "2024-08-11",
+        "mood": "cute"
     },
     {
         "id": "shibuki-fox-rain",
@@ -5416,7 +5811,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: 애절하고 아련한 여우비 감성"
         },
-        "publishedAt": "2024-08-09"
+        "publishedAt": "2024-08-09",
+        "mood": "groovy"
     },
     {
         "id": "kanna-blue-crystal",
@@ -5435,7 +5831,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 용의 숨결과 푸른 보석"
         },
-        "publishedAt": "2024-07-25"
+        "publishedAt": "2024-07-25",
+        "mood": "bright"
     },
     {
         "id": "riko-kaiju-flower",
@@ -5454,7 +5851,8 @@ const DEFAULT_SONGS = [
             "end": 94,
             "title": "후렴구: 리코만의 맑고 순수한 열창"
         },
-        "publishedAt": "2024-07-21"
+        "publishedAt": "2024-07-21",
+        "mood": "upbeat"
     },
     {
         "id": "stel-zcaAsuA54pI",
@@ -5473,11 +5871,12 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: 안녕, 또 언젠가! (요네즈 켄시)"
         },
-        "publishedAt": "2024-07-21"
+        "publishedAt": "2024-07-21",
+        "mood": "bright"
     },
     {
         "id": "lize-drowning",
-        "title": "Drowning (드로우닝)",
+        "title": "Drowning",
         "artist": "아카네 리제",
         "originalArtist": "WOODZ (조승연)",
         "type": "cover",
@@ -5492,7 +5891,8 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: 깊게 빠져드는 감성 보컬"
         },
-        "publishedAt": "2024-07-20"
+        "publishedAt": "2024-07-20",
+        "mood": "upbeat"
     },
     {
         "id": "ost-kanna-epicseven",
@@ -5511,7 +5911,8 @@ const DEFAULT_SONGS = [
             "end": 102,
             "title": "후렴구: 얼어붙은 일식의 세계"
         },
-        "publishedAt": "2024-07-06"
+        "publishedAt": "2024-07-06",
+        "mood": "upbeat"
     },
     {
         "id": "mashiro-dance-robot",
@@ -5530,7 +5931,8 @@ const DEFAULT_SONGS = [
             "end": 78,
             "title": "후렴구: 중독성 넘치는 댄스 로봇 댄스"
         },
-        "publishedAt": "2024-07-05"
+        "publishedAt": "2024-07-05",
+        "mood": "groovy"
     },
     {
         "id": "stel-ZMgLAy-VKe4",
@@ -5549,7 +5951,8 @@ const DEFAULT_SONGS = [
             "end": 125,
             "title": "후렴구: Melt (メルト)"
         },
-        "publishedAt": "2024-06-30"
+        "publishedAt": "2024-06-30",
+        "mood": "upbeat"
     },
     {
         "id": "hina-stay-at-your-house",
@@ -5568,11 +5971,12 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: 달빛 아래 아련한 선율"
         },
-        "publishedAt": "2024-06-29"
+        "publishedAt": "2024-06-29",
+        "mood": "chill"
     },
     {
         "id": "stel-R_RAWjqdgTs",
-        "title": "SUPA DUPA",
+        "title": "SUPADOPA",
         "artist": "아야츠노 유니",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -5587,7 +5991,8 @@ const DEFAULT_SONGS = [
             "end": 89,
             "title": "후렴구: 아야츠노 유니 ( Ayatsuno Y"
         },
-        "publishedAt": "2024-06-19"
+        "publishedAt": "2024-06-19",
+        "mood": "cute"
     },
     {
         "id": "stel-pKPPV1RMk-c",
@@ -5606,7 +6011,8 @@ const DEFAULT_SONGS = [
             "end": 118,
             "title": "후렴구: 프라이드 혁명 (プライド革命)"
         },
-        "publishedAt": "2024-06-11"
+        "publishedAt": "2024-06-11",
+        "mood": "upbeat"
     },
     {
         "id": "stel-gGQqeRJub3E",
@@ -5625,7 +6031,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: HERO (LUCY)"
         },
-        "publishedAt": "2024-06-11"
+        "publishedAt": "2024-06-11",
+        "mood": "groovy"
     },
     {
         "id": "stel-VhBXWT6Oqto",
@@ -5644,7 +6051,8 @@ const DEFAULT_SONGS = [
             "end": 144,
             "title": "후렴구: 17살의 노래(17さいのうた。)"
         },
-        "publishedAt": "2024-06-10"
+        "publishedAt": "2024-06-10",
+        "mood": "chill"
     },
     {
         "id": "kanna-backlight",
@@ -5663,7 +6071,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: 파워풀한 역광 샤우팅"
         },
-        "publishedAt": "2024-06-09"
+        "publishedAt": "2024-06-09",
+        "mood": "upbeat"
     },
     {
         "id": "stel-6-Kz5sWJBg4",
@@ -5685,7 +6094,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구: 스텔라이브 (StelLive) Uni"
         },
-        "publishedAt": "2024-06-09"
+        "publishedAt": "2024-06-09",
+        "mood": "bright"
     },
     {
         "id": "stel-sEYBQaw1vRs",
@@ -5704,7 +6114,8 @@ const DEFAULT_SONGS = [
             "end": 130,
             "title": "후렴구: 안녕, 꽃도둑씨 (さようなら、花泥棒さ"
         },
-        "publishedAt": "2024-05-27"
+        "publishedAt": "2024-05-27",
+        "mood": "chill"
     },
     {
         "id": "stel-lfxl4YlY0lE",
@@ -5723,11 +6134,12 @@ const DEFAULT_SONGS = [
             "end": 103,
             "title": "후렴구: 용사(YOASOBI)"
         },
-        "publishedAt": "2024-05-17"
+        "publishedAt": "2024-05-17",
+        "mood": "bright"
     },
     {
         "id": "stel-v7UNI2YuqFc",
-        "title": "가짜 얼굴 (Fake Face)",
+        "title": "偽顔 (가짜 얼굴)",
         "artist": "하나코 나나",
         "originalArtist": "yama",
         "type": "cover",
@@ -5742,7 +6154,8 @@ const DEFAULT_SONGS = [
             "end": 87,
             "title": "후렴구: 가짜 얼굴(yama)"
         },
-        "publishedAt": "2024-05-17"
+        "publishedAt": "2024-05-17",
+        "mood": "bright"
     },
     {
         "id": "shibuki-tongue-out",
@@ -5761,7 +6174,8 @@ const DEFAULT_SONGS = [
             "end": 82,
             "title": "후렴구: 시부키의 장난기 가득한 메롱"
         },
-        "publishedAt": "2024-05-16"
+        "publishedAt": "2024-05-16",
+        "mood": "groovy"
     },
     {
         "id": "stel-UWa_OiXDiQA",
@@ -5780,11 +6194,12 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: 유령도쿄(Ayase)"
         },
-        "publishedAt": "2024-05-16"
+        "publishedAt": "2024-05-16",
+        "mood": "bright"
     },
     {
         "id": "stel-IRvrDhVYXHQ",
-        "title": "상처 입은 누군가의 마음을 지킬 수 있다면 (傷つく誰かの心を守ることができたなら)",
+        "title": "傷つく誰かの心を守ることができたなら (상처 입은 누군가의 마음을 지킬 수 있다면)",
         "artist": "아이리 칸나",
         "originalArtist": "ツユ (TUYU)",
         "type": "cover",
@@ -5799,7 +6214,8 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: If I Can Stop One He"
         },
-        "publishedAt": "2024-05-15"
+        "publishedAt": "2024-05-15",
+        "mood": "upbeat"
     },
     {
         "id": "stel-Tmjy9uLbMFc",
@@ -5818,7 +6234,8 @@ const DEFAULT_SONGS = [
             "end": 128,
             "title": "후렴구: 봄을 기다리다(春を待つ)"
         },
-        "publishedAt": "2024-05-10"
+        "publishedAt": "2024-05-10",
+        "mood": "chill"
     },
     {
         "id": "stel-yCVZq40vqLk",
@@ -5837,7 +6254,8 @@ const DEFAULT_SONGS = [
             "end": 115,
             "title": "후렴구: 괴수의 꽃노래 (怪獣の花唄)"
         },
-        "publishedAt": "2024-05-04"
+        "publishedAt": "2024-05-04",
+        "mood": "upbeat"
     },
     {
         "id": "stel-stars-align",
@@ -5859,7 +6277,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 밤하늘을 수놓는 별들의 화음"
         },
-        "publishedAt": "2024-04-30"
+        "publishedAt": "2024-04-30",
+        "mood": "bright"
     },
     {
         "id": "stel-dear-my-fairy",
@@ -5879,11 +6298,12 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 동화 같은 몽환적 선율"
         },
-        "publishedAt": "2024-04-21"
+        "publishedAt": "2024-04-21",
+        "mood": "chill"
     },
     {
         "id": "stel-a6imWKGILZA",
-        "title": "두근어질 (큐 큐라링 / きゅうくらりん)",
+        "title": "きゅうくらりん (두근어질)",
         "artist": "아야츠노 유니",
         "originalArtist": "이요와 (いよわ)",
         "type": "cover",
@@ -5898,7 +6318,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구:  두근어질 (큐 큐라"
         },
-        "publishedAt": "2024-04-16"
+        "publishedAt": "2024-04-16",
+        "mood": "cute"
     },
     {
         "id": "stel-hit-on-shot",
@@ -5918,7 +6339,8 @@ const DEFAULT_SONGS = [
             "end": 82,
             "title": "후렴구: 폭발하는 락 스피릿 하모니"
         },
-        "publishedAt": "2024-04-03"
+        "publishedAt": "2024-04-03",
+        "mood": "upbeat"
     },
     {
         "id": "stel-tmk0qlr4AeM",
@@ -5937,7 +6359,8 @@ const DEFAULT_SONGS = [
             "end": 119,
             "title": "후렴구: 사랑하고 있는거야 (恋しているのさ)"
         },
-        "publishedAt": "2024-03-31"
+        "publishedAt": "2024-03-31",
+        "mood": "chill"
     },
     {
         "id": "stel-NcXfMM_TL3A",
@@ -5956,7 +6379,8 @@ const DEFAULT_SONGS = [
             "end": 128,
             "title": "후렴구: ラプンツェル(Rapunzel)"
         },
-        "publishedAt": "2024-03-29"
+        "publishedAt": "2024-03-29",
+        "mood": "chill"
     },
     {
         "id": "stel-HBoqsgRoDw4",
@@ -5975,7 +6399,8 @@ const DEFAULT_SONGS = [
             "end": 101,
             "title": "후렴구: 첫사랑 ( 백아 )"
         },
-        "publishedAt": "2024-03-27"
+        "publishedAt": "2024-03-27",
+        "mood": "groovy"
     },
     {
         "id": "stel-xRkZVxvk55U",
@@ -5994,7 +6419,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: Sweet Dreams, My Dea"
         },
-        "publishedAt": "2024-03-15"
+        "publishedAt": "2024-03-15",
+        "mood": "chill"
     },
     {
         "id": "stel-iCCqSFvz9kM",
@@ -6013,7 +6439,8 @@ const DEFAULT_SONGS = [
             "end": 121,
             "title": "후렴구: 아이리 칸나(Airi Kanna) |"
         },
-        "publishedAt": "2024-03-03"
+        "publishedAt": "2024-03-03",
+        "mood": "upbeat"
     },
     {
         "id": "lize-utatane",
@@ -6032,7 +6459,8 @@ const DEFAULT_SONGS = [
             "end": 100,
             "title": "후렴구: 깊은 새벽의 감성 멜로디"
         },
-        "publishedAt": "2024-03-02"
+        "publishedAt": "2024-03-02",
+        "mood": "upbeat"
     },
     {
         "id": "stel-milkyway",
@@ -6056,7 +6484,8 @@ const DEFAULT_SONGS = [
             "end": 94,
             "title": "후렴구: 은하수를 건너 빛나는 우리"
         },
-        "publishedAt": "2024-02-24"
+        "publishedAt": "2024-02-24",
+        "mood": "bright"
     },
     {
         "id": "stel-0nVQggWAzyE",
@@ -6075,7 +6504,8 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: 츄 다양성 (ちゅ、多様性 )"
         },
-        "publishedAt": "2024-02-18"
+        "publishedAt": "2024-02-18",
+        "mood": "groovy"
     },
     {
         "id": "stel-d_YvT_ULGkc",
@@ -6094,7 +6524,8 @@ const DEFAULT_SONGS = [
             "end": 99,
             "title": "후렴구: 절정찬가 (絶頂讃歌) / Akane"
         },
-        "publishedAt": "2024-02-17"
+        "publishedAt": "2024-02-17",
+        "mood": "upbeat"
     },
     {
         "id": "hina-finale",
@@ -6113,7 +6544,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 아름다운 밤의 피날레"
         },
-        "publishedAt": "2024-02-11"
+        "publishedAt": "2024-02-11",
+        "mood": "chill"
     },
     {
         "id": "kanna-kaiju-flower",
@@ -6132,7 +6564,8 @@ const DEFAULT_SONGS = [
             "end": 94,
             "title": "후렴구: 감성 록 보컬의 정점"
         },
-        "publishedAt": "2024-02-10"
+        "publishedAt": "2024-02-10",
+        "mood": "upbeat"
     },
     {
         "id": "stel-cOLX5n5q4yc",
@@ -6151,7 +6584,8 @@ const DEFAULT_SONGS = [
             "end": 120,
             "title": "후렴구: 雪解け (tayori) / Akane"
         },
-        "publishedAt": "2024-02-04"
+        "publishedAt": "2024-02-04",
+        "mood": "upbeat"
     },
     {
         "id": "stel-bdapY46xR7A",
@@ -6170,7 +6604,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: 그저 네게 맑아라 (ただ君に晴れ)"
         },
-        "publishedAt": "2024-01-13"
+        "publishedAt": "2024-01-13",
+        "mood": "chill"
     },
     {
         "id": "mashiro-astronaut",
@@ -6189,7 +6624,8 @@ const DEFAULT_SONGS = [
             "end": 94,
             "title": "후렴구: 밤하늘을 유영하는 마시로의 음색"
         },
-        "publishedAt": "2023-12-25"
+        "publishedAt": "2023-12-25",
+        "mood": "chill"
     },
     {
         "id": "stel-h7l0Ho1Fjkg",
@@ -6208,7 +6644,8 @@ const DEFAULT_SONGS = [
             "end": 97,
             "title": "후렴구: 아카네 리제(Akane Lize )ㅣ"
         },
-        "publishedAt": "2023-12-10"
+        "publishedAt": "2023-12-10",
+        "mood": "upbeat"
     },
     {
         "id": "stel-6eb-U8R0nHQ",
@@ -6227,7 +6664,8 @@ const DEFAULT_SONGS = [
             "end": 119,
             "title": "후렴구:  Mela!"
         },
-        "publishedAt": "2023-12-09"
+        "publishedAt": "2023-12-09",
+        "mood": "bright"
     },
     {
         "id": "tabi-moon-in-the-day",
@@ -6246,11 +6684,12 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 동양풍 서정미 넘치는 보컬"
         },
-        "publishedAt": "2023-12-08"
+        "publishedAt": "2023-12-08",
+        "mood": "groovy"
     },
     {
         "id": "stel-eLJENPbBe8A",
-        "title": "勘ぐれい (의심쩍어 / 칸구레이)",
+        "title": "勘ぐれい (의심쩍어)",
         "artist": "아이리 칸나",
         "originalArtist": "ZUTOMAYO",
         "type": "cover",
@@ -6265,11 +6704,12 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: 勘ぐれい (ZUTOMAYO)"
         },
-        "publishedAt": "2023-11-18"
+        "publishedAt": "2023-11-18",
+        "mood": "upbeat"
     },
     {
         "id": "kanna-the-last-flower",
-        "title": "最終花 (최종화)",
+        "title": "최종화",
         "artist": "아이리 칸나",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -6284,7 +6724,8 @@ const DEFAULT_SONGS = [
             "end": 106,
             "title": "후렴구: 마지막 꽃이 피어나는 순간"
         },
-        "publishedAt": "2023-11-09"
+        "publishedAt": "2023-11-09",
+        "mood": "upbeat"
     },
     {
         "id": "lize-i-am",
@@ -6303,7 +6744,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 마음을 울리는 리제의 열창"
         },
-        "publishedAt": "2023-11-04"
+        "publishedAt": "2023-11-04",
+        "mood": "upbeat"
     },
     {
         "id": "stel-OgwD6f_tdIY",
@@ -6322,7 +6764,8 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: 愛して愛して愛して (Kikuo)"
         },
-        "publishedAt": "2023-10-31"
+        "publishedAt": "2023-10-31",
+        "mood": "upbeat"
     },
     {
         "id": "kanna-spinning-globe",
@@ -6341,11 +6784,12 @@ const DEFAULT_SONGS = [
             "end": 120,
             "title": "후렴구: 회전하는 지구본 위에 새긴 기억"
         },
-        "publishedAt": "2023-10-25"
+        "publishedAt": "2023-10-25",
+        "mood": "upbeat"
     },
     {
         "id": "mashiro-pale",
-        "title": "Pale (페일)",
+        "title": "Pale",
         "artist": "네네코 마시로",
         "originalArtist": "MIMI",
         "type": "cover",
@@ -6360,7 +6804,8 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: 투명하고 아련한 피아노와 보컬"
         },
-        "publishedAt": "2023-10-21"
+        "publishedAt": "2023-10-21",
+        "mood": "chill"
     },
     {
         "id": "kanna-kick-back",
@@ -6379,7 +6824,8 @@ const DEFAULT_SONGS = [
             "end": 84,
             "title": "후렴구: 강렬한 킥백 록 에너지"
         },
-        "publishedAt": "2023-10-14"
+        "publishedAt": "2023-10-14",
+        "mood": "upbeat"
     },
     {
         "id": "stel-GdH0TsPznUs",
@@ -6398,11 +6844,12 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: LADY (米津玄師)"
         },
-        "publishedAt": "2023-09-23"
+        "publishedAt": "2023-09-23",
+        "mood": "groovy"
     },
     {
         "id": "stel-Y52kljOrCsc",
-        "title": "그 여름에 피어나 (あの夏に咲け)",
+        "title": "あの夏に咲け (그 여름에 피어나)",
         "artist": "아라하시 타비",
         "originalArtist": "TUYU",
         "type": "cover",
@@ -6417,11 +6864,12 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: 그 여름에 피어나 (あの夏に咲け)"
         },
-        "publishedAt": "2023-09-18"
+        "publishedAt": "2023-09-18",
+        "mood": "groovy"
     },
     {
         "id": "stel-nYgMMdYDGak",
-        "title": "ねむるまち (잠드는 거리 / 네무루마치)",
+        "title": "ねむるまち (잠드는 거리)",
         "artist": "아이리 칸나",
         "originalArtist": "くじら (Kujira)",
         "type": "cover",
@@ -6436,7 +6884,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: ねむるまち (くじら)"
         },
-        "publishedAt": "2023-09-02"
+        "publishedAt": "2023-09-02",
+        "mood": "upbeat"
     },
     {
         "id": "stel-RoPzUi4rt9A",
@@ -6455,7 +6904,8 @@ const DEFAULT_SONGS = [
             "end": 70,
             "title": "후렴구: 메루메루메루메루메루메 [ 마시로 co"
         },
-        "publishedAt": "2023-08-27"
+        "publishedAt": "2023-08-27",
+        "mood": "cute"
     },
     {
         "id": "stel-u1UbWeVxhpY",
@@ -6474,7 +6924,8 @@ const DEFAULT_SONGS = [
             "end": 81,
             "title": "후렴구: 드라마(Drama)"
         },
-        "publishedAt": "2023-07-28"
+        "publishedAt": "2023-07-28",
+        "mood": "chill"
     },
     {
         "id": "yuni-how-to-be-mine",
@@ -6493,7 +6944,8 @@ const DEFAULT_SONGS = [
             "end": 74,
             "title": "후렴구: 내꺼 하는 법을 알려줄게"
         },
-        "publishedAt": "2023-07-20"
+        "publishedAt": "2023-07-20",
+        "mood": "cute"
     },
     {
         "id": "yuni-idol",
@@ -6512,11 +6964,12 @@ const DEFAULT_SONGS = [
             "end": 96,
             "title": "후렴구: 완벽하고 궁극적인 아이돌"
         },
-        "publishedAt": "2023-07-15"
+        "publishedAt": "2023-07-15",
+        "mood": "cute"
     },
     {
         "id": "stel-AsoPg-h-644",
-        "title": "색채",
+        "title": "色彩 (색채)",
         "artist": "아이리 칸나",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -6531,11 +6984,12 @@ const DEFAULT_SONGS = [
             "end": 115,
             "title": "후렴구: 色彩 / Team. Palette 【"
         },
-        "publishedAt": "2023-07-07"
+        "publishedAt": "2023-07-07",
+        "mood": "upbeat"
     },
     {
         "id": "stel-W-Xr4ceMOXI",
-        "title": "그 여름의 어느 날은 (あの夏のいつかは)",
+        "title": "あの夏のいつかは (그 여름의 어느 날은)",
         "artist": "아라하시 타비",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -6550,7 +7004,8 @@ const DEFAULT_SONGS = [
             "end": 121,
             "title": "후렴구: 그 여름의 어느 날은 (あの夏のいつか"
         },
-        "publishedAt": "2023-06-09"
+        "publishedAt": "2023-06-09",
+        "mood": "groovy"
     },
     {
         "id": "stel-naWmFCbwi3M",
@@ -6569,11 +7024,12 @@ const DEFAULT_SONGS = [
             "end": 108,
             "title": "후렴구: 괴물 (怪物)"
         },
-        "publishedAt": "2023-06-09"
+        "publishedAt": "2023-06-09",
+        "mood": "upbeat"
     },
     {
         "id": "stel-Y3McmrSFy1E",
-        "title": "Question (퀘스천)",
+        "title": "Question",
         "artist": "네네코 마시로",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -6588,7 +7044,8 @@ const DEFAULT_SONGS = [
             "end": 93,
             "title": "후렴구: 퀘스천 (Question)"
         },
-        "publishedAt": "2023-06-08"
+        "publishedAt": "2023-06-08",
+        "mood": "groovy"
     },
     {
         "id": "stel-gBWIv6NvLcU",
@@ -6607,11 +7064,12 @@ const DEFAULT_SONGS = [
             "end": 122,
             "title": "후렴구: 낙향(都落ち)"
         },
-        "publishedAt": "2023-06-08"
+        "publishedAt": "2023-06-08",
+        "mood": "chill"
     },
     {
         "id": "stel-kPdB6iGYBBc",
-        "title": "ADDICTION",
+        "title": "ADDICT!ON",
         "artist": "아이리 칸나",
         "originalArtist": "오리지널 (Original)",
         "type": "original",
@@ -6626,7 +7084,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: 藍璃かんな(Airi Kanna) |"
         },
-        "publishedAt": "2023-05-26"
+        "publishedAt": "2023-05-26",
+        "mood": "upbeat"
     },
     {
         "id": "stel-4_Aknw7fm_8",
@@ -6645,7 +7104,8 @@ const DEFAULT_SONGS = [
             "end": 110,
             "title": "후렴구: アイドル (YOASOBI)"
         },
-        "publishedAt": "2023-05-24"
+        "publishedAt": "2023-05-24",
+        "mood": "upbeat"
     },
     {
         "id": "yuni-goodbye-declaration",
@@ -6664,7 +7124,8 @@ const DEFAULT_SONGS = [
             "end": 76,
             "title": "후렴구: 굿바이 선언 포즈"
         },
-        "publishedAt": "2023-05-20"
+        "publishedAt": "2023-05-20",
+        "mood": "cute"
     },
     {
         "id": "kanna-error",
@@ -6683,7 +7144,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 폭발적인 샤우팅 ERROR"
         },
-        "publishedAt": "2023-04-22"
+        "publishedAt": "2023-04-22",
+        "mood": "upbeat"
     },
     {
         "id": "stel-v8MjiqzLKTs",
@@ -6702,7 +7164,8 @@ const DEFAULT_SONGS = [
             "end": 119,
             "title": "후렴구: すずめ Suzume (RADWIMPS"
         },
-        "publishedAt": "2023-04-09"
+        "publishedAt": "2023-04-09",
+        "mood": "upbeat"
     },
     {
         "id": "stel-3PxbqWrDCz4",
@@ -6721,7 +7184,8 @@ const DEFAULT_SONGS = [
             "end": 134,
             "title": "후렴구: 三文小説 (King Gnu)"
         },
-        "publishedAt": "2023-03-19"
+        "publishedAt": "2023-03-19",
+        "mood": "upbeat"
     },
     {
         "id": "kanna-new-genesis",
@@ -6740,7 +7204,8 @@ const DEFAULT_SONGS = [
             "end": 98,
             "title": "후렴구: 신시대를 여는 청량한 보컬"
         },
-        "publishedAt": "2023-03-04"
+        "publishedAt": "2023-03-04",
+        "mood": "upbeat"
     },
     {
         "id": "stel-yXemOzx8Cw8",
@@ -6759,7 +7224,8 @@ const DEFAULT_SONGS = [
             "end": 111,
             "title": "후렴구:  사랑의 말 Ⅳ"
         },
-        "publishedAt": "2023-02-14"
+        "publishedAt": "2023-02-14",
+        "mood": "cute"
     },
     {
         "id": "yuni-betelgeuse",
@@ -6778,7 +7244,8 @@ const DEFAULT_SONGS = [
             "end": 112,
             "title": "후렴구: 영원히 빛나는 베텔기우스처럼"
         },
-        "publishedAt": "2023-01-28"
+        "publishedAt": "2023-01-28",
+        "mood": "cute"
     },
     {
         "id": "kanna-sukidakara",
@@ -6797,7 +7264,8 @@ const DEFAULT_SONGS = [
             "end": 92,
             "title": "후렴구: 마음을 울리는 칸나의 감성 고백"
         },
-        "publishedAt": "2023-01-14"
+        "publishedAt": "2023-01-14",
+        "mood": "upbeat"
     },
     {
         "id": "yuni-proud-idol",
@@ -6816,7 +7284,8 @@ const DEFAULT_SONGS = [
             "end": 104,
             "title": "후렴구: 누구에게도 지지 않는 아이돌의 긍지"
         },
-        "publishedAt": "2023-01-04"
+        "publishedAt": "2023-01-04",
+        "mood": "cute"
     },
     {
         "id": "stel-MhtScZvcsiQ",
@@ -6835,7 +7304,8 @@ const DEFAULT_SONGS = [
             "end": 124,
             "title": "후렴구: I'm Invincible (Ado)"
         },
-        "publishedAt": "2022-08-20"
+        "publishedAt": "2022-08-20",
+        "mood": "upbeat"
     },
     {
         "id": "stel-2jSW47-0smE",
@@ -6854,11 +7324,12 @@ const DEFAULT_SONGS = [
             "end": 75,
             "title": "후렴구: At the end"
         },
-        "publishedAt": "2021-04-13"
+        "publishedAt": "2021-04-13",
+        "mood": "bright"
     },
     {
         "id": "stel-eEnEH7IpQtc",
-        "title": "어젯밤도 (Last Night)",
+        "title": "어젯밤도",
         "artist": "이한울 (feat. 강지)",
         "originalArtist": "이한울",
         "type": "featuring",
@@ -6873,7 +7344,8 @@ const DEFAULT_SONGS = [
             "end": 85,
             "title": "후렴구: 어젯밤도"
         },
-        "publishedAt": "2020-06-30"
+        "publishedAt": "2020-06-30",
+        "mood": "bright"
     }
 ];
 
@@ -6941,7 +7413,49 @@ function getAllSongs() {
         all.push({ ...song });
     }
 
-    // 사용자 맞춤 곡 정보 수정(Overrides) 및 맞춤 사비 실시간 병합
+    // 전곡 한국어 제목 자동 정제 및 날짜 정규화, 3D 라이브/OST 분류 기본 처리
+    const OST_DETECTION_REGEX = /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i;
+    const LIVE_MUSICAL_REGEX = /(?:방구석\s*뮤지컬|3D\s*Live|4K\s*3D|3D\s*Cover|3D\s*라이브|뮤지컬|지킬|웃는남자|킹키부츠)/i;
+
+    all.forEach(song => {
+        if (song) {
+            if (song.title) {
+                song.title = cleanAndKoreanizeTitle(song.title);
+            }
+            if (!song.releaseDate && song.publishedAt) {
+                song.releaseDate = song.publishedAt;
+            }
+            if (!song.publishedAt && song.releaseDate) {
+                song.publishedAt = song.releaseDate;
+            }
+            // 마시로의 뮤지컬 곡 및 3D 라이브 곡은 3D 라이브(live)로 분류 (OST 감지보다 우선)
+            const isLive = (song.type === 'live') ||
+                LIVE_MUSICAL_REGEX.test(`${song.title || ''} ${song.rawTitle || ''}`) ||
+                (song.artist && song.artist.includes('마시로') && /(?:뮤지컬|지킬|웃는남자|킹키부츠)/i.test(`${song.title || ''} ${song.originalArtist || ''}`));
+            
+            if (isLive) {
+                song.type = 'live';
+            } else if (!song.type || song.type === 'cover' || song.type === 'ost') {
+                if (OST_DETECTION_REGEX.test(song.title || '') ||
+                    OST_DETECTION_REGEX.test(song.rawTitle || '') ||
+                    OST_DETECTION_REGEX.test(song.originalArtist || '') ||
+                    (song.id && song.id.startsWith('ost-'))) {
+                    song.type = 'ost';
+                }
+            }
+
+            // 곡 분위기 기본값 보장 (누락 시 자동 추론)
+            if (!song.mood || song.mood === 'none') {
+                if (typeof window.detectSongMood === 'function') {
+                    song.mood = window.detectSongMood(song) || 'bright';
+                } else {
+                    song.mood = 'bright';
+                }
+            }
+        }
+    });
+
+    // 사용자 맞춤 곡 정보 수정(Overrides) 및 맞춤 사비는 최우선(최종)으로 병합하여 보장
     try {
         if (window.StorageManager) {
             const overrides = typeof window.StorageManager.getSongOverrides === 'function'
@@ -6970,82 +7484,379 @@ function getAllSongs() {
         }
     } catch (e) {}
 
-    // 전곡 한국어 제목 자동 정제 및 OST 무조건 자동 분류
-    const OST_DETECTION_REGEX = /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i;
-    all.forEach(song => {
-        if (song) {
-            if (song.title) {
-                song.title = cleanAndKoreanizeTitle(song.title);
-            }
-            if (!song.releaseDate && song.publishedAt) {
-                song.releaseDate = song.publishedAt;
-            }
-            if (!song.publishedAt && song.releaseDate) {
-                song.publishedAt = song.releaseDate;
-            }
-            // 곡 제목(또는 원제목/원곡 정보/ID)에 OST가 포함된 경우 무조건 OST로 분류
-            if (OST_DETECTION_REGEX.test(song.title || '') ||
-                OST_DETECTION_REGEX.test(song.rawTitle || '') ||
-                OST_DETECTION_REGEX.test(song.originalArtist || '') ||
-                (song.id && song.id.startsWith('ost-'))) {
-                song.type = 'ost';
-            }
-        }
-    });
-
     return all;
 }
 
-function cleanAndKoreanizeTitle(title) {
+const JAPANESE_SONG_MAP = {
+    '제육감': ['第六感', '제육감'],
+    'sixth sense': ['第六感', '제육감'],
+    '第六感': ['第六感', '제육감'],
+    '유령이 되고싶어': ['ゆうれいになりたい', '유령이 되고싶어'],
+    'ゆうれいになりたい': ['ゆうれいになりたい', '유령이 되고싶어'],
+    '도쿄 테디베어': ['東京テ디베어', '도쿄 테디베어']
+    '도쿄 테디베어': ['東京テディベア', '도쿄 테디베어'],
+    '東京テディベア': ['東京テディベア', '도쿄 테디베어'],
+    '東京テディベア': ['東京テ디베어', '도쿄 테디베어'],
+    'tokyo teddy bear': ['東京テディベア', '도쿄 테디베어'],
+    '아 프리오리': ['ア・プリオリ', '아 프리오리'],
+    'ア・プリオリ': ['ア・プリオリ', '아 프리오리'],
+    'a priori': ['ア・プリオリ', '아 프리오리'],
+    '오버라이드': ['オーバーライド', '오버라이드'],
+    'オーバーライド': ['オーバーライド', '오버라이드'],
+    'override': ['オーバーライド', '오버라이드'],
+    '불가행력': ['不可幸力', '불가행력'],
+    '不可幸力': ['不可幸力', '불가행력'],
+    'fukakouryoku': ['不可幸力', '불가행력'],
+    '나에게 꽃다발': ['わたしに花束', '나에게 꽃다발'],
+    'わたしに花束': ['わたしに花束', '나에게 꽃다발'],
+    '私に花束': ['わたしに花束', '나에게 꽃다발'],
+    '브레인 롯': ['ブレインロット', '브레인 롯'],
+    'ブレインロット': ['ブレインロット', '브레인 롯'],
+    '소녀레이': ['少女レイ', '소녀레이'],
+    '소녀 레이': ['少女レイ', '소녀레이'],
+    '少女レイ': ['少女レイ', '소녀레이'],
+    '비바해피': ['ビバハピ', '비바해피'],
+    'ビバハピ': ['ビバハピ', '비바해피'],
+    'otsukare summer': ['おつかれsummer', '수고했어 summer'],
+    'おつかれsummer': ['おつかれsummer', '수고했어 summer'],
+    '물떼새': ['千鳥', '물떼새'],
+    '千鳥': ['千鳥', '물떼새'],
+    'chidori': ['千鳥', '물떼새'],
+    'mosi mosi?': ['もしもし？', '모시모시?'],
+    'もしもし？': ['もしもし？', '모시모시?'],
+    '모시모시': ['もしもし？', '모시모시?'],
+    '구르는 바위, 네게 아침이 내린다': ['転がる岩、君に朝が降る', '구르는 바위, 네게 아침이 내린다'],
+    '転がる岩、君に朝が降る': ['転がる岩、君に朝が降る', '구르는 바위, 네게 아침이 내린다'],
+    '푸른 산호초': ['青い珊瑚礁', '푸른 산호초'],
+    '青い珊瑚礁': ['青い珊瑚礁', '푸른 산호초'],
+    '네, 기꺼이': ['はいよろこんで', '네, 기꺼이'],
+    '네 기꺼이': ['はいよろこんで', '네, 기꺼이'],
+    'はいよろこんで': ['はいよろこんで', '네, 기꺼이'],
+    'はいよろんで': ['はいよろこんで', '네, 기꺼이'],
+    '논브레스 오블리주': ['ノンブレス・オブリージュ', '논브레스 오블리주'],
+    'ノンブレス・オブリージュ': ['ノンブレス・オブリージュ', '논브레스 오블리주'],
+    '희극': ['喜劇', '희극'],
+    '喜劇': ['喜劇', '희극'],
+    '우리! 쓰레기 분리수거단': ['われら！ゴミ分別隊', '우리! 쓰레기 분리수거단'],
+    'われら！ゴミ分別隊': ['われら！ゴミ分別隊', '우리! 쓰레기 분리수거단'],
+    '我ら！ゴミ分別団': ['われら！ゴミ分別隊', '우리! 쓰레기 분리수거단'],
+    '서머타임레코드': ['サマータイムレコード', '서머타임 레코드'],
+    '서머타임 레코드': ['サマータイムレコード', '서머타임 레코드'],
+    'サマータイムレコード': ['サマータイムレコード', '서머타임 레코드'],
+    '청록': ['青緑', '청록'],
+    '青緑': ['青緑', '청록'],
+    'blue-green': ['青緑', '청록'],
+    '친애하는 소년이여': ['拝啓、少年よ', '삼가 아룁니다, 소년이여'],
+    '삼가 아룁니다, 소년이여': ['拝啓、少年よ', '삼가 아룁니다, 소년이여'],
+    '拝啓、少年よ': ['拝啓、少年よ', '삼가 아룁니다, 소년이여'],
+    '밤새도록 널 생각해': ['夜もすがら君想ふ', '밤새도록 널 생각해'],
+    '夜もすがら君想ふ': ['夜もすがら君想ふ', '밤새도록 널 생각해'],
+    '무대에 서서': ['舞台に立って', '무대에 서서'],
+    '舞台に立って': ['舞台に立って', '무대에 서서'],
+    'standing on the stage': ['舞台に立って', '무대에 서서'],
+    '내일 또 보자': ['またあした', '내일 또 보자'],
+    'またあした': ['またあした', '내일 또 보자'],
+    'また明日': ['またあした', '내일 또 보자'],
+    '망상 아스파탐': ['妄想アスパルテーム', '망상 아스파탐'],
+    '妄想アスパルテーム': ['妄想アスパルテーム', '망상 아스파탐'],
+    'delusional aspartame': ['妄想アスパルテーム', '망상 아스파탐'],
+    '악마가 아닌걸': ['デビルじゃないもん', '악마가 아닌걸'],
+    'デビルじゃないもん': ['デビルじゃないもん', '악마가 아닌걸'],
+    '悪魔じゃないもん': ['デビルじゃないもん', '악마가 아닌걸'],
+    '춘수': ['春愁', '춘수'],
+    '春愁': ['春愁', '춘수'],
+    '부탁해 달링': ['おねがいダーリン', '부탁해 달링'],
+    'おねがいダーリン': ['おねがいダーリン', '부탁해 달링'],
+    '멜트': ['メルト', '멜트'],
+    'メルト': ['メルト', '멜트'],
+    '오렌지': ['オレンジ', '오렌지'],
+    'オレンジ': ['オレンジ', '오렌지'],
+    '아이네 클라이네': ['アイネクライネ', '아이네 클라이네'],
+    'アイネクライネ': ['アイネクライ네', '아이네 클라이네'],
+    'eine kleine': ['アイネクライネ', '아이네 클라이네'],
+    '숨바꼭질': ['かくれんぼ', '숨바꼭질'],
+    'かくれんぼ': ['かくれんぼ', '숨바꼭질'],
+    '푸른 하늘의 랩소디': ['青空のラプソディ', '푸른 하늘의 랩소디'],
+    '青空のラプソディ': ['青空のラプソディ', '푸른 하늘의 랩소디'],
+    '사랑 감기에 실려': ['恋風邪にのせて', '사랑 감기에 실려'],
+    '恋風邪にのせて': ['恋風邪にのせて', '사랑 감기에 실려'],
+    'carried on a love cold': ['恋風邪にのせて', '사랑 감기에 실려'],
+    '포니': ['フォニイ', '포니'],
+    'フォニイ': ['フォニイ', '포니'],
+    'phony': ['フォニイ', '포니'],
+    '행복에 대해 내가 생각한 것': ['幸せについて、僕が考えたこと', '행복에 대해 내가 생각한 것'],
+    '幸せについて、僕が考えたこと': ['幸せについて、僕が考えたこと', '행복에 대해 내가 생각한 것'],
+    '푸른 보석과 어린 용': ['青い宝石と竜の子', '푸른 보석과 어린 용'],
+    '青い宝石と竜の子': ['青い宝石と竜の子', '푸른 보석과 어린 용'],
+    '색채': ['色彩', '색채'],
+    '色彩': ['色彩', '색채'],
+    '세카이': ['セカイ', '세카이'],
+    'セカイ': ['セカイ', '세카이'],
+    '라일락': ['ライラック', '라일락'],
+    'ライラック': ['ライラック', '라일락'],
+    'lilac': ['ライラック', '라일락'],
+    '귀여워서 미안해': ['可愛くてごめん', '귀여워서 미안해'],
+    '可愛くてごめん': ['可愛くてごめん', '귀여워서 미안해'],
+    '강풍 올백': ['強風オールバック', '강풍 올백'],
+    '강풍올백': ['強風オールバック', '강풍 올백'],
+    '強風オールバック': ['強風オールバック', '강풍 올백'],
+    '실루엣': ['シルエット', '실루엣'],
+    'シルエット': ['シルエット', '실루엣'],
+    '루즈의 전언': ['ルージュの伝言', '루즈의 전언'],
+    'ルージュの伝言': ['ルージュの伝言', '루즈의 전언'],
+    '팬서비스': ['ファンサ', '팬서비스'],
+    '팬 서비스': ['ファンサ', '팬서비스'],
+    'ファンサ': ['ファンサ', '팬서비스'],
+    '금목서': ['金木犀', '금목서'],
+    '金木犀': ['金木犀', '금목서'],
+    '눈물이 마르지 않아': ['涙が乾くまで', '눈물이 마르지 않아'],
+    '涙が乾くまで': ['涙が乾くまで', '눈물이 마르지 않아'],
+    '스파클': ['スパークル', '스파클'],
+    'スパークル': ['スパークル', '스파클'],
+    '쏘아올린 불꽃': ['打上花火', '쏘아올린 불꽃'],
+    '打上花火': ['打上花火', '쏘아올린 불꽃'],
+    '마로니에': ['マロニエ', '마로니에'],
+    'マロニエ': ['マロニエ', '마로니에'],
+    '메피스토': ['メフィスト', '메피스토'],
+    'メフィスト': ['メフィスト', '메피스토'],
+    '아이돌': ['アイドル', '아이돌'],
+    'アイドル': ['アイドル', '아이돌'],
+    '뱀파이어': ['ヴァンパイア', '뱀파이어'],
+    'ヴァンパイア': ['ヴァンパイア', '뱀파이어'],
+    '신 같네': ['神っぽいな', '신 같네'],
+    '神っぽいな': ['神っぽいな', '신 같네'],
+    '굿바이 선언': ['グッバイ宣言', '굿바이 선언'],
+    'グッバイ宣言': ['グッバイ宣言', '굿바이 선언'],
+    '피스 사인': ['ピースサイン', '피스 사인'],
+    'ピースサイン': ['ピースサイン', '피스 사인'],
+    '괴물': ['怪物', '괴물'],
+    '怪物': ['怪物', '괴물'],
+    '밤을 달리다': ['夜に駆ける', '밤을 달리다'],
+    '夜に駆ける': ['夜に駆ける', '밤을 달리다'],
+    '봄을 고하다': ['春を告げる', '봄을 고하다'],
+    '春を告げる': ['春を告げる', '봄을 고하다'],
+    '말해줘': ['言って。', '말해줘'],
+    '言って。': ['言って。', '말해줘'],
+    '그저 네게 맑아라': ['ただ君に晴れ', '그저 네게 맑아라'],
+    'ただ君に晴れ': ['ただ君に晴れ', '그저 네게 맑아라'],
+    '사계절이 흐르고': ['四季刻歌', '사계절이 흐르고'],
+    '四季刻歌': ['四季刻歌', '사계절이 흐르고'],
+    '백일': ['白日', '백일'],
+    '白日': ['白日', '백일'],
+    '마리골드': ['マリーゴールド', '마리골드'],
+    'マリーゴールド': ['マリーゴールド', '마리골드'],
+};
+
+const ENGLISH_TITLES_SET = new Set([
+    'deja vu', 'to you, my light', 'star trail', 'dancehall', 'orion', 'acacia',
+    'stellar stellar', 'one last kiss', 'ray', 'twinkle', 'chewing luv', 'festa!',
+    'our tales', 'supadopa', 'stars align', 'dear my fairy', 'hit on shot',
+    'addict!on', 'milky way', 'berry verry strawberry', 'villain alert',
+    'high hopes', 'drivers license', 'hollowness', 'booo!', 'loveit?', 'start',
+    'oh...', 'mela!', 'daybreak frontline', 'henceforth', 'surges', 'summer',
+    'refrain', 'drowning', 'pale', 'question', 'identity', 'ego rock', 'king',
+    'villain', 'w●rk', 'confrontation', 'alive 2', 'land of lola', 'dynamite',
+    'dance the night away', 'catallena', '100% for you', 'loop in june',
+    'kick back', 'pretender', 'lemon', 'tomboy', 'joker', 'aizo'
+]);
+
+function cleanAndKoreanizeTitle(title, rawTitle = '') {
     if (!title) return '';
     let t = title.trim();
+    const raw = rawTitle ? rawTitle.trim() : '';
 
-    // 1. [4K], 【4K】, (4K), (MV), [MV], [Live], (Live), Official MV 등 잡음 제거
-    t = t.replace(/[\[【\(]\s*(?:4K|MV|Live|Official)\s*[\]】\)]/gi, '');
+    // 0. 유튜브 메타데이터 및 채널 접두어 제거
+    t = t.replace(/\s*-\s*YouTube$/i, '');
+    t = t.replace(/^(?:스텔라이브\s*\(StelLive\)\s*(?:Cliché|Universe)?\s*[\|Iㅣ]\s*|STELLIVE\s*\(스텔라이브\)\s*|StelLive\s*[\|ㅣ]\s*)/i, '');
+    t = t.replace(/^(?:스텔라이브\s*\(STELLIVE\)\s*Universe\s*[\|ㅣ]\s*)/i, '');
+
+    // 1. [4K], 【MV】, (Live Cover) 등 각종 태그 및 잡음 제거
+    t = t.replace(/[\[【\(]\s*(?:4K|UHD|HD|MV|Live|Official)\s*[\]】\)]/gi, '');
     t = t.replace(/\s*Official\s*(?:Music\s*Video|Video|MV)\s*$/gi, '');
     t = t.replace(/\s*(?:Music\s*Video|MV)\s*$/gi, '');
-    t = t.replace(/[\s\|ㅣ/]*[\[【\(]?(?:Live\s*)?Cover[\]】\)]?.*$/gi, '');
+    t = t.replace(/[\s\|ㅣ/]*[\[【\(]?(?:3D\s*)?(?:Live\s*)?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\]】\)]?.*$/gi, '');
     t = t.replace(/\s*\(Feat\.[^\)]+\)/gi, '');
 
-    // 2. 파이프 기호 분리 (아티스트 | 곡제목)
+    // 1-1. 아티스트 커버 후미 태그 안전 제거 (중첩 괄호 및 영문명 포함)
+    t = t.replace(/[\/\|ㅣ\-]\s*[^\]】」』\/\|ㅣ\-]*?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\s\S]*$/gi, '').trim();
+    t = t.replace(/(?<=[\]】」』\)])\s*[^\[\(\]】」』\/\|ㅣ\-]*?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\s\S]*$/gi, '').trim();
+    t = t.replace(/\s*(?:시즈키\s*토아|코가네\s*랑|하나요\s*히요리|토키노\s*메리|아야츠노\s*유니|아오쿠모\s*린|시라유키\s*히나|유즈하\s*리코|하나코\s*나나|텐코\s*시부키|아카네\s*리제|아라하시\s*타비|아이리\s*칸나|네네코\s*마시로)\s*Cover.*$/gi, '').trim();
+
+    // 1-2. 스마트 정규식: Nested 일본어 인용구 추출 (예: '아 프리오리 (Mrs. GREEN APPLE 「ア・プリオリ」)' -> 'ア・プリオリ (아 프리오리)')
+    const mNested = t.match(/^([가-힣a-zA-Z0-9\s]+)\s*[\(\[][^\)\]]*?[「『]([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s0-9\.\-!·・]+)[」』][^\)\]]*?[\)\]]$/);
+    if (mNested) {
+        const kor = mNested[1].trim();
+        const jap = mNested[2].trim();
+        return `${jap} (${kor})`;
+    }
+
+    // 1-3. 스마트 정규식: 괄호 내 일본어/원곡자 분리 (예: '제육감 [第六感 l Reol]' -> '第六感 (제육감)', '호랑풍류가 [나와 호랑이님 OST]' -> '호랑풍류가 (나와 호랑이님 OST)')
+    const mBracket = t.match(/^([가-힣a-zA-Z0-9\s,\.!\?]+)\s*[\[【「『\(]([\s\S]+?)[\]】」』\)]$/);
+    if (mBracket) {
+        const prefix = mBracket[1].trim();
+        const inside = mBracket[2].trim();
+        if (/OST/i.test(inside)) {
+            return `${prefix} (${inside})`;
+        }
+        const parts = inside.split(/[\/\|lIㅣ:\-]/).map(p => p.trim()).filter(Boolean);
+        let japPart = null;
+        for (const p of parts) {
+            if (/[\u3040-\u309F\u30A0-\u30FF]/.test(p) || (/[\u4E00-\u9FFF]/.test(p) && !/[가-힣]/.test(p))) {
+                japPart = p;
+                break;
+            }
+        }
+        if (japPart) {
+            const japClean = japPart.replace(/^[「『'"“‘]+|[」』'"”’]+$/g, '').trim();
+            if (/[가-힣]/.test(prefix)) {
+                return `${japClean} (${prefix})`;
+            } else {
+                return japClean;
+            }
+        }
+    }
+
+
+    // 2. 파이프 분리 (아티스트 | 곡제목)
     const pipeMatch = t.match(/^[^\|ㅣ]+[\|ㅣ]\s*[\'‘"“]([^\'’"”]+)[\'’"”]/);
     if (pipeMatch) {
         t = pipeMatch[1].trim();
     } else {
         const pipeMatch2 = t.match(/^[^\|ㅣ]+[\|ㅣ]\s*([^\|ㅣ\n]+)$/);
-        if (pipeMatch2 && !/cover|보았다/i.test(pipeMatch2[1])) {
+        if (pipeMatch2 && !/cover|보았다|mv|라이브/i.test(pipeMatch2[1])) {
             t = pipeMatch2[1].trim();
         }
     }
 
-    // 3. 따옴표 제거 및 양끝 정리
     t = t.replace(/^[\'‘"“](.+)[\'’"”]$/, '$1').trim();
     t = t.replace(/^[\|\-ㅣ/]\s*/, '').replace(/\s*[\|\-ㅣ/]$/, '').trim();
 
-    // 4. 영어 전용 또는 혼용 대표곡 한국어 매핑
-    const TITLE_MAP = {
-        'Milky Way': '밀키웨이',
-        'Stars Align': '스타즈 얼라인',
-        'Our Tales': '아워 테일즈',
-        'Hit On Shot': '히트 온 샷',
-        'Dear My Fairy': '디어 마이 페어리',
-        'セカイ (SEKAI)': '세카이',
-        'SEKAI': '세카이',
-        'Maid My Way': '메이드 마이 웨이',
-        'Hush Trap': '허쉬 트랩',
-        'Frozen Eclipse': '프로즌 이클립스',
-        'Star Walkin': '스타 워킨',
-        'Star Walkin\'': '스타 워킨',
-        'STAR WALKIN\'': '스타 워킨',
-        'Identity': '아이덴티티',
-        'Ego Rock': '에고 록',
-        'W●RK': '워크 (W●RK)',
-        'King': '킹 (King)',
-        'Villain': '빌런',
-        'God-ish': '신 같네 (신의 뜻대로)'
+    // 3. 한국어 고유 곡명 표준 정리 (영어 부제 및 한자 제거)
+    const KOREAN_EXACT = {
+        '히로인이 되고 싶어 (I Want to Be a Heroine)': '히로인이 되고 싶어',
+        '삐질게 (BBiJilGe)': '삐질게',
+        '여로 (Voyage)': '여로',
+        '하나 (夏拏)': '하나',
+        'HANA': '하나',
+        '최종화 (最終花)': '최종화',
+        '최종화 (Acoustic Ver.)': '최종화',
+        '最終花 (최종화)': '최종화',
+        'Wish Me Luck [A journey] - WONPIL(DAY6)': '행운을 빌어 줘',
+        '「명일방주: 엔드필드」 리노 EP - 미랫빛 라이더 Mirairo Rider': '미랫빛 라이더',
+        'My Sea (아이와 나의 바다) [IU]': '아이와 나의 바다',
+        '아이와 나의 바다': '아이와 나의 바다',
+        'Atlantis Princess': '아틀란티스 소녀',
+        '유성우': '유성우',
+        '마음악보': '마음악보',
+        '봄꿈': '봄꿈',
+        '내꺼 하는 법': '내꺼 하는 법',
+        '호랑풍류가': '호랑풍류가 (나와 호랑이님 OST)',
+        '호랑풍류가 (나와 호랑이님 OST)': '호랑풍류가 (나와 호랑이님 OST)'
     };
-    if (TITLE_MAP[t]) {
-        return TITLE_MAP[t];
+    if (KOREAN_EXACT[t]) return KOREAN_EXACT[t];
+
+    const fullText = (t + ' ' + raw).trim();
+    const fullLower = fullText.toLowerCase();
+
+    // 특정 OST 및 뮤지컬 곡
+    if (fullLower.includes('loop in june')) return 'Loop in June (명조:워더링 웨이브 OST)';
+    if (fullLower.includes('confrontation') && fullText.includes('지킬')) return 'Confrontation (지킬 앤 하이드 OST)';
+    if (fullLower.includes('alive 2') && fullText.includes('지킬')) return 'Alive 2 (지킬 앤 하이드 OST)';
+    if (fullLower.includes('land of lola') && fullText.includes('킹키부츠')) return 'Land of Lola (킹키부츠 OST)';
+    if (fullText.includes('웃는남자')) return '웃는남자 (뮤지컬 웃는남자 OST)';
+    if (fullText.includes('여우의 별자리') && fullText.includes('명조')) return '여우의 별자리 「심월과 달의 노래」 (명조 OST)';
+
+    // 3D 라이브 특별 곡
+    if (fullLower.includes('dance the night away')) return 'Dance The Night Away [3D Live]';
+    if (fullLower.includes('dynamite') && (fullLower.includes('bts') || fullText.includes('방탄소년단'))) return 'Dynamite [3D Live]';
+    if (fullText.includes('까탈레나') || fullLower.includes('catallena')) return '까탈레나 [3D Live]';
+    if (fullLower.includes('100% for you')) return '100% for You [3D Live]';
+
+    // 대표 영어 및 일본어 특별 타이틀 정규화
+    if (fullLower.includes('deja vu') && fullLower.includes('olivia')) return 'Deja vu';
+    if (fullLower.includes('drivers license')) return 'drivers license';
+    if (fullLower.includes('dancehall')) return 'Dancehall';
+    if (fullLower.includes('star trail')) return 'STAR TRAIL';
+    if (fullLower.includes('high hopes')) return 'High Hopes';
+    if (fullLower.includes('acacia') && fullLower.includes('bump')) return 'Acacia';
+    if (fullLower.includes('one last kiss')) return 'One Last Kiss';
+    if (fullLower.includes('stellar stellar')) return 'Stellar Stellar';
+    if (fullLower.includes('milky way')) return 'Milky Way';
+    if (fullLower.includes('onegai darling') || fullText.includes('おねがいダーリン')) return 'おねがいダーリン (부탁해 달링)';
+    if (fullLower.includes('waste sorting squad') || fullLower.includes('gomi bunbetsudan')) return 'われら！ゴミ分別隊 (우리! 쓰레기 분리수거단)';
+    if (fullLower.includes('melt cpk') || (fullLower.includes('melt') && fullLower.includes('supercell'))) return 'メルト (CPK! Remix)';
+
+    // 후미 아티스트 및 인용구 제거
+    t = t.replace(/\s*-\s*[「『【\[].*?[」』】\]]\s*$/, '');
+    t = t.replace(/\s*\[(?:타다노\s*카에데|只野\s*楓)[^\]]*\]\s*$/, '');
+
+    // 영어 제목에 한국어 번역이 괄호로 붙은 경우: 'English (한글)' -> 영어 제목 원본 유지 ('영어제목 미번역' 원칙)
+    const mEngKor = t.match(/^([a-zA-Z0-9\s\?!\.●\'-]+)\s*\(([가-힣\s]+)\)$/);
+    if (mEngKor) {
+        const engCandidate = mEngKor[1].trim();
+        const engLow = engCandidate.toLowerCase();
+        if (ENGLISH_TITLES_SET.has(engLow) || /^[a-zA-Z0-9\s\?!\.●\'-]+$/.test(engCandidate)) {
+            if (!JAPANESE_SONG_MAP[engCandidate] && !JAPANESE_SONG_MAP[engLow]) {
+                return engCandidate;
+            }
+        }
+    }
+
+    // 영어 곡 원문 보존 (한국어 번역/괄호 미적용)
+    const tCleanAlnum = t.replace(/[^a-zA-Z0-9\s\?!\.●]/g, '').trim().toLowerCase();
+    if (ENGLISH_TITLES_SET.has(tCleanAlnum)) {
+        return t.trim();
+    }
+
+    // 아이돌 예외 (긍지높은 아이돌 등과 구분)
+    if (['아이돌', 'アイドル', '아이돌 (YOASOBI)', 'アイドル (YOASOBI)'].includes(t.trim())) {
+        return 'アイドル (아이돌)';
+    }
+
+    // 일본어 곡 원곡명 (번역명) 매핑 검사
+    const tLow = t.toLowerCase();
+    for (const [key, val] of Object.entries(JAPANESE_SONG_MAP)) {
+        if (key === '아이돌' || key === 'アイドル') continue;
+        if (key.toLowerCase() === tLow) {
+            return `${val[0]} (${val[1]})`;
+        }
+    }
+
+    for (const [key, val] of Object.entries(JAPANESE_SONG_MAP)) {
+        if (key === '아이돌' || key === 'アイドル') continue;
+        const re = new RegExp(`(^|[\\s\\[\\(『【])${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[\\s\\]\\)』】])`, 'i');
+        if (re.test(t)) {
+            return `${val[0]} (${val[1]})`;
+        }
+    }
+
+    // '한글 (일본어)' 형태인 경우 -> '일본어 (한글)'로 역전 정규화!
+    const mRev = t.match(/^([가-힣\s0-9]+)\s*[\(\[『【]([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s0-9\.\-!]+)[\)\]』】]$/);
+    if (mRev) {
+        return `${mRev[2].trim()} (${mRev[1].trim()})`;
+    }
+
+    // 이미 '일본어 (한글)' 형태인 경우 정규화 유지
+    const mStd = t.match(/^([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s0-9\.\-!]+)\s*\(([가-힣\s0-9]+)\)$/);
+    if (mStd) {
+        return `${mStd[1].trim()} (${mStd[2].trim()})`;
+    }
+
+    // 한국어 곡 뒤에 영어 부제가 붙어 있는 경우: '한국어 (English)' -> 순수 한국어만 보존
+    const mKorEng = t.match(/^([가-힣\s0-9]+)\s*\([a-zA-Z\s0-9\.\-!]+\)$/);
+    if (mKorEng) {
+        return mKorEng[1].trim();
+    }
+
+    // 트레일링 아티스트 태그 '제목 - 아티스트' 분리 처리
+    if (t.includes(' - ')) {
+        const parts = t.split(' - ');
+        if (parts.length === 2) {
+            const rightLow = parts[1].trim().toLowerCase();
+            if (['yoasobi', 'bump of chicken', 'olivia rodrigo', 'mrs. green apple', 'vaundy', 'ado', 'tokotoko', 'hump back', 'kenshi yonezu', 'biz', 'wonpil', 'day6', 'fuwari', 'halcali'].some(k => rightLow.includes(k))) {
+                return cleanAndKoreanizeTitle(parts[0].trim(), rawTitle);
+            }
+        }
     }
 
     return t;
