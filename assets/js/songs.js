@@ -211,6 +211,60 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-rKQptWhAvO0",
+        "title": "東京テディベア (도쿄 테디베어)",
+        "artist": "토키노 메리",
+        "originalArtist": "Neru",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["mary"],
+        "youtubeId": "rKQptWhAvO0",
+        "duration": 194,
+        "sabi": {
+            "start": 48,
+            "end": 88,
+            "title": "후렴구: 도쿄 테디베어"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "upbeat"
+    },
+    {
+        "id": "stel-ouKcRBeyKbk",
+        "title": "ゆうれいになりたい (유령이 되고싶어)",
+        "artist": "하나요 히요리",
+        "originalArtist": "유이카 (Yuika)",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["hiyori"],
+        "youtubeId": "ouKcRBeyKbk",
+        "duration": 243,
+        "sabi": {
+            "start": 50,
+            "end": 90,
+            "title": "후렴구: 유령이 되고싶어"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "chill"
+    },
+    {
+        "id": "stel-iAoU1UGPoXc",
+        "title": "호랑풍류가 (나와 호랑이님 OST)",
+        "artist": "코가네 랑",
+        "originalArtist": "나와 호랑이님 OST",
+        "type": "cover",
+        "gen": "g4",
+        "members": ["rang"],
+        "youtubeId": "iAoU1UGPoXc",
+        "duration": 253,
+        "sabi": {
+            "start": 55,
+            "end": 95,
+            "title": "후렴구: 호랑풍류가"
+        },
+        "publishedAt": "2026-10-16",
+        "mood": "bright"
+    },
+    {
         "id": "stel-MZNKiadMo3U",
         "title": "第六感 (제육감)",
         "artist": "시즈키 토아",

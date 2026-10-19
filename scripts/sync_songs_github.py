@@ -557,7 +557,7 @@ def main():
         'fXoGiuE6e-I': 'Loop in June (명조:워더링 웨이브 OST)',
         'bmFg-paLaMI': 'ブレインロット (브레인 롯)',
     }
-    g4_order = ['MZNKiadMo3U', 'iAoU1UGPoXc', 'ouKcRBeyKbk', 'rKQptWhAvO0']
+    g4_order = ['rKQptWhAvO0', 'ouKcRBeyKbk', 'iAoU1UGPoXc', 'MZNKiadMo3U']
 
     for t in tracks:
         tid = t.get('id')
