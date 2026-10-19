@@ -538,6 +538,43 @@ def main():
     tracks = fetch_tracks()
     print(f"Fetched total {len(tracks)} tracks.")
 
+    canonical_titles = {
+        'MZNKiadMo3U': '第六感 (제육감)',
+        'iAoU1UGPoXc': '호랑풍류가 (나와 호랑이님 OST)',
+        'ouKcRBeyKbk': 'ゆうれいになりたい (유령이 되고싶어)',
+        'rKQptWhAvO0': '東京テディベア (도쿄 테디베어)',
+        'JLM7z8afU4s': 'ア・プリオリ (아 프리오리)',
+        'kNzGpNEdBqw': 'オーバーライド (오버라이드)',
+        'Qi_JLmXBFFo': '不可幸力 (불가행력)',
+        'Qngf5HNfl6Q': '少女レイ (소녀레이)',
+        'FzefgoF26Ac': '여우의 별자리 (명조:워더링 웨이브 OST)',
+        'blFr5w6o2jQ': '아이와 나의 바다',
+        'Zetk77I6_s8': 'おつかれsummer (수고했어 summer)',
+        'uBtFoUXR9Qc': '千鳥 (물떼새)',
+        'zQp6ZZAT6ew': 'もしもし？ (모시모시?)',
+        'yuxa6o1_scc': 'ライラック (라일락)',
+        'ekINzN4PQmo': '아틀란티스 소녀',
+        'fXoGiuE6e-I': 'Loop in June (명조:워더링 웨이브 OST)',
+        'bmFg-paLaMI': 'ブレインロット (브레인 롯)',
+    }
+    g4_order = ['MZNKiadMo3U', 'iAoU1UGPoXc', 'ouKcRBeyKbk', 'rKQptWhAvO0']
+
+    for t in tracks:
+        tid = t.get('id')
+        if tid in canonical_titles:
+            t['title'] = canonical_titles[tid]
+        if tid in g4_order:
+            t['publishedAt'] = '2026-10-16'
+            if tid == 'MZNKiadMo3U': t['members'] = ['toa']; t['defaultMember'] = 'toa'
+            elif tid == 'iAoU1UGPoXc': t['members'] = ['rang']; t['defaultMember'] = 'rang'
+            elif tid == 'ouKcRBeyKbk': t['members'] = ['hiyori']; t['defaultMember'] = 'hiyori'
+            elif tid == 'rKQptWhAvO0': t['members'] = ['mary']; t['defaultMember'] = 'mary'
+            t['defaultType'] = 'cover'
+
+    g4_map = {t['id']: t for t in tracks if t.get('id') in g4_order}
+    others = [t for t in tracks if t.get('id') not in g4_order]
+    tracks = [g4_map[tid] for tid in g4_order if tid in g4_map] + others
+
     payload = {
         'success': True,
         'count': len(tracks),
