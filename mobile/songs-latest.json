@@ -1,26 +1,27 @@
 {
   "success": true,
-  "count": 80,
-  "updatedAt": "2026-10-22T08:08:29.371952+00:00",
+  "count": 98,
+  "updatedAt": "2026-09-27T19:16:01.056325+00:00",
   "tracks": [
     {
       "id": "LmOl01G4DR4",
       "title": "打上花火 (쏘아올린 불꽃)",
-      "rawTitle": "타상연화『打上花火』[DAOKO × 요네즈켄시] | 시라유키 히나 x 아오쿠모 린 Cover 스",
-      "duration": 290,
-      "uploader": "",
+      "rawTitle": "타상연화『打上花火』[DAOKO × 요네즈켄시] | 시라유키 히나 x 아오쿠모 린 Cover",
+      "duration": 289,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
       "defaultMember": "hina",
       "members": [
         "hina",
         "rin"
       ],
       "defaultType": "cover",
-      "publishedAt": "2026-10-21"
+      "publishedAt": "2026-10-21",
+      "mood": "upbeat"
     },
     {
       "id": "EKEts5IShas",
       "title": "별이 시작되는 곳",
-      "rawTitle": "[STELLIVE] ABYSS - Where Stars Begin",
+      "rawTitle": "[STELLIVE] ABYSS - 별이 시작되는 곳 (Where Stars Begin)",
       "duration": 207,
       "uploader": "스텔라이브 StelLive Official",
       "defaultMember": "group",
@@ -31,20 +32,22 @@
         "mary"
       ],
       "defaultType": "original",
-      "publishedAt": "2026-10-20"
+      "publishedAt": "2026-10-20",
+      "mood": "bright"
     },
     {
       "id": "rKQptWhAvO0",
       "title": "東京テディベア (도쿄 테디베어)",
-      "rawTitle": "도쿄 테디베어 [東京テディベア l Neru] / 토키노 메리 (Tokino Mary) Cover",
-      "duration": 195,
+      "rawTitle": "도쿄 테디베어 [東京テ디베어 l Neru] / 토키노 메리 (Tokino Mary) Cover",
+      "duration": 194,
       "uploader": "토키노 메리 TOKINO MARY",
       "defaultMember": "mary",
       "members": [
         "mary"
       ],
       "defaultType": "cover",
-      "publishedAt": "2026-10-16"
+      "publishedAt": "2026-10-16",
+      "mood": "upbeat"
     },
     {
       "id": "ouKcRBeyKbk",
@@ -57,7 +60,8 @@
         "hiyori"
       ],
       "defaultType": "cover",
-      "publishedAt": "2026-10-16"
+      "publishedAt": "2026-10-16",
+      "mood": "chill"
     },
     {
       "id": "iAoU1UGPoXc",
@@ -70,7 +74,8 @@
         "rang"
       ],
       "defaultType": "cover",
-      "publishedAt": "2026-10-16"
+      "publishedAt": "2026-10-16",
+      "mood": "bright"
     },
     {
       "id": "MZNKiadMo3U",
@@ -83,43 +88,22 @@
         "toa"
       ],
       "defaultType": "cover",
-      "publishedAt": "2026-10-16"
-    },
-    {
-      "id": "3Xf1Wt7Z-RY",
-      "title": "革命道中 (혁명도중)",
-      "rawTitle": "혁명도중 [革命道中 / アイナ・ジ・エンド] / 텐코 시부키 (Tenko Shibuki) cover",
-      "duration": 197,
-      "uploader": "텐코 시부키 TENKO SHIBUKI",
-      "defaultMember": "shibuki",
-      "members": [
-        "shibuki"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "VuyZF2VYAfU",
-      "title": "CH4NGE [Giga ft. KAF]",
-      "rawTitle": "CH4NGE [Giga ft. KAF] / Yuzuha Riko cover",
-      "duration": 134,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "riko",
-      "members": [
-        "riko"
-      ],
-      "defaultType": "cover"
+      "publishedAt": "2026-10-16",
+      "mood": "upbeat"
     },
     {
       "id": "JLM7z8afU4s",
       "title": "ア・プリオリ (아 프리오리)",
       "rawTitle": "아 프리오리 (Mrs. GREEN APPLE 「ア・プリオリ」) / 아오쿠모 린(Aokumo Rin) Cover",
-      "duration": 207,
+      "duration": 206,
       "uploader": "아오쿠모 린 AOKUMO RIN",
       "defaultMember": "rin",
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-10-12",
+      "mood": "upbeat"
     },
     {
       "id": "kNzGpNEdBqw",
@@ -131,7 +115,9 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-10-09",
+      "mood": "cute"
     },
     {
       "id": "Qi_JLmXBFFo",
@@ -143,7 +129,31 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-30",
+      "mood": "chill"
+    },
+    {
+      "id": "fXoGiuE6e-I",
+      "title": "Loop in June (명조:워더링 웨이브 OST)",
+      "rawTitle": "명조:워더링 웨이브 OST - Loop in June『솔라리스: 별을 쫓아서 Season 2』| 시라유키 히나",
+      "duration": 220,
+      "uploader": "시라유키 히나",
+      "defaultMember": "hina",
+      "defaultType": "ost",
+      "publishedAt": "2026-10-11",
+      "mood": "bright"
+    },
+    {
+      "id": "bmFg-paLaMI",
+      "title": "ブレインロット (브레인 롯)",
+      "rawTitle": "브레인 롯 (도쿄 마나카) | 불러보았다 (나나 드라이브)",
+      "duration": 125,
+      "uploader": "하나코 나나",
+      "defaultMember": "nana",
+      "defaultType": "cover",
+      "publishedAt": "2026-10-11",
+      "mood": "cute"
     },
     {
       "id": "Qngf5HNfl6Q",
@@ -156,19 +166,150 @@
         "hina",
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-27",
+      "mood": "chill"
+    },
+    {
+      "id": "OlJ-7k9Trm0",
+      "title": "Confrontation (지킬 앤 하이드 OST)",
+      "rawTitle": "마시로 - Confrontation 방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
+      "duration": 224,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-27",
+      "mood": "upbeat"
     },
     {
       "id": "FzefgoF26Ac",
       "title": "여우의 별자리 (명조:워더링 웨이브 OST)",
       "rawTitle": "여우의 별자리 「심월과 달의 노래」 (『명조워더링 웨이브』 OST)ㅣ아카네 리제(Akane Lize) 【COVER】",
-      "duration": 219,
+      "duration": 218,
       "uploader": "아카네 리제 AKANE LIZE",
       "defaultMember": "lize",
       "members": [
         "lize"
       ],
-      "defaultType": "ost"
+      "defaultType": "ost",
+      "publishedAt": "2026-09-26",
+      "mood": "chill"
+    },
+    {
+      "id": "Da77IyHlwao",
+      "title": "웃는남자 (뮤지컬 웃는남자 OST)",
+      "rawTitle": "마시로 - 웃는남자 방구석 뮤지컬 [ 웃는남자 ] (4k)",
+      "duration": 221,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-26",
+      "mood": "chill"
+    },
+    {
+      "id": "F7kdEX0VRss",
+      "title": "Dance The Night Away",
+      "rawTitle": "[4K] Dance The Night Away - TWICE(트와이스) / 하나코 나나 3D Cover",
+      "duration": 186,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-25",
+      "mood": "groovy"
+    },
+    {
+      "id": "j_RAn7yvq_0",
+      "title": "Alive 2 (지킬 앤 하이드 OST)",
+      "rawTitle": "마시로 -  Alive 2  방구석 뮤지컬 [ 지킬 앤 하이드 ] (4k)",
+      "duration": 102,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-25",
+      "mood": "upbeat"
+    },
+    {
+      "id": "jHc5yW6iOPk",
+      "title": "Land of Lola (킹키부츠 OST)",
+      "rawTitle": "마시로 - Land of Lola 방구석 뮤지컬 [ 킹키부츠 ] (4k)",
+      "duration": 215,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-24",
+      "mood": "upbeat"
+    },
+    {
+      "id": "y-rdBQSrzSs",
+      "title": "Dynamite",
+      "rawTitle": "[4K] Dynamite - BTS(방탄소년단) / 하나코 나나 3D Cover",
+      "duration": 200,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-21",
+      "mood": "groovy"
+    },
+    {
+      "id": "JsnnXkxNGQU",
+      "title": "ビバハピ (비바해피)",
+      "rawTitle": "비바해피 [ビバハピ / Mitchie M] l 에버리스 (EVERYS) Cover",
+      "duration": 210,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "huya",
+        "yuni"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-09-20",
+      "mood": "cute"
+    },
+    {
+      "id": "qv_VVUJOt0M",
+      "title": "까탈레나",
+      "rawTitle": "[4K] Catallena - Orange Caramel / Hanako Nana 3D Cover",
+      "duration": 197,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-17",
+      "mood": "cute"
+    },
+    {
+      "id": "npwilOOckxY",
+      "title": "100% for You",
+      "rawTitle": "[4K] 100% for You / Hanako Nana 3D Cover",
+      "duration": 206,
+      "uploader": "",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "live",
+      "publishedAt": "2026-09-14",
+      "mood": "bright"
     },
     {
       "id": "blFr5w6o2jQ",
@@ -180,7 +321,9 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-13",
+      "mood": "bright"
     },
     {
       "id": "Zetk77I6_s8",
@@ -193,7 +336,9 @@
         "huya",
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-12",
+      "mood": "bright"
     },
     {
       "id": "uBtFoUXR9Qc",
@@ -205,7 +350,9 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-07",
+      "mood": "chill"
     },
     {
       "id": "zQp6ZZAT6ew",
@@ -217,7 +364,9 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-02",
+      "mood": "groovy"
     },
     {
       "id": "yuxa6o1_scc",
@@ -229,7 +378,9 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-02",
+      "mood": "upbeat"
     },
     {
       "id": "ekINzN4PQmo",
@@ -242,7 +393,9 @@
         "hina",
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-01",
+      "mood": "chill"
     },
     {
       "id": "SiBzI2htX2o",
@@ -255,7 +408,9 @@
         "mashiro",
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-09-01",
+      "mood": "upbeat"
     },
     {
       "id": "nwqIoe_3zbE",
@@ -267,7 +422,9 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-31",
+      "mood": "upbeat"
     },
     {
       "id": "8shKFjkHabo",
@@ -279,7 +436,9 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-31",
+      "mood": "chill"
     },
     {
       "id": "2qEGFmXROQ4",
@@ -292,7 +451,9 @@
         "mashiro",
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-29",
+      "mood": "cute"
     },
     {
       "id": "YXIz7U42pgk",
@@ -304,7 +465,9 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-16",
+      "mood": "upbeat"
     },
     {
       "id": "9S3if_u5n_Q",
@@ -316,7 +479,9 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-11",
+      "mood": "chill"
     },
     {
       "id": "wu2a0AeQOCc",
@@ -328,11 +493,13 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-10",
+      "mood": "upbeat"
     },
     {
       "id": "gkmnG2pWzys",
-      "title": "Comedy) [喜劇 (희극)",
+      "title": "喜劇 (희극)",
       "rawTitle": "희극 (Comedy) [喜劇 / 호시노 겐] / 하나코 나나 COVER",
       "duration": 232,
       "uploader": "하나코 나나 HANAKO NANA",
@@ -340,7 +507,9 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-08-07",
+      "mood": "chill"
     },
     {
       "id": "MhdJaaEhiHc",
@@ -353,11 +522,69 @@
         "rin",
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-31",
+      "mood": "groovy"
+    },
+    {
+      "id": "ZYSQLv_L26Y",
+      "title": "Maid My Way",
+      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
+      "duration": 200,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-27",
+      "mood": "cute"
+    },
+    {
+      "id": "jvZRK7W7S9Y",
+      "title": "Hush Trap",
+      "rawTitle": "Hanako Nana | 'Hush Trap'",
+      "duration": 201,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-26",
+      "mood": "groovy"
+    },
+    {
+      "id": "nsZmnwC9ukE",
+      "title": "Berry Verry Strawberry",
+      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
+      "duration": 186,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-25",
+      "mood": "cute"
+    },
+    {
+      "id": "P_oxx3_VpIY",
+      "title": "Villain Alert",
+      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
+      "duration": 187,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-07-24",
+      "mood": "bright"
     },
     {
       "id": "dhudKbeIMJg",
-      "title": "サマータイムレコード (서머타임레코드)",
+      "title": "サマータイムレコード (서머타임 레코드)",
       "rawTitle": "서머타임레코드 [サマータイムレコード / じん] / 유즈하 리코 (Yuzuha Riko) cover",
       "duration": 276,
       "uploader": "유즈하 리코 YUZUHA RIKO",
@@ -365,7 +592,9 @@
       "members": [
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-15",
+      "mood": "bright"
     },
     {
       "id": "VITNdv2ZywY",
@@ -377,7 +606,9 @@
       "members": [
         "huya"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-07",
+      "mood": "cute"
     },
     {
       "id": "3Y7Ek6YSGPE",
@@ -389,11 +620,13 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-07-04",
+      "mood": "upbeat"
     },
     {
       "id": "AH8sMk7otKU",
-      "title": "拝啓、少年よ",
+      "title": "拝啓、少年よ (삼가 아룁니다, 소년이여)",
       "rawTitle": "Dear Boy (拝啓、少年よ / Hump Back) / Tenko Shibuki cover",
       "duration": 189,
       "uploader": "텐코 시부키 TENKO SHIBUKI",
@@ -401,11 +634,13 @@
       "members": [
         "shibuki"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-29",
+      "mood": "groovy"
     },
     {
       "id": "y1nUYj_D1Es",
-      "title": "ヨルシカ (물떼새)",
+      "title": "千鳥 (물떼새)",
       "rawTitle": "물떼새(ヨルシカ - 千鳥) / 아오쿠모 린(Aokumo Rin) Cover",
       "duration": 252,
       "uploader": "아오쿠모 린 AOKUMO RIN",
@@ -413,7 +648,9 @@
       "members": [
         "rin"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-28",
+      "mood": "chill"
     },
     {
       "id": "_pTBkDP1TE0",
@@ -425,7 +662,9 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-22",
+      "mood": "bright"
     },
     {
       "id": "39_zaFVluAw",
@@ -437,7 +676,9 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-20",
+      "mood": "groovy"
     },
     {
       "id": "4nVjnxK4j0c",
@@ -449,7 +690,9 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-11",
+      "mood": "groovy"
     },
     {
       "id": "_t4OxKtCHrg",
@@ -461,7 +704,23 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-11",
+      "mood": "upbeat"
+    },
+    {
+      "id": "yiprl7-dU04",
+      "title": "마음악보",
+      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
+      "duration": 225,
+      "uploader": "스텔라이브 StelLive Official",
+      "defaultMember": "group",
+      "members": [
+        "group"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-06-11",
+      "mood": "chill"
     },
     {
       "id": "VTTQJNcmlD0",
@@ -473,7 +732,9 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-10",
+      "mood": "chill"
     },
     {
       "id": "f7uaxrWNIdE",
@@ -485,11 +746,13 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-06-10",
+      "mood": "cute"
     },
     {
       "id": "xKA5wKYMFhM",
-      "title": "DECO*27 x ピノキオピー (악마가 아닌걸)",
+      "title": "デビルじゃないもん (악마가 아닌걸)",
       "rawTitle": "악마가 아닌걸 [DECO*27 x ピノキオピー] / 유즈하 리코 Yuzuha Riko x 네네코 마시로 Neneko Mashiro Cover",
       "duration": 164,
       "uploader": "유즈하 리코 YUZUHA RIKO",
@@ -498,7 +761,9 @@
         "mashiro",
         "riko"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-28",
+      "mood": "cute"
     },
     {
       "id": "yRKJ5-vcMUI",
@@ -510,7 +775,9 @@
       "members": [
         "hina"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-27",
+      "mood": "chill"
     },
     {
       "id": "SUJm8SX87DY",
@@ -522,7 +789,9 @@
       "members": [
         "nana"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-24",
+      "mood": "chill"
     },
     {
       "id": "L-pn_xrqQkQ",
@@ -534,7 +803,9 @@
       "members": [
         "lize"
       ],
-      "defaultType": "cover"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-23",
+      "mood": "upbeat"
     },
     {
       "id": "bRa_zAaaCCE",
@@ -547,152 +818,9 @@
         "yuni",
         "nana"
       ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "xwuVYaJYERo",
-      "title": "わたしに花束 (나에게 꽃다발)",
-      "rawTitle": "나에게 꽃다발 [わたしに花束 - Ado] / 텐코 시부키(Tenko Shibuki) cover",
-      "duration": 228,
-      "uploader": "텐코 시부키 TENKO SHIBUKI",
-      "defaultMember": "shibuki",
-      "members": [
-        "shibuki"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "KmH0RhhenzE",
-      "title": "deja vu",
-      "rawTitle": "Deja vu (Olivia Rodrigo) | I Covered [Nana Drive]",
-      "duration": 218,
-      "uploader": "하나코 나나 HANAKO NANA",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "6mVByQMyxdY",
-      "title": "Back in the day, a nostalgic Tooniverse medley🎈 [StelLive🎀]",
-      "rawTitle": "Back in the day, a nostalgic Tooniverse medley🎈 [StelLive🎀]",
-      "duration": 1235,
-      "uploader": "시라유키 히나 SHIRAYUKI HINA",
-      "defaultMember": "hina",
-      "members": [
-        "hina"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "jTUOSAmCqeI",
-      "title": "Dancehall",
-      "rawTitle": "Dancehall (Mrs. GREEN APPLE \"Dancehall\") / Aokumo Rin Cover",
-      "duration": 202,
-      "uploader": "아오쿠모 린 AOKUMO RIN",
-      "defaultMember": "rin",
-      "members": [
-        "rin"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "-RrbCkl3YJo",
-      "title": "メルト (멜트)",
-      "rawTitle": "Melt CPK! Remix (初音ミク ver.) [ryo (supercell)] l 사키하네 후야(Sakihane Huya) Cover",
-      "duration": 271,
-      "uploader": "사키하네 후야 SAKIHANE HUYA",
-      "defaultMember": "huya",
-      "members": [
-        "huya"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "C0hOHzutBRI",
-      "title": "オレンジ",
-      "rawTitle": "Orange [ オレンジ / Your Lie in April ED ] Yuzuha Riko cover",
-      "duration": 352,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "group",
-      "members": [
-        "riko",
-        "rang"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "CU8hsIhmkwc",
-      "title": "orion",
-      "rawTitle": "orion - [Kenshi Yonezu] | Akane Lize 【COVER】",
-      "duration": 287,
-      "uploader": "아카네 리제 AKANE LIZE",
-      "defaultMember": "lize",
-      "members": [
-        "lize"
-      ],
-      "defaultType": "cover"
-    },
-    {
-      "id": "ZYSQLv_L26Y",
-      "title": "Maid My Way",
-      "rawTitle": "아오쿠모 린(Aokumo Rin) | 'Maid My Way'",
-      "duration": 200,
-      "uploader": "아오쿠모 린 AOKUMO RIN",
-      "defaultMember": "rin",
-      "members": [
-        "rin"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "jvZRK7W7S9Y",
-      "title": "Hush Trap",
-      "rawTitle": "Hanako Nana | 'Hush Trap'",
-      "duration": 201,
-      "uploader": "하나코 나나 HANAKO NANA",
-      "defaultMember": "nana",
-      "members": [
-        "nana"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "nsZmnwC9ukE",
-      "title": "Berry Verry Strawberry",
-      "rawTitle": "Tenko Shibuki | Berry Verry Strawberry",
-      "duration": 186,
-      "uploader": "텐코 시부키 TENKO SHIBUKI",
-      "defaultMember": "shibuki",
-      "members": [
-        "shibuki"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "P_oxx3_VpIY",
-      "title": "Villain Alert",
-      "rawTitle": "Yuzuha Riko | 'Villain Alert'",
-      "duration": 187,
-      "uploader": "유즈하 리코 YUZUHA RIKO",
-      "defaultMember": "riko",
-      "members": [
-        "riko"
-      ],
-      "defaultType": "original"
-    },
-    {
-      "id": "yiprl7-dU04",
-      "title": "마음악보",
-      "rawTitle": "스텔라이브 (STELLIVE) Universe | '마음악보'",
-      "duration": 225,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original"
+      "defaultType": "cover",
+      "publishedAt": "2026-05-21",
+      "mood": "cute"
     },
     {
       "id": "XR81lQrRceg",
@@ -704,7 +832,37 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2026-05-19",
+      "mood": "bright"
+    },
+    {
+      "id": "xwuVYaJYERo",
+      "title": "わたしに花束 (나에게 꽃다발)",
+      "rawTitle": "나에게 꽃다발 [わたしに花束 - Ado] / 텐코 시부키(Tenko Shibuki) cover",
+      "duration": 228,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-05-18",
+      "mood": "groovy"
+    },
+    {
+      "id": "KmH0RhhenzE",
+      "title": "deja vu",
+      "rawTitle": "Deja vu (Olivia Rodrigo) | I Covered [Nana Drive]",
+      "duration": 218,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-05-10",
+      "mood": "bright"
     },
     {
       "id": "tD9N1BhSrCI",
@@ -716,7 +874,9 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2026-05-08",
+      "mood": "bright"
     },
     {
       "id": "v094-E3Pmtk",
@@ -728,11 +888,111 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2026-05-08",
+      "mood": "bright"
+    },
+    {
+      "id": "jTUOSAmCqeI",
+      "title": "Dancehall",
+      "rawTitle": "Dancehall (Mrs. GREEN APPLE \"Dancehall\") / Aokumo Rin Cover",
+      "duration": 202,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-05-03",
+      "mood": "groovy"
+    },
+    {
+      "id": "-RrbCkl3YJo",
+      "title": "メルト (멜트)",
+      "rawTitle": "Melt CPK! Remix (初音ミク ver.) [ryo (supercell)] l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 271,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-04-30",
+      "mood": "bright"
+    },
+    {
+      "id": "C0hOHzutBRI",
+      "title": "オレンジ (오렌지)",
+      "rawTitle": "Orange [ オレンジ / Your Lie in April ED ] Yuzuha Riko cover",
+      "duration": 352,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-04-30",
+      "mood": "bright"
+    },
+    {
+      "id": "CU8hsIhmkwc",
+      "title": "orion",
+      "rawTitle": "orion - [Kenshi Yonezu] | Akane Lize 【COVER】",
+      "duration": 287,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-04-19",
+      "mood": "upbeat"
+    },
+    {
+      "id": "5rQSMZLi5z4",
+      "title": "アイネクライネ (아이네 클라이네)",
+      "rawTitle": "Eine Kleine (アイネクライネ : Kenshi Yonezu) / Aokumo Rin Cover",
+      "duration": 289,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-04-19",
+      "mood": "bright"
+    },
+    {
+      "id": "LxqwR1KE81o",
+      "title": "アカシア (아카시아)",
+      "rawTitle": "Acacia (BUMP OF CHICKEN) / Pokémon GOTCHA！| 시라유키 히나 Cover",
+      "duration": 263,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "hina",
+      "members": [
+        "hina"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-04-18",
+      "mood": "chill"
+    },
+    {
+      "id": "fLLX2R-RwVE",
+      "title": "かくれんぼ (숨바꼭질)",
+      "rawTitle": "숨바꼭질 [ かくれんぼㅣAliA ] / 유즈하 리코 Yuzuha Riko cover",
+      "duration": 300,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-04-13",
+      "mood": "chill"
     },
     {
       "id": "m-rIYEw5uAs",
-      "title": "I Want to Be a Heroine",
+      "title": "히로인이 되고 싶어",
       "rawTitle": "StelLive | 'I Want to Be a Heroine'",
       "duration": 197,
       "uploader": "스텔라이브 StelLive Official",
@@ -740,7 +1000,123 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2026-04-10",
+      "mood": "chill"
+    },
+    {
+      "id": "Xo1Q-RPAk2c",
+      "title": "青空のラプソディ (푸른 하늘의 랩소디)",
+      "rawTitle": "푸른 하늘의 랩소디 [青空のラプソディ/ 코바야시네 메이드래곤 OP] l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 278,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-30",
+      "mood": "upbeat"
+    },
+    {
+      "id": "DHG3s8GF1DM",
+      "title": "Stellar Stellar",
+      "rawTitle": "Stellar Stellar - [星街すいせい] ㅣAkane Lize 【COVER】",
+      "duration": 303,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-29",
+      "mood": "upbeat"
+    },
+    {
+      "id": "prBtBX0wGxc",
+      "title": "恋風邪にのせて (사랑 감기에 실려)",
+      "rawTitle": "Carried on a Love Cold [恋風邪にのせて - Vaundy] | Arahashi Tabi Cover",
+      "duration": 256,
+      "uploader": "아라하시 타비 ARAHASHI TABI",
+      "defaultMember": "tabi",
+      "members": [
+        "tabi"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-28",
+      "mood": "groovy"
+    },
+    {
+      "id": "cWnykOC5b_c",
+      "title": "フォニイ (포니)",
+      "rawTitle": "phony [포니 / ツミキ] / 유즈하 리코 Yuzuha Riko cover",
+      "duration": 190,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-26",
+      "mood": "bright"
+    },
+    {
+      "id": "RLKm8ymJPlo",
+      "title": "Oh...",
+      "rawTitle": "Oh... [타다노 카에데 只野 楓] / 아오쿠모 린(Aokumo Rin) Cover",
+      "duration": 222,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "rin",
+      "members": [
+        "rin"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-25",
+      "mood": "bright"
+    },
+    {
+      "id": "IoBUWPQ3dwc",
+      "title": "One Last Kiss",
+      "rawTitle": "One Last Kiss - 『宇多田ヒカル, 신 에반게리온 극장판  𝄇  OST / 하나코 나나 COVER",
+      "duration": 258,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "ost",
+      "publishedAt": "2026-03-22",
+      "mood": "chill"
+    },
+    {
+      "id": "yA25-F9SJh0",
+      "title": "幸せについて、僕が考えたこと (행복에 대해 내가 생각한 것)",
+      "rawTitle": "행복에 대해 내가 생각한 것 『幸せについて、僕が考えたこと』 / 텐코 시부키(Tenko Shibuki) cover",
+      "duration": 222,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-21",
+      "mood": "bright"
+    },
+    {
+      "id": "UcFBb927-kU",
+      "title": "ray",
+      "rawTitle": "ray - Super Princess Kaguya! Ver. / BUMP OF CHICKEN | Shirayuki Hina x Akane Rize Cover",
+      "duration": 283,
+      "uploader": "시라유키 히나 SHIRAYUKI HINA",
+      "defaultMember": "group",
+      "members": [
+        "hina",
+        "lize",
+        "rin"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-03-17",
+      "mood": "upbeat"
     },
     {
       "id": "he2W_4xY5Zo",
@@ -752,7 +1128,9 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2026-02-23",
+      "mood": "bright"
     },
     {
       "id": "TDn37k6Ccw0",
@@ -764,7 +1142,9 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2025-11-12",
+      "mood": "cute"
     },
     {
       "id": "IQbeBUIVmdw",
@@ -776,7 +1156,9 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2025-11-12",
+      "mood": "cute"
     },
     {
       "id": "G5tTozKJRD4",
@@ -788,7 +1170,9 @@
       "members": [
         "tabi"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-12-11",
+      "mood": "chill"
     },
     {
       "id": "_8uoathMY0A",
@@ -800,7 +1184,9 @@
       "members": [
         "mashiro"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-10-16",
+      "mood": "bright"
     },
     {
       "id": "3_0Ut2tlxLM",
@@ -812,11 +1198,13 @@
       "members": [
         "lize"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-09-29",
+      "mood": "upbeat"
     },
     {
       "id": "rQaluJS-Tc0",
-      "title": "夏拏 (하나)",
+      "title": "하나",
       "rawTitle": "시라유키 히나(Shirayuki Hina) | ‘하나(夏拏)’",
       "duration": 255,
       "uploader": "시라유키 히나 SHIRAYUKI HINA",
@@ -824,7 +1212,9 @@
       "members": [
         "hina"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-09-11",
+      "mood": "chill"
     },
     {
       "id": "GN-rdF8tEpU",
@@ -836,7 +1226,9 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-08-24",
+      "mood": "bright"
     },
     {
       "id": "gq3gzxPBOK0",
@@ -848,7 +1240,9 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-07-25",
+      "mood": "bright"
     },
     {
       "id": "R_RAWjqdgTs",
@@ -860,7 +1254,9 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-06-19",
+      "mood": "cute"
     },
     {
       "id": "Jt6UCd7JhAA",
@@ -872,7 +1268,9 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-04-30",
+      "mood": "bright"
     },
     {
       "id": "uTj88854gZ0",
@@ -885,7 +1283,9 @@
         "hina",
         "mashiro"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-04-21",
+      "mood": "chill"
     },
     {
       "id": "suyhkCwKX48",
@@ -898,7 +1298,9 @@
         "kanna",
         "lize"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-04-03",
+      "mood": "upbeat"
     },
     {
       "id": "iCCqSFvz9kM",
@@ -910,7 +1312,9 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-03-03",
+      "mood": "upbeat"
     },
     {
       "id": "YcyDo-jp4YM",
@@ -922,11 +1326,13 @@
       "members": [
         "group"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2024-02-24",
+      "mood": "bright"
     },
     {
       "id": "ajDAmJYPQ-U",
-      "title": "最終花",
+      "title": "최종화",
       "rawTitle": "藍璃かんな(Airi Kanna) | ‘最終花’",
       "duration": 256,
       "uploader": "Airi Kanna",
@@ -934,7 +1340,9 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2023-11-09",
+      "mood": "upbeat"
     },
     {
       "id": "pkypi5nXSYM",
@@ -946,7 +1354,9 @@
       "members": [
         "yuni"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2023-07-20",
+      "mood": "cute"
     },
     {
       "id": "AsoPg-h-644",
@@ -958,7 +1368,9 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
+      "defaultType": "original",
+      "publishedAt": "2023-07-07",
+      "mood": "upbeat"
     },
     {
       "id": "kPdB6iGYBBc",
@@ -970,20 +1382,9 @@
       "members": [
         "kanna"
       ],
-      "defaultType": "original"
-    },
-    {
-      "id": "fXoGiuE6e-I",
-      "title": "Loop in June (명조:워더링 웨이브 OST)",
-      "rawTitle": "Wuthering Waves OST - Loop in June \"Solaris: Chasing Stars Season 2\" | Shirayuki Hina",
-      "duration": 221,
-      "uploader": "",
-      "defaultMember": "group",
-      "members": [
-        "hina",
-        "rin"
-      ],
-      "defaultType": "ost"
+      "defaultType": "original",
+      "publishedAt": "2023-05-26",
+      "mood": "upbeat"
     }
   ]
 }

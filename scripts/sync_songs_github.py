@@ -268,7 +268,11 @@ def clean_title(title, raw_title=''):
     if re.search(r'where\s*stars\s*begin|별이\s*시작되는\s*곳', f"{t} {raw}", re.IGNORECASE):
         return '별이 시작되는 곳'
     if re.search(r'타상연화|打上花火|쏘아올린\s*불꽃', f"{t} {raw}"):
-        return '打上花火 (쏘아올린 불꽃)'
+        return '타상연화'
+    if re.search(r'혁명도중|革命道中', f"{t} {raw}"):
+        return '혁명도중'
+    if re.search(r'ch4nge|체인지', f"{t} {raw}", re.IGNORECASE):
+        return 'CH4NGE (체인지)'
 
     # 0. 유튜브 메타데이터 및 채널 접두어 제거
     t = re.sub(r'\s*-\s*YouTube$', '', t, flags=re.IGNORECASE)
@@ -546,8 +550,10 @@ def main():
     print(f"Fetched total {len(tracks)} tracks.")
 
     canonical_titles = {
-        'LmOl01G4DR4': '打上花火 (쏘아올린 불꽃)',
+        'LmOl01G4DR4': '타상연화',
+        '3Xf1Wt7Z-RY': '혁명도중',
         'EKEts5IShas': '별이 시작되는 곳',
+        'VuyZF2VYAfU': 'CH4NGE (체인지)',
         'MZNKiadMo3U': '第六感 (제육감)',
         'iAoU1UGPoXc': '호랑풍류가 (나와 호랑이님 OST)',
         'ouKcRBeyKbk': 'ゆうれいになりたい (유령이 되고싶어)',
@@ -573,7 +579,7 @@ def main():
         'fXoGiuE6e-I': 'Loop in June (명조:워더링 웨이브 OST)',
         'bmFg-paLaMI': 'ブレインロット (브레인 롯)',
     }
-    top_order = ['LmOl01G4DR4', 'EKEts5IShas', 'rKQptWhAvO0', 'ouKcRBeyKbk', 'iAoU1UGPoXc', 'MZNKiadMo3U']
+    top_order = ['LmOl01G4DR4', '3Xf1Wt7Z-RY', 'EKEts5IShas', 'VuyZF2VYAfU', 'rKQptWhAvO0', 'ouKcRBeyKbk', 'iAoU1UGPoXc', 'MZNKiadMo3U']
 
     for t in tracks:
         tid = t.get('id')
@@ -581,15 +587,29 @@ def main():
             t['title'] = canonical_titles[tid]
         if tid in top_order:
             if tid == 'LmOl01G4DR4':
+                t['title'] = '타상연화'
                 t['members'] = ['hina', 'rin']
                 t['defaultMember'] = 'hina'
                 t['defaultType'] = 'cover'
                 t['publishedAt'] = '2026-10-21'
+            elif tid == '3Xf1Wt7Z-RY':
+                t['title'] = '혁명도중'
+                t['members'] = ['shibuki']
+                t['defaultMember'] = 'shibuki'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-20'
             elif tid == 'EKEts5IShas':
+                t['title'] = '별이 시작되는 곳'
                 t['members'] = ['toa', 'rang', 'hiyori', 'mary']
                 t['defaultMember'] = 'group'
                 t['defaultType'] = 'original'
                 t['publishedAt'] = '2026-10-20'
+            elif tid == 'VuyZF2VYAfU':
+                t['title'] = 'CH4NGE (체인지)'
+                t['members'] = ['riko']
+                t['defaultMember'] = 'riko'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-19'
             elif tid == 'rKQptWhAvO0':
                 t['members'] = ['mary']
                 t['defaultMember'] = 'mary'
