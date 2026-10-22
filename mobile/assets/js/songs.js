@@ -212,9 +212,9 @@ const GENERATIONS = [
 const DEFAULT_SONGS = [
     {
         "id": "stel-LmOl01G4DR4",
-        "title": "타상연화",
+        "title": "打上花火 (타상연화)",
         "artist": "시라유키 히나 & 아오쿠모 린",
-        "originalArtist": "DAOKO × 요네즈 켄시 (打上花火)",
+        "originalArtist": "DAOKO × 요네즈 켄시",
         "type": "cover",
         "gen": "group",
         "members": ["hina", "rin"],
@@ -223,16 +223,16 @@ const DEFAULT_SONGS = [
         "sabi": {
             "start": 65,
             "end": 105,
-            "title": "사비구간: 타상연화"
+            "title": "후렴구: 타상연화"
         },
         "publishedAt": "2026-10-21",
         "mood": "upbeat"
     },
     {
         "id": "stel-3Xf1Wt7Z-RY",
-        "title": "혁명도중",
+        "title": "革命道中 (혁명도중)",
         "artist": "텐코 시부키",
-        "originalArtist": "アイナ・ジ・エンド (AiNA THE END) - 革命道中",
+        "originalArtist": "アイナ・ジ・エンド (AiNA THE END)",
         "type": "cover",
         "gen": "cliche",
         "members": ["shibuki"],
@@ -241,7 +241,7 @@ const DEFAULT_SONGS = [
         "sabi": {
             "start": 52,
             "end": 92,
-            "title": "사비구간: 혁명도중"
+            "title": "후렴구: 혁명도중"
         },
         "publishedAt": "2026-10-20",
         "mood": "upbeat"
@@ -7737,8 +7737,8 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     if (!title) return '';
     let t = title.trim();
     if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(t) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
-    if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(t) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '타상연화';
-    if (/혁명도중|革命道中/i.test(t) || /혁명도중|革命道中/i.test(rawTitle)) return '혁명도중';
+    if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(t) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (타상연화)';
+    if (/혁명도중|革命道中/i.test(t) || /혁명도중|革命道中/i.test(rawTitle)) return '革命道中 (혁명도중)';
     if (/CH4NGE|체인지/i.test(t) || /CH4NGE|체인지/i.test(rawTitle)) return 'CH4NGE (체인지)';
     const raw = rawTitle ? rawTitle.trim() : '';
 

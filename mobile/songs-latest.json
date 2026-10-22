@@ -1,11 +1,11 @@
 {
   "success": true,
-  "count": 98,
+  "count": 100,
   "updatedAt": "2026-09-27T19:16:01.056325+00:00",
   "tracks": [
     {
       "id": "LmOl01G4DR4",
-      "title": "打上花火 (쏘아올린 불꽃)",
+      "title": "打上花火 (타상연화)",
       "rawTitle": "타상연화『打上花火』[DAOKO × 요네즈켄시] | 시라유키 히나 x 아오쿠모 린 Cover",
       "duration": 289,
       "uploader": "시라유키 히나 SHIRAYUKI HINA",
@@ -16,6 +16,20 @@
       ],
       "defaultType": "cover",
       "publishedAt": "2026-10-21",
+      "mood": "upbeat"
+    },
+    {
+      "id": "3Xf1Wt7Z-RY",
+      "title": "革命道中 (혁명도중)",
+      "rawTitle": "혁명도중 [革命道中 / アイナ・ジ・エンド] / 텐코 시부키 (Tenko Shibuki) cover",
+      "duration": 197,
+      "uploader": "텐코 시부키 TENKO SHIBUKI",
+      "defaultMember": "shibuki",
+      "members": [
+        "shibuki"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-10-20",
       "mood": "upbeat"
     },
     {
@@ -34,6 +48,20 @@
       "defaultType": "original",
       "publishedAt": "2026-10-20",
       "mood": "bright"
+    },
+    {
+      "id": "VuyZF2VYAfU",
+      "title": "CH4NGE (체인지)",
+      "rawTitle": "CH4NGE [Giga ft.可不] / 유즈하 리코 Yuzuha Riko cover",
+      "duration": 133,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-10-19",
+      "mood": "groovy"
     },
     {
       "id": "rKQptWhAvO0",

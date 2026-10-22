@@ -398,8 +398,13 @@
                                 </svg>
                                 <span>업데이트 지금 확인</span>
                             </button>
-                            <button id="btn-reset-app-update" title="기본 번들 버전으로 초기화" style="height:38px; padding:0 12px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); color:var(--text-secondary); font-weight:600; font-size:0.82rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-                                복원
+                            <button id="btn-open-patchnotes" title="패치노트 확인" style="height:38px; padding:0 12px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); color:var(--text-secondary); font-weight:600; font-size:0.82rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                <span>패치노트</span>
+                            </button>
+                            <button id="btn-reset-app-update" title="버전 선택 복원 및 이전 롤백" style="height:38px; padding:0 12px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid var(--border-glass); color:var(--text-secondary); font-weight:600; font-size:0.82rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                                <span>복원</span>
                             </button>
                         </div>
                     </div>
@@ -1310,6 +1315,64 @@
                     <button id="m-btn-dismiss-live-update" style="padding:6px 8px; background:rgba(255,255,255,0.1); border:none; border-radius:8px; color:#c7d2fe; font-size:0.78rem; cursor:pointer;">
                         ✕
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 패치노트 모달 -->
+        <div class="mobile-modal" id="m-modal-patchnotes">
+            <div class="modal-backdrop" id="m-backdrop-patchnotes"></div>
+            <div class="modal-content" style="max-height:85vh; width:92%; max-width:480px; display:flex; flex-direction:column; border-radius:18px; padding:0; overflow:hidden;">
+                <div class="modal-header" style="padding:16px 20px; border-bottom:1px solid var(--border-glass); display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:1.1rem;">📜</span>
+                        <span class="modal-title" style="font-weight:700; font-size:0.95rem;">StellPlay 패치노트</span>
+                    </div>
+                    <button class="modal-close-btn" id="m-btn-close-patchnotes" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:4px 8px;">✕</button>
+                </div>
+                <div id="m-patchnotes-body" style="padding:16px 20px; overflow-y:auto; flex:1; font-size:0.78rem; line-height:1.6; color:var(--text-secondary); white-space:pre-wrap; word-break:break-word; font-family:inherit;">
+                    패치노트를 불러오는 중...
+                </div>
+                <div style="padding:12px 20px; border-top:1px solid var(--border-glass); display:flex; justify-content:flex-end;">
+                    <button id="m-btn-confirm-patchnotes" style="padding:8px 18px; border-radius:10px; background:var(--theme-color); color:#fff; font-weight:700; font-size:0.82rem; border:none; cursor:pointer;">
+                        확인
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 버전 선택 복원 및 롤백 모달 -->
+        <div class="mobile-modal" id="m-modal-ota-restore">
+            <div class="modal-backdrop" id="m-backdrop-ota-restore"></div>
+            <div class="modal-content" style="max-height:85vh; width:92%; max-width:480px; display:flex; flex-direction:column; border-radius:18px; padding:0; overflow:hidden;">
+                <div class="modal-header" style="padding:16px 20px; border-bottom:1px solid var(--border-glass); display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:1.1rem;">⏪</span>
+                        <span class="modal-title" style="font-weight:700; font-size:0.95rem;">패치 버전 복원 및 롤백</span>
+                    </div>
+                    <button class="modal-close-btn" id="m-btn-close-ota-restore" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:4px 8px;">✕</button>
+                </div>
+                <div style="padding:16px 20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px;">
+                    <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
+                        최근 백업된 이전 패치 버전으로 되돌리거나, 앱 설치 시 기본 번들 상태로 복원할 수 있습니다.
+                    </div>
+                    
+                    <!-- 직전 버전 빠른 롤백 버튼 -->
+                    <button id="btn-quick-rollback-ota" style="width:100%; padding:11px; border-radius:12px; background:linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2)); border:1px solid rgba(139,92,246,0.4); color:#c4b5fd; font-weight:700; font-size:0.82rem; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        <span id="btn-quick-rollback-text">⚡ 직전 버전으로 즉시 롤백</span>
+                    </button>
+
+                    <div style="display:flex; align-items:center; gap:8px; margin:2px 0;">
+                        <div style="flex:1; height:1px; background:var(--border-glass);"></div>
+                        <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">또는 특정 버전 선택 복원</span>
+                        <div style="flex:1; height:1px; background:var(--border-glass);"></div>
+                    </div>
+
+                    <!-- 버전 선택 목록 -->
+                    <div id="m-ota-versions-list" style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:12px;">버전 기록을 불러오는 중...</div>
+                    </div>
                 </div>
             </div>
         </div>

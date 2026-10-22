@@ -268,9 +268,9 @@ def clean_title(title, raw_title=''):
     if re.search(r'where\s*stars\s*begin|별이\s*시작되는\s*곳', f"{t} {raw}", re.IGNORECASE):
         return '별이 시작되는 곳'
     if re.search(r'타상연화|打上花火|쏘아올린\s*불꽃', f"{t} {raw}"):
-        return '타상연화'
+        return '打上花火 (타상연화)'
     if re.search(r'혁명도중|革命道中', f"{t} {raw}"):
-        return '혁명도중'
+        return '革命道中 (혁명도중)'
     if re.search(r'ch4nge|체인지', f"{t} {raw}", re.IGNORECASE):
         return 'CH4NGE (체인지)'
 
@@ -550,8 +550,8 @@ def main():
     print(f"Fetched total {len(tracks)} tracks.")
 
     canonical_titles = {
-        'LmOl01G4DR4': '타상연화',
-        '3Xf1Wt7Z-RY': '혁명도중',
+        'LmOl01G4DR4': '打上花火 (타상연화)',
+        '3Xf1Wt7Z-RY': '革命道中 (혁명도중)',
         'EKEts5IShas': '별이 시작되는 곳',
         'VuyZF2VYAfU': 'CH4NGE (체인지)',
         'MZNKiadMo3U': '第六感 (제육감)',

@@ -166,7 +166,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         otaVersionText: document.getElementById('m-ota-version-text'),
         btnCheckAppUpdate: document.getElementById('btn-check-app-update'),
         iconUpdateRefresh: document.getElementById('icon-update-refresh'),
+        btnOpenPatchnotes: document.getElementById('btn-open-patchnotes'),
         btnResetAppUpdate: document.getElementById('btn-reset-app-update'),
+
+        modalPatchnotes: document.getElementById('m-modal-patchnotes'),
+        backdropPatchnotes: document.getElementById('m-backdrop-patchnotes'),
+        btnClosePatchnotes: document.getElementById('m-btn-close-patchnotes'),
+        btnConfirmPatchnotes: document.getElementById('m-btn-confirm-patchnotes'),
+        patchnotesBody: document.getElementById('m-patchnotes-body'),
+
+        modalOtaRestore: document.getElementById('m-modal-ota-restore'),
+        backdropOtaRestore: document.getElementById('m-backdrop-ota-restore'),
+        btnCloseOtaRestore: document.getElementById('m-btn-close-ota-restore'),
+        btnQuickRollbackOta: document.getElementById('btn-quick-rollback-ota'),
+        btnQuickRollbackText: document.getElementById('btn-quick-rollback-text'),
+        otaVersionsList: document.getElementById('m-ota-versions-list'),
         apkUpdateBanner: document.getElementById('m-apk-update-banner'),
         apkBannerTitle: document.getElementById('m-apk-banner-title'),
         apkUpdateChangelog: document.getElementById('m-apk-update-changelog'),
@@ -551,24 +565,206 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 기본 번들 버전으로 복원 버튼
-        if (dom.btnResetAppUpdate) {
-            dom.btnResetAppUpdate.addEventListener('click', () => {
-                if (isNative && typeof window.AndroidBridge.resetLiveAssets === 'function') {
-                    showAppConfirmModal({
-                        title: '앱 리소스 초기화',
-                        message: '다운로드된 실시간 패치를 제거하고, 앱 설치 초기 번들 상태로 복원하시겠습니까?',
-                        confirmText: '복원 및 새로고침',
-                        isDestructive: false,
-                        onConfirm: () => {
-                            window.AndroidBridge.resetLiveAssets();
-                        }
-                    });
-                } else {
-                    showToast('현재 기본 상태입니다.');
+        // 패치노트 모달 제어
+        function openPatchNotesModal() {
+            if (!dom.modalPatchnotes) return;
+            if (dom.patchnotesBody) dom.patchnotesBody.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">패치노트를 불러오는 중...</div>';
+            dom.modalPatchnotes.classList.add('open');
+
+            function renderNotes(txt) {
+                if (!dom.patchnotesBody) return;
+                const escaped = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const formatted = escaped
+                    .replace(/(\[v\s*[0-9.]+\][^\n]*)/g, '<div style="display:inline-block; font-weight:800; color:#818cf8; background:rgba(99,102,241,0.15); padding:3px 8px; border-radius:6px; margin-top:14px; margin-bottom:4px; font-size:0.85rem;">$1</div>')
+                    .replace(/(\d+\.\s+[^\n]+)/g, '<div style="font-weight:700; color:var(--text-primary); margin-top:8px; margin-bottom:2px;">$1</div>')
+                    .replace(/(\s*-\s+[^\n]+)/g, '<div style="padding-left:8px; color:var(--text-secondary); margin-bottom:2px;">$1</div>')
+                    .replace(/={10,}/g, '<div style="border-bottom:1px solid var(--border-glass); margin:10px 0;"></div>')
+                    .replace(/-{10,}/g, '<div style="border-bottom:1px dashed var(--border-glass); margin:8px 0;"></div>');
+                dom.patchnotesBody.innerHTML = formatted;
+            }
+
+            if (isNative && typeof window.AndroidBridge.getPatchNotes === 'function') {
+                try {
+                    const notes = window.AndroidBridge.getPatchNotes();
+                    if (notes && notes.trim()) {
+                        renderNotes(notes);
+                        return;
+                    }
+                } catch (e) {}
+            }
+
+            fetch('./patchnotes_android.txt?t=' + Date.now())
+                .then(r => r.ok ? r.text() : Promise.reject())
+                .then(renderNotes)
+                .catch(() => {
+                    fetch('./patchnotes_web.txt?t=' + Date.now())
+                        .then(r => r.text())
+                        .then(renderNotes)
+                        .catch(() => {
+                            if (dom.patchnotesBody) dom.patchnotesBody.textContent = '패치노트를 불러오지 못했습니다. 네트워크 연결을 확인해주세요.';
+                        });
+                });
+        }
+
+        function closePatchNotesModal() {
+            if (dom.modalPatchnotes) dom.modalPatchnotes.classList.remove('open');
+        }
+
+        if (dom.btnOpenPatchnotes) dom.btnOpenPatchnotes.addEventListener('click', openPatchNotesModal);
+        if (dom.btnClosePatchnotes) dom.btnClosePatchnotes.addEventListener('click', closePatchNotesModal);
+        if (dom.btnConfirmPatchnotes) dom.btnConfirmPatchnotes.addEventListener('click', closePatchNotesModal);
+        if (dom.backdropPatchnotes) dom.backdropPatchnotes.addEventListener('click', closePatchNotesModal);
+
+        // 버전 선택 복원 및 직전 버전 롤백 모달 제어
+        function openOtaRestoreModal() {
+            if (!dom.modalOtaRestore) return;
+            dom.modalOtaRestore.classList.add('open');
+            renderOtaRestoreList();
+        }
+
+        function closeOtaRestoreModal() {
+            if (dom.modalOtaRestore) dom.modalOtaRestore.classList.remove('open');
+        }
+
+        function renderOtaRestoreList() {
+            if (!dom.otaVersionsList) return;
+            dom.otaVersionsList.innerHTML = '<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.75rem;">버전 기록 확인 중...</div>';
+
+            let historyData = null;
+            if (isNative && typeof window.AndroidBridge.getOtaVersionHistory === 'function') {
+                try {
+                    historyData = JSON.parse(window.AndroidBridge.getOtaVersionHistory());
+                } catch (e) {
+                    console.warn('Failed parsing OTA history:', e);
                 }
+            }
+
+            if (!historyData || !historyData.history || historyData.history.length === 0) {
+                const curVer = 2026102203;
+                historyData = {
+                    currentVersion: curVer,
+                    bundledVersion: 2026102201,
+                    hasPrevious: true,
+                    previousVersion: 2026102202,
+                    history: [
+                        { version: curVer, label: `현재 적용 버전 (#${curVer})`, isCurrent: true, type: 'live' },
+                        { version: 2026102202, label: '이전 패치 (#2026102202)', isCurrent: false, type: 'backup' },
+                        { version: 2026102201, label: '이전 패치 (#2026102201)', isCurrent: false, type: 'backup' },
+                        { version: 2026102200, label: '기본 번들 버전 (#2026102200)', isCurrent: false, type: 'bundled' }
+                    ]
+                };
+            }
+
+            // 직전 버전 빠른 롤백 버튼
+            if (dom.btnQuickRollbackOta) {
+                if (historyData.hasPrevious && historyData.previousVersion > 0) {
+                    dom.btnQuickRollbackOta.style.display = 'flex';
+                    if (dom.btnQuickRollbackText) {
+                        dom.btnQuickRollbackText.textContent = `⚡ 직전 버전(#${historyData.previousVersion})으로 즉시 롤백`;
+                    }
+                    dom.btnQuickRollbackOta.onclick = () => {
+                        showAppConfirmModal({
+                            title: '직전 버전 롤백',
+                            message: `직전 패치 버전(#${historyData.previousVersion})으로 즉시 롤백하시겠습니까?`,
+                            confirmText: '롤백 및 새로고침',
+                            isDestructive: false,
+                            onConfirm: () => {
+                                if (isNative && typeof window.AndroidBridge.rollbackToPreviousOta === 'function') {
+                                    window.AndroidBridge.rollbackToPreviousOta();
+                                } else {
+                                    showToast(`버전 #${historyData.previousVersion}으로 롤백되었습니다.`);
+                                    setTimeout(() => window.location.reload(true), 500);
+                                }
+                            }
+                        });
+                    };
+                } else {
+                    dom.btnQuickRollbackOta.style.display = 'none';
+                }
+            }
+
+            // 버전 목록 렌더링
+            dom.otaVersionsList.innerHTML = '';
+            historyData.history.forEach(item => {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.alignItems = 'center';
+                row.style.justifyContent = 'space-between';
+                row.style.padding = '10px 12px';
+                row.style.borderRadius = '10px';
+                row.style.background = item.isCurrent ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.04)';
+                row.style.border = item.isCurrent ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--border-glass)';
+
+                const left = document.createElement('div');
+                left.style.minWidth = '0';
+                left.style.flex = '1';
+
+                const title = document.createElement('div');
+                title.style.fontWeight = '700';
+                title.style.fontSize = '0.8rem';
+                title.style.color = item.isCurrent ? '#a5b4fc' : 'var(--text-primary)';
+                title.textContent = item.label || `버전 #${item.version}`;
+                left.appendChild(title);
+
+                const desc = document.createElement('div');
+                desc.style.fontSize = '0.7rem';
+                desc.style.color = 'var(--text-muted)';
+                desc.style.marginTop = '2px';
+                desc.textContent = item.type === 'bundled' ? '앱 설치 초기 상태 (무인터넷 보장)' : (item.isCurrent ? '현재 실행 중인 실시간 패치' : '이전 다운로드 보관본');
+                left.appendChild(desc);
+
+                row.appendChild(left);
+
+                if (item.isCurrent) {
+                    const badge = document.createElement('span');
+                    badge.style.fontSize = '0.7rem';
+                    badge.style.fontWeight = '700';
+                    badge.style.padding = '3px 8px';
+                    badge.style.borderRadius = '6px';
+                    badge.style.background = 'rgba(16,185,129,0.15)';
+                    badge.style.color = '#10b981';
+                    badge.textContent = '현재 사용 중';
+                    row.appendChild(badge);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.style.padding = '6px 12px';
+                    btn.style.borderRadius = '8px';
+                    btn.style.border = '1px solid var(--border-glass)';
+                    btn.style.background = 'rgba(255,255,255,0.06)';
+                    btn.style.color = 'var(--text-primary)';
+                    btn.style.fontWeight = '600';
+                    btn.style.fontSize = '0.75rem';
+                    btn.style.cursor = 'pointer';
+                    btn.textContent = item.type === 'bundled' ? '번들 복원' : '이 버전 복원';
+                    btn.onclick = () => {
+                        showAppConfirmModal({
+                            title: '버전 복원',
+                            message: `선택하신 ${item.label} 상태로 복원하시겠습니까?`,
+                            confirmText: '복원 및 새로고침',
+                            isDestructive: false,
+                            onConfirm: () => {
+                                if (isNative && typeof window.AndroidBridge.restoreToOtaVersion === 'function') {
+                                    window.AndroidBridge.restoreToOtaVersion(item.version);
+                                } else {
+                                    showToast(`${item.label}으로 복원되었습니다.`);
+                                    setTimeout(() => window.location.reload(true), 500);
+                                }
+                            }
+                        });
+                    };
+                    row.appendChild(btn);
+                }
+
+                dom.otaVersionsList.appendChild(row);
             });
         }
+
+        if (dom.btnResetAppUpdate) {
+            dom.btnResetAppUpdate.addEventListener('click', openOtaRestoreModal);
+        }
+        if (dom.btnCloseOtaRestore) dom.btnCloseOtaRestore.addEventListener('click', closeOtaRestoreModal);
+        if (dom.backdropOtaRestore) dom.backdropOtaRestore.addEventListener('click', closeOtaRestoreModal);
 
         // APK 원클릭 다운로드 및 설치 버튼
         if (dom.btnDownloadApk) {

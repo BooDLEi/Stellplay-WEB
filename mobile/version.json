@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026102202,
+  "otaVersion": 2026102203,
   "otaReleaseDate": "2026-10-22",
   "files": [
     "index.html",
@@ -8,12 +8,13 @@
     "assets/js/mobile-player.js",
     "assets/js/songs.js",
     "assets/js/storage.js",
-    "songs-latest.json"
+    "songs-latest.json",
+    "patchnotes_android.txt"
   ],
   "apk": {
     "versionCode": 11,
-    "versionName": "1.11.0",
+    "versionName": "1.11.1",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "타상연화 곡명 복원 및 신곡 혁명도중(시부키), CH4NGE(리코) 최신순 정렬 반영"
+    "changelog": "패치노트 인앱 확인 모달, 다단계 패치 롤백/복원 시스템, 타상연화/혁명도중 표준 곡명 일원화"
   }
 }
