@@ -88,7 +88,7 @@ MEMBER_KEYWORDS = {
 }
 
 JAPANESE_SONG_MAP = {
-    '타상연화': ('打上花火', '타상연화'),
+    '타상연화': ('打上花火', '쏘아올린 불꽃'),
     '제육감': ('第六感', '제육감'),
     'sixth sense': ('第六感', '제육감'),
     '第六感': ('第六感', '제육감'),
@@ -267,8 +267,8 @@ def clean_title(title, raw_title=''):
     raw = raw_title.strip() if raw_title else ""
     if re.search(r'where\s*stars\s*begin|별이\s*시작되는\s*곳', f"{t} {raw}", re.IGNORECASE):
         return '별이 시작되는 곳'
-    if re.search(r'타상연화|打上花火', f"{t} {raw}"):
-        return '打上花火 (타상연화)'
+    if re.search(r'타상연화|打上花火|쏘아올린\s*불꽃', f"{t} {raw}"):
+        return '打上花火 (쏘아올린 불꽃)'
 
     # 0. 유튜브 메타데이터 및 채널 접두어 제거
     t = re.sub(r'\s*-\s*YouTube$', '', t, flags=re.IGNORECASE)
@@ -277,7 +277,7 @@ def clean_title(title, raw_title=''):
     t = re.sub(r'^(?:스텔라이브\s*\(STELLIVE\)\s*Universe\s*[\|ㅣ]\s*)', '', t, flags=re.IGNORECASE)
 
     # 1. 태그 및 잡음 제거
-    t = re.sub(r'\[\s*(?:4K|UHD|HD|MV|Live|Official)\s*\]', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'\[\s*(?:4K|UHD|HD|MV|Live|Official|3D\s*Live)\s*\]', '', t, flags=re.IGNORECASE)
     t = re.sub(r'【\s*(?:4K|UHD|HD|MV|Live|Official)\s*】', '', t, flags=re.IGNORECASE)
     t = re.sub(r'\(\s*(?:4K|UHD|HD|MV|Live|Official)\s*\)', '', t, flags=re.IGNORECASE)
     t = re.sub(r'\s*Official\s*(?:Music\s*Video|Video|MV)\s*$', '', t, flags=re.IGNORECASE)
@@ -362,13 +362,13 @@ def clean_title(title, raw_title=''):
     if 'alive 2' in full_lower and '지킬' in full_text: return 'Alive 2 (지킬 앤 하이드 OST)'
     if 'land of lola' in full_lower and '킹키부츠' in full_text: return 'Land of Lola (킹키부츠 OST)'
     if '웃는남자' in full_text: return '웃는남자 (뮤지컬 웃는남자 OST)'
-    if '여우의 별자리' in full_text and '명조' in full_text: return '여우의 별자리 「심월과 달의 노래」 (명조 OST)'
+    if '여우의 별자리' in full_text and '명조' in full_text: return '여우의 별자리 (명조:워더링 웨이브 OST)'
 
     # 3D 라이브 특별 곡
-    if 'dance the night away' in full_lower: return 'Dance The Night Away [3D Live]'
-    if 'dynamite' in full_lower and ('bts' in full_lower or '방탄소년단' in full_text): return 'Dynamite [3D Live]'
-    if '까탈레나' in full_text or 'catallena' in full_lower: return '까탈레나 [3D Live]'
-    if '100% for you' in full_lower: return '100% for You [3D Live]'
+    if 'dance the night away' in full_lower: return 'Dance The Night Away'
+    if 'dynamite' in full_lower and ('bts' in full_lower or '방탄소년단' in full_text): return 'Dynamite'
+    if '까탈레나' in full_text or 'catallena' in full_lower: return '까탈레나'
+    if '100% for you' in full_lower: return '100% for You'
 
     # 대표 영어 및 일본어 특별 타이틀 정규화
     if 'deja vu' in full_lower and 'olivia' in full_lower: return 'Deja vu'
@@ -389,7 +389,7 @@ def clean_title(title, raw_title=''):
     t = re.sub(r'\s*\[(?:타다노\s*카에데|只野\s*楓)[^\]]*\]\s*$', '', t)
 
     # 영어 제목에 한국어 번역이 괄호로 붙은 경우: 'English (한글)' -> 영어 원문 유지 ('영어제목 미번역' 원칙)
-    m_eng_kor = re.match(r'^([a-zA-Z0-9\s\?!\.●\'-]+)\s*\(([가-힣\s]+)\)$', t)
+    m_eng_kor = re.match(r'^([a-zA-Z0-9\s\?!\.●\'-]+)\s*\(([가-힣\s\?!\.●\'-]+)\)$', t)
     if m_eng_kor:
         eng_cand = m_eng_kor.group(1).strip()
         eng_low = eng_cand.lower()
@@ -546,7 +546,7 @@ def main():
     print(f"Fetched total {len(tracks)} tracks.")
 
     canonical_titles = {
-        'LmOl01G4DR4': '打上花火 (타상연화)',
+        'LmOl01G4DR4': '打上花火 (쏘아올린 불꽃)',
         'EKEts5IShas': '별이 시작되는 곳',
         'MZNKiadMo3U': '第六感 (제육감)',
         'iAoU1UGPoXc': '호랑풍류가 (나와 호랑이님 OST)',
@@ -557,6 +557,13 @@ def main():
         'Qi_JLmXBFFo': '不可幸力 (불가행력)',
         'Qngf5HNfl6Q': '少女レイ (소녀레이)',
         'FzefgoF26Ac': '여우의 별자리 (명조:워더링 웨이브 OST)',
+        'F7kdEX0VRss': 'Dance The Night Away',
+        'y-rdBQSrzSs': 'Dynamite',
+        'qv_VVUJOt0M': '까탈레나',
+        'npwilOOckxY': '100% for You',
+        '-RrbCkl3YJo': 'メルト (멜트)',
+        'LxqwR1KE81o': 'アカシア (아카시아)',
+        'KmH0RhhenzE': 'deja vu',
         'blFr5w6o2jQ': '아이와 나의 바다',
         'Zetk77I6_s8': 'おつかれsummer (수고했어 summer)',
         'uBtFoUXR9Qc': '千鳥 (물떼새)',

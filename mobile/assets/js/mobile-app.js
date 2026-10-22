@@ -2820,10 +2820,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
+    const _underlyingCleanAndKoreanizeTitle = (typeof window.cleanAndKoreanizeTitle === 'function') ? window.cleanAndKoreanizeTitle : null;
+
     function cleanAndKoreanizeTitle(title, rawTitle = '') {
         if (!title) return '';
         if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(title) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
-        if (/타상연화|打上花火/i.test(title) || /타상연화|打上花火/i.test(rawTitle)) return '打上花火 (타상연화)';
+        if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(title) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (쏘아올린 불꽃)';
         let t = title;
         t = t.replace(/\s*-\s*YouTube$/i, '');
 
@@ -2864,8 +2866,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // Delegate to standard cleanAndKoreanizeTitle for complete Japanese/English/Korean standardization
-        if (typeof window.cleanAndKoreanizeTitle === 'function' && window.cleanAndKoreanizeTitle !== cleanAndKoreanizeTitle) {
-            return window.cleanAndKoreanizeTitle(t, rawTitle);
+        if (_underlyingCleanAndKoreanizeTitle) {
+            return _underlyingCleanAndKoreanizeTitle(t, rawTitle);
         }
 
         t = t.replace(/【(?:MV|Music Video|COVER|Cover|커버|스텔라이브|오피셜|공식|4K)[^】]*】/gi, '');

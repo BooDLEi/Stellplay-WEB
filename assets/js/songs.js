@@ -212,7 +212,7 @@ const GENERATIONS = [
 const DEFAULT_SONGS = [
     {
         "id": "stel-LmOl01G4DR4",
-        "title": "打上花火 (타상연화)",
+        "title": "打上花火 (쏘아올린 불꽃)",
         "artist": "시라유키 히나 & 아오쿠모 린",
         "originalArtist": "DAOKO × 요네즈 켄시",
         "type": "cover",
@@ -223,7 +223,7 @@ const DEFAULT_SONGS = [
         "sabi": {
             "start": 65,
             "end": 105,
-            "title": "후렴구: 타상연화"
+            "title": "후렴구: 쏘아올린 불꽃"
         },
         "publishedAt": "2026-10-21",
         "mood": "upbeat"
@@ -475,7 +475,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-FzefgoF26Ac",
-        "title": "여우의 별자리 「심월과 달의 노래」 (명조 OST)",
+        "title": "여우의 별자리 (명조:워더링 웨이브 OST)",
         "artist": "아카네 리제",
         "originalArtist": "명조: 워더링 웨이브 OST (Cover)",
         "type": "ost",
@@ -488,7 +488,7 @@ const DEFAULT_SONGS = [
         "sabi": {
             "start": 65,
             "end": 105,
-            "title": "후렴구: 여우의 별자리 「심월과 달의 노래」"
+            "title": "후렴구: 여우의 별자리"
         },
         "publishedAt": "2026-09-26",
         "mood": "chill"
@@ -515,7 +515,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-F7kdEX0VRss",
-        "title": "Dance The Night Away [3D Live]",
+        "title": "Dance The Night Away",
         "artist": "하나코 나나",
         "originalArtist": "TWICE (트와이스)",
         "type": "live",
@@ -555,7 +555,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-y-rdBQSrzSs",
-        "title": "Dynamite [3D Live]",
+        "title": "Dynamite",
         "artist": "하나코 나나",
         "originalArtist": "BTS (방탄소년단)",
         "type": "live",
@@ -596,7 +596,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-qv_VVUJOt0M",
-        "title": "까탈레나 [3D Live]",
+        "title": "까탈레나",
         "artist": "하나코 나나",
         "originalArtist": "오렌지캬라멜 (Orange Caramel)",
         "type": "live",
@@ -616,7 +616,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-npwilOOckxY",
-        "title": "100% for You [3D Live]",
+        "title": "100% for You",
         "artist": "하나코 나나",
         "originalArtist": "커버곡",
         "type": "live",
@@ -656,7 +656,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-Zetk77I6_s8",
-        "title": "おつかれsummer (오츠카레 서머)",
+        "title": "おつかれsummer (수고했어 summer)",
         "artist": "하나코 나나, 사키하네 후야",
         "originalArtist": "HALCALI",
         "type": "cover",
@@ -2199,7 +2199,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "hina-mela",
-        "title": "Mela! (메라!)",
+        "title": "Mela!",
         "artist": "시라유키 히나",
         "originalArtist": "녹황색사회 (緑黄色社会)",
         "type": "live",
@@ -6685,7 +6685,7 @@ const DEFAULT_SONGS = [
     },
     {
         "id": "stel-6eb-U8R0nHQ",
-        "title": "Mela! (메라!)",
+        "title": "Mela!",
         "artist": "아야츠노 유니",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
@@ -7524,7 +7524,7 @@ function getAllSongs() {
 }
 
 const JAPANESE_SONG_MAP = {
-    '타상연화': ['打上花火', '타상연화'],
+    '타상연화': ['打上花火', '쏘아올린 불꽃'],
     'uchiage hanabi': ['打上花火', '타상연화'],
     '제육감': ['第六感', '제육감'],
     'sixth sense': ['第六感', '제육감'],
@@ -7700,7 +7700,7 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     if (!title) return '';
     let t = title.trim();
     if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(t) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
-    if (/타상연화|打上花火/i.test(t) || /타상연화|打上花火/i.test(rawTitle)) return '打上花火 (타상연화)';
+    if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(t) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (쏘아올린 불꽃)';
     const raw = rawTitle ? rawTitle.trim() : '';
 
     // 0. 유튜브 메타데이터 및 채널 접두어 제거
@@ -7710,7 +7710,7 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     t = t.replace(/^(?:스텔라이브\s*\(STELLIVE\)\s*Universe\s*[\|ㅣ]\s*)/i, '');
 
     // 1. [4K], 【MV】, (Live Cover) 등 각종 태그 및 잡음 제거
-    t = t.replace(/[\[【\(]\s*(?:4K|UHD|HD|MV|Live|Official)\s*[\]】\)]/gi, '');
+    t = t.replace(/[\[【\(]\s*(?:4K|UHD|HD|MV|Live|Official|3D\s*Live)\s*[\]】\)]/gi, '');
     t = t.replace(/\s*Official\s*(?:Music\s*Video|Video|MV)\s*$/gi, '');
     t = t.replace(/\s*(?:Music\s*Video|MV)\s*$/gi, '');
     t = t.replace(/[\s\|ㅣ/]*[\[【\(]?(?:3D\s*)?(?:Live\s*)?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\]】\)]?.*$/gi, '');
@@ -7803,17 +7803,18 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     if (fullLower.includes('alive 2') && fullText.includes('지킬')) return 'Alive 2 (지킬 앤 하이드 OST)';
     if (fullLower.includes('land of lola') && fullText.includes('킹키부츠')) return 'Land of Lola (킹키부츠 OST)';
     if (fullText.includes('웃는남자')) return '웃는남자 (뮤지컬 웃는남자 OST)';
-    if (fullText.includes('여우의 별자리') && fullText.includes('명조')) return '여우의 별자리 「심월과 달의 노래」 (명조 OST)';
+    if (fullText.includes('여우의 별자리') && fullText.includes('명조')) return '여우의 별자리 (명조:워더링 웨이브 OST)';
 
     // 3D 라이브 특별 곡
-    if (fullLower.includes('dance the night away')) return 'Dance The Night Away [3D Live]';
-    if (fullLower.includes('dynamite') && (fullLower.includes('bts') || fullText.includes('방탄소년단'))) return 'Dynamite [3D Live]';
-    if (fullText.includes('까탈레나') || fullLower.includes('catallena')) return '까탈레나 [3D Live]';
-    if (fullLower.includes('100% for you')) return '100% for You [3D Live]';
+    if (fullLower.includes('dance the night away')) return 'Dance The Night Away';
+    if (fullLower.includes('dynamite') && (fullLower.includes('bts') || fullText.includes('방탄소년단'))) return 'Dynamite';
+    if (fullText.includes('까탈레나') || fullLower.includes('catallena')) return '까탈레나';
+    if (fullLower.includes('100% for you')) return '100% for You';
 
     // 대표 영어 및 일본어 특별 타이틀 정규화
     if (fullLower.includes('deja vu') && fullLower.includes('olivia')) return 'Deja vu';
     if (fullLower.includes('drivers license')) return 'drivers license';
+    if (fullLower.includes('mela')) return 'Mela!';
     if (fullLower.includes('dancehall')) return 'Dancehall';
     if (fullLower.includes('star trail')) return 'STAR TRAIL';
     if (fullLower.includes('high hopes')) return 'High Hopes';
@@ -7830,7 +7831,7 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     t = t.replace(/\s*\[(?:타다노\s*카에데|只野\s*楓)[^\]]*\]\s*$/, '');
 
     // 영어 제목에 한국어 번역이 괄호로 붙은 경우: 'English (한글)' -> 영어 제목 원본 유지 ('영어제목 미번역' 원칙)
-    const mEngKor = t.match(/^([a-zA-Z0-9\s\?!\.●\'-]+)\s*\(([가-힣\s]+)\)$/);
+    const mEngKor = t.match(/^([a-zA-Z0-9\s\?!\.●\'-]+)\s*\(([가-힣\s\?!\.●\'-]+)\)$/);
     if (mEngKor) {
         const engCandidate = mEngKor[1].trim();
         const engLow = engCandidate.toLowerCase();
