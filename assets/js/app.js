@@ -795,6 +795,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     function cleanAndKoreanizeTitle(title, rawTitle = '') {
         if (!title) return '';
+        if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(title) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
+        if (/타상연화|打上花火/i.test(title) || /타상연화|打上花火/i.test(rawTitle)) return '打上花火 (타상연화)';
         let t = title;
         t = t.replace(/\s*-\s*YouTube$/i, '');
 

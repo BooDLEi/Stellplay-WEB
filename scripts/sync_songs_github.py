@@ -7,6 +7,7 @@ StellPlay - GitHub Actions용 스텔라이브 공식 신곡 동기화 스크립�
 
 import sys
 import os
+import re
 import json
 import time
 from datetime import datetime, timezone
@@ -87,6 +88,7 @@ MEMBER_KEYWORDS = {
 }
 
 JAPANESE_SONG_MAP = {
+    '타상연화': ('打上花火', '타상연화'),
     '제육감': ('第六感', '제육감'),
     'sixth sense': ('第六感', '제육감'),
     '第六感': ('第六感', '제육감'),
@@ -263,9 +265,14 @@ def clean_title(title, raw_title=''):
         return ""
     t = title.strip()
     raw = raw_title.strip() if raw_title else ""
+    if re.search(r'where\s*stars\s*begin|별이\s*시작되는\s*곳', f"{t} {raw}", re.IGNORECASE):
+        return '별이 시작되는 곳'
+    if re.search(r'타상연화|打上花火', f"{t} {raw}"):
+        return '打上花火 (타상연화)'
 
     # 0. 유튜브 메타데이터 및 채널 접두어 제거
     t = re.sub(r'\s*-\s*YouTube$', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'^(?:\[STELLIVE\]\s*(?:ABYSS|Universe|Cliché)?\s*[\-\|ㅣ]\s*)', '', t, flags=re.IGNORECASE)
     t = re.sub(r'^(?:스텔라이브\s*\(StelLive\)\s*(?:Cliché|Universe)?\s*[\|Iㅣ]\s*|STELLIVE\s*\(스텔라이브\)\s*|StelLive\s*[\|ㅣ]\s*)', '', t, flags=re.IGNORECASE)
     t = re.sub(r'^(?:스텔라이브\s*\(STELLIVE\)\s*Universe\s*[\|ㅣ]\s*)', '', t, flags=re.IGNORECASE)
 
@@ -539,6 +546,8 @@ def main():
     print(f"Fetched total {len(tracks)} tracks.")
 
     canonical_titles = {
+        'LmOl01G4DR4': '打上花火 (타상연화)',
+        'EKEts5IShas': '별이 시작되는 곳',
         'MZNKiadMo3U': '第六感 (제육감)',
         'iAoU1UGPoXc': '호랑풍류가 (나와 호랑이님 OST)',
         'ouKcRBeyKbk': 'ゆうれいになりたい (유령이 되고싶어)',
@@ -557,23 +566,47 @@ def main():
         'fXoGiuE6e-I': 'Loop in June (명조:워더링 웨이브 OST)',
         'bmFg-paLaMI': 'ブレインロット (브레인 롯)',
     }
-    g4_order = ['rKQptWhAvO0', 'ouKcRBeyKbk', 'iAoU1UGPoXc', 'MZNKiadMo3U']
+    top_order = ['LmOl01G4DR4', 'EKEts5IShas', 'rKQptWhAvO0', 'ouKcRBeyKbk', 'iAoU1UGPoXc', 'MZNKiadMo3U']
 
     for t in tracks:
         tid = t.get('id')
         if tid in canonical_titles:
             t['title'] = canonical_titles[tid]
-        if tid in g4_order:
-            t['publishedAt'] = '2026-10-16'
-            if tid == 'MZNKiadMo3U': t['members'] = ['toa']; t['defaultMember'] = 'toa'
-            elif tid == 'iAoU1UGPoXc': t['members'] = ['rang']; t['defaultMember'] = 'rang'
-            elif tid == 'ouKcRBeyKbk': t['members'] = ['hiyori']; t['defaultMember'] = 'hiyori'
-            elif tid == 'rKQptWhAvO0': t['members'] = ['mary']; t['defaultMember'] = 'mary'
-            t['defaultType'] = 'cover'
+        if tid in top_order:
+            if tid == 'LmOl01G4DR4':
+                t['members'] = ['hina', 'rin']
+                t['defaultMember'] = 'hina'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-21'
+            elif tid == 'EKEts5IShas':
+                t['members'] = ['toa', 'rang', 'hiyori', 'mary']
+                t['defaultMember'] = 'group'
+                t['defaultType'] = 'original'
+                t['publishedAt'] = '2026-10-20'
+            elif tid == 'rKQptWhAvO0':
+                t['members'] = ['mary']
+                t['defaultMember'] = 'mary'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-16'
+            elif tid == 'ouKcRBeyKbk':
+                t['members'] = ['hiyori']
+                t['defaultMember'] = 'hiyori'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-16'
+            elif tid == 'iAoU1UGPoXc':
+                t['members'] = ['rang']
+                t['defaultMember'] = 'rang'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-16'
+            elif tid == 'MZNKiadMo3U':
+                t['members'] = ['toa']
+                t['defaultMember'] = 'toa'
+                t['defaultType'] = 'cover'
+                t['publishedAt'] = '2026-10-16'
 
-    g4_map = {t['id']: t for t in tracks if t.get('id') in g4_order}
-    others = [t for t in tracks if t.get('id') not in g4_order]
-    tracks = [g4_map[tid] for tid in g4_order if tid in g4_map] + others
+    top_map = {t['id']: t for t in tracks if t.get('id') in top_order}
+    others = [t for t in tracks if t.get('id') not in top_order]
+    tracks = [top_map[tid] for tid in top_order if tid in top_map] + others
 
     payload = {
         'success': True,

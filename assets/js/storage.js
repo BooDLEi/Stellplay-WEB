@@ -407,6 +407,12 @@ const StorageManager = {
             if (!data) return [];
             let songs = JSON.parse(data);
             if (!Array.isArray(songs)) return [];
+            songs = songs.map(s => {
+                if (s && s.title && (s.title.includes('Where Stars Begin') || s.title.includes('Where stars begin') || s.id === 'auto-EKEts5IShas')) {
+                    s.title = '별이 시작되는 곳';
+                }
+                return s;
+            });
 
             const isNonMusicTrack = (s) => {
                 if (!s) return true;

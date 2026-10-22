@@ -211,6 +211,42 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-LmOl01G4DR4",
+        "title": "打上花火 (타상연화)",
+        "artist": "시라유키 히나 & 아오쿠모 린",
+        "originalArtist": "DAOKO × 요네즈 켄시",
+        "type": "cover",
+        "gen": "group",
+        "members": ["hina", "rin"],
+        "youtubeId": "LmOl01G4DR4",
+        "duration": 289,
+        "sabi": {
+            "start": 65,
+            "end": 105,
+            "title": "후렴구: 타상연화"
+        },
+        "publishedAt": "2026-10-21",
+        "mood": "upbeat"
+    },
+    {
+        "id": "stel-EKEts5IShas",
+        "title": "별이 시작되는 곳",
+        "artist": "어비스 (ABYSS 4기생)",
+        "originalArtist": "스텔라이브 4기생 어비스 오리지널 (Original)",
+        "type": "original",
+        "gen": "g4",
+        "members": ["toa", "rang", "hiyori", "mary"],
+        "youtubeId": "EKEts5IShas",
+        "duration": 207,
+        "sabi": {
+            "start": 52,
+            "end": 92,
+            "title": "후렴구: 별이 시작되는 곳"
+        },
+        "publishedAt": "2026-10-20",
+        "mood": "bright"
+    },
+    {
         "id": "stel-rKQptWhAvO0",
         "title": "東京テディベア (도쿄 테디베어)",
         "artist": "토키노 메리",
@@ -278,60 +314,6 @@ const DEFAULT_SONGS = [
             "start": 40,
             "end": 80,
             "title": "후렴구: 제육감"
-        },
-        "publishedAt": "2026-10-16",
-        "mood": "upbeat"
-    },
-    {
-        "id": "stel-iAoU1UGPoXc",
-        "title": "호랑풍류가 (나와 호랑이님 OST)",
-        "artist": "코가네 랑",
-        "originalArtist": "나와 호랑이님 OST",
-        "type": "cover",
-        "gen": "g4",
-        "members": ["rang"],
-        "youtubeId": "iAoU1UGPoXc",
-        "duration": 253,
-        "sabi": {
-            "start": 55,
-            "end": 95,
-            "title": "후렴구: 호랑풍류가"
-        },
-        "publishedAt": "2026-10-16",
-        "mood": "bright"
-    },
-    {
-        "id": "stel-ouKcRBeyKbk",
-        "title": "ゆうれいになりたい (유령이 되고싶어)",
-        "artist": "하나요 히요리",
-        "originalArtist": "유이카 (Yuika)",
-        "type": "cover",
-        "gen": "g4",
-        "members": ["hiyori"],
-        "youtubeId": "ouKcRBeyKbk",
-        "duration": 243,
-        "sabi": {
-            "start": 50,
-            "end": 90,
-            "title": "후렴구: 유령이 되고싶어"
-        },
-        "publishedAt": "2026-10-16",
-        "mood": "chill"
-    },
-    {
-        "id": "stel-rKQptWhAvO0",
-        "title": "東京テディベア (도쿄 테디베어)",
-        "artist": "토키노 메리",
-        "originalArtist": "Neru",
-        "type": "cover",
-        "gen": "g4",
-        "members": ["mary"],
-        "youtubeId": "rKQptWhAvO0",
-        "duration": 194,
-        "sabi": {
-            "start": 48,
-            "end": 88,
-            "title": "후렴구: 도쿄 테디베어"
         },
         "publishedAt": "2026-10-16",
         "mood": "upbeat"
@@ -7543,6 +7525,8 @@ function getAllSongs() {
 }
 
 const JAPANESE_SONG_MAP = {
+    '타상연화': ['打上花火', '타상연화'],
+    'uchiage hanabi': ['打上花火', '타상연화'],
     '제육감': ['第六感', '제육감'],
     'sixth sense': ['第六感', '제육감'],
     '第六感': ['第六感', '제육감'],
@@ -7716,10 +7700,13 @@ const ENGLISH_TITLES_SET = new Set([
 function cleanAndKoreanizeTitle(title, rawTitle = '') {
     if (!title) return '';
     let t = title.trim();
+    if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(t) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
+    if (/타상연화|打上花火/i.test(t) || /타상연화|打上花火/i.test(rawTitle)) return '打上花火 (타상연화)';
     const raw = rawTitle ? rawTitle.trim() : '';
 
     // 0. 유튜브 메타데이터 및 채널 접두어 제거
     t = t.replace(/\s*-\s*YouTube$/i, '');
+    t = t.replace(/^(?:\[STELLIVE\]\s*(?:ABYSS|Universe|Cliché)?\s*[\-\|ㅣ]\s*)/i, '');
     t = t.replace(/^(?:스텔라이브\s*\(StelLive\)\s*(?:Cliché|Universe)?\s*[\|Iㅣ]\s*|STELLIVE\s*\(스텔라이브\)\s*|StelLive\s*[\|ㅣ]\s*)/i, '');
     t = t.replace(/^(?:스텔라이브\s*\(STELLIVE\)\s*Universe\s*[\|ㅣ]\s*)/i, '');
 

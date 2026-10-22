@@ -402,6 +402,12 @@ const StorageManager = {
             if (!data) return [];
             let songs = JSON.parse(data);
             if (!Array.isArray(songs)) return [];
+            songs = songs.map(s => {
+                if (s && s.title && (s.title.includes('Where Stars Begin') || s.title.includes('Where stars begin') || s.id === 'auto-EKEts5IShas')) {
+                    s.title = '별이 시작되는 곳';
+                }
+                return s;
+            });
 
             // DEFAULT_SONGS에 이미 정식 등록된 곡은 autoDetected 로컬 캐시에서 자동 정리 (중복 원천 차단)
             const isNonMusicTrack = (s) => {
