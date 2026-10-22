@@ -160,6 +160,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnSyncSongsSettings: document.getElementById('btn-sync-songs-settings'),
         btnRestoreHiddenSettings: document.getElementById('btn-restore-hidden-settings'),
 
+        // 앱 업데이트 및 실시간 버전 관리
+        cardAppUpdate: document.getElementById('m-card-app-update'),
+        appVersionBadge: document.getElementById('m-app-version-badge'),
+        otaVersionText: document.getElementById('m-ota-version-text'),
+        btnCheckAppUpdate: document.getElementById('btn-check-app-update'),
+        iconUpdateRefresh: document.getElementById('icon-update-refresh'),
+        btnResetAppUpdate: document.getElementById('btn-reset-app-update'),
+        apkUpdateBanner: document.getElementById('m-apk-update-banner'),
+        apkBannerTitle: document.getElementById('m-apk-banner-title'),
+        apkUpdateChangelog: document.getElementById('m-apk-update-changelog'),
+        btnDownloadApk: document.getElementById('btn-download-apk'),
+        apkProgressWrap: document.getElementById('m-apk-progress-wrap'),
+        apkProgressBar: document.getElementById('m-apk-progress-bar'),
+        apkProgressText: document.getElementById('m-apk-progress-text'),
+        liveUpdateToast: document.getElementById('m-live-update-toast'),
+        liveUpdateDesc: document.getElementById('m-live-update-desc'),
+        btnReloadLiveUpdate: document.getElementById('m-btn-reload-live-update'),
+        btnDismissLiveUpdate: document.getElementById('m-btn-dismiss-live-update'),
+
         // 하단 탭
         tabBtns: document.querySelectorAll('.tab-btn'),
 
@@ -468,6 +487,168 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ===================================================================
+    // 실시간 웹 에셋(OTA) & APK 인앱 업데이트 관리 UI
+    // ===================================================================
+    function initUpdateManagerUI() {
+        const isNative = typeof window.AndroidBridge !== 'undefined';
+        let latestApkDownloadUrl = '';
+
+        function refreshUpdateDisplay() {
+            if (isNative && typeof window.AndroidBridge.getLiveUpdateInfo === 'function') {
+                try {
+                    const infoStr = window.AndroidBridge.getLiveUpdateInfo();
+                    const info = JSON.parse(infoStr);
+                    if (dom.appVersionBadge) {
+                        dom.appVersionBadge.textContent = `v${info.installedApkName || '1.10.0'}`;
+                    }
+                    if (dom.otaVersionText) {
+                        const otaVer = info.currentOtaVersion || '최신';
+                        const isLive = info.hasLiveAssets;
+                        dom.otaVersionText.textContent = `#${otaVer} (${isLive ? '실시간 패치 적용됨' : '기본 번들'})`;
+                        dom.otaVersionText.style.color = isLive ? '#38bdf8' : 'var(--color-green)';
+                    }
+
+                    if (info.apkAvailable && dom.apkUpdateBanner) {
+                        dom.apkUpdateBanner.style.display = 'flex';
+                        if (dom.apkBannerTitle) {
+                            dom.apkBannerTitle.textContent = `새 버전 v${info.latestApkName} 출시!`;
+                        }
+                        if (dom.apkUpdateChangelog) {
+                            dom.apkUpdateChangelog.textContent = info.latestApkChangelog || '새로운 기능과 성능 개선이 포함되어 있습니다.';
+                        }
+                        latestApkDownloadUrl = info.latestApkUrl || '';
+                    }
+                } catch (e) {
+                    console.warn('Failed parsing update info:', e);
+                }
+            } else {
+                // 웹 브라우저 접속 모드
+                if (dom.appVersionBadge) dom.appVersionBadge.textContent = 'Web Live';
+                if (dom.otaVersionText) dom.otaVersionText.textContent = '웹 브라우저 접속 (항상 최신)';
+            }
+        }
+
+        refreshUpdateDisplay();
+
+        // 업데이트 수동 확인 버튼
+        if (dom.btnCheckAppUpdate) {
+            dom.btnCheckAppUpdate.addEventListener('click', () => {
+                if (isNative && typeof window.AndroidBridge.checkForUpdatesManual === 'function') {
+                    if (dom.iconUpdateRefresh) dom.iconUpdateRefresh.classList.add('spin-animation');
+                    showToast('업데이트 서버를 확인하는 중입니다...');
+                    window.AndroidBridge.checkForUpdatesManual();
+                    setTimeout(() => {
+                        if (dom.iconUpdateRefresh) dom.iconUpdateRefresh.classList.remove('spin-animation');
+                    }, 4000);
+                } else {
+                    fetch('./version.json?t=' + Date.now())
+                        .then(r => r.json())
+                        .then(v => {
+                            showToast(`웹 버전은 항상 최신 상태입니다 (빌드 #${v.otaVersion})`);
+                        })
+                        .catch(() => showToast('버전 정보를 확인할 수 없습니다.'));
+                }
+            });
+        }
+
+        // 기본 번들 버전으로 복원 버튼
+        if (dom.btnResetAppUpdate) {
+            dom.btnResetAppUpdate.addEventListener('click', () => {
+                if (isNative && typeof window.AndroidBridge.resetLiveAssets === 'function') {
+                    showAppConfirmModal({
+                        title: '앱 리소스 초기화',
+                        message: '다운로드된 실시간 패치를 제거하고, 앱 설치 초기 번들 상태로 복원하시겠습니까?',
+                        confirmText: '복원 및 새로고침',
+                        isDestructive: false,
+                        onConfirm: () => {
+                            window.AndroidBridge.resetLiveAssets();
+                        }
+                    });
+                } else {
+                    showToast('현재 기본 상태입니다.');
+                }
+            });
+        }
+
+        // APK 원클릭 다운로드 및 설치 버튼
+        if (dom.btnDownloadApk) {
+            dom.btnDownloadApk.addEventListener('click', () => {
+                if (isNative && typeof window.AndroidBridge.downloadAndInstallApk === 'function') {
+                    if (dom.apkProgressWrap) dom.apkProgressWrap.style.display = 'flex';
+                    dom.btnDownloadApk.disabled = true;
+                    dom.btnDownloadApk.textContent = 'APK 다운로드 중...';
+                    window.AndroidBridge.downloadAndInstallApk(latestApkDownloadUrl);
+                } else {
+                    window.open('https://github.com/BooDLEi/Stellplay-WEB/releases', '_blank');
+                }
+            });
+        }
+
+        // 플로팅 배너 - 지금 적용 버튼
+        if (dom.btnReloadLiveUpdate) {
+            dom.btnReloadLiveUpdate.addEventListener('click', () => {
+                window.location.reload(true);
+            });
+        }
+
+        // 플로팅 배너 - 닫기 버튼
+        if (dom.btnDismissLiveUpdate) {
+            dom.btnDismissLiveUpdate.addEventListener('click', () => {
+                if (dom.liveUpdateToast) dom.liveUpdateToast.style.display = 'none';
+            });
+        }
+
+        // 네이티브 콜백 수신
+        window.onLiveUpdateStatus = function(data) {
+            if (dom.iconUpdateRefresh) dom.iconUpdateRefresh.classList.remove('spin-animation');
+            if (!data) return;
+
+            refreshUpdateDisplay();
+
+            if (data.status === 'up_to_date') {
+                showToast('✨ 현재 최신 버전입니다 (패치 #' + data.otaVersion + ')');
+            } else if (data.status === 'error') {
+                showToast('⚠️ ' + (data.message || '업데이트 확인에 실패했습니다.'));
+            }
+        };
+
+        window.onLiveUpdateApplied = function(data) {
+            refreshUpdateDisplay();
+            if (dom.liveUpdateToast) {
+                if (dom.liveUpdateDesc) {
+                    dom.liveUpdateDesc.textContent = `신곡 및 UI 패치 #${data.otaVersion} 다운로드 완료`;
+                }
+                dom.liveUpdateToast.style.display = 'block';
+            }
+            showToast(`🎉 새로운 업데이트가 다운로드되었습니다 (패치 #${data.otaVersion})`);
+        };
+
+        window.onApkDownloadProgress = function(percent) {
+            if (dom.apkProgressBar) dom.apkProgressBar.style.width = percent + '%';
+            if (dom.apkProgressText) dom.apkProgressText.textContent = percent + '%';
+        };
+
+        window.onApkDownloadComplete = function() {
+            if (dom.apkProgressBar) dom.apkProgressBar.style.width = '100%';
+            if (dom.apkProgressText) dom.apkProgressText.textContent = '100% (설치 화면 실행)';
+            if (dom.btnDownloadApk) {
+                dom.btnDownloadApk.disabled = false;
+                dom.btnDownloadApk.textContent = '설치 화면 다시 열기';
+            }
+            showToast('APK 다운로드가 완료되어 설치 창이 열립니다.');
+        };
+
+        window.onApkDownloadError = function(errMsg) {
+            if (dom.apkProgressWrap) dom.apkProgressWrap.style.display = 'none';
+            if (dom.btnDownloadApk) {
+                dom.btnDownloadApk.disabled = false;
+                dom.btnDownloadApk.textContent = '최신 APK 원클릭 설치';
+            }
+            showToast('APK 다운로드 실패: ' + errMsg);
+        };
+    }
+
+    // ===================================================================
     // 1. 초기화 (Init)
     // ===================================================================
     async function init() {
@@ -566,6 +747,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => {
             syncNewSongs(false);
         }, 3000);
+
+        // 실시간 무설치 업데이트(OTA) 및 APK 업데이트 관리 초기화
+        initUpdateManagerUI();
     }
 
     // 태블릿 및 폴더블 대화면 판별 헬퍼 (일반 스마트폰 가로모드 오인 방지: min-width: 650px & min-height: 550px)

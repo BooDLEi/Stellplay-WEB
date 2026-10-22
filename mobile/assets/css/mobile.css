@@ -4525,3 +4525,44 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     background: var(--theme-color) !important;
     color: #ffffff !important;
 }
+
+
+/* 실시간 OTA 업데이트 플로팅 알림 애니메이션 및 라이트 테마 지원 */
+@keyframes fadeInSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+[data-theme="light"] #m-live-update-toast {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 244, 255, 0.98)) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15) !important;
+}
+
+[data-theme="light"] #m-live-update-toast div[style*="color:#fff"] {
+    color: #1e1b4b !important;
+}
+
+[data-theme="light"] #m-live-update-desc {
+    color: #4338ca !important;
+}
+
+[data-theme="light"] #m-btn-dismiss-live-update {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #64748b !important;
+}
