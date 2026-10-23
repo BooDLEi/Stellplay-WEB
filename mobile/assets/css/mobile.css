@@ -3200,17 +3200,25 @@ body::before {
         cursor: default !important;
     }
 
-    /* 태블릿 분할 모드: 대기열 상단 헤더 및 버튼 정렬 고정 (세로화면에서도 버튼 밀림 방지) */
+    /* 가로/폴드/태블릿 분할 모드: 대기열 상단 헤더 (제목/곡수 상단줄 + 메뉴 버튼 하단줄로 2줄 분리 배치하여 우측 짤림 방지) */
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-header {
-        padding: 10px 14px 8px !important;
+        padding: 10px 14px 10px !important;
         display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        flex-wrap: nowrap !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
         box-sizing: border-box !important;
         min-width: 0 !important;
         width: 100% !important;
+    }
+
+    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-header-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        min-width: 0 !important;
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-title-row {
@@ -3218,12 +3226,13 @@ body::before {
         min-width: 0 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 6px !important;
+        gap: 8px !important;
         overflow: hidden !important;
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-title {
-        font-size: 0.92rem !important;
+        font-size: 0.95rem !important;
+        font-weight: 800 !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
@@ -3231,26 +3240,42 @@ body::before {
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-badge {
         flex-shrink: 0 !important;
-        font-size: 0.7rem !important;
-        padding: 1px 6px !important;
+        font-size: 0.72rem !important;
+        padding: 2px 7px !important;
         white-space: nowrap !important;
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-actions {
-        flex-shrink: 0 !important;
+        width: 100% !important;
         display: flex !important;
         align-items: center !important;
-        gap: 6px !important;
+        gap: 5px !important;
         flex-wrap: nowrap !important;
+        box-sizing: border-box !important;
+        overflow-x: auto !important;
+        scrollbar-width: none !important;
+    }
+
+    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-actions::-webkit-scrollbar {
+        display: none !important;
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-action-btn {
-        padding: 5px 8px !important;
-        font-size: 0.74rem !important;
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        padding: 6px 3px !important;
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
         white-space: nowrap !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 4px !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        box-sizing: border-box !important;
+        border-radius: 8px !important;
+    }
+
+    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-action-btn svg {
         flex-shrink: 0 !important;
     }
 
