@@ -1,6 +1,6 @@
 {
-  "otaVersion": 2026102203,
-  "otaReleaseDate": "2026-10-22",
+  "otaVersion": 2026102301,
+  "otaReleaseDate": "2026-10-23",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -12,9 +12,19 @@
     "patchnotes_android.txt"
   ],
   "apk": {
-    "versionCode": 11,
-    "versionName": "1.11.1",
+    "versionCode": 12,
+    "versionName": "1.11.2",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "패치노트 인앱 확인 모달, 다단계 패치 롤백/복원 시스템, 타상연화/혁명도중 표준 곡명 일원화"
+    "changelog": "5계층 다중 보안 방어 체계 구축 (OTA SHA-256 무결성 검증, 엄격한 CSP, 파일 샌드박스 및 APK 화이트리스트)"
+  },
+  "fileHashes": {
+    "index.html": "85556939f8ac29755ee197a3fd6ac01727f2bfc784448ee4f4114db9c7b2c882",
+    "assets/css/mobile.css": "050b6664fbc3cb6274f62c7a894b1aa24e468e49f39f446ec0ce9315275890f8",
+    "assets/js/mobile-app.js": "42c6887a827e783fe36628a286327be7fc785bfcf3752f934b03d286035f07ce",
+    "assets/js/mobile-player.js": "f2c897bf58955dfd66d02a0dcb8afbe3b435b49ad650d0781b6540d5b562d7a8",
+    "assets/js/songs.js": "d30d87c21c8a99a0a3cca29cc817aa0f09809f261c6765c3fa128d6874908557",
+    "assets/js/storage.js": "03c6a5df77877ff9dfbc8319331db86a84594281028977069cf884ab11dc457d",
+    "songs-latest.json": "8430fe8b99538e8d6ec5f46292a77346373ef118536881659c5970f57e45e0e3",
+    "patchnotes_android.txt": "b4113f37be04431f1ca743c2302d4db06cdbf36a552dd6e33c0c070066e99f88"
   }
 }

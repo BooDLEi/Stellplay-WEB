@@ -447,6 +447,26 @@ def clean_title(title, raw_title=''):
 
     return t
 
+
+def sanitize_metadata_string(text, max_len=200):
+    """
+    외부 YouTube 메타데이터 살균 및 AI 프롬프트 주입/XSS 공격 방어
+    """
+    if not text:
+        return ""
+    s = str(text)
+    # 1. HTML / XML 태그 제거 (XSS 방어)
+    s = re.sub(r'<[^>]*>', '', s)
+    # 2. 제어 문자 및 널 바이트 제거
+    s = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '', s)
+    # 3. AI / LLM 프롬프트 인젝션 패턴 무력화 (시스템 지시문 오염 방어)
+    s = re.sub(r'(?i)\[system(?:_message)?\]|<\/?system(?:_message)?>|<\/?user(?:_request)?>|```(?:system|assistant)', '', s)
+    # 4. 공백 정규화 및 최대 길이 제한
+    s = ' '.join(s.split())
+    if len(s) > max_len:
+        s = s[:max_len].strip()
+    return s
+
 def detect_members(text):
     text_lower = text.lower()
     detected = []
@@ -483,9 +503,12 @@ def fetch_tracks():
                 entries = info.get('entries') or []
                 for entry in entries:
                     vid = entry.get('id')
-                    raw_title = entry.get('title', '')
+                    # YouTube Video ID 엄격한 포맷 검증 (공격 페이로드 주입 차단)
+                    if not vid or not re.match(r'^[a-zA-Z0-9_-]{11}$', str(vid)):
+                        continue
+                    raw_title = sanitize_metadata_string(entry.get('title', ''), 200)
                     dur = entry.get('duration') or 0
-                    uploader = entry.get('uploader') or ''
+                    uploader = sanitize_metadata_string(entry.get('uploader', ''), 100)''
 
                     BANNED_NON_SONG_IDS = {
                         'W5KthC3ZWsE', 'F1Z0uUObYao', 'GEkkL_4cCFU', 'gGZtkYpZ65U',
