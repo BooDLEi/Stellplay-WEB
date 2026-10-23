@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026102303,
+  "otaVersion": 2026102304,
   "otaReleaseDate": "2026-10-23",
   "apkVersionName": "1.11.3",
   "files": [
@@ -27,12 +27,14 @@
     "versionCode": 13,
     "versionName": "1.11.3",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "라이트모드 곡 선택 취소 버튼 가시성 개선, 타상연화/혁명도중 곡명 수정 미반영 원천 버그 해결, 곡 정보 수정 내 '곡 정보 재감지' 기능 추가, PC 클라이언트 실시간 업데이트·패치노트·버전 복원 탑재"
+    "changelog": "서버 127.0.0.1 루프백 격리 및 SSRF/CORS 차단, 안드로이드 음원 식별자 살균, 네이티브 업데이트 필요 시에만 알림 표시",
+    "minRequiredVersionCode": 13,
+    "nativeRequired": true
   },
   "fileHashes": {
     "index.html": "040bd2beccd388bf915370c4ce28eaf135f1a9a945e14955a6730a3efd505dfa",
     "assets/css/mobile.css": "37f4be8c910cb3c25c0bab9f821c05b544462ea0b0db152b3cf78b4bb4dac32b",
-    "assets/js/mobile-app.js": "53314209115e346d03a6770a32983ff1e45f4eb502a0a0b0e343e205b1b790db",
+    "assets/js/mobile-app.js": "6c6632a06c75b4afc79d0bdf56c51584571c5ad49a78fbb5ba6077e90c1067a1",
     "assets/js/mobile-player.js": "f2c897bf58955dfd66d02a0dcb8afbe3b435b49ad650d0781b6540d5b562d7a8",
     "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",

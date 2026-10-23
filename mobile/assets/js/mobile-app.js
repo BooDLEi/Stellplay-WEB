@@ -525,12 +525,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (info.apkAvailable && dom.apkUpdateBanner) {
                         dom.apkUpdateBanner.style.display = 'flex';
                         if (dom.apkBannerTitle) {
-                            dom.apkBannerTitle.textContent = `새 버전 v${info.latestApkName} 출시!`;
+                            dom.apkBannerTitle.textContent = `네이티브 앱(APK) 업데이트 v${info.latestApkName}`;
                         }
                         if (dom.apkUpdateChangelog) {
-                            dom.apkUpdateChangelog.textContent = info.latestApkChangelog || '새로운 기능과 성능 개선이 포함되어 있습니다.';
+                            dom.apkUpdateChangelog.textContent = info.latestApkChangelog || '보안 및 핵심 엔진 필수 업데이트가 포함되어 있습니다.';
                         }
                         latestApkDownloadUrl = info.latestApkUrl || '';
+                    } else if (dom.apkUpdateBanner) {
+                        dom.apkUpdateBanner.style.display = 'none';
                     }
                 } catch (e) {
                     console.warn('Failed parsing update info:', e);
@@ -802,7 +804,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             refreshUpdateDisplay();
 
             if (data.status === 'up_to_date') {
-                showToast('✨ 현재 최신 버전입니다 (패치 #' + data.otaVersion + ')');
+                if (data.isNewerApkAvailable && !data.nativeUpdateRequired) {
+                    showToast(`✨ 최신 패치(#${data.otaVersion}) 적용됨 (선택적 APK v${data.apkVersionName || ''} 배포중)`);
+                } else {
+                    showToast('✨ 현재 최신 버전입니다 (패치 #' + data.otaVersion + ')');
+                }
             } else if (data.status === 'error') {
                 showToast('⚠️ ' + (data.message || '업데이트 확인에 실패했습니다.'));
             }
