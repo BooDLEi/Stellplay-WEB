@@ -36,7 +36,7 @@
     "assets/js/mobile-player.js": "f2c897bf58955dfd66d02a0dcb8afbe3b435b49ad650d0781b6540d5b562d7a8",
     "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
-    "songs-latest.json": "8430fe8b99538e8d6ec5f46292a77346373ef118536881659c5970f57e45e0e3",
+    "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
     "patchnotes_android.txt": "cad56e79ebfc58bfbbbceb7ddccc6e81d3f6715ddb5b2fc6d995a0e798f6b8cf"
   },
   "pcFileHashes": {
@@ -46,7 +46,7 @@
     "assets/js/storage.js": "6f3f06727cb97bbb0691138b8cbd9bf67c0ca51b0ae8e08461f43cb28f6c2c88",
     "assets/js/player.js": "89b0ec8793de607f24587a818007415b4bf7cf40d27cbf4cecc84504e25fd04f",
     "assets/js/app.js": "9466c1fddfd4f6c1dc4b8190477f266b189e8ea7423b9b87f84bf8ed0ae5cdec",
-    "songs-latest.json": "8430fe8b99538e8d6ec5f46292a77346373ef118536881659c5970f57e45e0e3",
+    "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
     "patchnotes_pc.txt": "8703891d1c062e07a45f65eaf8f8317442511a42c46b1538897c150552b9e39e",
     "patchnotes_web.txt": "102d6e8686867b15f5722ed1175c8cccfe20cb20400408aefca42e37af00ced0"
   }
