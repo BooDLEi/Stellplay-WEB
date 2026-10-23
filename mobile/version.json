@@ -1,6 +1,7 @@
 {
-  "otaVersion": 2026102302,
+  "otaVersion": 2026102303,
   "otaReleaseDate": "2026-10-23",
+  "apkVersionName": "1.11.3",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -11,20 +12,42 @@
     "songs-latest.json",
     "patchnotes_android.txt"
   ],
+  "pcFiles": [
+    "index.html",
+    "assets/css/style.css",
+    "assets/js/songs.js",
+    "assets/js/storage.js",
+    "assets/js/player.js",
+    "assets/js/app.js",
+    "songs-latest.json",
+    "patchnotes_pc.txt",
+    "patchnotes_web.txt"
+  ],
   "apk": {
-    "versionCode": 12,
-    "versionName": "1.11.2",
+    "versionCode": 13,
+    "versionName": "1.11.3",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "인앱 APK 다운로드 및 릴리즈 연동 정상화, 가로/폴드/태블릿 모드 대기열 상단 메뉴 우측 잘림 해결, 5계층 다중 보안 방어 체계(OTA SHA-256 검증, CSP, 경로 탈출 및 확장자 필터)"
+    "changelog": "라이트모드 곡 선택 취소 버튼 가시성 개선, 타상연화/혁명도중 곡명 수정 미반영 원천 버그 해결, 곡 정보 수정 내 '곡 정보 재감지' 기능 추가, PC 클라이언트 실시간 업데이트·패치노트·버전 복원 탑재"
   },
   "fileHashes": {
-    "index.html": "85556939f8ac29755ee197a3fd6ac01727f2bfc784448ee4f4114db9c7b2c882",
-    "assets/css/mobile.css": "674b52135d9c6d5c2da2f94ad1df1fff28442278f5252ca4333f369d5dbe8dbf",
-    "assets/js/mobile-app.js": "42c6887a827e783fe36628a286327be7fc785bfcf3752f934b03d286035f07ce",
+    "index.html": "040bd2beccd388bf915370c4ce28eaf135f1a9a945e14955a6730a3efd505dfa",
+    "assets/css/mobile.css": "37f4be8c910cb3c25c0bab9f821c05b544462ea0b0db152b3cf78b4bb4dac32b",
+    "assets/js/mobile-app.js": "53314209115e346d03a6770a32983ff1e45f4eb502a0a0b0e343e205b1b790db",
     "assets/js/mobile-player.js": "f2c897bf58955dfd66d02a0dcb8afbe3b435b49ad650d0781b6540d5b562d7a8",
-    "assets/js/songs.js": "d30d87c21c8a99a0a3cca29cc817aa0f09809f261c6765c3fa128d6874908557",
-    "assets/js/storage.js": "03c6a5df77877ff9dfbc8319331db86a84594281028977069cf884ab11dc457d",
+    "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
+    "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "songs-latest.json": "8430fe8b99538e8d6ec5f46292a77346373ef118536881659c5970f57e45e0e3",
-    "patchnotes_android.txt": "fd3b5db9661fd01fa83be8413e21e3706a314d40346c4c58ee2a1436ba06fffb"
+    "patchnotes_android.txt": "cad56e79ebfc58bfbbbceb7ddccc6e81d3f6715ddb5b2fc6d995a0e798f6b8cf"
+  },
+  "pcFileHashes": {
+    "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",
+    "assets/css/style.css": "a94b64922c5e81a7a0f9115f28ecff1e632c3754701a8f6c5ea8e0392bb400fc",
+    "assets/js/songs.js": "3aa473c72fd8a960dacb5d1c704446ed959f23e42a2a1ea69712044f42cc8663",
+    "assets/js/storage.js": "6f3f06727cb97bbb0691138b8cbd9bf67c0ca51b0ae8e08461f43cb28f6c2c88",
+    "assets/js/player.js": "89b0ec8793de607f24587a818007415b4bf7cf40d27cbf4cecc84504e25fd04f",
+    "assets/js/app.js": "9466c1fddfd4f6c1dc4b8190477f266b189e8ea7423b9b87f84bf8ed0ae5cdec",
+    "songs-latest.json": "8430fe8b99538e8d6ec5f46292a77346373ef118536881659c5970f57e45e0e3",
+    "patchnotes_pc.txt": "8703891d1c062e07a45f65eaf8f8317442511a42c46b1538897c150552b9e39e",
+    "patchnotes_web.txt": "102d6e8686867b15f5722ed1175c8cccfe20cb20400408aefca42e37af00ced0"
   }
 }

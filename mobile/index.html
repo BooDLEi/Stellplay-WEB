@@ -929,7 +929,10 @@
                 <form id="m-form-edit-song" class="modal-form">
                     <input type="hidden" id="m-edit-song-id">
                     <div class="form-group">
-                        <label>곡 제목</label>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <label style="margin:0;">곡 제목</label>
+                            <button type="button" class="btn-text-detect" id="m-btn-redetect-song" title="유튜브 원본 및 표준 양식 사전을 기반으로 곡명·가수·멤버 정보를 재감지하고 원래대로 복원합니다">🔄 곡 정보 재감지</button>
+                        </div>
                         <input type="text" id="m-edit-title" class="form-input" required>
                     </div>
                     <div class="form-group">
@@ -1029,7 +1032,7 @@
                         </div>
                     </div>
                     <div class="modal-btn-row">
-                        <button type="button" class="btn-reset" id="m-btn-reset-song-edit">기본값 복원</button>
+                        <button type="button" class="btn-reset" id="m-btn-reset-song-edit">🔄 재감지/복원</button>
                         <button type="button" class="btn-cancel" id="m-btn-cancel-edit">취소</button>
                         <button type="submit" class="btn-submit">수정 완료</button>
                     </div>
@@ -1384,19 +1387,28 @@
     </div>
 
     <!-- 스크립트 로드 순서 -->
-    <script src="./assets/js/storage.js?v=2.5"></script>
-    <script src="./assets/js/songs.js?v=2.5"></script>
-    <script src="./assets/js/offline-db.js?v=2.6"></script>
-    <script src="./assets/js/mobile-player.js?v=2.6"></script>
-    <script src="./assets/js/mobile-app.js?v=2.5"></script>
+    <script src="./assets/js/storage.js?v=2.8"></script>
+    <script src="./assets/js/songs.js?v=2.8"></script>
+    <script src="./assets/js/offline-db.js?v=2.8"></script>
+    <script src="./assets/js/mobile-player.js?v=2.8"></script>
+    <script src="./assets/js/mobile-app.js?v=2.8"></script>
 
-    <!-- [핵심] PWA Service Worker 등록 스크립트 -->
+    <!-- [핵심] PWA Service Worker 등록 스크립트 (네이티브 앱 내장 WebView에서는 OTA 최신 파일 우선 반영을 위해 SW 비활성화) -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then((reg) => console.log('PWA Service Worker 활성화 완료:', reg.scope))
-            .catch((err) => console.error('PWA Service Worker 등록 실패:', err));
+          if (window.AndroidBridge) {
+            navigator.serviceWorker.getRegistrations().then((regs) => {
+              regs.forEach((r) => r.unregister());
+            }).catch(() => {});
+            if (window.caches && typeof window.caches.keys === 'function') {
+              window.caches.keys().then((keys) => keys.forEach((k) => window.caches.delete(k))).catch(() => {});
+            }
+          } else {
+            navigator.serviceWorker.register('./sw.js')
+              .then((reg) => console.log('PWA Service Worker 활성화 완료:', reg.scope))
+              .catch((err) => console.error('PWA Service Worker 등록 실패:', err));
+          }
         });
       }
     </script>

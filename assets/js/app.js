@@ -798,7 +798,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function cleanAndKoreanizeTitle(title, rawTitle = '') {
         if (!title) return '';
         if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(title) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
-        if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(title) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (쏘아올린 불꽃)';
+        if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(title) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (타상연화)';
+        if (/혁명도중|革命道中/i.test(title) || /혁명도중|革命道中/i.test(rawTitle)) return '革命道中 (혁명도중)';
+        if (/\bCH4NGE\b|^체인지$/i.test(title.trim()) || /\bCH4NGE\b/i.test(rawTitle)) return 'CH4NGE (체인지)';
         let t = title;
         t = t.replace(/\s*-\s*YouTube$/i, '');
 
@@ -4601,6 +4603,288 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectEngine = document.getElementById('setting-engine-select');
         if (selectEngine) selectEngine.value = engineVal;
 
+        refreshPcUpdateInfoUI();
+    }
+
+    // ===================================================================
+    // 5.4.1 PC 클라이언트 실시간 버전 업데이트 / 패치노트 / 버전 선택 복원 제어
+    // ===================================================================
+    async function fetchPcUpdateInfoData() {
+        const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        if (isLocal) {
+            try {
+                const r = await fetch(`/api/pc-update/info?t=${Date.now()}`, { cache: 'no-store' });
+                if (r.ok) {
+                    const data = await r.json();
+                    if (data && data.success) return data;
+                }
+            } catch (_) {}
+        }
+        try {
+            const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
+            if (r.ok) {
+                const v = await r.json();
+                const verNum = v.otaVersion || 2026102302;
+                return {
+                    success: true,
+                    versionName: v.apkVersionName || '1.11.3',
+                    currentVersion: verNum,
+                    bundledVersion: verNum,
+                    otaReleaseDate: v.otaReleaseDate || '2026-10-23',
+                    hasPrevious: false,
+                    previousVersion: -1,
+                    history: [{
+                        version: verNum,
+                        label: `현재 웹 배포 버전 (#${verNum})`,
+                        isCurrent: true,
+                        type: 'bundled'
+                    }]
+                };
+            }
+        } catch (_) {}
+        return {
+            success: true,
+            versionName: '1.11.3',
+            currentVersion: 2026102302,
+            bundledVersion: 2026102302,
+            hasPrevious: false,
+            previousVersion: -1,
+            history: [{
+                version: 2026102302,
+                label: '현재 적용 버전 (#2026102302)',
+                isCurrent: true,
+                type: 'bundled'
+            }]
+        };
+    }
+
+    async function refreshPcUpdateInfoUI() {
+        const verTextEl = document.getElementById('pc-version-info-text');
+        const badgeEl = document.getElementById('pc-update-status-badge');
+        const info = await fetchPcUpdateInfoData();
+        if (verTextEl && info) {
+            const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.11.3'} (패치 #${info.currentVersion || 2026102302})`;
+        }
+        if (badgeEl) {
+            badgeEl.textContent = '최신 상태';
+        }
+    }
+
+    const btnPcCheckUpdate = document.getElementById('btn-pc-check-update');
+    if (btnPcCheckUpdate) {
+        btnPcCheckUpdate.addEventListener('click', async () => {
+            const badgeEl = document.getElementById('pc-update-status-badge');
+            const origText = btnPcCheckUpdate.textContent;
+            btnPcCheckUpdate.disabled = true;
+            btnPcCheckUpdate.textContent = '⏳ 확인 중...';
+            if (badgeEl) badgeEl.textContent = '업데이트 확인 중...';
+
+            try {
+                const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+                if (isLocal) {
+                    const r = await fetch(`/api/pc-update/check?t=${Date.now()}`, { cache: 'no-store' });
+                    if (r.ok) {
+                        const res = await r.json();
+                        if (res.status === 'applied') {
+                            if (badgeEl) {
+                                badgeEl.textContent = `패치 #${res.otaVersion} 적용됨`;
+                                badgeEl.style.background = 'rgba(16, 185, 129, 0.2)';
+                                badgeEl.style.color = '#34d399';
+                            }
+                            showToast(`🎉 최신 업데이트(v${res.versionName} / #${res.otaVersion})가 적용되었습니다! 화면을 새로고침합니다...`);
+                            setTimeout(() => window.location.reload(), 1200);
+                            return;
+                        } else if (res.status === 'up_to_date') {
+                            if (badgeEl) badgeEl.textContent = '최신 버전';
+                            await refreshPcUpdateInfoUI();
+                            showToast(`✅ 현재 최신 버전(v${res.versionName || '1.11.3'} / 패치 #${res.currentVersion})입니다.`);
+                            return;
+                        } else {
+                            if (badgeEl) badgeEl.textContent = '오류';
+                            showToast(`⚠️ ${res.message || '업데이트 확인 중 오류가 발생했습니다.'}`);
+                            return;
+                        }
+                    }
+                }
+                // 웹 환경 폴백: 최신 version.json 및 신곡 동기화 확인
+                await refreshPcUpdateInfoUI();
+                await triggerBackgroundSync(true);
+                showToast('✅ 최신 버전 및 곡 목록 동기화가 완료되었습니다.');
+            } catch (e) {
+                showToast('⚠️ 업데이트 서버 연결에 실패했습니다.');
+            } finally {
+                btnPcCheckUpdate.disabled = false;
+                btnPcCheckUpdate.textContent = origText;
+            }
+        });
+    }
+
+    // 패치노트 모달 열기/닫기/복사
+    const modalPcPatchnotes = document.getElementById('modal-pc-patchnotes');
+    const btnPcOpenPatchnotes = document.getElementById('btn-pc-open-patchnotes');
+    const btnClosePcPatchnotes = document.getElementById('btn-close-pc-patchnotes');
+    const btnCopyPcPatchnotes = document.getElementById('btn-copy-pc-patchnotes');
+    const pcPatchnotesContent = document.getElementById('pc-patchnotes-content');
+
+    async function openPcPatchnotesModal() {
+        if (!modalPcPatchnotes) return;
+        modalPcPatchnotes.classList.add('open');
+        if (pcPatchnotesContent) pcPatchnotesContent.textContent = '패치노트를 불러오는 중...';
+
+        let notesText = '';
+        const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        if (isLocal) {
+            try {
+                const r = await fetch(`/api/pc-update/patchnotes?t=${Date.now()}`, { cache: 'no-store' });
+                if (r.ok) {
+                    const d = await r.json();
+                    if (d && d.text) notesText = d.text;
+                }
+            } catch (_) {}
+        }
+        if (!notesText) {
+            for (const f of ['./patchnotes_pc.txt', './patchnotes_web.txt', './patchnotes_android.txt']) {
+                try {
+                    const r = await fetch(`${f}?t=${Date.now()}`, { cache: 'no-store' });
+                    if (r.ok) {
+                        notesText = await r.text();
+                        if (notesText && notesText.trim()) break;
+                    }
+                } catch (_) {}
+            }
+        }
+        if (pcPatchnotesContent) {
+            pcPatchnotesContent.textContent = notesText || '패치노트 내역을 불러올 수 없습니다.';
+        }
+    }
+
+    if (btnPcOpenPatchnotes) btnPcOpenPatchnotes.addEventListener('click', openPcPatchnotesModal);
+    if (btnClosePcPatchnotes) btnClosePcPatchnotes.addEventListener('click', () => modalPcPatchnotes && modalPcPatchnotes.classList.remove('open'));
+    if (modalPcPatchnotes) {
+        modalPcPatchnotes.addEventListener('click', (e) => {
+            if (e.target === modalPcPatchnotes) modalPcPatchnotes.classList.remove('open');
+        });
+    }
+    if (btnCopyPcPatchnotes) {
+        btnCopyPcPatchnotes.addEventListener('click', async () => {
+            const txt = pcPatchnotesContent ? pcPatchnotesContent.textContent : '';
+            if (!txt) return;
+            try {
+                await navigator.clipboard.writeText(txt);
+                showToast('📋 패치노트가 클립보드에 복사되었습니다.');
+            } catch (_) {
+                showToast('복사에 실패했습니다.');
+            }
+        });
+    }
+
+    // PC 버전 선택 복원 / 롤백 모달
+    const modalPcOtaRestore = document.getElementById('modal-pc-ota-restore');
+    const btnPcOpenRestore = document.getElementById('btn-pc-open-restore');
+    const btnClosePcOtaRestore = document.getElementById('btn-close-pc-ota-restore');
+    const btnPcRollbackPrev = document.getElementById('btn-pc-rollback-previous');
+
+    async function executePcRestoreVersion(targetVer, isQuickRollback = false) {
+        const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        if (!isLocal) {
+            showToast('버전 백업 복원 기능은 PC 클라이언트(로컬 서버) 환경에서 지원됩니다.');
+            return;
+        }
+        const endpoint = isQuickRollback
+            ? `/api/pc-update/rollback?t=${Date.now()}`
+            : `/api/pc-update/restore?version=${encodeURIComponent(targetVer)}&t=${Date.now()}`;
+        try {
+            const r = await fetch(endpoint, { cache: 'no-store' });
+            if (r.ok) {
+                const res = await r.json();
+                if (res && res.success) {
+                    showToast(`⏪ ${res.message || '선택한 버전으로 복원되었습니다.'} 잠시 후 새로고침됩니다...`);
+                    if (modalPcOtaRestore) modalPcOtaRestore.classList.remove('open');
+                    setTimeout(() => window.location.reload(), 1000);
+                    return;
+                } else {
+                    showToast(`⚠️ ${res.message || '복원에 실패했습니다.'}`);
+                }
+            }
+        } catch (e) {
+            showToast('⚠️ 복원 요청 중 오류가 발생했습니다.');
+        }
+    }
+
+    async function openPcOtaRestoreModal() {
+        if (!modalPcOtaRestore) return;
+        modalPcOtaRestore.classList.add('open');
+        const listEl = document.getElementById('pc-ota-versions-list');
+        const quickBox = document.getElementById('pc-ota-quick-rollback-box');
+        const quickDesc = document.getElementById('pc-ota-quick-rollback-desc');
+        if (listEl) listEl.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:14px;">버전 기록을 불러오는 중...</div>';
+
+        const info = await fetchPcUpdateInfoData();
+        if (quickBox) {
+            if (info && info.hasPrevious && info.previousVersion > 0) {
+                quickBox.style.display = 'block';
+                if (quickDesc) {
+                    quickDesc.textContent = `현재 적용된 버전(#${info.currentVersion})에서 직전 버전(#${info.previousVersion})으로 즉시 되돌립니다.`;
+                }
+            } else {
+                quickBox.style.display = 'none';
+            }
+        }
+
+        const history = (info && Array.isArray(info.history)) ? info.history : [];
+        if (!listEl) return;
+        if (history.length === 0) {
+            listEl.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:14px;">저장된 버전 기록이 없습니다.</div>';
+            return;
+        }
+
+        listEl.innerHTML = '';
+        history.forEach(item => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-radius:10px; background:var(--bg-surface); border:1px solid ' + (item.isCurrent ? 'rgba(124,92,252,0.5)' : 'var(--border-subtle)') + ';';
+            const left = document.createElement('div');
+            left.innerHTML = `
+                <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                    <span>${item.label || ('버전 #' + item.version)}</span>
+                    ${item.isCurrent ? '<span style="font-size:0.68rem; padding:2px 7px; border-radius:999px; background:rgba(124,92,252,0.2); color:#a78bfa;">현재 사용 중</span>' : ''}
+                </div>
+                <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
+                    ${item.type === 'bundled' ? '클라이언트 기본 번들 스냅샷' : (item.isCurrent ? '현재 활성화된 최신 환경' : '로컬 백업 스냅샷 보존됨')}
+                </div>
+            `;
+            row.appendChild(left);
+
+            if (!item.isCurrent) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-secondary';
+                btn.style.cssText = 'padding:6px 12px; font-size:0.78rem; color:#38bdf8; border-color:rgba(56,189,248,0.4); white-space:nowrap;';
+                btn.textContent = '이 버전으로 복원';
+                btn.addEventListener('click', () => {
+                    if (confirm(`버전 #${item.version} (${item.label}) 상태로 복원하시겠습니까?`)) {
+                        executePcRestoreVersion(item.version, false);
+                    }
+                });
+                row.appendChild(btn);
+            }
+            listEl.appendChild(row);
+        });
+    }
+
+    if (btnPcOpenRestore) btnPcOpenRestore.addEventListener('click', openPcOtaRestoreModal);
+    if (btnClosePcOtaRestore) btnClosePcOtaRestore.addEventListener('click', () => modalPcOtaRestore && modalPcOtaRestore.classList.remove('open'));
+    if (modalPcOtaRestore) {
+        modalPcOtaRestore.addEventListener('click', (e) => {
+            if (e.target === modalPcOtaRestore) modalPcOtaRestore.classList.remove('open');
+        });
+    }
+    if (btnPcRollbackPrev) {
+        btnPcRollbackPrev.addEventListener('click', () => {
+            if (confirm('직전 버전으로 즉시 롤백하시겠습니까?')) {
+                executePcRestoreVersion(null, true);
+            }
+        });
     }
 
     // 좌측 사이드바 테마 전환 버튼 이벤트 바인딩
@@ -4927,36 +5211,169 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleResetSongEdit() {
+    async function handleResetSongEdit(btnEl) {
         const songId = dom.editSongId.value;
         if (!songId) return;
 
-        if (confirm('이 곡의 수정한 정보를 초기화하고 원래 정규 기본값으로 되돌리시겠습니까?')) {
+        const targetBtn = (btnEl && btnEl.tagName === 'BUTTON') ? btnEl : document.getElementById('btn-redetect-song');
+        const origText = targetBtn ? targetBtn.textContent : '';
+        if (targetBtn) {
+            targetBtn.disabled = true;
+            targetBtn.textContent = '⏳ 재감지 중...';
+        }
+
+        try {
             window.StorageManager.resetSongOverride(songId);
 
-            const freshSong = window.getSongById ? window.getSongById(songId) : null;
-            if (freshSong) {
-                if (player.currentSong && player.currentSong.id === songId) {
-                    player.currentSong = { ...freshSong };
-                    updatePlayerUIState();
-                }
-                if (player.queue) {
-                    player.queue.forEach(qSong => {
-                        if (qSong.id === songId) {
-                            Object.assign(qSong, freshSong);
-                        }
-                    });
-                    renderQueue(false);
+            const allBefore = window.getAllSongs ? window.getAllSongs() : [];
+            const curSong = allBefore.find(s => s.id === songId) || {};
+            const ytId = curSong.youtubeId || songId.replace(/^(auto|stel|custom|live|ost)-/, '');
+            const baseSong = (window.DEFAULT_SONGS || []).find(s => s.id === songId || (ytId && s.youtubeId === ytId));
+
+            let ytRawTitle = '';
+            let ytAuthor = '';
+            if (ytId && ytId.length >= 8) {
+                try {
+                    const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}&format=json`;
+                    const r = await fetch(oembedUrl, { signal: AbortSignal.timeout(3500) });
+                    if (r.ok) {
+                        const oData = await r.json();
+                        ytRawTitle = oData.title || '';
+                        ytAuthor = oData.author_name || '';
+                    }
+                } catch (_) {}
+            }
+
+            const rawCandidate = (baseSong && baseSong.rawTitle) || ytRawTitle || curSong.rawTitle || (baseSong && baseSong.title) || curSong.title || '';
+            const baseTitleCandidate = (baseSong && baseSong.title) || ytRawTitle || curSong.rawTitle || curSong.title || '';
+            const redetectedTitle = cleanAndKoreanizeTitle(baseTitleCandidate, rawCandidate) || baseTitleCandidate;
+
+            let redetectedMembers = (baseSong && Array.isArray(baseSong.members) && baseSong.members.length > 0)
+                ? [...baseSong.members]
+                : detectMembersFromText(`${rawCandidate} ${ytAuthor} ${curSong.artist || ''}`);
+            if (!redetectedMembers || redetectedMembers.length === 0) {
+                redetectedMembers = curSong.members || ['group'];
+            }
+
+            let redetectedArtist = (baseSong && baseSong.artist) || '';
+            let redetectedGen = (baseSong && baseSong.gen) || 'group';
+            if (!redetectedArtist) {
+                if (redetectedMembers.length === 1 && redetectedMembers[0] !== 'group') {
+                    const mObj = window.MEMBERS ? window.MEMBERS[redetectedMembers[0]] : null;
+                    redetectedArtist = mObj ? mObj.name : (MEMBER_NAMES_MAP[redetectedMembers[0]] || redetectedMembers[0]);
+                    redetectedGen = mObj ? mObj.gen : 'group';
+                } else if (redetectedMembers.length > 1) {
+                    const names = redetectedMembers.filter(m => m !== 'group').map(m => MEMBER_NAMES_MAP[m] || m);
+                    redetectedArtist = names.length > 0 ? names.join(', ') : '스텔라이브';
+                } else {
+                    redetectedArtist = curSong.artist || '스텔라이브';
                 }
             }
 
-            closeEditSongModal();
+            let redetectedOrig = (baseSong && baseSong.originalArtist) || '';
+            if (!redetectedOrig && rawCandidate) {
+                const origMatch = rawCandidate.match(/(?:원곡|Covered from|Original)\s*[:：]?\s*([^)/\]]+)/i) ||
+                                  rawCandidate.match(/\(([^)]+)\)/) ||
+                                  rawCandidate.match(/（([^）]+)）/);
+                if (origMatch && origMatch[1]) {
+                    const cand = origMatch[1].trim();
+                    if (!detectMembersFromText(cand).length && !/cover|mv|타상연화|혁명도중|체인지|제육감/i.test(cand)) {
+                        redetectedOrig = cand;
+                    }
+                }
+            }
+            if (!redetectedOrig) redetectedOrig = curSong.originalArtist || '커버곡';
+
+            const redetectedType = (baseSong && baseSong.type) || curSong.type || 'cover';
+            const redetectedMood = (baseSong && baseSong.mood && baseSong.mood !== 'none')
+                ? baseSong.mood
+                : (detectSongMood({ title: redetectedTitle, artist: redetectedArtist, originalArtist: redetectedOrig }) || 'bright');
+            const redetectedPub = (baseSong && (baseSong.publishedAt || baseSong.releaseDate)) || curSong.publishedAt || curSong.releaseDate || '';
+            const redetectedSabi = (baseSong && baseSong.sabi) || curSong.sabi || { start: 45, end: 80, title: '하이라이트' };
+
+            // 모달 입력 폼에 즉시 반영
+            if (dom.editSongTitle) dom.editSongTitle.value = redetectedTitle;
+            if (dom.editSongArtist) dom.editSongArtist.value = redetectedArtist;
+            if (dom.editSongOriginalArtist) dom.editSongOriginalArtist.value = redetectedOrig;
+            const uiType = (redetectedType === 'ost') ? 'featuring' : redetectedType;
+            if (dom.editSongType) dom.editSongType.value = uiType;
+            setPillSelectValue('edit-type-pills', 'edit-song-type', uiType);
+            if (dom.editSongMood) dom.editSongMood.value = redetectedMood;
+            setPillSelectValue('edit-mood-pills', 'edit-song-mood', redetectedMood);
+            if (dom.editSongPublishedAt) dom.editSongPublishedAt.value = redetectedPub;
+            if (dom.editSabiStart) dom.editSabiStart.value = redetectedSabi.start ?? 45;
+            if (dom.editSabiEnd) dom.editSabiEnd.value = redetectedSabi.end ?? 80;
+
+            const isStelliveGroup = redetectedMembers.length === 1 && redetectedMembers[0] === 'group';
+            const activeMembers = redetectedMembers.filter(m => m !== 'group');
+            setMemberPickerState('edit', {
+                isStellive: isStelliveGroup,
+                units: [],
+                members: activeMembers
+            }, dom.editSongArtist);
+            if (dom.editSongArtist) dom.editSongArtist.value = redetectedArtist;
+
+            if (!baseSong && window.StorageManager) {
+                window.StorageManager.saveSongOverride(songId, {
+                    title: redetectedTitle,
+                    artist: redetectedArtist,
+                    originalArtist: redetectedOrig,
+                    type: redetectedType,
+                    mood: redetectedMood,
+                    members: redetectedMembers,
+                    gen: redetectedGen,
+                    publishedAt: redetectedPub,
+                    releaseDate: redetectedPub,
+                    sabi: redetectedSabi
+                });
+            }
+
+            const freshSong = {
+                ...(baseSong || curSong),
+                id: songId,
+                title: redetectedTitle,
+                artist: redetectedArtist,
+                originalArtist: redetectedOrig,
+                type: redetectedType,
+                mood: redetectedMood,
+                members: redetectedMembers,
+                gen: redetectedGen,
+                publishedAt: redetectedPub,
+                sabi: redetectedSabi
+            };
+
+            if (player.currentSong && player.currentSong.id === songId) {
+                player.currentSong = { ...freshSong };
+                updatePlayerUIState();
+            }
+            if (player.queue) {
+                player.queue.forEach(qSong => {
+                    if (qSong.id === songId) {
+                        Object.assign(qSong, freshSong);
+                    }
+                });
+                renderQueue(false);
+            }
+
             refreshTrackList();
             if (state.activeView === 'playlists' && state.currentPlaylistDetailId) {
                 openPlaylistDetail(state.currentPlaylistDetailId);
             }
-            showToast('곡 정보가 기본값으로 복원되었습니다.');
+            showToast(`🔄 [${redetectedTitle}] 표준 양식으로 곡 정보가 재감지 및 복원되었습니다!`);
+        } catch (err) {
+            console.warn('Redetect error:', err);
+            showToast('곡 정보 재감지 중 오류가 발생했습니다.');
+        } finally {
+            if (targetBtn) {
+                targetBtn.disabled = false;
+                targetBtn.textContent = origText;
+            }
         }
+    }
+
+    const btnRedetectSongPc = document.getElementById('btn-redetect-song');
+    if (btnRedetectSongPc) {
+        btnRedetectSongPc.addEventListener('click', () => handleResetSongEdit(btnRedetectSongPc));
     }
 
     // ===================================================================

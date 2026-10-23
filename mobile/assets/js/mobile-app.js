@@ -2479,6 +2479,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (dom.btnToggleMultiselectHome) {
             dom.btnToggleMultiselectHome.classList.toggle('active', state.isMultiSelectHome);
+            const labelSpan = dom.btnToggleMultiselectHome.querySelector('span');
+            if (labelSpan) {
+                labelSpan.textContent = state.isMultiSelectHome ? '선택 취소' : '곡 선택';
+            }
         }
         updateHomeMultiSelectUI();
     }
@@ -3205,7 +3209,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     function cleanAndKoreanizeTitle(title, rawTitle = '') {
         if (!title) return '';
         if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(title) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
-        if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(title) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (쏘아올린 불꽃)';
+        if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(title) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (타상연화)';
+        if (/혁명도중|革命道中/i.test(title) || /혁명도중|革命道中/i.test(rawTitle)) return '革命道中 (혁명도중)';
+        if (/\bCH4NGE\b|^체인지$/i.test(title.trim()) || /\bCH4NGE\b/i.test(rawTitle)) return 'CH4NGE (체인지)';
         let t = title;
         t = t.replace(/\s*-\s*YouTube$/i, '');
 
@@ -6026,24 +6032,164 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        async function performRedetectSongEdit(songId, btnEl) {
+            if (!songId) return;
+            const origBtnText = btnEl ? btnEl.textContent : '';
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.textContent = '⏳ 재감지 중...';
+            }
+            try {
+                if (window.StorageManager) {
+                    window.StorageManager.resetSongOverride(songId);
+                }
+
+                const allBefore = window.getAllSongs ? window.getAllSongs() : [];
+                const curSong = allBefore.find(s => s.id === songId) || {};
+                const ytId = curSong.youtubeId || songId.replace(/^(auto|stel|custom|live|ost)-/, '');
+
+                const baseSong = (window.DEFAULT_SONGS || []).find(s => s.id === songId || (ytId && s.youtubeId === ytId));
+
+                let ytRawTitle = '';
+                let ytAuthor = '';
+                if (ytId && ytId.length >= 8) {
+                    try {
+                        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}&format=json`;
+                        const r = await fetch(oembedUrl, { signal: AbortSignal.timeout(3500) });
+                        if (r.ok) {
+                            const oData = await r.json();
+                            ytRawTitle = oData.title || '';
+                            ytAuthor = oData.author_name || '';
+                        }
+                    } catch (_) {}
+                }
+
+                const rawCandidate = (baseSong && baseSong.rawTitle) || ytRawTitle || curSong.rawTitle || (baseSong && baseSong.title) || curSong.title || '';
+                const baseTitleCandidate = (baseSong && baseSong.title) || ytRawTitle || curSong.rawTitle || curSong.title || '';
+                const redetectedTitle = cleanAndKoreanizeTitle(baseTitleCandidate, rawCandidate) || baseTitleCandidate;
+
+                let redetectedMembers = (baseSong && Array.isArray(baseSong.members) && baseSong.members.length > 0)
+                    ? [...baseSong.members]
+                    : detectMembersFromText(`${rawCandidate} ${ytAuthor} ${curSong.artist || ''}`);
+                if (!redetectedMembers || redetectedMembers.length === 0) {
+                    redetectedMembers = curSong.members || ['group'];
+                }
+
+                let redetectedArtist = (baseSong && baseSong.artist) || '';
+                let redetectedGen = (baseSong && baseSong.gen) || 'group';
+                if (!redetectedArtist) {
+                    if (redetectedMembers.length === 1 && redetectedMembers[0] !== 'group') {
+                        const mObj = window.MEMBERS ? window.MEMBERS[redetectedMembers[0]] : null;
+                        redetectedArtist = mObj ? mObj.name : (MEMBER_NAMES_MAP[redetectedMembers[0]] || redetectedMembers[0]);
+                        redetectedGen = mObj ? mObj.gen : 'group';
+                    } else if (redetectedMembers.length > 1) {
+                        const names = redetectedMembers.filter(m => m !== 'group').map(m => MEMBER_NAMES_MAP[m] || m);
+                        redetectedArtist = names.length > 0 ? names.join(', ') : '스텔라이브';
+                    } else {
+                        redetectedArtist = curSong.artist || '스텔라이브';
+                    }
+                }
+
+                let redetectedOrig = (baseSong && baseSong.originalArtist) || '';
+                if (!redetectedOrig && rawCandidate) {
+                    const origMatch = rawCandidate.match(/(?:원곡|Covered from|Original)\s*[:：]?\s*([^)/\]]+)/i) ||
+                                      rawCandidate.match(/\(([^)]+)\)/) ||
+                                      rawCandidate.match(/（([^）]+)）/);
+                    if (origMatch && origMatch[1]) {
+                        const cand = origMatch[1].trim();
+                        if (!detectMembersFromText(cand).length && !/cover|mv|타상연화|혁명도중|체인지|제육감/i.test(cand)) {
+                            redetectedOrig = cand;
+                        }
+                    }
+                }
+                if (!redetectedOrig) redetectedOrig = curSong.originalArtist || '커버곡';
+
+                const redetectedType = (baseSong && baseSong.type) || curSong.type || 'cover';
+                const redetectedMood = (baseSong && baseSong.mood && baseSong.mood !== 'none')
+                    ? baseSong.mood
+                    : (detectSongMood({ title: redetectedTitle, artist: redetectedArtist, originalArtist: redetectedOrig }) || 'bright');
+                const redetectedPub = (baseSong && (baseSong.publishedAt || baseSong.releaseDate)) || curSong.publishedAt || curSong.releaseDate || '';
+                const redetectedSabi = (baseSong && baseSong.sabi) || curSong.sabi || { start: 45, end: 75, title: '하이라이트' };
+
+                // Update modal inputs immediately
+                if (dom.editTitle) dom.editTitle.value = redetectedTitle;
+                if (dom.editArtist) dom.editArtist.value = redetectedArtist;
+                if (dom.editOriginalArtist) dom.editOriginalArtist.value = redetectedOrig;
+                setPillSelectValue('m-edit-type-pills', 'm-edit-type', (redetectedType === 'ost' ? 'featuring' : redetectedType));
+                setPillSelectValue('m-edit-mood-pills', 'm-edit-mood', redetectedMood);
+                if (dom.editPublishedAt) dom.editPublishedAt.value = redetectedPub;
+                if (dom.editSabiStart) dom.editSabiStart.value = redetectedSabi.start ?? 45;
+                if (dom.editSabiEnd) dom.editSabiEnd.value = redetectedSabi.end ?? 75;
+                applyDetectedMembersToPicker('m-edit', redetectedMembers, dom.editArtist);
+                if (dom.editArtist) dom.editArtist.value = redetectedArtist;
+
+                // If auto-detected song, update auto_songs cache directly
+                if (!baseSong && window.StorageManager) {
+                    window.StorageManager.saveSongOverride(songId, {
+                        title: redetectedTitle,
+                        artist: redetectedArtist,
+                        originalArtist: redetectedOrig,
+                        type: redetectedType,
+                        mood: redetectedMood,
+                        members: redetectedMembers,
+                        gen: redetectedGen,
+                        publishedAt: redetectedPub,
+                        releaseDate: redetectedPub,
+                        sabi: redetectedSabi
+                    });
+                }
+
+                const refreshedSong = {
+                    ...(baseSong || curSong),
+                    id: songId,
+                    title: redetectedTitle,
+                    artist: redetectedArtist,
+                    originalArtist: redetectedOrig,
+                    type: redetectedType,
+                    mood: redetectedMood,
+                    members: redetectedMembers,
+                    gen: redetectedGen,
+                    publishedAt: redetectedPub,
+                    sabi: redetectedSabi
+                };
+
+                if (player.queue && player.queue.length > 0) {
+                    player.queue.forEach(qSong => {
+                        if (qSong && qSong.id === songId) Object.assign(qSong, refreshedSong);
+                    });
+                }
+                if (player.currentSong && player.currentSong.id === songId) {
+                    Object.assign(player.currentSong, refreshedSong);
+                    updatePlayerUI(player.currentSong, player.isOfflinePlayback);
+                }
+
+                renderAllViews();
+                renderMobileQueue(false);
+                showToast(`🔄 [${redetectedTitle}] 표준 양식으로 곡 정보가 재감지 및 복원되었습니다!`);
+            } catch (e) {
+                console.warn('Redetect error:', e);
+                showToast('곡 정보 재감지 중 오류가 발생했습니다.');
+            } finally {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = origBtnText;
+                }
+            }
+        }
+
+        const btnRedetectSongMobile = document.getElementById('m-btn-redetect-song');
+        if (btnRedetectSongMobile) {
+            btnRedetectSongMobile.addEventListener('click', () => {
+                const songId = dom.editSongId ? dom.editSongId.value : '';
+                performRedetectSongEdit(songId, btnRedetectSongMobile);
+            });
+        }
+
         if (dom.btnResetSongEdit) {
             dom.btnResetSongEdit.addEventListener('click', () => {
                 const songId = dom.editSongId.value;
                 if (!songId) return;
-                showAppConfirmModal({
-                    title: '곡 정보 초기화',
-                    message: '이 곡의 수정 내용을 모두 지우고 기본 정보로 되돌리시겠습니까?',
-                    confirmText: '초기화',
-                    isDestructive: true,
-                    onConfirm: () => {
-                        if (window.StorageManager) {
-                            window.StorageManager.resetSongOverride(songId);
-                        }
-                        showToast('곡 정보가 기본값으로 복원되었습니다.');
-                        closeEditSongModal();
-                        renderAllViews();
-                    }
-                });
+                performRedetectSongEdit(songId, dom.btnResetSongEdit);
             });
         }
 

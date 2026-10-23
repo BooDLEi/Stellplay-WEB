@@ -498,13 +498,19 @@
                                 </div>
                             </div>
 
-                            <div class="settings-row" style="border-bottom:none;">
-                                <div class="settings-row-info">
-                                    <div class="settings-label">애플리케이션 버전</div>
-                                    <div class="settings-desc">StellPlay Modern Desktop Edition</div>
+                            <div class="settings-row" style="border-bottom:none; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+                                <div class="settings-row-info" style="flex:1; min-width:240px;">
+                                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                        <div class="settings-label">앱 버전 및 실시간 업데이트 (OTA)</div>
+                                        <span class="settings-badge" id="pc-update-status-badge" style="background: rgba(124,92,252,0.2); color:#a78bfa;">최신 상태</span>
+                                    </div>
+                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.11.3 (패치 #2026102302)</div>
+                                    <div class="settings-desc" id="pc-update-sub-desc" style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">GitHub 보안 검증 채널을 통해 재설치 없이 최신 기능·곡 DB를 실시간 반영하고 이전 버전으로 언제든 복원할 수 있습니다.</div>
                                 </div>
-                                <div class="settings-row-ctrl">
-                                    <span class="settings-badge" style="background: rgba(124,92,252,0.2); color:#a78bfa;">v2.5 Release</span>
+                                <div class="settings-row-ctrl" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                                    <button type="button" class="btn-primary" id="btn-pc-check-update" style="padding:7px 14px; font-size:0.82rem;">🔄 업데이트 확인</button>
+                                    <button type="button" class="btn-secondary" id="btn-pc-open-patchnotes" style="padding:7px 12px; font-size:0.82rem;">📜 패치노트</button>
+                                    <button type="button" class="btn-secondary" id="btn-pc-open-restore" style="padding:7px 12px; font-size:0.82rem; color:#38bdf8; border-color:rgba(56,189,248,0.4);">⏪ 복원</button>
                                 </div>
                             </div>
                         </div>
@@ -916,7 +922,10 @@
                 <div class="modal-form-body">
                     <div class="form-row">
                         <div class="form-group" style="flex: 1.5;">
-                            <label class="form-label">곡 제목 *</label>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <label class="form-label" style="margin:0;">곡 제목 *</label>
+                                <button type="button" class="btn-secondary" id="btn-redetect-song" style="padding:3px 10px; font-size:0.76rem; color:#a78bfa; border-color:rgba(167,139,250,0.4); background:rgba(124,92,252,0.12);" title="표준 양식 사전 및 유튜브 원본 데이터를 기반으로 곡명·가수·멤버 정보를 재감지하고 원래대로 되돌립니다">🔄 곡 정보 재감지</button>
+                            </div>
                             <input type="text" class="form-input" id="edit-song-title" required placeholder="곡 제목 입력">
                         </div>
                         <div class="form-group" style="flex: 1;">
@@ -1019,7 +1028,7 @@
                 <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn-secondary" id="btn-delete-song" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);" title="이 곡을 라이브러리에서 숨깁니다 (설정 탭에서 언제든 복원 가능)">라이브러리에서 숨기기</button>
-                        <button type="button" class="btn-secondary" id="btn-reset-song-edit" style="color: var(--text-muted); border-color: var(--border-subtle);" title="사용자가 수정한 내용을 지우고 정규 기본 정보로 되돌립니다">기본값 복원</button>
+                        <button type="button" class="btn-secondary" id="btn-reset-song-edit" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);" title="곡명이 양식을 따르지 않거나 잘못 수정되었을 때 표준 양식으로 재감지 및 기본값 복원합니다">🔄 곡 정보 재감지 / 기본값 복원</button>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn-secondary" id="btn-cancel-edit-song">취소</button>
@@ -1324,13 +1333,56 @@
         </div>
     </div>
 
+    <!-- PC 패치노트 확인 모달 -->
+    <div class="modal-backdrop" id="modal-pc-patchnotes">
+        <div class="modal-box" style="max-width: 680px; width: 92%; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="modal-title">📜 StellPlay 패치노트 (업데이트 내역)</h3>
+                <button class="btn-close-full" id="btn-close-pc-patchnotes">✕</button>
+            </div>
+            <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">최신 업데이트 및 보안·기능 개선 히스토리</span>
+                    <button type="button" class="btn-secondary" id="btn-copy-pc-patchnotes" style="padding:4px 10px; font-size:0.76rem;">📋 전체 복사</button>
+                </div>
+                <pre id="pc-patchnotes-content" style="white-space:pre-wrap; word-break:break-word; font-family:inherit; font-size:0.84rem; line-height:1.65; color:var(--text-primary); background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:12px; padding:16px; max-height:56vh; overflow-y:auto; margin:0;">패치노트를 불러오는 중...</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- PC 버전 선택 복원 / 롤백 모달 -->
+    <div class="modal-backdrop" id="modal-pc-ota-restore">
+        <div class="modal-box" style="max-width: 520px; width: 92%; max-height: 82vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="modal-title">⏪ 업데이트 버전 복원 관리</h3>
+                <button class="btn-close-full" id="btn-close-pc-ota-restore">✕</button>
+            </div>
+            <div style="padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
+                <div style="font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
+                    실시간 업데이트(OTA) 적용 후 이전 버전으로 되돌리고 싶을 때, <b>직전 버전으로 즉시 롤백</b>하거나 <b>원하는 백업 버전을 직접 선택</b>하여 복원할 수 있습니다.
+                </div>
+                <div id="pc-ota-quick-rollback-box" style="display:none; background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.35); border-radius:12px; padding:14px;">
+                    <div style="font-size:0.82rem; font-weight:700; color:#fbbf24; margin-bottom:4px;">⚡ 직전 버전으로 빠른 복원</div>
+                    <div id="pc-ota-quick-rollback-desc" style="font-size:0.76rem; color:var(--text-secondary); margin-bottom:10px;">현재 적용된 패치 바로 이전 상태로 즉시 되돌립니다.</div>
+                    <button type="button" class="btn-primary" id="btn-pc-rollback-previous" style="width:100%; background:linear-gradient(135deg, #f59e0b, #d97706); border:none;">⏪ 직전 버전으로 즉시 복원</button>
+                </div>
+                <div>
+                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">📋 저장된 버전 목록 (선택하여 복원)</div>
+                    <div id="pc-ota-versions-list" style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:14px;">버전 기록을 불러오는 중...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 토스트 알림 컨테이너 -->
     <div class="toast-container" id="toast-container"></div>
 
     <!-- JavaScript Scripts -->
-    <script src="assets/js/songs.js"></script>
-    <script src="assets/js/storage.js"></script>
-    <script src="assets/js/player.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/songs.js?v=2.8"></script>
+    <script src="assets/js/storage.js?v=2.8"></script>
+    <script src="assets/js/player.js?v=2.8"></script>
+    <script src="assets/js/app.js?v=2.8"></script>
 </body>
 </html>

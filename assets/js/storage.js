@@ -360,7 +360,24 @@ const StorageManager = {
     getSongOverrides() {
         try {
             const data = localStorage.getItem(STORAGE_KEYS.SONG_OVERRIDES);
-            return data ? JSON.parse(data) : {};
+            const parsed = data ? JSON.parse(data) : {};
+            let healed = false;
+            for (const k of Object.keys(parsed)) {
+                const ov = parsed[k];
+                if (ov && typeof ov.title === 'string') {
+                    if (/打上花火\s*\(\s*쏘아올린\s*불꽃\s*\)|^쏘아올린\s*불꽃$|^타상연화$/i.test(ov.title.trim())) {
+                        ov.title = '打上花火 (타상연화)';
+                        healed = true;
+                    } else if (/^혁명도중$|^革命道中$/i.test(ov.title.trim())) {
+                        ov.title = '革命道中 (혁명도중)';
+                        healed = true;
+                    }
+                }
+            }
+            if (healed) {
+                try { localStorage.setItem(STORAGE_KEYS.SONG_OVERRIDES, JSON.stringify(parsed)); } catch (e) {}
+            }
+            return parsed;
         } catch (e) {
             return {};
         }
@@ -410,6 +427,12 @@ const StorageManager = {
             songs = songs.map(s => {
                 if (s && s.title && (s.title.includes('Where Stars Begin') || s.title.includes('Where stars begin') || s.id === 'auto-EKEts5IShas')) {
                     s.title = '별이 시작되는 곳';
+                } else if (s && s.title && typeof window !== 'undefined' && typeof window.cleanAndKoreanizeTitle === 'function') {
+                    s.title = window.cleanAndKoreanizeTitle(s.title, s.rawTitle || '');
+                } else if (s && s.title && /타상연화|打上花火|쏘아올린\s*불꽃/i.test(s.title)) {
+                    s.title = '打上花火 (타상연화)';
+                } else if (s && s.title && /혁명도중|革命道中/i.test(s.title)) {
+                    s.title = '革命道中 (혁명도중)';
                 }
                 return s;
             });
