@@ -56,7 +56,10 @@ _STREAM_CACHE = {}
 
 def get_audio_stream_info(vid):
     """YouTube ID에서 순수 오디오 스트림 URL과 헤더 추출 (인메모리 캐싱)"""
-    if not HAS_YTDLP:
+    if not HAS_YTDLP or not vid:
+        return None
+    vid = str(vid).strip()
+    if not re.match(r'^[a-zA-Z0-9_-]{11}$', vid):
         return None
     now = time.time()
     if vid in _STREAM_CACHE and _STREAM_CACHE[vid]['expires'] > now:
@@ -85,13 +88,25 @@ def get_audio_stream_info(vid):
         return None
 
 def fetch_youtube_video_info(url_or_id):
-    """유튜브 링크 또는 ID로 영상 메타데이터(제목, 채널명, 썸네일, 길이) 파싱"""
+    """유튜브 링크 또는 ID로 영상 메타데이터(제목, 채널명, 썸네일, 길이) 파싱 (SSRF 방어 화이트리스트 검증)"""
     if not HAS_YTDLP:
         return None
-    if not url_or_id.startswith('http'):
+    url_or_id = (url_or_id or '').strip()
+    if not url_or_id:
+        return None
+
+    if re.match(r'^[a-zA-Z0-9_-]{11}$', url_or_id):
         url = f"https://www.youtube.com/watch?v={url_or_id}"
+    elif url_or_id.startswith(('http://', 'https://')):
+        parsed = urllib.parse.urlparse(url_or_id)
+        hostname = (parsed.hostname or '').lower()
+        if hostname in ('youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtu.be'):
+            url = url_or_id
+        else:
+            print(f"[Security Alert] Blocked non-YouTube URL in fetch_youtube_video_info: {url_or_id}", flush=True)
+            return None
     else:
-        url = url_or_id
+        return None
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -629,7 +644,15 @@ class StellPlayHandler(http.server.SimpleHTTPRequestHandler):
 
     def end_headers(self):
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        self.send_header('Access-Control-Allow-Origin', '*')
+        origin = self.headers.get('Origin', '') if hasattr(self, 'headers') and self.headers else ''
+        if origin:
+            parsed = urllib.parse.urlparse(origin)
+            hostname = (parsed.hostname or '').lower()
+            if hostname in ('localhost', '127.0.0.1'):
+                self.send_header('Access-Control-Allow-Origin', origin)
+                self.send_header('Vary', 'Origin')
+        else:
+            self.send_header('Access-Control-Allow-Origin', 'http://127.0.0.1:8888')
         self.send_header('Access-Control-Allow-Headers', 'Range, Origin, Content-Type')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         super().end_headers()
@@ -645,6 +668,18 @@ class StellPlayHandler(http.server.SimpleHTTPRequestHandler):
         return os.path.join(target_dir, 'user_data.json')
 
     def do_POST(self):
+        # 외부 사이트에서의 불법 CSRF 요청 차단
+        origin = self.headers.get('Origin', '') if hasattr(self, 'headers') and self.headers else ''
+        if origin:
+            parsed_origin = urllib.parse.urlparse(origin)
+            if (parsed_origin.hostname or '').lower() not in ('localhost', '127.0.0.1'):
+                self.send_error(403, "Forbidden origin")
+                return
+        sec_fetch_site = self.headers.get('Sec-Fetch-Site', '') if hasattr(self, 'headers') and self.headers else ''
+        if sec_fetch_site == 'cross-site':
+            self.send_error(403, "Cross-site requests forbidden")
+            return
+
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == '/api/user-data':
             try:
@@ -675,11 +710,11 @@ class StellPlayHandler(http.server.SimpleHTTPRequestHandler):
         if parsed.path == '/api/audio':
             qs = urllib.parse.parse_qs(parsed.query)
             vid = qs.get('id', [None])[0]
-            if not vid:
-                self.send_error(400, "Missing 'id' parameter")
+            if not vid or not re.match(r'^[a-zA-Z0-9_-]{11}$', str(vid).strip()):
+                self.send_error(400, "Invalid or missing 'id' parameter (must be 11-char YouTube ID)")
                 return
 
-            info = get_audio_stream_info(vid)
+            info = get_audio_stream_info(str(vid).strip())
             if not info or not info.get('url'):
                 self.send_error(502, f"Could not extract audio stream for ID: {vid}")
                 return
@@ -726,7 +761,7 @@ class StellPlayHandler(http.server.SimpleHTTPRequestHandler):
 
             info = fetch_youtube_video_info(target_url)
             if not info:
-                self.send_error(404, "Failed to parse YouTube info")
+                self.send_error(400, "Invalid or unsupported YouTube URL/ID")
                 return
 
             payload = json.dumps(info, ensure_ascii=False).encode('utf-8')
@@ -1167,7 +1202,7 @@ def run_server():
 
     for p in range(PORT, PORT + 20):
         try:
-            with ThreadingHTTPServer(("", p), StellPlayHandler) as httpd:
+            with ThreadingHTTPServer(("127.0.0.1", p), StellPlayHandler) as httpd:
                 url = f"http://localhost:{p}"
                 print("=" * 60, flush=True)
                 print(" ⭐ [StellPlay] Stellive Zero-Ad Music Server", flush=True)
