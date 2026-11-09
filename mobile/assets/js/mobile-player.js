@@ -1007,24 +1007,12 @@ class MobilePlayer {
                 try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
             }
         }
-        let offlineRecord = null;
-        try {
-            if (window.OfflineDB && typeof window.OfflineDB.getTrack === 'function') {
-                offlineRecord = await window.OfflineDB.getTrack(song.id);
-                if (!offlineRecord && song.youtubeId) {
-                    offlineRecord = await window.OfflineDB.getTrack(song.youtubeId);
-                }
-            }
-        } catch (e) {}
-
-        const hasValidIndexedBlob = offlineRecord && offlineRecord.blob && offlineRecord.blob.size > 1000;
-        const isNativeOffline = window.AndroidBridge && typeof window.AndroidBridge.hasOfflineTrack === 'function'
-            ? window.AndroidBridge.hasOfflineTrack(song.id, song.youtubeId || '')
-            : false;
-
-        // 1. 안드로이드 APK 네이티브 환경인 경우 (기기 저장 파일이 있거나, IndexedDB 블롭이 없고 온라인인 경우)
-        if (window.AndroidBridge && typeof window.AndroidBridge.playIndexNative === 'function' && (isNativeOffline || (!hasValidIndexedBlob && navigator.onLine))) {
+        // 1. 안드로이드 APK 네이티브 환경인 경우: DB 조회 대기 없이 즉시 네이티브 ExoPlayer로 0초 재생 위임
+        if (window.AndroidBridge && typeof window.AndroidBridge.playIndexNative === 'function') {
             this.activeEngine = 'native';
+            const isNativeOffline = (window.state && window.state.offlineSongIds)
+                ? (window.state.offlineSongIds.has(song.id) || (song.youtubeId && window.state.offlineSongIds.has(song.youtubeId)))
+                : false;
             this.isOfflinePlayback = isNativeOffline;
             try { this.audio.pause(); } catch (e) {}
             try { this.silentAudio.pause(); } catch (e) {}
@@ -1043,6 +1031,19 @@ class MobilePlayer {
             }));
             return;
         }
+
+        let offlineRecord = null;
+        try {
+            if (window.OfflineDB && typeof window.OfflineDB.getTrack === 'function') {
+                offlineRecord = await window.OfflineDB.getTrack(song.id);
+                if (!offlineRecord && song.youtubeId) {
+                    offlineRecord = await window.OfflineDB.getTrack(song.youtubeId);
+                }
+            }
+        } catch (e) {}
+
+        const hasValidIndexedBlob = offlineRecord && offlineRecord.blob && offlineRecord.blob.size > 1000;
+        const isNativeOffline = false;
 
         // 이전 Blob URL 해제
         if (this.currentBlobUrl) {
@@ -1245,6 +1246,8 @@ class MobilePlayer {
             return;
         }
         if (this.activeEngine === 'native' && window.AndroidBridge && typeof window.AndroidBridge.togglePlayNative === 'function') {
+            this.isPlaying = !this.isPlaying;
+            window.dispatchEvent(new CustomEvent('mobileplayer:stateChanged', { detail: { isPlaying: this.isPlaying } }));
             window.AndroidBridge.togglePlayNative();
             return;
         }

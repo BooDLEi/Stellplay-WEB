@@ -1,7 +1,7 @@
 {
-  "otaVersion": 2026102304,
-  "otaReleaseDate": "2026-10-23",
-  "apkVersionName": "1.11.3",
+  "otaVersion": 2026110901,
+  "otaReleaseDate": "2026-11-09",
+  "apkVersionName": "1.11.4",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -24,22 +24,22 @@
     "patchnotes_web.txt"
   ],
   "apk": {
-    "versionCode": 13,
-    "versionName": "1.11.3",
+    "versionCode": 14,
+    "versionName": "1.11.4",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "서버 127.0.0.1 루프백 격리 및 SSRF/CORS 차단, 안드로이드 음원 식별자 살균, 네이티브 업데이트 필요 시에만 알림 표시",
-    "minRequiredVersionCode": 13,
+    "changelog": "전역 300ms 탭 딜레이 제거, 0초 반응형 탭/플레이버튼 마이크로 인터랙션, O(1) 초고속 오프라인/캐시 인메모리 스캔, 백그라운드 큐 파싱 및 GPU 하드웨어 가속 최적화",
+    "minRequiredVersionCode": 14,
     "nativeRequired": true
   },
   "fileHashes": {
     "index.html": "040bd2beccd388bf915370c4ce28eaf135f1a9a945e14955a6730a3efd505dfa",
-    "assets/css/mobile.css": "37f4be8c910cb3c25c0bab9f821c05b544462ea0b0db152b3cf78b4bb4dac32b",
-    "assets/js/mobile-app.js": "6c6632a06c75b4afc79d0bdf56c51584571c5ad49a78fbb5ba6077e90c1067a1",
-    "assets/js/mobile-player.js": "f2c897bf58955dfd66d02a0dcb8afbe3b435b49ad650d0781b6540d5b562d7a8",
+    "assets/css/mobile.css": "f41d9c5ebe58d2d17ab7ee3ced7b5b54604be2009a4853e45abc058c8a837c0d",
+    "assets/js/mobile-app.js": "17545056cace1f3f078781aead8f7dac7b7c1fd2e1e24390ffa6181bd88cc23b",
+    "assets/js/mobile-player.js": "4292249e0a15552a0a058fdc5632eb46613ed56a6eb69866979ec688925df9af",
     "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
-    "patchnotes_android.txt": "cad56e79ebfc58bfbbbceb7ddccc6e81d3f6715ddb5b2fc6d995a0e798f6b8cf"
+    "patchnotes_android.txt": "f921f159aea3d435d5d734dfdbac88c6d94572468172cc39bb51db3fdb082eac"
   },
   "pcFileHashes": {
     "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",

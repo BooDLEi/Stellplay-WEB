@@ -1056,11 +1056,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function refreshOfflineCacheState() {
         try {
+            if (window.AndroidBridge && typeof window.AndroidBridge.getOfflineSongIdsJson === 'function') {
+                try {
+                    const rawOffline = window.AndroidBridge.getOfflineSongIdsJson();
+                    const offlineArr = JSON.parse(rawOffline);
+                    if (Array.isArray(offlineArr)) {
+                        state.offlineSongIds = new Set(offlineArr);
+                    }
+                } catch (e) {}
+            }
             if (window.OfflineDB && typeof window.OfflineDB.syncNativeOfflineTracks === 'function' && window.getAllSongs) {
                 await window.OfflineDB.syncNativeOfflineTracks(window.getAllSongs());
             }
             const tracks = await window.OfflineDB.getAllTracks();
-            state.offlineSongIds = new Set(tracks.map(t => t.id));
+            if (!state.offlineSongIds || state.offlineSongIds.size === 0) {
+                state.offlineSongIds = new Set(tracks.map(t => t.id));
+            } else {
+                tracks.forEach(t => state.offlineSongIds.add(t.id));
+            }
 
             // 네이티브 오디오 캐시 동기화
             state.cachedSongIds = new Set();
@@ -1240,11 +1253,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isPlaying = player.currentSong && player.currentSong.id === song.id;
         if (isPlaying) row.classList.add('playing');
 
-        const isDownloaded = state.offlineSongIds.has(song.id);
+        const isDownloaded = state.offlineSongIds.has(song.id) || (song.youtubeId && state.offlineSongIds.has(song.youtubeId));
         const isDownloading = state.downloadingIds.has(song.id);
         const isCached = !isDownloaded && (
-            (state.cachedSongIds && (state.cachedSongIds.has(song.youtubeId) || state.cachedSongIds.has(song.id))) ||
-            (window.AndroidBridge && typeof window.AndroidBridge.isSongCached === 'function' && window.AndroidBridge.isSongCached(song.id, song.youtubeId || ''))
+            (state.cachedSongIds && (state.cachedSongIds.has(song.youtubeId) || state.cachedSongIds.has(song.id)))
         );
 
         let statusBadge = '';
@@ -1272,7 +1284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div class="m-track-left">
                 <div class="m-track-thumb-wrap">
-                    <img class="m-track-thumb" src="${thumbUrl}" alt="" width="44" height="44" loading="lazy">
+                    <img class="m-track-thumb" src="${thumbUrl}" alt="" width="44" height="44" loading="lazy" decoding="async">
                     <div class="m-track-playing-indicator">
                         <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
                     </div>
@@ -1753,23 +1765,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
         }
 
-        // 4. 정렬 (최신순 / 오래된순 / 곡명순 - 유튜브 업로드일자 publishedAt 우선)
+        // 4. 정렬 (최신순 / 오래된순 / 곡명순 - 유튜브 업로드일자 publishedAt 우선, 타임스탬프 캐싱으로 O(1) 초고속 정렬)
         const sortOrder = state.sortOrder || 'latest';
         if (sortOrder === 'latest') {
             res.sort((a, b) => {
-                const dateA = a.publishedAt || a.releaseDate || '';
-                const dateB = b.publishedAt || b.releaseDate || '';
-                const timeA = dateA ? new Date(dateA).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0));
-                const timeB = dateB ? new Date(dateB).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0));
+                const timeA = a._time !== undefined ? a._time : (a._time = (a.publishedAt || a.releaseDate) ? new Date(a.publishedAt || a.releaseDate).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0)));
+                const timeB = b._time !== undefined ? b._time : (b._time = (b.publishedAt || b.releaseDate) ? new Date(b.publishedAt || b.releaseDate).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0)));
                 if (timeA !== timeB) return timeB - timeA;
                 return (a._catalogIndex || 0) - (b._catalogIndex || 0);
             });
         } else if (sortOrder === 'oldest') {
             res.sort((a, b) => {
-                const dateA = a.publishedAt || a.releaseDate || '';
-                const dateB = b.publishedAt || b.releaseDate || '';
-                const timeA = dateA ? new Date(dateA).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0));
-                const timeB = dateB ? new Date(dateB).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0));
+                const timeA = a._time !== undefined ? a._time : (a._time = (a.publishedAt || a.releaseDate) ? new Date(a.publishedAt || a.releaseDate).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0)));
+                const timeB = b._time !== undefined ? b._time : (b._time = (b.publishedAt || b.releaseDate) ? new Date(b.publishedAt || b.releaseDate).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0)));
                 if (timeA !== timeB) return timeA - timeB;
                 return (a._catalogIndex || 0) - (b._catalogIndex || 0);
             });

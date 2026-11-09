@@ -211,8 +211,40 @@ const OfflineDB = {
      * 앱 기동 시 안드로이드 네이티브 Music 폴더에 존재하는 mp3 목록을 IndexedDB에 동기화
      */
     async syncNativeOfflineTracks(allSongs) {
-        if (!window.AndroidBridge || typeof window.AndroidBridge.hasOfflineTrack !== 'function') return;
+        if (!window.AndroidBridge) return;
         if (!Array.isArray(allSongs) || allSongs.length === 0) return;
+
+        // 1. 고속 JSON 배치 쿼리 지원 시 (O(1) 파일 목록 원샷 스캔)
+        if (typeof window.AndroidBridge.getOfflineSongIdsJson === 'function') {
+            try {
+                const raw = window.AndroidBridge.getOfflineSongIdsJson();
+                const nativeIds = JSON.parse(raw) || [];
+                const nativeIdSet = new Set(nativeIds);
+                const existingTracks = await this.getAllTracks();
+                const existingMap = new Map(existingTracks.map(t => [t.id, t]));
+                const songMap = new Map(allSongs.map(s => [s.id, s]));
+
+                for (const id of nativeIdSet) {
+                    if (!existingMap.has(id)) {
+                        const song = songMap.get(id) || allSongs.find(s => s.youtubeId === id);
+                        if (song) {
+                            await this.saveTrack(song, new Blob(['native_audio'], { type: 'audio/mp3' }), 'audio/mp3');
+                        }
+                    }
+                }
+                for (const [id, track] of existingMap.entries()) {
+                    if (track.blob && track.blob.size <= 100 && !nativeIdSet.has(id)) {
+                        await this.deleteTrack(id);
+                    }
+                }
+                return;
+            } catch (e) {
+                console.warn('Fast native offline sync failed, falling back:', e);
+            }
+        }
+
+        // 2. 구버전 호환 폴백 (1회성 점검)
+        if (typeof window.AndroidBridge.hasOfflineTrack !== 'function') return;
         for (const song of allSongs) {
             try {
                 const hasNative = window.AndroidBridge.hasOfflineTrack(song.id, song.youtubeId || '');

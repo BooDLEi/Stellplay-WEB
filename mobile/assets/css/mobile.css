@@ -407,7 +407,20 @@ html, body {
     -webkit-user-select: none;
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
     transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 글로벌 터치 반응 속도 최적화: 300ms 탭 딜레이 원천 제거 및 터치 영역 하이라이트 제어 */
+button, a, input, select, textarea, [role="button"],
+.tab-btn, .m-track-row, .m-btn-action, .m-home-action-btn,
+.mini-play-btn, .mini-ctrl-group button, .sheet-ctrl-btn,
+.sheet-main-play-btn, .playlist-card, .m-queue-item,
+.member-major-btn, .member-sub-btn, .member-text-btn,
+.m-chip, .mood-chip-card, .m-custom-checkbox, .actions-item {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* 모바일 전역 테마 및 라이트/다크 모드 부드러운 전환 */
@@ -1746,6 +1759,10 @@ body::before {
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 10px var(--theme-glow);
+    transition: transform 0.08s ease;
+}
+.mini-play-btn:active {
+    transform: scale(0.88);
 }
 
 /* ===================================================================
@@ -1784,7 +1801,11 @@ body::before {
     gap: 3px;
     cursor: pointer;
     position: relative;
-    transition: color 0.2s;
+    transition: color 0.15s ease, transform 0.08s ease, opacity 0.08s ease;
+}
+.tab-btn:active {
+    transform: scale(0.91);
+    opacity: 0.72;
 }
 
 .tab-btn.active {
@@ -2006,6 +2027,10 @@ body::before {
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 25px var(--theme-glow);
+    transition: transform 0.08s ease;
+}
+.sheet-main-play-btn:active {
+    transform: scale(0.9);
 }
 
 /* 재생목록 상단 드래그 다운 영역 (헤더/핸들/힌트 통합 제스처 바) */
