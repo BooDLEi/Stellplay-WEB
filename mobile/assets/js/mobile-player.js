@@ -42,6 +42,7 @@ class MobilePlayer {
         this.wakeLock = null;
         this._isRequestingWakeLock = false;
         this._lastSyncedQueueSig = null;
+        this._hasStartedPlayback = false;
 
         // PWA & 모바일 웹앱 백그라운드 재생 및 잠금화면 유지를 위한 무음 오디오 킵얼라이브 (16-bit 가청한계 이하 미세 디더링)
         function createKeepAliveAudioBlob() {
@@ -955,6 +956,7 @@ class MobilePlayer {
 
     async playSong(song, isUserInitiated = true) {
         if (!song) return;
+        this._hasStartedPlayback = true;
         this.currentSong = song;
 
         // iOS WebKit / Android: 비동기(await) 진입 전 사용자 터치 제스처 권한을 동기적으로 선점
@@ -1241,6 +1243,12 @@ class MobilePlayer {
     }
 
     togglePlay() {
+        if (this.currentSong && !this._hasStartedPlayback) {
+            const q = (this.queue && this.queue.length > 0) ? this.queue : [this.currentSong];
+            const idx = (this.queue && this.queue.length > 0) ? (this.queueIndex || 0) : 0;
+            this.setQueue(q, idx, true);
+            return;
+        }
         if (this.playerViewMode === 'video' || this.activeEngine === 'youtube') {
             this.toggleOnlinePlayFromNative();
             return;
@@ -1791,6 +1799,9 @@ class MobilePlayer {
                 this.queueIndex = state.queueIndex;
                 this.currentSong = this.queue[this.queueIndex];
                 this.isPlaying = state.isPlaying;
+                if (state.isPlaying || (state.position && state.position > 0)) {
+                    this._hasStartedPlayback = true;
+                }
 
                 if (state.isPlaying && window.StorageManager && this.currentSong && this.currentSong.id) {
                     window.StorageManager.addToHistory(this.currentSong.id);

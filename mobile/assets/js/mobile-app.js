@@ -10,6 +10,52 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const CURRENT_APP_VERSION = '1.11.5';
+    const CURRENT_OTA_BUILD = 2026111005;
+
+    let lastFastInteractionTime = 0;
+    let lastFastInteractionX = 0;
+    let lastFastInteractionY = 0;
+    let lastTrackActionsOpenTime = 0;
+
+    function markFastInteraction(x, y) {
+        lastFastInteractionTime = Date.now();
+        lastFastInteractionX = x || 0;
+        lastFastInteractionY = y || 0;
+    }
+
+    // 캡처링 단계에서 빠른 터치 처리 후 뒤따르는 지연 합성 클릭(Ghost Click) 원천 차단
+    document.addEventListener('click', (e) => {
+        if (e.isTrusted && Date.now() - lastFastInteractionTime < 480) {
+            const dx = Math.abs(e.clientX - lastFastInteractionX);
+            const dy = Math.abs(e.clientY - lastFastInteractionY);
+            if (dx < 35 && dy < 35) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+    }, true);
+
+    function bindFastControl(btn, actionFn) {
+        if (!btn) return;
+        let lastActionTime = 0;
+        btn.addEventListener('touchstart', (e) => {
+            lastActionTime = Date.now();
+            if (e.touches && e.touches.length > 0) {
+                markFastInteraction(e.touches[0].clientX, e.touches[0].clientY);
+            }
+            actionFn(e);
+        }, { passive: true });
+        btn.addEventListener('click', (e) => {
+            if (Date.now() - lastActionTime < 500) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            actionFn(e);
+        });
+    }
+
     const player = new window.MobilePlayer();
     window.player = player;
 
@@ -519,13 +565,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     const infoStr = window.AndroidBridge.getLiveUpdateInfo();
                     const info = JSON.parse(infoStr);
+                    const nativeVer = info.installedApkName || '1.11.4';
+                    const otaVer = info.currentOtaVersion || CURRENT_OTA_BUILD;
+                    const isLive = !!info.hasLiveAssets;
+                    const isUpToLatest = isLive || (Number(otaVer) >= CURRENT_OTA_BUILD);
+                    const displayAppVer = isUpToLatest ? CURRENT_APP_VERSION : nativeVer;
+
                     if (dom.appVersionBadge) {
-                        dom.appVersionBadge.textContent = `v${info.installedApkName || '1.10.0'}`;
+                        dom.appVersionBadge.textContent = `v${displayAppVer}`;
                     }
                     if (dom.otaVersionText) {
-                        const otaVer = info.currentOtaVersion || '최신';
-                        const isLive = info.hasLiveAssets;
-                        dom.otaVersionText.textContent = `#${otaVer} (${isLive ? '실시간 패치 적용됨' : '기본 번들'})`;
+                        dom.otaVersionText.textContent = isLive
+                            ? `v${displayAppVer} (#${otaVer} · 실시간 패치 적용됨 / 앱 엔진 v${nativeVer})`
+                            : `v${displayAppVer} (#${otaVer} · 기본 번들 · 앱 엔진 v${nativeVer})`;
                         dom.otaVersionText.style.color = isLive ? '#38bdf8' : 'var(--color-green)';
                     }
 
@@ -661,7 +713,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (!historyData || !historyData.history || historyData.history.length === 0) {
-                const curVer = 2026102203;
+                const curVer = CURRENT_OTA_BUILD;
                 historyData = {
                     currentVersion: curVer,
                     bundledVersion: 2026102201,
@@ -843,9 +895,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (data.status === 'up_to_date') {
                 if (data.isNewerApkAvailable && !data.nativeUpdateRequired) {
-                    showToast(`✨ 최신 패치(#${data.otaVersion}) 적용됨 (선택적 APK v${data.apkVersionName || ''} 배포중)`);
+                    showToast(`✨ 최신 패치 v${CURRENT_APP_VERSION} (#${data.otaVersion}) 적용됨`);
                 } else {
-                    showToast('✨ 현재 최신 버전입니다 (패치 #' + data.otaVersion + ')');
+                    showToast(`✨ 현재 최신 버전입니다 (v${CURRENT_APP_VERSION} / #${data.otaVersion})`);
                 }
             } else if (data.status === 'error') {
                 showToast('⚠️ ' + (data.message || '업데이트 확인에 실패했습니다.'));
@@ -949,18 +1001,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const savedQueue = JSON.parse(savedQueueStr);
                     if (Array.isArray(savedQueue) && savedQueue.length > 0) {
                         const targetIdx = (savedIndex >= 0 && savedIndex < savedQueue.length) ? savedIndex : 0;
+                        const targetSong = savedQueue[targetIdx];
                         player.queue = savedQueue;
                         player.queueIndex = targetIdx;
+                        player.currentSong = targetSong;
+                        player.isPlaying = false;
+                        player._hasStartedPlayback = false;
                         updateQueueBadge();
-                        // 마지막 곡 자동 재생 (유튜브뮤직 방식)
-                        setTimeout(() => {
-                            if (player && typeof player.playQueueIndex === 'function') {
-                                player.playQueueIndex(targetIdx);
-                            }
-                        }, 300);
+                        renderMobileQueue(false);
+                        // 앱 실행 시 자동 재생하지 않고 마지막 재생 곡 UI만 일시정지(대기) 상태로 복원
+                        updatePlayerUI(targetSong, state.offlineSongIds.has(targetSong.id));
+                        updatePlayButtonUI(false);
                     }
                 } catch (e) {
-                    console.warn('[Auto-resume error]', e);
+                    console.warn('[Auto-restore error]', e);
                 }
             }
         } else {
@@ -3022,6 +3076,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===================================================================
     function openTrackActions(song) {
         if (!song) return;
+        lastTrackActionsOpenTime = Date.now();
         state.selectedActionSong = song;
 
         dom.actionTrackThumb.src = `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`;
@@ -4252,6 +4307,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             btn.addEventListener('touchstart', (e) => {
                 lastTabTouchTime = Date.now();
+                if (e.touches && e.touches.length > 0) {
+                    markFastInteraction(e.touches[0].clientX, e.touches[0].clientY);
+                }
                 activateTab();
             }, { passive: true });
 
@@ -4281,17 +4339,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             container.addEventListener('touchend', (e) => {
                 if (!targetRow || e.changedTouches.length === 0) return;
-                const dx = Math.abs(e.changedTouches[0].clientX - startX);
-                const dy = Math.abs(e.changedTouches[0].clientY - startY);
+                const touch = e.changedTouches[0];
+                const dx = Math.abs(touch.clientX - startX);
+                const dy = Math.abs(touch.clientY - startY);
                 const elapsed = Date.now() - startTime;
 
-                // 세로 스크롤 이동이 없고 400ms 이내의 순수 탭인 경우 지연 없이 즉시 실행
-                if (dx < 10 && dy < 10 && elapsed < 400) {
+                // 순수 탭 판정 시 지연된 합성 클릭(Ghost Click)이 새로 열린 바텀시트 백드롭(#m-actions-backdrop)을 눌러 닫아버리는 현상 원천 방지
+                if (dx < 14 && dy < 14 && elapsed < 450) {
                     lastFastTapTime = Date.now();
+                    if (e.cancelable) e.preventDefault();
+                    markFastInteraction(touch.clientX, touch.clientY);
                     handleTrackContainerClick(e, getSongsFn);
                 }
                 targetRow = null;
-            }, { passive: true });
+            }, { passive: false });
 
             container.addEventListener('click', (e) => {
                 if (Date.now() - lastFastTapTime < 450) {
@@ -5899,7 +5960,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 트랙 액션 바텀시트 닫기
         if (dom.btnCloseActions) dom.btnCloseActions.addEventListener('click', () => closeTrackActions());
-        if (dom.actionsBackdrop) dom.actionsBackdrop.addEventListener('click', () => closeTrackActions());
+        if (dom.actionsBackdrop) {
+            dom.actionsBackdrop.addEventListener('click', () => {
+                if (Date.now() - lastTrackActionsOpenTime < 450) return;
+                closeTrackActions();
+            });
+        }
 
         // 트랙 액션 메뉴 항목들
         if (dom.actStation) {
@@ -6486,21 +6552,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 재생/일시정지 및 곡 넘김 (0ms 즉각 반응 터치 & 중복 클릭 방지)
-        function bindFastControl(btn, actionFn) {
-            if (!btn) return;
-            let lastActionTime = 0;
-            btn.addEventListener('touchstart', (e) => {
-                lastActionTime = Date.now();
-                actionFn(e);
-            }, { passive: true });
-            btn.addEventListener('click', (e) => {
-                if (Date.now() - lastActionTime < 450) {
-                    e.preventDefault();
-                    return;
-                }
-                actionFn(e);
-            });
-        }
 
         bindFastControl(dom.miniPlayBtn, () => player.togglePlay());
         bindFastControl(dom.miniNextBtn, () => player.playNext());
