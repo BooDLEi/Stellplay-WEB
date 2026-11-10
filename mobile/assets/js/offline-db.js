@@ -233,7 +233,8 @@ const OfflineDB = {
                     }
                 }
                 for (const [id, track] of existingMap.entries()) {
-                    if (track.blob && track.blob.size <= 100 && !nativeIdSet.has(id)) {
+                    const hasYoutubeIdMatch = track.song && track.song.youtubeId && nativeIdSet.has(track.song.youtubeId);
+                    if (track.blob && track.blob.size <= 100 && !nativeIdSet.has(id) && !hasYoutubeIdMatch) {
                         await this.deleteTrack(id);
                     }
                 }

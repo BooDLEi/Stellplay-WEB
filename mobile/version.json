@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026111005,
+  "otaVersion": 2026111006,
   "otaReleaseDate": "2026-11-10",
   "apkVersionName": "1.11.4",
   "files": [
@@ -9,6 +9,7 @@
     "assets/js/mobile-player.js",
     "assets/js/songs.js",
     "assets/js/storage.js",
+    "assets/js/offline-db.js",
     "songs-latest.json",
     "patchnotes_android.txt"
   ],
@@ -32,14 +33,15 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "5a0e276d4da0a1af08e9598f4726f24d138c920909a4d07cea0af691b6ae625f",
+    "index.html": "3b6116e2a2a4f462ffa3dac6ae24a77682adb84cb5c671e93b719f93c9c3161f",
     "assets/css/mobile.css": "e988be4c1796abd2554aa456ec2681990d99a0f3cc3e97e1b4903410078db133",
-    "assets/js/mobile-app.js": "9478cb9e9d4585c612ba75c85c3590914bac7c1d8a6fae8682e245dc868a827b",
+    "assets/js/mobile-app.js": "ba15d43f547c77ae801cf78a7722ec457431a7be51271983e017bcbb4a7a627a",
     "assets/js/mobile-player.js": "7ce7336efb05e9cd7dd5a045c3de993324e71f737919c2c6b77bad9382a90221",
     "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
+    "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
-    "patchnotes_android.txt": "341f922c4b1d39760132e967a869c23039be630b4763e238321fe0fb9c0b68bd"
+    "patchnotes_android.txt": "cb4bc512a1f4853912dd939427b1065244941a24792dff0992875aed021b08ea"
   },
   "pcFileHashes": {
     "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",

@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.11.5';
-    const CURRENT_OTA_BUILD = 2026111005;
+    const CURRENT_APP_VERSION = '1.11.6';
+    const CURRENT_OTA_BUILD = 2026111006;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         homeTracksDirty: false,
         playlistsDirty: false
     };
+    window.state = state;
 
     // DOM 캐싱
     const dom = {
@@ -1512,14 +1513,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // 검색 상태이거나 단일 곡 목록인 경우:
-            // 검색 결과 소수의 곡만 대기열에 갇히는 현상을 해결하기 위해
-            // 유튜브 뮤직의 "뮤직 스테이션"처럼 선택된 곡을 기반으로 유사곡 및 전체 카탈로그를 유기적으로 추천/배치하여 무한 연속 재생합니다.
+            // 오프라인 보관함에서는 온라인 추천 스테이션 생성이나 대기열 자동 열기를 하지 않고 오프라인 곡만 즉시 재생
+            const isOfflineContext = (state.activeView === 'view-offline') || !!(e.target && e.target.closest('#m-track-list-offline'));
             const isSearching = !!(state.searchQuery && state.searchQuery.trim().length > 0);
-            if (isSearching || (songs && songs.length === 1 && !state.activePlaylistDetailId)) {
+            if (!isOfflineContext && (isSearching || (songs && songs.length === 1 && !state.activePlaylistDetailId))) {
                 const stationQueue = buildMusicStationQueue(song);
                 player.setQueue(stationQueue, 0, true);
-                openQueueSheet();
                 return;
             }
 
@@ -1887,6 +1886,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let currentHomeRenderId = 0;
     function renderHomeTracks() {
+        state.homeTracksDirty = false;
         const songs = getFilteredSongs();
         state.currentHomeSongs = songs;
         dom.trackCountHome.textContent = `총 ${songs.length}곡`;
@@ -1955,14 +1955,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function renderOfflineTracks() {
         if (!dom.trackListOffline) return;
         const records = await window.OfflineDB.getAllTracks();
-        const allOfflineSongs = records.map(r => r.song);
+        const allCatalog = window.getAllSongs ? window.getAllSongs() : [];
+        const catalogMap = new Map(allCatalog.map(s => [s.id, s]));
+        const allOfflineSongs = records.map(r => catalogMap.get(r.song.id) || r.song);
 
         // 멤버 필터, 카테고리 필터 및 검색 적용
         const filteredSongs = filterSongList(allOfflineSongs, true, state.selectedOfflineTypes);
+        state.currentOfflineSongs = filteredSongs;
         if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '';
         dom.trackListOffline.innerHTML = '';
 
         if (allOfflineSongs.length === 0) {
+            state.currentOfflineSongs = [];
             dom.trackListOffline.innerHTML = `
                 <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
                     <div style="font-size:1.8rem; margin-bottom:8px;">✈️</div>
@@ -1990,6 +1994,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 4.1 재생목록 탭 (Playlists) & 상세 화면 렌더러
     // ===================================================================
     function renderPlaylists() {
+        state.playlistsDirty = false;
         if (!dom.playlistsGrid) return;
         const all = window.getAllSongs ? window.getAllSongs() : [];
         const songMap = new Map(all.map(s => [s.id, s]));
@@ -2795,21 +2800,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function openQueueSheet() {
-        // 이미 대기열 트랙들이 렌더링되어 있다면 전체 DOM 재구축 없이 0ms 즉각 활성 트랙 갱신 후 시트 오픈
-        if (!dom.queueList || dom.queueList.children.length === 0) {
+        const expectedLen = (player && player.queue) ? player.queue.length : 0;
+        const renderedCount = dom.queueList ? dom.queueList.querySelectorAll('.m-queue-item').length : 0;
+        // 이미 대기열 트랙들이 정확히 렌더링되어 있다면 전체 DOM 재구축 없이 0ms 즉각 활성 트랙 갱신 후 시트 오픈
+        if (!dom.queueList || expectedLen === 0 || renderedCount !== expectedLen) {
             renderMobileQueue(false);
         } else {
             updateQueueActiveItem();
         }
         dom.queueSheet.classList.add('open');
-        // 불필요한 연속 setTimeout reflow를 제거하고 단일 rAF로 즉각 정위치 배치
         requestAnimationFrame(() => {
             scrollQueueToActiveTrack(false);
         });
     }
 
     function toggleQueueSelectMode(forceState) {
-        state.isQueueSelectMode = (forceState !== undefined) ? forceState : !state.isQueueSelectMode;
+        const nextState = (forceState !== undefined) ? forceState : !state.isQueueSelectMode;
+        if (nextState === state.isQueueSelectMode) return;
+        state.isQueueSelectMode = nextState;
         if (!state.isQueueSelectMode) {
             state.queueSelectedIndices.clear();
         }
@@ -2853,7 +2861,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function closeQueueSheet() {
-        toggleQueueSelectMode(false);
+        if (state.isQueueSelectMode) {
+            toggleQueueSelectMode(false);
+        }
         dom.queueSheet.classList.remove('open');
     }
 
@@ -4058,10 +4068,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderAllViews() {
-        if (state.activeView === 'view-home') renderHomeTracks();
-        else if (state.activeView === 'view-sabi') renderSabiTracks();
+        if (state.activeView === 'view-home') {
+            renderHomeTracks();
+        } else {
+            state.homeTracksDirty = true;
+        }
+
+        if (state.activeView === 'view-playlists') {
+            renderPlaylists();
+        } else {
+            state.playlistsDirty = true;
+        }
+
+        if (state.activeView === 'view-sabi') renderSabiTracks();
         else if (state.activeView === 'view-offline') renderOfflineTracks();
-        else if (state.activeView === 'view-playlists') renderPlaylists();
         updateQueueBadge();
     }
 
@@ -5429,34 +5449,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }, { passive: true });
 
-            dom.miniLeftContent.addEventListener('touchend', (e) => {
-                if (e.changedTouches && e.changedTouches.length > 0) {
-                    const endX = e.changedTouches[0].clientX;
-                    const endY = e.changedTouches[0].clientY;
-                    const dx = endX - miniTouchStartX;
-                    const dy = endY - miniTouchStartY;
-
-                    // 수평 스와이프 판정: 가로 40px 이상 이동 및 수직 이동 대비 1.4배 이상
-                    if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-                        miniIsSwiped = true;
-                        if (dx > 0) {
-                            // 오른쪽 슬라이드 (왼쪽->오른쪽): 다음곡
-                            if (player && typeof player.playNext === 'function') {
-                                player.playNext();
-                            }
-                        } else {
-                            // 왼쪽 슬라이드 (오른쪽->왼쪽): 이전곡
-                            if (player && typeof player.playPrev === 'function') {
-                                player.playPrev();
-                            }
-                        }
-                        // 탭 시트 열림 방지 타이머
-                        setTimeout(() => { miniIsSwiped = false; }, 320);
-                    }
-                }
-            }, { passive: true });
-
-            // 미니 플레이어 탭 -> 전체화면 시트 열기 (지연 없는 즉시 오픈)
             let lastMiniOpenTime = 0;
             function triggerOpenFullscreenSheet(e) {
                 if (miniIsSwiped) {
@@ -5479,10 +5471,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             dom.miniLeftContent.addEventListener('touchend', (e) => {
-                if (miniIsSwiped) return;
-                lastMiniOpenTime = Date.now();
-                triggerOpenFullscreenSheet(e);
-            }, { passive: true });
+                if (!e.changedTouches || e.changedTouches.length === 0) return;
+                const touch = e.changedTouches[0];
+                const dx = touch.clientX - miniTouchStartX;
+                const dy = touch.clientY - miniTouchStartY;
+
+                // 수평 스와이프 판정: 가로 40px 이상 이동 및 수직 이동 대비 1.4배 이상
+                if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+                    miniIsSwiped = true;
+                    if (e.cancelable) e.preventDefault();
+                    markFastInteraction(touch.clientX, touch.clientY);
+                    if (dx > 0) {
+                        if (player && typeof player.playNext === 'function') player.playNext();
+                    } else {
+                        if (player && typeof player.playPrev === 'function') player.playPrev();
+                    }
+                    setTimeout(() => { miniIsSwiped = false; }, 320);
+                    return;
+                }
+
+                // 순수 탭인 경우에만 합성 클릭 차단 후 전체화면 플레이어 즉시 오픈
+                if (Math.abs(dx) < 16 && Math.abs(dy) < 16 && !miniIsSwiped) {
+                    lastMiniOpenTime = Date.now();
+                    if (e.cancelable) e.preventDefault();
+                    markFastInteraction(touch.clientX, touch.clientY);
+                    triggerOpenFullscreenSheet(e);
+                }
+            }, { passive: false });
 
             dom.miniLeftContent.addEventListener('click', (e) => {
                 if (Date.now() - lastMiniOpenTime < 450) {
@@ -5503,15 +5518,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             dockYouTubePlayer(false);
         }
 
-        let lastSheetCloseTime = 0;
-        dom.sheetCloseBtn.addEventListener('touchstart', (e) => {
-            lastSheetCloseTime = Date.now();
-            closeMobilePlayerSheet();
-        }, { passive: true });
-        dom.sheetCloseBtn.addEventListener('click', (e) => {
-            if (Date.now() - lastSheetCloseTime < 450) return;
-            closeMobilePlayerSheet();
-        });
+        bindFastControl(dom.sheetCloseBtn, () => closeMobilePlayerSheet());
 
         // 대기열 열기/닫기 및 메뉴 버튼 (0ms 즉각 반응 Fast-Control)
         bindFastControl(dom.miniQueueBtn, () => toggleQueueSheet());
@@ -6766,24 +6773,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             updatePlayerUI(song, e.detail.isOffline);
             if (state.activePlaylistDetailId === 'pl-history') {
                 openPlaylistDetail('pl-history');
-            } else if (dom.playlistsListContainer && dom.playlistsListContainer.style.display !== 'none') {
+            } else if (state.activeView === 'view-playlists' && dom.playlistsListContainer && dom.playlistsListContainer.style.display !== 'none') {
                 renderPlaylists();
+            } else {
+                state.playlistsDirty = true;
             }
         });
 
         window.addEventListener('stellplay:historyUpdated', () => {
             if (state.activePlaylistDetailId === 'pl-history') {
                 openPlaylistDetail('pl-history');
-            } else if (dom.playlistsListContainer && dom.playlistsListContainer.style.display !== 'none') {
+            } else if (state.activeView === 'view-playlists' && dom.playlistsListContainer && dom.playlistsListContainer.style.display !== 'none') {
                 renderPlaylists();
+            } else {
+                state.playlistsDirty = true;
             }
         });
 
         window.addEventListener('stellplay:playlistsUpdated', () => {
             if (state.activePlaylistDetailId) {
                 openPlaylistDetail(state.activePlaylistDetailId);
-            } else if (dom.playlistsListContainer && dom.playlistsListContainer.style.display !== 'none') {
+            } else if (state.activeView === 'view-playlists' && dom.playlistsListContainer && dom.playlistsListContainer.style.display !== 'none') {
                 renderPlaylists();
+            } else {
+                state.playlistsDirty = true;
             }
         });
 
