@@ -2689,7 +2689,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===================================================================
     // 5. 대기열(재생목록) 슬라이드 시트 & 드래그 재배치
     // ===================================================================
-    function scrollQueueToActiveTrack(smooth = true) {
+    function updateQueueActiveItem() {
+        if (!dom.queueList) return;
+        const curIdx = player.queueIndex;
+        const items = dom.queueList.querySelectorAll('.m-queue-item');
+        items.forEach((item, idx) => {
+            const isCur = idx === curIdx;
+            if (item.classList.contains('active') !== isCur) {
+                item.classList.toggle('active', isCur);
+                const titleRow = item.querySelector('.m-queue-title-row');
+                const tag = item.querySelector('.m-queue-tag');
+                if (isCur && !tag && titleRow) {
+                    titleRow.insertAdjacentHTML('beforeend', '<span class="m-queue-tag">재생 중</span>');
+                } else if (!isCur && tag) {
+                    tag.remove();
+                }
+            }
+        });
+        updateQueueBadge();
+    }
+
+    function scrollQueueToActiveTrack(smooth = false) {
         if (!dom.queueList) return;
         const activeItem = dom.queueList.querySelector('.m-queue-item.active');
         if (!activeItem) return;
@@ -2709,32 +2729,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         const maxScroll = Math.max(0, dom.queueList.scrollHeight - listHeight);
         const finalTop = Math.max(0, Math.min(targetTop, maxScroll));
 
-        try {
-            dom.queueList.scrollTo({
-                top: Math.round(finalTop),
-                behavior: smooth ? 'smooth' : 'auto'
-            });
-        } catch (e) {
+        if (smooth) {
+            try {
+                dom.queueList.scrollTo({ top: Math.round(finalTop), behavior: 'smooth' });
+            } catch (e) {
+                dom.queueList.scrollTop = Math.round(finalTop);
+            }
+        } else {
             dom.queueList.scrollTop = Math.round(finalTop);
         }
     }
 
     function openQueueSheet() {
-        renderMobileQueue(false);
+        // 이미 대기열 트랙들이 렌더링되어 있다면 전체 DOM 재구축 없이 0ms 즉각 활성 트랙 갱신 후 시트 오픈
+        if (!dom.queueList || dom.queueList.children.length === 0) {
+            renderMobileQueue(false);
+        } else {
+            updateQueueActiveItem();
+        }
         dom.queueSheet.classList.add('open');
-        // 바텀시트 슬라이드 오픈 애니메이션 중 및 완료 후 현재 재생곡 위치로 정확히 중앙 스크롤
+        // 불필요한 연속 setTimeout reflow를 제거하고 단일 rAF로 즉각 정위치 배치
         requestAnimationFrame(() => {
             scrollQueueToActiveTrack(false);
         });
-        setTimeout(() => {
-            scrollQueueToActiveTrack(false);
-        }, 80);
-        setTimeout(() => {
-            scrollQueueToActiveTrack(true);
-        }, 250);
-        setTimeout(() => {
-            scrollQueueToActiveTrack(false);
-        }, 450);
     }
 
     function toggleQueueSelectMode(forceState) {
@@ -5435,17 +5452,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeMobilePlayerSheet();
         });
 
-        // 대기열 열기/닫기 및 메뉴 버튼
-        if (dom.miniQueueBtn) dom.miniQueueBtn.addEventListener('click', () => toggleQueueSheet());
-        if (dom.sheetQueueBtn) {
-            dom.sheetQueueBtn.addEventListener('click', () => {
-                if (isTabletLayout()) {
-                    document.body.classList.toggle('tablet-queue-collapsed');
-                } else {
-                    toggleQueueSheet();
-                }
-            });
-        }
+        // 대기열 열기/닫기 및 메뉴 버튼 (0ms 즉각 반응 Fast-Control)
+        bindFastControl(dom.miniQueueBtn, () => toggleQueueSheet());
+        bindFastControl(dom.sheetQueueBtn, () => {
+            if (isTabletLayout()) {
+                document.body.classList.toggle('tablet-queue-collapsed');
+            } else {
+                toggleQueueSheet();
+            }
+        });
         if (dom.sheetMenuBtn) {
             dom.sheetMenuBtn.addEventListener('click', () => {
                 if (player.currentSong) {
@@ -5455,13 +5470,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
-        if (dom.btnCloseQueue) dom.btnCloseQueue.addEventListener('click', () => closeQueueSheet());
-        if (dom.queueBackdrop) dom.queueBackdrop.addEventListener('click', () => closeQueueSheet());
-        if (dom.queuePosBtn) {
-            dom.queuePosBtn.addEventListener('click', () => {
-                scrollQueueToActiveTrack(true);
-            });
-        }
+        bindFastControl(dom.btnCloseQueue, () => closeQueueSheet());
+        bindFastControl(dom.queueBackdrop, () => closeQueueSheet());
+        bindFastControl(dom.queuePosBtn, () => scrollQueueToActiveTrack(true));
 
         // ===================================================================
         // 13. 재생화면(Now Playing) & 재생목록(대기열) 전역 스크롤/스와이프 제스처
@@ -5521,13 +5532,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const deltaY = clientY - sheetStartY;
                 const deltaX = clientX - sheetStartX;
 
-                // 1. 초기 방향 잠금 (초기 3px 이상 하강 이동 시 하강 제스처 모드로 영구 락)
+                // 1. 초기 방향 잠금
                 if (!isPullingDown) {
                     if (deltaY > 3 && Math.abs(deltaY) > Math.abs(deltaX)) {
                         isPullingDown = true;
                         dom.fullscreenSheet.style.transition = 'none';
                         if (e && e.cancelable) e.preventDefault();
-                    } else if (Math.abs(deltaX) > 8 || deltaY < -8) {
+                    } else if (deltaY < -15 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                        // 손가락을 위로 15px 올리는 즉시 대기열(재생목록) 시트 열기 (손가락을 뗄 때까지 기다리지 않고 제스처 중에 즉시 반응!)
+                        if (!isTabletLayout()) {
+                            isSheetGesture = false;
+                            if (e && e.cancelable) e.preventDefault();
+                            openQueueSheet();
+                            return;
+                        }
+                    } else if (Math.abs(deltaX) > 8) {
                         return;
                     }
                 }
@@ -5596,11 +5615,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         return;
                     }
                 } else {
-                    // 모바일 전용 제스처
+                    // 모바일 전용 제스처 (빠른 튕기기 또는 위로 스와이프)
                     if (Math.abs(deltaY) > Math.abs(deltaX)) {
                         if (deltaY > 40) {
                             closeMobilePlayerSheet();
-                        } else if (deltaY < -40) {
+                        } else if (deltaY < -15 || velocityY < -0.25) {
                             openQueueSheet();
                         }
                     }

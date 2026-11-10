@@ -2158,7 +2158,7 @@ body::before {
     z-index: 1000;
     pointer-events: none;
     visibility: hidden;
-    transition: visibility 0.3s;
+    transition: visibility 0.2s;
 }
 
 .queue-sheet.open {
@@ -2176,7 +2176,7 @@ body::before {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
 }
 
 .queue-sheet.open .queue-sheet-backdrop {

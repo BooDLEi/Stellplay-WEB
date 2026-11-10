@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026111003,
+  "otaVersion": 2026111004,
   "otaReleaseDate": "2026-11-10",
   "apkVersionName": "1.11.4",
   "files": [
@@ -33,8 +33,8 @@
   },
   "fileHashes": {
     "index.html": "4330adadc79b5013f56ea9937b99a9d180ec5e0639c4376c6317eda3456c3cfb",
-    "assets/css/mobile.css": "f8405b572d8ad5c427db71cf9e91f3bef7e93b62834df9dbbe0dae05d367d471",
-    "assets/js/mobile-app.js": "82521a0d7b7e2c78d832ff29a5d48eed7746dad68ff8c5c1f4657fae834880c2",
+    "assets/css/mobile.css": "e988be4c1796abd2554aa456ec2681990d99a0f3cc3e97e1b4903410078db133",
+    "assets/js/mobile-app.js": "3b8736df48ff07d0977d905cbe878094ff171c3fe36e60cc4eba193870c1ef28",
     "assets/js/mobile-player.js": "4292249e0a15552a0a058fdc5632eb46613ed56a6eb69866979ec688925df9af",
     "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
