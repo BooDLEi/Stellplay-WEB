@@ -5389,6 +5389,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return;
                 }
                 document.body.classList.remove('tablet-queue-collapsed');
+                dom.fullscreenSheet.style.transition = '';
+                dom.fullscreenSheet.style.transform = '';
                 dom.fullscreenSheet.classList.add('open');
                 if (mobilePlayerViewMode === 'video') {
                     dockYouTubePlayer(true);
@@ -5418,6 +5420,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 toggleVideoFullscreen(false);
             }
             dom.fullscreenSheet.classList.remove('open');
+            dom.fullscreenSheet.style.transition = '';
+            dom.fullscreenSheet.style.transform = '';
             dockYouTubePlayer(false);
         }
 
@@ -5475,49 +5479,93 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.fullscreenSheet) {
             let sheetStartY = 0;
             let sheetStartX = 0;
+            let sheetStartTime = 0;
             let isSheetGesture = false;
             let isPullingDown = false;
+            let currentTranslateY = 0;
+            let rafId = null;
 
-            const isInteractive = (el) => !!(el && (el.closest('button') || el.closest('input') || el.closest('a') || el.closest('.sheet-menu-dropdown') || el.closest('#m-modal-sabi-editor') || el.closest('.m-video-box')));
+            const isInteractive = (el) => !!(el && (
+                el.closest('button') || 
+                el.closest('input') || 
+                el.closest('a') || 
+                el.closest('.sheet-menu-dropdown') || 
+                el.closest('#m-modal-sabi-editor') || 
+                el.closest('.m-video-box') ||
+                el.closest('.sheet-seek-wrap')
+            ));
+
+            const updateSheetTransform = () => {
+                if (dom.fullscreenSheet) {
+                    dom.fullscreenSheet.style.transform = `translateY(${currentTranslateY}px)`;
+                }
+                rafId = null;
+            };
 
             const onStart = (clientX, clientY, target) => {
                 if (isInteractive(target)) return;
                 sheetStartY = clientY;
                 sheetStartX = clientX;
+                sheetStartTime = Date.now();
                 isSheetGesture = true;
                 isPullingDown = false;
+                currentTranslateY = 0;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
             };
 
-            const onMove = (clientX, clientY) => {
+            const onMove = (clientX, clientY, e) => {
                 if (!isSheetGesture) return;
                 const deltaY = clientY - sheetStartY;
                 const deltaX = clientX - sheetStartX;
 
-                // 손가락을 내리는 즉시 전체화면 플레이어가 손가락에 밀착하여 1:1로 실시간 하강
-                if (deltaY > 6 && Math.abs(deltaY) > Math.abs(deltaX)) {
-                    isPullingDown = true;
-                    dom.fullscreenSheet.style.transition = 'none';
-                    dom.fullscreenSheet.style.transform = `translateY(${Math.max(0, deltaY)}px)`;
+                // 1. 초기 방향 잠금 (초기 3px 이상 하강 이동 시 하강 제스처 모드로 영구 락)
+                if (!isPullingDown) {
+                    if (deltaY > 3 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                        isPullingDown = true;
+                        dom.fullscreenSheet.style.transition = 'none';
+                        if (e && e.cancelable) e.preventDefault();
+                    } else if (Math.abs(deltaX) > 8 || deltaY < -8) {
+                        return;
+                    }
+                }
+
+                // 2. 하강 드래그 동작 중: rAF 동기화로 60/120Hz 화면 끊김 없는 실시간 1:1 추적
+                if (isPullingDown) {
+                    if (e && e.cancelable) e.preventDefault();
+                    currentTranslateY = Math.max(0, deltaY);
+                    if (!rafId) {
+                        rafId = requestAnimationFrame(updateSheetTransform);
+                    }
                 }
             };
 
             const onEnd = (clientX, clientY) => {
                 if (!isSheetGesture) return;
                 isSheetGesture = false;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+
                 const deltaY = clientY - sheetStartY;
                 const deltaX = clientX - sheetStartX;
+                const elapsed = Math.max(1, Date.now() - sheetStartTime);
+                const velocityY = deltaY / elapsed;
 
                 const isTablet = isTabletLayout();
 
                 if (isPullingDown) {
                     isPullingDown = false;
-                    dom.fullscreenSheet.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
-                    if (deltaY > 55) {
-                        // 55px 이상 내렸으면 즉시 메인화면으로 복귀
-                        closeMobilePlayerSheet();
+                    dom.fullscreenSheet.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+
+                    // 60px 이상 내렸거나 빠른 플링(튕기기) 제스처인 경우 메인화면으로 즉시 복귀
+                    if (deltaY > 60 || (deltaY > 25 && velocityY > 0.32)) {
+                        dom.fullscreenSheet.style.transform = 'translateY(100%)';
                         setTimeout(() => {
-                            dom.fullscreenSheet.style.transform = '';
-                            dom.fullscreenSheet.style.transition = '';
+                            closeMobilePlayerSheet();
                         }, 220);
                         return;
                     } else {
@@ -5548,7 +5596,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         return;
                     }
                 } else {
-                    // 모바일(스마트폰) 전용 제스처
+                    // 모바일 전용 제스처
                     if (Math.abs(deltaY) > Math.abs(deltaX)) {
                         if (deltaY > 40) {
                             closeMobilePlayerSheet();
@@ -5559,16 +5607,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             };
 
+            const onCancel = () => {
+                if (!isSheetGesture) return;
+                isSheetGesture = false;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                if (isPullingDown) {
+                    isPullingDown = false;
+                    dom.fullscreenSheet.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+                    dom.fullscreenSheet.style.transform = 'translateY(0)';
+                    setTimeout(() => {
+                        dom.fullscreenSheet.style.transform = '';
+                        dom.fullscreenSheet.style.transition = '';
+                    }, 220);
+                }
+            };
+
             dom.fullscreenSheet.addEventListener('touchstart', (e) => {
+                if (e.touches.length !== 1) return;
                 onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
             }, { passive: true });
 
             dom.fullscreenSheet.addEventListener('touchmove', (e) => {
-                onMove(e.touches[0].clientX, e.touches[0].clientY);
-            }, { passive: true });
+                if (e.touches.length !== 1) return;
+                onMove(e.touches[0].clientX, e.touches[0].clientY, e);
+            }, { passive: false });
 
             dom.fullscreenSheet.addEventListener('touchend', (e) => {
                 onEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            }, { passive: true });
+
+            dom.fullscreenSheet.addEventListener('touchcancel', () => {
+                onCancel();
             }, { passive: true });
 
             dom.fullscreenSheet.addEventListener('mousedown', (e) => {
@@ -5576,7 +5648,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             dom.fullscreenSheet.addEventListener('mousemove', (e) => {
-                if (isSheetGesture) onMove(e.clientX, e.clientY);
+                if (isSheetGesture) onMove(e.clientX, e.clientY, e);
             });
 
             dom.fullscreenSheet.addEventListener('mouseup', (e) => {
