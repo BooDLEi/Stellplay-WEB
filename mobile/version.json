@@ -32,14 +32,14 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "65faa6c3807f6ef3c6fabd4857dc943bbe1fe6c622f2e58a1f58ee665024bae5",
-    "assets/css/mobile.css": "0e51f771ffb14c7980b4a225e60fc6065abf969b3ccb53a8be0156b0666fac76",
-    "assets/js/mobile-app.js": "7449578606096fe1bcce3c3ddaf725484c6f1b148e1f521513bed8559a92587e",
+    "index.html": "4330adadc79b5013f56ea9937b99a9d180ec5e0639c4376c6317eda3456c3cfb",
+    "assets/css/mobile.css": "67fb669cdd06d59ecd701b2e3c34c29a94c6f1ca08936738ad4d25b2e549b7ab",
+    "assets/js/mobile-app.js": "61622c720a6a9f61f99da1f413c276700f7863c39626372b2f19ff9232e5bdc1",
     "assets/js/mobile-player.js": "4292249e0a15552a0a058fdc5632eb46613ed56a6eb69866979ec688925df9af",
     "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
-    "patchnotes_android.txt": "e811e9a8bd503ce40bee4a037d3757d2477b461325dc742d89164af8a610df50"
+    "patchnotes_android.txt": "f367be7fe4a23e9030da5036fc07a40f8050714d2181c1200ef7ac0d960a8142"
   },
   "pcFileHashes": {
     "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",
