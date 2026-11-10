@@ -1850,7 +1850,8 @@ body::before {
     flex-direction: column;
     padding: calc(env(safe-area-inset-top) + 16px) 24px calc(env(safe-area-inset-bottom) + 24px);
     transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.32, 1, 0.23, 1);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
 }
 
 .fullscreen-sheet.open {
@@ -2194,7 +2195,8 @@ body::before {
     display: flex;
     flex-direction: column;
     transform: translateY(100%);
-    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
     padding-bottom: env(safe-area-inset-bottom);
 }
@@ -2713,7 +2715,8 @@ body::before {
     border-radius: 20px 20px 0 0;
     padding: 12px 18px calc(24px + env(safe-area-inset-bottom));
     transform: translateY(100%);
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
 }
 

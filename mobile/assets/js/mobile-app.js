@@ -38,7 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         selectedOfflineTypes: new Set(),
         activePlaylistDetailId: null,
         isPlaylistSelectMode: false,
-        playlistSelectedSongIds: new Set()
+        playlistSelectedSongIds: new Set(),
+        homeTracksDirty: false,
+        playlistsDirty: false
     };
 
     // DOM 캐싱
@@ -185,6 +187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         apkBannerTitle: document.getElementById('m-apk-banner-title'),
         apkUpdateChangelog: document.getElementById('m-apk-update-changelog'),
         btnDownloadApk: document.getElementById('btn-download-apk'),
+        apkManualBox: document.getElementById('m-apk-manual-box'),
+        apkManualBadge: document.getElementById('m-apk-manual-badge'),
+        btnManualDownloadApk: document.getElementById('btn-manual-download-apk'),
+        modalApkBadge: document.getElementById('m-modal-apk-badge'),
+        btnModalDownloadApk: document.getElementById('btn-modal-download-apk'),
         apkProgressWrap: document.getElementById('m-apk-progress-wrap'),
         apkProgressBar: document.getElementById('m-apk-progress-bar'),
         apkProgressText: document.getElementById('m-apk-progress-text'),
@@ -522,17 +529,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                         dom.otaVersionText.style.color = isLive ? '#38bdf8' : 'var(--color-green)';
                     }
 
-                    if (info.apkAvailable && dom.apkUpdateBanner) {
+                    // 오직 네이티브 필수 업데이트(nativeUpdateRequired) 상황에서만 강제 배너 표시
+                    if (info.nativeUpdateRequired && dom.apkUpdateBanner) {
                         dom.apkUpdateBanner.style.display = 'flex';
                         if (dom.apkBannerTitle) {
-                            dom.apkBannerTitle.textContent = `네이티브 앱(APK) 업데이트 v${info.latestApkName}`;
+                            dom.apkBannerTitle.textContent = `네이티브 앱(APK) 필수 엔진 업데이트 v${info.latestApkName || ''}`;
                         }
                         if (dom.apkUpdateChangelog) {
-                            dom.apkUpdateChangelog.textContent = info.latestApkChangelog || '보안 및 핵심 엔진 필수 업데이트가 포함되어 있습니다.';
+                            dom.apkUpdateChangelog.textContent = info.latestApkChangelog || '보안 및 네이티브 필수 인터페이스 업데이트가 필요합니다.';
                         }
                         latestApkDownloadUrl = info.latestApkUrl || '';
                     } else if (dom.apkUpdateBanner) {
                         dom.apkUpdateBanner.style.display = 'none';
+                    }
+
+                    // 수동 버전 탐색 및 원할 때 직접 설치할 수 있는 APK 다운로드 섹션
+                    if (dom.apkManualBox) {
+                        dom.apkManualBox.style.display = 'flex';
+                        const displayApkVer = info.latestApkName || info.installedApkName || '1.11.4';
+                        if (dom.apkManualBadge) dom.apkManualBadge.textContent = `v${displayApkVer}`;
+                        if (dom.modalApkBadge) dom.modalApkBadge.textContent = `v${displayApkVer}`;
+                    }
+                    if (info.latestApkUrl) {
+                        latestApkDownloadUrl = info.latestApkUrl;
                     }
                 } catch (e) {
                     console.warn('Failed parsing update info:', e);
@@ -769,16 +788,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.backdropOtaRestore) dom.backdropOtaRestore.addEventListener('click', closeOtaRestoreModal);
 
         // APK 원클릭 다운로드 및 설치 버튼
-        if (dom.btnDownloadApk) {
-            dom.btnDownloadApk.addEventListener('click', () => {
-                if (isNative && typeof window.AndroidBridge.downloadAndInstallApk === 'function') {
-                    if (dom.apkProgressWrap) dom.apkProgressWrap.style.display = 'flex';
+        function startApkInstallation() {
+            const dlUrl = latestApkDownloadUrl || 'https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk';
+            if (isNative && typeof window.AndroidBridge.downloadAndInstallApk === 'function') {
+                if (dom.apkProgressWrap) dom.apkProgressWrap.style.display = 'flex';
+                if (dom.btnDownloadApk) {
                     dom.btnDownloadApk.disabled = true;
                     dom.btnDownloadApk.textContent = 'APK 다운로드 중...';
-                    window.AndroidBridge.downloadAndInstallApk(latestApkDownloadUrl);
-                } else {
-                    window.open('https://github.com/BooDLEi/Stellplay-WEB/releases', '_blank');
                 }
+                if (dom.btnManualDownloadApk) {
+                    dom.btnManualDownloadApk.disabled = true;
+                    dom.btnManualDownloadApk.textContent = '다운로드 시작됨...';
+                }
+                showToast('최신 APK 파일 다운로드를 시작합니다...');
+                window.AndroidBridge.downloadAndInstallApk(dlUrl);
+            } else {
+                window.open('https://github.com/BooDLEi/Stellplay-WEB/releases/latest', '_blank');
+            }
+        }
+
+        if (dom.btnDownloadApk) {
+            dom.btnDownloadApk.addEventListener('click', startApkInstallation);
+        }
+        if (dom.btnManualDownloadApk) {
+            dom.btnManualDownloadApk.addEventListener('click', startApkInstallation);
+        }
+        if (dom.btnModalDownloadApk) {
+            dom.btnModalDownloadApk.addEventListener('click', () => {
+                closeOtaRestoreModal();
+                startApkInstallation();
             });
         }
 
@@ -4138,10 +4176,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 11. 이벤트 리스너 바인딩
     // ===================================================================
     function bindEvents() {
-        // 하단 탭 전환
+        // 하단 탭 전환 (0ms 즉각 반응 터치 & 중복 클릭 방지 & 불필요한 DOM 재렌더링 제거)
         dom.tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+            let lastTabTouchTime = 0;
+            function activateTab() {
                 const targetViewId = btn.dataset.view;
+                if (state.activeView === targetViewId) return;
                 state.activeView = targetViewId;
 
                 dom.tabBtns.forEach(b => b.classList.toggle('active', b === btn));
@@ -4173,31 +4213,84 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (targetViewId === 'view-offline') {
                     refreshOfflineCacheState().then(() => renderOfflineTracks());
                 }
-                else if (targetViewId === 'view-playlists') renderPlaylists();
-                else if (targetViewId === 'view-home') renderHomeTracks();
+                else if (targetViewId === 'view-playlists') {
+                    if (!state.playlistsRendered || state.playlistsDirty) {
+                        renderPlaylists();
+                        state.playlistsRendered = true;
+                        state.playlistsDirty = false;
+                    }
+                }
+                else if (targetViewId === 'view-home') {
+                    // 이미 홈 화면 트랙들이 렌더링되어 있으면 DOM을 파괴/재구축하지 않고 0ms로 즉각 표시
+                    if (!dom.trackListHome || dom.trackListHome.children.length === 0 || state.homeTracksDirty) {
+                        renderHomeTracks();
+                        state.homeTracksDirty = false;
+                    }
+                }
                 else if (targetViewId === 'view-settings') {
                     refreshOfflineCacheState();
                     updateSettingsCacheInfo();
                 }
+            }
+
+            btn.addEventListener('touchstart', (e) => {
+                lastTabTouchTime = Date.now();
+                activateTab();
+            }, { passive: true });
+
+            btn.addEventListener('click', (e) => {
+                if (Date.now() - lastTabTouchTime < 450) {
+                    e.preventDefault();
+                    return;
+                }
+                activateTab();
             });
         });
 
-        // 트랙 리스트 클릭 이벤트 위임 (컨테이너 레벨 단일 리스너로 1,650개 개별 리스너 제거)
-        if (dom.trackListHome) {
-            dom.trackListHome.addEventListener('click', (e) => handleTrackContainerClick(e, () => state.currentHomeSongs || getFilteredSongs()));
+        // 트랙 리스트 터치 및 클릭 이벤트 위임 (합성 클릭 지연 없는 0ms 즉각 탭 감지)
+        function bindFastTrackList(container, getSongsFn) {
+            if (!container) return;
+            let startX = 0, startY = 0, startTime = 0;
+            let targetRow = null;
+            let lastFastTapTime = 0;
+
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length !== 1) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                startTime = Date.now();
+                targetRow = e.target.closest('.m-track-row');
+            }, { passive: true });
+
+            container.addEventListener('touchend', (e) => {
+                if (!targetRow || e.changedTouches.length === 0) return;
+                const dx = Math.abs(e.changedTouches[0].clientX - startX);
+                const dy = Math.abs(e.changedTouches[0].clientY - startY);
+                const elapsed = Date.now() - startTime;
+
+                // 세로 스크롤 이동이 없고 400ms 이내의 순수 탭인 경우 지연 없이 즉시 실행
+                if (dx < 10 && dy < 10 && elapsed < 400) {
+                    lastFastTapTime = Date.now();
+                    handleTrackContainerClick(e, getSongsFn);
+                }
+                targetRow = null;
+            }, { passive: true });
+
+            container.addEventListener('click', (e) => {
+                if (Date.now() - lastFastTapTime < 450) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+                handleTrackContainerClick(e, getSongsFn);
+            });
         }
-        if (dom.trackListOffline) {
-            dom.trackListOffline.addEventListener('click', (e) => handleTrackContainerClick(e, () => state.currentOfflineSongs || []));
-        }
-        if (dom.trackListSabi) {
-            dom.trackListSabi.addEventListener('click', (e) => handleTrackContainerClick(e, () => state.currentSabiSongs || []));
-        }
-        if (dom.detailPlaylistTracks) {
-            dom.detailPlaylistTracks.addEventListener('click', (e) => handleTrackContainerClick(e, () => state.currentPlaylistTracks || []));
-        }
-        if (dom.moodTrackList) {
-            dom.moodTrackList.addEventListener('click', (e) => handleTrackContainerClick(e, () => currentMoodSongs || []));
-        }
+
+        bindFastTrackList(dom.trackListHome, () => state.currentHomeSongs || getFilteredSongs());
+        bindFastTrackList(dom.trackListOffline, () => state.currentOfflineSongs || []);
+        bindFastTrackList(dom.trackListSabi, () => state.currentSabiSongs || []);
+        bindFastTrackList(dom.detailPlaylistTracks, () => state.currentPlaylistTracks || []);
+        bindFastTrackList(dom.moodTrackList, () => currentMoodSongs || []);
 
         // 정렬 셀렉트 (최신순 / 오래된순 / 곡명순)
         if (dom.sortSelect) {
@@ -5285,11 +5378,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }, { passive: true });
 
-            // 미니 플레이어 탭 -> 전체화면 시트 열기
-            dom.miniLeftContent.addEventListener('click', (e) => {
+            // 미니 플레이어 탭 -> 전체화면 시트 열기 (지연 없는 즉시 오픈)
+            let lastMiniOpenTime = 0;
+            function triggerOpenFullscreenSheet(e) {
                 if (miniIsSwiped) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                    if (e && e.preventDefault) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
                     return;
                 }
                 document.body.classList.remove('tablet-queue-collapsed');
@@ -5300,6 +5396,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (isTabletLayout()) {
                     renderMobileQueue(true);
                 }
+            }
+
+            dom.miniLeftContent.addEventListener('touchend', (e) => {
+                if (miniIsSwiped) return;
+                lastMiniOpenTime = Date.now();
+                triggerOpenFullscreenSheet(e);
+            }, { passive: true });
+
+            dom.miniLeftContent.addEventListener('click', (e) => {
+                if (Date.now() - lastMiniOpenTime < 450) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+                triggerOpenFullscreenSheet(e);
             });
         }
         function closeMobilePlayerSheet() {
@@ -5309,7 +5420,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.fullscreenSheet.classList.remove('open');
             dockYouTubePlayer(false);
         }
-        dom.sheetCloseBtn.addEventListener('click', () => {
+
+        let lastSheetCloseTime = 0;
+        dom.sheetCloseBtn.addEventListener('touchstart', (e) => {
+            lastSheetCloseTime = Date.now();
+            closeMobilePlayerSheet();
+        }, { passive: true });
+        dom.sheetCloseBtn.addEventListener('click', (e) => {
+            if (Date.now() - lastSheetCloseTime < 450) return;
             closeMobilePlayerSheet();
         });
 
@@ -5358,14 +5476,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             let sheetStartY = 0;
             let sheetStartX = 0;
             let isSheetGesture = false;
+            let isPullingDown = false;
 
-            const isInteractive = (el) => !!(el && (el.closest('button') || el.closest('input') || el.closest('a') || el.closest('.sheet-menu-dropdown') || el.closest('#m-modal-sabi-editor')));
+            const isInteractive = (el) => !!(el && (el.closest('button') || el.closest('input') || el.closest('a') || el.closest('.sheet-menu-dropdown') || el.closest('#m-modal-sabi-editor') || el.closest('.m-video-box')));
 
             const onStart = (clientX, clientY, target) => {
                 if (isInteractive(target)) return;
                 sheetStartY = clientY;
                 sheetStartX = clientX;
                 isSheetGesture = true;
+                isPullingDown = false;
+            };
+
+            const onMove = (clientX, clientY) => {
+                if (!isSheetGesture) return;
+                const deltaY = clientY - sheetStartY;
+                const deltaX = clientX - sheetStartX;
+
+                // 손가락을 내리는 즉시 전체화면 플레이어가 손가락에 밀착하여 1:1로 실시간 하강
+                if (deltaY > 6 && Math.abs(deltaY) > Math.abs(deltaX)) {
+                    isPullingDown = true;
+                    dom.fullscreenSheet.style.transition = 'none';
+                    dom.fullscreenSheet.style.transform = `translateY(${Math.max(0, deltaY)}px)`;
+                }
             };
 
             const onEnd = (clientX, clientY) => {
@@ -5376,33 +5509,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const isTablet = isTabletLayout();
 
+                if (isPullingDown) {
+                    isPullingDown = false;
+                    dom.fullscreenSheet.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
+                    if (deltaY > 55) {
+                        // 55px 이상 내렸으면 즉시 메인화면으로 복귀
+                        closeMobilePlayerSheet();
+                        setTimeout(() => {
+                            dom.fullscreenSheet.style.transform = '';
+                            dom.fullscreenSheet.style.transition = '';
+                        }, 220);
+                        return;
+                    } else {
+                        // 탄성 복귀
+                        dom.fullscreenSheet.style.transform = 'translateY(0)';
+                        setTimeout(() => {
+                            dom.fullscreenSheet.style.transform = '';
+                            dom.fullscreenSheet.style.transition = '';
+                        }, 220);
+                        return;
+                    }
+                }
+
                 if (isTablet) {
                     // 태블릿 전용 제스처
                     if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
                         if (deltaX < -40) {
-                            // 왼쪽으로 슬라이드: 우측 대기열 패널 열기
                             document.body.classList.remove('tablet-queue-collapsed');
                             renderMobileQueue(true);
                             return;
                         } else if (deltaX > 40) {
-                            // 오른쪽으로 슬라이드: 우측 대기열 패널 접기
                             document.body.classList.add('tablet-queue-collapsed');
                             return;
                         }
                     }
                     if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 40) {
-                        // 재생창 영역에서 내리면: 메인화면으로 바로 내려가기
                         closeMobilePlayerSheet();
                         return;
                     }
                 } else {
                     // 모바일(스마트폰) 전용 제스처
-                    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 40) {
+                    if (Math.abs(deltaY) > Math.abs(deltaX)) {
                         if (deltaY > 40) {
-                            // 내리면: 메인화면으로 복귀
                             closeMobilePlayerSheet();
                         } else if (deltaY < -40) {
-                            // 올리면: 재생목록(대기열) 열기
                             openQueueSheet();
                         }
                     }
@@ -5413,12 +5563,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
             }, { passive: true });
 
+            dom.fullscreenSheet.addEventListener('touchmove', (e) => {
+                onMove(e.touches[0].clientX, e.touches[0].clientY);
+            }, { passive: true });
+
             dom.fullscreenSheet.addEventListener('touchend', (e) => {
                 onEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
             }, { passive: true });
 
             dom.fullscreenSheet.addEventListener('mousedown', (e) => {
                 onStart(e.clientX, e.clientY, e.target);
+            });
+
+            dom.fullscreenSheet.addEventListener('mousemove', (e) => {
+                if (isSheetGesture) onMove(e.clientX, e.clientY);
             });
 
             dom.fullscreenSheet.addEventListener('mouseup', (e) => {
@@ -6236,12 +6394,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 재생/일시정지
-        dom.miniPlayBtn.addEventListener('click', () => player.togglePlay());
-        dom.miniNextBtn.addEventListener('click', () => player.playNext());
-        dom.sheetPlayBtn.addEventListener('click', () => player.togglePlay());
-        dom.sheetNextBtn.addEventListener('click', () => player.playNext());
-        dom.sheetPrevBtn.addEventListener('click', () => player.playPrev());
+        // 재생/일시정지 및 곡 넘김 (0ms 즉각 반응 터치 & 중복 클릭 방지)
+        function bindFastControl(btn, actionFn) {
+            if (!btn) return;
+            let lastActionTime = 0;
+            btn.addEventListener('touchstart', (e) => {
+                lastActionTime = Date.now();
+                actionFn(e);
+            }, { passive: true });
+            btn.addEventListener('click', (e) => {
+                if (Date.now() - lastActionTime < 450) {
+                    e.preventDefault();
+                    return;
+                }
+                actionFn(e);
+            });
+        }
+
+        bindFastControl(dom.miniPlayBtn, () => player.togglePlay());
+        bindFastControl(dom.miniNextBtn, () => player.playNext());
+        bindFastControl(dom.sheetPlayBtn, () => player.togglePlay());
+        bindFastControl(dom.sheetNextBtn, () => player.playNext());
+        bindFastControl(dom.sheetPrevBtn, () => player.playPrev());
 
         // 시트 다운로드 버튼 클릭
         if (dom.sheetDownloadBtn) {
