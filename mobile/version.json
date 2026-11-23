@@ -1,6 +1,6 @@
 {
-  "otaVersion": 2026111006,
-  "otaReleaseDate": "2026-11-10",
+  "otaVersion": 2026112301,
+  "otaReleaseDate": "2026-11-23",
   "apkVersionName": "1.11.4",
   "files": [
     "index.html",
@@ -33,25 +33,25 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "3b6116e2a2a4f462ffa3dac6ae24a77682adb84cb5c671e93b719f93c9c3161f",
-    "assets/css/mobile.css": "e988be4c1796abd2554aa456ec2681990d99a0f3cc3e97e1b4903410078db133",
-    "assets/js/mobile-app.js": "ba15d43f547c77ae801cf78a7722ec457431a7be51271983e017bcbb4a7a627a",
+    "index.html": "51b95ea722ca8994ecce9d05c7f77fe4786a48231ba13220d891ce5af0117a56",
+    "assets/css/mobile.css": "40672ac42cb6e5b967a1ea8cef00c395033c4e9a599a760cddf1538250a7ac24",
+    "assets/js/mobile-app.js": "1ff5f94266b18fc2d3f5a194eb746b94ccbbcfc525f61c11c1f40e818aaf48c1",
     "assets/js/mobile-player.js": "7ce7336efb05e9cd7dd5a045c3de993324e71f737919c2c6b77bad9382a90221",
-    "assets/js/songs.js": "971f1eb8ea039423b5312c09a7cb53c7c7f26b14fa46eac7ed5d7d9ef4e48025",
+    "assets/js/songs.js": "ea38b85b96152827981a8ad66e46c2441281846e82ea5a8c2d15cd3dad8244dc",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
-    "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
-    "patchnotes_android.txt": "cb4bc512a1f4853912dd939427b1065244941a24792dff0992875aed021b08ea"
+    "songs-latest.json": "ebba1064f046dc58a551a885032a8fd79f3e29e3430d9f457c1c8682760453d8",
+    "patchnotes_android.txt": "1bba75950df3ce24697ce07c91a455e05c39b22754392353a1779b68b3db0706"
   },
   "pcFileHashes": {
     "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",
     "assets/css/style.css": "a94b64922c5e81a7a0f9115f28ecff1e632c3754701a8f6c5ea8e0392bb400fc",
-    "assets/js/songs.js": "3aa473c72fd8a960dacb5d1c704446ed959f23e42a2a1ea69712044f42cc8663",
+    "assets/js/songs.js": "4f5a463157213bc4d51c3bf0133f6203f92ed9438efab63f73453e23695d0578",
     "assets/js/storage.js": "6f3f06727cb97bbb0691138b8cbd9bf67c0ca51b0ae8e08461f43cb28f6c2c88",
     "assets/js/player.js": "89b0ec8793de607f24587a818007415b4bf7cf40d27cbf4cecc84504e25fd04f",
     "assets/js/app.js": "9466c1fddfd4f6c1dc4b8190477f266b189e8ea7423b9b87f84bf8ed0ae5cdec",
-    "songs-latest.json": "27072500d0f7c88b23ed8e9da0ccf2c52511107d6e49ff73db8bff8367622ba1",
-    "patchnotes_pc.txt": "8703891d1c062e07a45f65eaf8f8317442511a42c46b1538897c150552b9e39e",
-    "patchnotes_web.txt": "102d6e8686867b15f5722ed1175c8cccfe20cb20400408aefca42e37af00ced0"
+    "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
+    "patchnotes_pc.txt": "380278bdea3ee0111cc7afafafb3f4146d2d670a684197822e180290b795b854",
+    "patchnotes_web.txt": "5ec5e00f6b34115266f5985eb7a3241ffe7dff6a93b5b8a4cf2dcfe5a8918fdf"
   }
 }

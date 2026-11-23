@@ -211,6 +211,175 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-QuPmTX-GcAU",
+        "title": "HELP!!",
+        "artist": "시즈키 토아",
+        "originalArtist": "Kobo Kanaeru (코보 카나에루)",
+        "type": "cover",
+        "gen": "g4",
+        "members": [
+                "toa"
+        ],
+        "youtubeId": "QuPmTX-GcAU",
+        "duration": 188,
+        "sabi": {
+                "start": 42,
+                "end": 76,
+                "title": "후렴구: HELP!!"
+        },
+        "publishedAt": "2026-11-22",
+        "mood": "upbeat"
+},
+    {
+        "id": "stel-lae-GcDKZjo",
+        "title": "자그만 기적 (A Tiny Miracle)",
+        "artist": "아야츠노 유니",
+        "originalArtist": "호랑이 들어와요 2 OP (애니메이션 OST)",
+        "type": "original",
+        "gen": "g1",
+        "members": [
+                "yuni"
+        ],
+        "youtubeId": "lae-GcDKZjo",
+        "duration": 81,
+        "sabi": {
+                "start": 25,
+                "end": 55,
+                "title": "후렴구: 자그만 기적"
+        },
+        "publishedAt": "2026-11-20",
+        "mood": "bright"
+},
+    {
+        "id": "stel-8lD-6Xyq4Lg",
+        "title": "발랄라이카 (BALALAIKA)",
+        "artist": "하나코 나나",
+        "originalArtist": "9Lana",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+                "nana"
+        ],
+        "youtubeId": "8lD-6Xyq4Lg",
+        "duration": 192,
+        "sabi": {
+                "start": 45,
+                "end": 85,
+                "title": "후렴구: 발랄라이카"
+        },
+        "publishedAt": "2026-11-11",
+        "mood": "upbeat"
+},
+    {
+        "id": "stel-Z5N_XqM9Nl8",
+        "title": "BUMPA",
+        "artist": "네네코 마시로",
+        "originalArtist": "비비 (BIBI)",
+        "type": "cover",
+        "gen": "g2",
+        "members": [
+                "mashiro"
+        ],
+        "youtubeId": "Z5N_XqM9Nl8",
+        "duration": 216,
+        "sabi": {
+                "start": 50,
+                "end": 90,
+                "title": "후렴구: BUMPA"
+        },
+        "publishedAt": "2026-11-08",
+        "mood": "dreamy"
+},
+    {
+        "id": "stel-TM-uVDKQxhg",
+        "title": "Loveit?",
+        "artist": "유즈하 리코",
+        "originalArtist": "biz × ZERA feat. LOLUET",
+        "type": "cover",
+        "gen": "g3",
+        "members": [
+                "riko"
+        ],
+        "youtubeId": "TM-uVDKQxhg",
+        "duration": 155,
+        "sabi": {
+                "start": 40,
+                "end": 75,
+                "title": "후렴구: Loveit?"
+        },
+        "publishedAt": "2026-11-07",
+        "mood": "upbeat"
+},
+    {
+        "id": "stel-liPEQZJLQh4",
+        "title": "로스트원의 호곡 (ロストワンの号哭)",
+        "artist": "아카네 리제",
+        "originalArtist": "Neru feat. 鏡音リン",
+        "type": "cover",
+        "gen": "g2",
+        "members": [
+                "lize"
+        ],
+        "youtubeId": "liPEQZJLQh4",
+        "duration": 217,
+        "sabi": {
+                "start": 48,
+                "end": 88,
+                "title": "후렴구: 로스트원의 호곡"
+        },
+        "publishedAt": "2026-11-06",
+        "mood": "upbeat"
+},
+    {
+        "id": "stel-qNOFi7GzpfM",
+        "title": "괴도 F의 대본 ~사라진 다이아몬드의 수수께끼~ (怪盗Fの台本〜消えたダイヤの謎〜)",
+        "artist": "스텔라이브",
+        "originalArtist": "ひとしずく×やま△ (Hitoshizuku-P × Yama△)",
+        "type": "cover",
+        "gen": "group",
+        "members": [
+                "yuni",
+                "huya",
+                "hina",
+                "mashiro",
+                "lize",
+                "tabi",
+                "shibuki",
+                "rin",
+                "nana",
+                "riko"
+        ],
+        "youtubeId": "qNOFi7GzpfM",
+        "duration": 246,
+        "sabi": {
+                "start": 60,
+                "end": 105,
+                "title": "후렴구: 괴도 F의 대본"
+        },
+        "publishedAt": "2026-10-31",
+        "mood": "upbeat"
+},
+    {
+        "id": "stel-SRMTyNLUnZY",
+        "title": "Letters to me",
+        "artist": "사키하네 후야",
+        "originalArtist": "아카네 린 (이환 OST)",
+        "type": "cover",
+        "gen": "g1",
+        "members": [
+                "huya"
+        ],
+        "youtubeId": "SRMTyNLUnZY",
+        "duration": 250,
+        "sabi": {
+                "start": 65,
+                "end": 105,
+                "title": "후렴구: Letters to me"
+        },
+        "publishedAt": "2026-10-23",
+        "mood": "emotional"
+},
+    {
         "id": "stel-LmOl01G4DR4",
         "title": "打上花火 (타상연화)",
         "artist": "시라유키 히나 & 아오쿠모 린",

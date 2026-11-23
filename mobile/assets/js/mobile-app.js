@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.11.6';
-    const CURRENT_OTA_BUILD = 2026111006;
+    const CURRENT_APP_VERSION = '1.11.7';
+    const CURRENT_OTA_BUILD = 2026112301;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;

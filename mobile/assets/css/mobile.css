@@ -35,7 +35,7 @@
     --color-sabi: #f59e0b;
     --color-danger: #ef4444;
 
-    --safe-bottom: max(34px, env(safe-area-inset-bottom, 34px));
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
     --tab-height: 54px;
     --mini-player-height: 64px;
 }
@@ -1781,7 +1781,7 @@ body::before {
     -webkit-backdrop-filter: blur(25px);
     border-top: 1px solid var(--border-glass);
     display: flex;
-    align-items: stretch;
+    align-items: center;
     justify-content: space-around;
     z-index: 100;
 }
@@ -1796,8 +1796,8 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 6px;
+    justify-content: center;
+    padding: 4px 0;
     gap: 3px;
     cursor: pointer;
     position: relative;
@@ -4121,6 +4121,35 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     opacity: 1 !important;
     pointer-events: auto !important;
     z-index: 10 !important;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    margin: 0 0 16px 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0;
+    aspect-ratio: auto !important;
+}
+
+.m-video-dock-target {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.m-video-box.active-video .m-video-dock-target {
+    width: 92%;
+    max-width: 440px;
+    aspect-ratio: 16/9;
+    max-height: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    position: relative;
 }
 
 #m-youtube-player-wrap {
@@ -4194,9 +4223,17 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
 
 .m-video-box:fullscreen #m-video-dock-target,
 .m-video-box:-webkit-full-screen #m-video-dock-target,
-.m-video-box.video-fullscreen-active #m-video-dock-target {
+.m-video-box.video-fullscreen-active #m-video-dock-target,
+.m-video-box:fullscreen .m-video-dock-target,
+.m-video-box:-webkit-full-screen .m-video-dock-target,
+.m-video-box.video-fullscreen-active .m-video-dock-target {
     width: 100% !important;
     height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
     position: relative !important;
 }
 

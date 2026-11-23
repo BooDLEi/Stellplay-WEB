@@ -1,8 +1,129 @@
 {
   "success": true,
   "count": 100,
-  "updatedAt": "2026-09-27T19:16:01.056325+00:00",
+  "updatedAt": "2026-11-23T03:53:15.104817+00:00",
   "tracks": [
+    {
+      "id": "QuPmTX-GcAU",
+      "title": "HELP!!",
+      "rawTitle": "HELP!! [Kobo Kanaeru] / 시즈키 토아 (Shizuki Toa) Cover",
+      "duration": 188,
+      "uploader": "시즈키 토아 SHIZUKI TOA",
+      "defaultMember": "toa",
+      "members": [
+        "toa"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-11-22",
+      "mood": "upbeat"
+    },
+    {
+      "id": "lae-GcDKZjo",
+      "title": "자그만 기적 (A Tiny Miracle)",
+      "rawTitle": "[Official Audio] 아야츠노 유니 - 자그만 기적 (A Tiny Miracle) ['호랑이 들어와요 2' OP]",
+      "duration": 81,
+      "uploader": "DanalEntertainment",
+      "defaultMember": "yuni",
+      "members": [
+        "yuni"
+      ],
+      "defaultType": "original",
+      "publishedAt": "2026-11-20",
+      "mood": "bright"
+    },
+    {
+      "id": "8lD-6Xyq4Lg",
+      "title": "발랄라이카 (BALALAIKA)",
+      "rawTitle": "발랄라이카 [ BALALAIKA / 9Lana ] / 하나코 나나 COVER",
+      "duration": 192,
+      "uploader": "하나코 나나 HANAKO NANA",
+      "defaultMember": "nana",
+      "members": [
+        "nana"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-11-11",
+      "mood": "upbeat"
+    },
+    {
+      "id": "Z5N_XqM9Nl8",
+      "title": "BUMPA",
+      "rawTitle": "BUMPA [비비 (BIBI)] - 네네코 마시로 Cover",
+      "duration": 216,
+      "uploader": "네네코 마시로 NENEKO MASHIRO",
+      "defaultMember": "mashiro",
+      "members": [
+        "mashiro"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-11-08",
+      "mood": "dreamy"
+    },
+    {
+      "id": "TM-uVDKQxhg",
+      "title": "Loveit?",
+      "rawTitle": "Loveit? [ biz×ZERA feat LOLUET ] / 유즈하 리코 Yuzuha Riko cover",
+      "duration": 155,
+      "uploader": "유즈하 리코 YUZUHA RIKO",
+      "defaultMember": "riko",
+      "members": [
+        "riko"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-11-07",
+      "mood": "upbeat"
+    },
+    {
+      "id": "liPEQZJLQh4",
+      "title": "로스트원의 호곡 (ロストワンの号哭)",
+      "rawTitle": "로스트원의 호곡 [ロストワンの号哭 / Neru]ㅣ아카네 리제(Akane Lize) 【COVER】",
+      "duration": 217,
+      "uploader": "아카네 리제 AKANE LIZE",
+      "defaultMember": "lize",
+      "members": [
+        "lize"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-11-06",
+      "mood": "upbeat"
+    },
+    {
+      "id": "qNOFi7GzpfM",
+      "title": "괴도 F의 대본 ~사라진 다이아몬드의 수수께끼~ (怪盗Fの台本〜消えたダイヤの謎〜)",
+      "rawTitle": "괴도 F의 대본 ~사라진 다이아몬드의 수수께끼~ [ひとしずく×やま△] / 스텔라이브 (STELLIVE) Cover",
+      "duration": 246,
+      "uploader": "아오쿠모 린 AOKUMO RIN",
+      "defaultMember": "group",
+      "members": [
+        "yuni",
+        "huya",
+        "hina",
+        "mashiro",
+        "lize",
+        "tabi",
+        "shibuki",
+        "rin",
+        "nana",
+        "riko"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-10-31",
+      "mood": "upbeat"
+    },
+    {
+      "id": "SRMTyNLUnZY",
+      "title": "Letters to me",
+      "rawTitle": "Letters to me [이환 OST / 아카네 린] l 사키하네 후야(Sakihane Huya) Cover",
+      "duration": 250,
+      "uploader": "사키하네 후야 SAKIHANE HUYA",
+      "defaultMember": "huya",
+      "members": [
+        "huya"
+      ],
+      "defaultType": "cover",
+      "publishedAt": "2026-10-23",
+      "mood": "emotional"
+    },
     {
       "id": "LmOl01G4DR4",
       "title": "打上花火 (타상연화)",
@@ -1299,120 +1420,6 @@
       "defaultType": "original",
       "publishedAt": "2024-04-30",
       "mood": "bright"
-    },
-    {
-      "id": "uTj88854gZ0",
-      "title": "Dear my fairy",
-      "rawTitle": "시라유키 히나 X 네네코 마시로 | ‘Dear my fairy’",
-      "duration": 250,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "hina",
-        "mashiro"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2024-04-21",
-      "mood": "chill"
-    },
-    {
-      "id": "suyhkCwKX48",
-      "title": "Hit On Shot",
-      "rawTitle": "아이리 칸나 x 아카네 리제  | ‘Hit On Shot’",
-      "duration": 209,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "kanna",
-        "lize"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2024-04-03",
-      "mood": "upbeat"
-    },
-    {
-      "id": "iCCqSFvz9kM",
-      "title": "최종화",
-      "rawTitle": "아이리 칸나(Airi Kanna) | 최종화 (Acoustic Ver.)",
-      "duration": 247,
-      "uploader": "Airi Kanna",
-      "defaultMember": "kanna",
-      "members": [
-        "kanna"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2024-03-03",
-      "mood": "upbeat"
-    },
-    {
-      "id": "YcyDo-jp4YM",
-      "title": "Milky Way",
-      "rawTitle": "STELLIVE (스텔라이브) ‘Milky Way’ Music Video",
-      "duration": 193,
-      "uploader": "스텔라이브 StelLive Official",
-      "defaultMember": "group",
-      "members": [
-        "group"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2024-02-24",
-      "mood": "bright"
-    },
-    {
-      "id": "ajDAmJYPQ-U",
-      "title": "최종화",
-      "rawTitle": "藍璃かんな(Airi Kanna) | ‘最終花’",
-      "duration": 256,
-      "uploader": "Airi Kanna",
-      "defaultMember": "kanna",
-      "members": [
-        "kanna"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2023-11-09",
-      "mood": "upbeat"
-    },
-    {
-      "id": "pkypi5nXSYM",
-      "title": "내꺼 하는 법",
-      "rawTitle": "아야츠노 유니 ( Ayatsuno Yuni ) | ‘내꺼 하는 법’ Music Video",
-      "duration": 146,
-      "uploader": "아야츠노 유니 AYATSUNO YUNI",
-      "defaultMember": "yuni",
-      "members": [
-        "yuni"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2023-07-20",
-      "mood": "cute"
-    },
-    {
-      "id": "AsoPg-h-644",
-      "title": "色彩 (색채)",
-      "rawTitle": "色彩 / Team. Palette 【ボカデュオ2023】",
-      "duration": 230,
-      "uploader": "Airi Kanna",
-      "defaultMember": "kanna",
-      "members": [
-        "kanna"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2023-07-07",
-      "mood": "upbeat"
-    },
-    {
-      "id": "kPdB6iGYBBc",
-      "title": "ADDICT!ON",
-      "rawTitle": "藍璃かんな(Airi Kanna) | ‘ADDICT!ON’ Music Video",
-      "duration": 217,
-      "uploader": "Airi Kanna",
-      "defaultMember": "kanna",
-      "members": [
-        "kanna"
-      ],
-      "defaultType": "original",
-      "publishedAt": "2023-05-26",
-      "mood": "upbeat"
     }
   ]
 }
