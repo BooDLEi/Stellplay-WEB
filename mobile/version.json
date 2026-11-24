@@ -1,6 +1,6 @@
 {
-  "otaVersion": 2026112301,
-  "otaReleaseDate": "2026-11-23",
+  "otaVersion": 2026112401,
+  "otaReleaseDate": "2026-11-24",
   "apkVersionName": "1.11.4",
   "files": [
     "index.html",
@@ -33,15 +33,15 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "51b95ea722ca8994ecce9d05c7f77fe4786a48231ba13220d891ce5af0117a56",
-    "assets/css/mobile.css": "40672ac42cb6e5b967a1ea8cef00c395033c4e9a599a760cddf1538250a7ac24",
-    "assets/js/mobile-app.js": "1ff5f94266b18fc2d3f5a194eb746b94ccbbcfc525f61c11c1f40e818aaf48c1",
-    "assets/js/mobile-player.js": "7ce7336efb05e9cd7dd5a045c3de993324e71f737919c2c6b77bad9382a90221",
+    "index.html": "8596645ee7789f3f50f90cdf5f97bbf21a8afc8f2e977cdb5897bcbb2d551780",
+    "assets/css/mobile.css": "88e43b4c4afd2571e3c93ae46115db349c005a408242c0925c5e8bf75e0ac6d1",
+    "assets/js/mobile-app.js": "0aa9d017bd44b24922f09f77326b44c7e678e1ed2b72c52907e896f4863e2d65",
+    "assets/js/mobile-player.js": "700a66bc028027cb903f17cbbf712c7af190f93534d8c452e5d9288a0eafbcfb",
     "assets/js/songs.js": "ea38b85b96152827981a8ad66e46c2441281846e82ea5a8c2d15cd3dad8244dc",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "ebba1064f046dc58a551a885032a8fd79f3e29e3430d9f457c1c8682760453d8",
-    "patchnotes_android.txt": "1bba75950df3ce24697ce07c91a455e05c39b22754392353a1779b68b3db0706"
+    "patchnotes_android.txt": "be9619cbf9e8d582068623bc60f8a6faedc7942e27fe4fc12ef92e4fbbddfbcb"
   },
   "pcFileHashes": {
     "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",
@@ -52,6 +52,6 @@
     "assets/js/app.js": "9466c1fddfd4f6c1dc4b8190477f266b189e8ea7423b9b87f84bf8ed0ae5cdec",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
     "patchnotes_pc.txt": "380278bdea3ee0111cc7afafafb3f4146d2d670a684197822e180290b795b854",
-    "patchnotes_web.txt": "5ec5e00f6b34115266f5985eb7a3241ffe7dff6a93b5b8a4cf2dcfe5a8918fdf"
+    "patchnotes_web.txt": "e50a644bed5b007ac1f0a873dc05be9d5462d6862bbca6e026cfaa6221bc9a02"
   }
 }

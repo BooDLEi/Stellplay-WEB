@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.11.7';
-    const CURRENT_OTA_BUILD = 2026112301;
+    const CURRENT_APP_VERSION = '1.11.8';
+    const CURRENT_OTA_BUILD = 2026112401;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -85,6 +85,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         activePlaylistDetailId: null,
         isPlaylistSelectMode: false,
         playlistSelectedSongIds: new Set(),
+        playlistViewMode: localStorage.getItem('stellplay_playlist_view_mode') || 'list',
+        isSearchOpen: false,
         homeTracksDirty: false,
         playlistsDirty: false
     };
@@ -95,6 +97,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 헤더 & 계층형 멤버 필터
         searchInput: document.getElementById('m-search-input'),
         searchClear: document.getElementById('m-search-clear'),
+        searchClose: document.getElementById('m-search-close'),
+        searchDrawer: document.getElementById('m-home-search-drawer'),
         searchBarWrap: document.querySelector('.search-bar-wrap'),
         membersContainer: document.getElementById('m-members-filter-container') || document.getElementById('m-members-grid'),
         membersGrid: document.getElementById('m-members-grid') || document.getElementById('m-members-filter-container'),
@@ -110,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 뷰
         viewSections: document.querySelectorAll('.view-section'),
-        typePills: document.querySelectorAll('.type-pill'),
+        typePills: document.querySelectorAll('#m-home-type-pills .type-pill'),
         trackCountHome: document.getElementById('m-track-count'),
         trackListHome: document.getElementById('m-track-list-home'),
         trackCountSabi: document.getElementById('m-sabi-count'),
@@ -120,8 +124,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 홈 퀵 액션 바 & 멀티선택
         btnOpenQueueHome: document.getElementById('btn-open-queue-home'),
         btnQueueHomeText: document.getElementById('btn-queue-home-text'),
+        btnOpenMoodHome: document.getElementById('btn-open-mood-home'),
         btnOpenAddSongHome: document.getElementById('btn-open-add-song-home'),
         btnSyncSongsHome: document.getElementById('btn-sync-songs-home'),
+        btnToggleSearchHome: document.getElementById('btn-toggle-search-home'),
         btnToggleMultiselectHome: document.getElementById('btn-toggle-multiselect-home'),
         multiselectBar: document.getElementById('m-multiselect-bar'),
         multiselectCount: document.getElementById('m-multiselect-count'),
@@ -401,6 +407,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnSabiPreviewToggle: document.getElementById('btn-sabi-preview-toggle'),
         // 분위기 추천 & 모달
         moodCardsList: document.getElementById('m-mood-cards-list'),
+        modalMoodPicker: document.getElementById('m-modal-mood-picker'),
+        btnCloseMoodPicker: document.getElementById('m-btn-close-mood-picker'),
         modalMoodDetail: document.getElementById('m-modal-mood-detail'),
         moodModalIcon: document.getElementById('m-mood-modal-icon'),
         moodModalTitle: document.getElementById('m-mood-modal-title'),
@@ -410,6 +418,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnMoodRefresh: document.getElementById('btn-mood-refresh'),
         btnMoodSavePlaylist: document.getElementById('btn-mood-save-playlist'),
         btnCloseMoodModal: document.getElementById('m-btn-close-mood-modal'),
+        btnTogglePlaylistView: document.getElementById('btn-toggle-playlist-view'),
+        videoTouchShield: document.getElementById('m-video-touch-shield'),
 
         toastContainer: document.getElementById('toast-container')
     };
@@ -1846,8 +1856,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 3. 검색 쿼리
-        if (state.searchQuery) {
+        // 3. 검색 쿼리 (홈 검색 드로어 전용 - 오프라인 보관함 필터링에는 개입하지 않음)
+        if (state.searchQuery && !customTypeSet) {
             const q = state.searchQuery.toLowerCase();
             res = res.filter(s =>
                 (s.title && s.title.toLowerCase().includes(q)) ||
@@ -1993,9 +2003,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ===================================================================
     // 4.1 재생목록 탭 (Playlists) & 상세 화면 렌더러
     // ===================================================================
+    function syncPlaylistViewToggleIcon() {
+        const isGallery = state.playlistViewMode === 'gallery';
+        if (dom.playlistsGrid) {
+            dom.playlistsGrid.classList.toggle('gallery-mode', isGallery);
+        }
+        if (dom.btnTogglePlaylistView) {
+            if (isGallery) {
+                // 현재 갤러리 모드일 때 -> 리스트 보기 아이콘 버튼 표시
+                dom.btnTogglePlaylistView.title = '리스트 보기로 전환';
+                dom.btnTogglePlaylistView.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                        <circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/>
+                    </svg>
+                `;
+            } else {
+                // 현재 리스트 모드일 때 -> 갤러리 보기 아이콘 버튼 표시
+                dom.btnTogglePlaylistView.title = '갤러리 보기로 전환';
+                dom.btnTogglePlaylistView.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                    </svg>
+                `;
+            }
+        }
+    }
+
     function renderPlaylists() {
         state.playlistsDirty = false;
         if (!dom.playlistsGrid) return;
+        syncPlaylistViewToggleIcon();
+
         const all = window.getAllSongs ? window.getAllSongs() : [];
         const songMap = new Map(all.map(s => [s.id, s]));
 
@@ -2008,7 +2050,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         dom.playlistsGrid.innerHTML = '';
         if (playlists.length === 0) {
             dom.playlistsGrid.innerHTML = `
-                <div style="text-align:center; padding:30px 10px; color:var(--text-muted); background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed var(--border-glass);">
+                <div style="grid-column:1 / -1; text-align:center; padding:30px 10px; color:var(--text-muted); background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed var(--border-glass);">
                     <div style="font-size:1.6rem; margin-bottom:6px;">📑</div>
                     <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:4px;">생성된 재생목록이 없습니다</div>
                     <div style="font-size:0.75rem;">상단의 '+ 새 목록' 버튼 또는 홈 화면에서 곡을 선택하여 나만의 재생목록을 만들어보세요!</div>
@@ -2017,36 +2059,88 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        const isGallery = state.playlistViewMode === 'gallery';
+
         playlists.forEach(pl => {
-            const card = document.createElement('div');
-            card.className = `playlist-card ${pl.isHistory ? 'playlist-card-history' : ''}`;
             const count = pl.songIds ? pl.songIds.length : 0;
             const icon = pl.isHistory ? '🕒' : '🎵';
-            const countText = pl.isHistory ? `${count}곡 기록 (최근 100곡)` : `${count}곡 수록됨`;
+            const countText = pl.isHistory ? `${count}곡 기록` : `${count}곡 수록됨`;
+            const thumbs = [];
+            if (Array.isArray(pl.songIds)) {
+                for (let i = 0; i < pl.songIds.length && thumbs.length < 4; i++) {
+                    const s = songMap.get(pl.songIds[i]);
+                    if (s && s.youtubeId) {
+                        thumbs.push(`https://i.ytimg.com/vi/${encodeURIComponent(s.youtubeId)}/mqdefault.jpg`);
+                    }
+                }
+            }
 
-            card.innerHTML = `
-                <div class="playlist-card-left" style="flex:1;">
-                    <div class="playlist-card-icon">${icon}</div>
-                    <div class="playlist-card-meta">
+            if (isGallery) {
+                const card = document.createElement('div');
+                card.className = `playlist-gallery-card ${pl.isHistory ? 'playlist-card-history' : ''}`;
+                let coverHtml = '';
+                if (thumbs.length >= 4) {
+                    coverHtml = `<div class="playlist-cover-collage">${thumbs.map(u => `<img src="${u}" alt="" loading="lazy">`).join('')}</div>`;
+                } else if (thumbs.length >= 1) {
+                    coverHtml = `<img src="${thumbs[0]}" alt="" loading="lazy">`;
+                } else {
+                    coverHtml = `<span class="playlist-gallery-empty-icon">${icon}</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="playlist-gallery-cover">
+                        ${coverHtml}
+                        <button type="button" class="playlist-gallery-play-btn" title="전체 재생">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        </button>
+                    </div>
+                    <div class="playlist-gallery-meta">
                         <div class="playlist-card-title">${escapeHtml(pl.name)}</div>
                         <div class="playlist-card-sub">${countText}</div>
                     </div>
-                </div>
-                <button class="playlist-card-play-btn" title="전체 재생">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                </button>
-            `;
+                `;
 
-            card.querySelector('.playlist-card-left').addEventListener('click', () => {
-                openPlaylistDetail(pl.id);
-            });
+                card.addEventListener('click', () => {
+                    openPlaylistDetail(pl.id);
+                });
+                card.querySelector('.playlist-gallery-play-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playPlaylistAll(pl.id);
+                });
 
-            card.querySelector('.playlist-card-play-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                playPlaylistAll(pl.id);
-            });
+                dom.playlistsGrid.appendChild(card);
+            } else {
+                const card = document.createElement('div');
+                card.className = `playlist-card ${pl.isHistory ? 'playlist-card-history' : ''}`;
+                const listCountText = pl.isHistory ? `${count}곡 기록 (최근 100곡)` : `${count}곡 수록됨`;
+                const iconBoxHtml = thumbs.length > 0
+                    ? `<img src="${thumbs[0]}" alt="" loading="lazy" style="width:100%; height:100%; object-fit:cover;">`
+                    : `${icon}`;
 
-            dom.playlistsGrid.appendChild(card);
+                card.innerHTML = `
+                    <div class="playlist-card-left" style="flex:1;">
+                        <div class="playlist-card-icon">${iconBoxHtml}</div>
+                        <div class="playlist-card-meta">
+                            <div class="playlist-card-title">${escapeHtml(pl.name)}</div>
+                            <div class="playlist-card-sub">${listCountText}</div>
+                        </div>
+                    </div>
+                    <button class="playlist-card-play-btn" title="전체 재생">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                    </button>
+                `;
+
+                card.querySelector('.playlist-card-left').addEventListener('click', () => {
+                    openPlaylistDetail(pl.id);
+                });
+
+                card.querySelector('.playlist-card-play-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playPlaylistAll(pl.id);
+                });
+
+                dom.playlistsGrid.appendChild(card);
+            }
         });
     }
 
@@ -4279,7 +4373,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 dom.tabBtns.forEach(b => b.classList.toggle('active', b === btn));
                 dom.viewSections.forEach(sec => sec.classList.toggle('active', sec.id === targetViewId));
 
-                // 설정 및 재생목록 탭에서는 상단 멤버 바 및 검색창 숨김 처리
+                // 설정 및 재생목록 탭에서는 상단 멤버 바 숨김 처리
                 const hideTopBars = (targetViewId === 'view-settings' || targetViewId === 'view-playlists');
                 const memBar = dom.membersContainer || dom.membersGrid;
                 if (memBar) {
@@ -4288,17 +4382,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         memBar.style.display = 'none';
                     } else {
                         memBar.classList.remove('hidden');
-                        memBar.style.display = 'block';
-                    }
-                }
-
-                if (dom.searchBarWrap) {
-                    if (hideTopBars) {
-                        dom.searchBarWrap.classList.add('hidden');
-                        dom.searchBarWrap.style.display = 'none';
-                    } else {
-                        dom.searchBarWrap.classList.remove('hidden');
-                        dom.searchBarWrap.style.display = 'flex';
+                        memBar.style.display = 'flex';
                     }
                 }
 
@@ -4581,39 +4665,72 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.moodTrackList.appendChild(frag);
         }
 
+        function openMoodPicker() {
+            if (dom.modalMoodDetail) dom.modalMoodDetail.classList.remove('open');
+            if (dom.modalMoodPicker) dom.modalMoodPicker.classList.add('open');
+        }
+
+        function closeMoodPicker() {
+            if (dom.modalMoodPicker) dom.modalMoodPicker.classList.remove('open');
+        }
+
         function openMoodDetail(moodKey) {
             const preset = MOOD_PRESETS[moodKey];
             if (!preset) return;
             currentMoodKey = moodKey;
             currentMoodPreset = preset;
 
-            // 실시간 전체 곡 풀에서 신선한 랜덤 플레이리스트 생성
+            // 1단계 장르 선택 창을 닫고 2단계 20곡 추천 창으로 전환
+            closeMoodPicker();
+
+            // 실시간 전체 곡 풀에서 신선한 랜덤 플레이리스트 20곡 생성
             currentMoodSongs = rollRandomMoodPlaylist(moodKey, 20);
 
             if (dom.moodModalIcon) dom.moodModalIcon.textContent = preset.icon;
-            if (dom.moodModalTitle) dom.moodModalTitle.textContent = `${preset.icon} ${preset.title} (${currentMoodSongs.length}곡 추천)`;
-            if (dom.moodModalSub) dom.moodModalSub.textContent = `${preset.desc} • 언제든 새로고침으로 새로운 조합을 만날 수 있습니다`;
+            if (dom.moodModalTitle) dom.moodModalTitle.textContent = `${preset.title} (${currentMoodSongs.length}곡 추천)`;
+            if (dom.moodModalSub) dom.moodModalSub.textContent = `${preset.desc}`;
 
             renderMoodTrackList();
 
             if (dom.modalMoodDetail) dom.modalMoodDetail.classList.add('open');
         }
 
-        function closeMoodDetail() {
+        function closeMoodDetail(returnToPicker = true) {
             if (dom.modalMoodDetail) dom.modalMoodDetail.classList.remove('open');
+            if (returnToPicker) {
+                openMoodPicker();
+            }
         }
 
-        document.querySelectorAll('.mood-chip-card').forEach(card => {
+        window.__moodModals = { openMoodPicker, closeMoodPicker, closeMoodDetail };
+
+        if (dom.btnOpenMoodHome) {
+            dom.btnOpenMoodHome.addEventListener('click', () => openMoodPicker());
+        }
+        if (dom.btnCloseMoodPicker) {
+            dom.btnCloseMoodPicker.addEventListener('click', () => closeMoodPicker());
+        }
+        if (dom.modalMoodPicker) {
+            dom.modalMoodPicker.addEventListener('click', (e) => {
+                if (e.target === dom.modalMoodPicker || e.target.classList.contains('modal-backdrop')) {
+                    closeMoodPicker();
+                }
+            });
+        }
+
+        document.querySelectorAll('.mood-picker-btn, .mood-chip-card').forEach(card => {
             card.addEventListener('click', () => {
                 const mood = card.dataset.mood;
                 openMoodDetail(mood);
             });
         });
 
-        if (dom.btnCloseMoodModal) dom.btnCloseMoodModal.addEventListener('click', () => closeMoodDetail());
+        if (dom.btnCloseMoodModal) dom.btnCloseMoodModal.addEventListener('click', () => closeMoodDetail(true));
         if (dom.modalMoodDetail) {
             dom.modalMoodDetail.addEventListener('click', (e) => {
-                if (e.target === dom.modalMoodDetail) closeMoodDetail();
+                if (e.target === dom.modalMoodDetail || e.target.classList.contains('modal-backdrop')) {
+                    closeMoodDetail(true);
+                }
             });
         }
 
@@ -4623,7 +4740,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!currentMoodKey) return;
                 currentMoodSongs = rollRandomMoodPlaylist(currentMoodKey, 20);
                 if (dom.moodModalTitle && currentMoodPreset) {
-                    dom.moodModalTitle.textContent = `${currentMoodPreset.icon} ${currentMoodPreset.title} (${currentMoodSongs.length}곡 추천)`;
+                    dom.moodModalTitle.textContent = `${currentMoodPreset.title} (${currentMoodSongs.length}곡 추천)`;
                 }
                 renderMoodTrackList();
                 showToast(`🔀 새로운 '${currentMoodPreset ? currentMoodPreset.title : '분위기'}' 추천 곡 목록을 불러왔습니다!`);
@@ -4635,7 +4752,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!currentMoodSongs || currentMoodSongs.length === 0) return;
                 player.setQueue(currentMoodSongs, 0, true);
                 showToast(`🎶 '${currentMoodPreset ? currentMoodPreset.title : '분위기'}' ${currentMoodSongs.length}곡을 재생합니다.`);
-                closeMoodDetail();
+                closeMoodDetail(false);
+                closeMoodPicker();
             });
         }
 
@@ -4649,6 +4767,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     showToast(`🎉 '${plName}' 재생목록이 생성되었습니다!`);
                     renderPlaylists();
                 }
+            });
+        }
+
+        // 재생목록 탭 리스트/갤러리 보기 전환 버튼
+        if (dom.btnTogglePlaylistView) {
+            dom.btnTogglePlaylistView.addEventListener('click', () => {
+                state.playlistViewMode = (state.playlistViewMode === 'gallery') ? 'list' : 'gallery';
+                try {
+                    localStorage.setItem('stellplay_playlist_view_mode', state.playlistViewMode);
+                } catch (_) {}
+                renderPlaylists();
             });
         }
 
@@ -5190,28 +5319,81 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
+        // 슬라이드 팝업형 일시 노출 검색 드로어 & 키보드 자동 활성화
+        function toggleHomeSearchDrawer(forceState) {
+            const nextState = (typeof forceState === 'boolean') ? forceState : !state.isSearchOpen;
+            state.isSearchOpen = nextState;
+
+            if (dom.searchDrawer) {
+                dom.searchDrawer.classList.toggle('open', nextState);
+            }
+            if (dom.btnToggleSearchHome) {
+                dom.btnToggleSearchHome.classList.toggle('search-open', nextState);
+            }
+
+            if (nextState) {
+                if (dom.searchInput) {
+                    try { dom.searchInput.focus(); } catch (_) {}
+                    setTimeout(() => {
+                        try { dom.searchInput.focus(); } catch (_) {}
+                    }, 60);
+                }
+            } else {
+                if (dom.searchInput) {
+                    try { dom.searchInput.blur(); } catch (_) {}
+                    if (dom.searchInput.value || state.searchQuery) {
+                        dom.searchInput.value = '';
+                        state.searchQuery = '';
+                        if (dom.searchClear) dom.searchClear.style.display = 'none';
+                        renderHomeTracks();
+                    }
+                }
+            }
+        }
+        window.__toggleHomeSearchDrawer = toggleHomeSearchDrawer;
+
+        if (dom.btnToggleSearchHome) {
+            dom.btnToggleSearchHome.addEventListener('click', () => {
+                toggleHomeSearchDrawer();
+            });
+        }
+        if (dom.searchClose) {
+            dom.searchClose.addEventListener('click', () => {
+                toggleHomeSearchDrawer(false);
+            });
+        }
+
         // 검색 (활성 탭에 맞춰 전체 갱신 - 150ms 디바운스 적용)
         let searchDebounceTimer = null;
-        dom.searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            dom.searchClear.style.display = query ? 'block' : 'none';
-            clearTimeout(searchDebounceTimer);
-            searchDebounceTimer = setTimeout(() => {
-                state.searchQuery = query;
-                renderAllViews();
-            }, 150);
-        });
-        dom.searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                dom.searchInput.blur();
-            }
-        });
-        dom.searchClear.addEventListener('click', () => {
-            dom.searchInput.value = '';
-            state.searchQuery = '';
-            dom.searchClear.style.display = 'none';
-            renderAllViews();
-        });
+        if (dom.searchInput) {
+            dom.searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                if (dom.searchClear) dom.searchClear.style.display = query ? 'block' : 'none';
+                clearTimeout(searchDebounceTimer);
+                searchDebounceTimer = setTimeout(() => {
+                    state.searchQuery = query;
+                    renderHomeTracks();
+                }, 150);
+            });
+            dom.searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    dom.searchInput.blur();
+                } else if (e.key === 'Escape') {
+                    toggleHomeSearchDrawer(false);
+                }
+            });
+        }
+        if (dom.searchClear) {
+            dom.searchClear.addEventListener('click', () => {
+                if (dom.searchInput) {
+                    dom.searchInput.value = '';
+                    try { dom.searchInput.focus(); } catch (_) {}
+                }
+                state.searchQuery = '';
+                dom.searchClear.style.display = 'none';
+                renderHomeTracks();
+            });
+        }
 
         let mobilePlayerViewMode = 'art';
 
@@ -5369,9 +5551,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.toggleVideoFullscreen = toggleVideoFullscreen;
 
         if (mBtnVideoFs) {
-            mBtnVideoFs.addEventListener('click', (e) => {
+            let lastFsTapTime = 0;
+            mBtnVideoFs.addEventListener('touchend', (e) => {
+                lastFsTapTime = Date.now();
+                if (e.cancelable) e.preventDefault();
                 e.stopPropagation();
                 toggleVideoFullscreen();
+            }, { passive: false });
+
+            mBtnVideoFs.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (Date.now() - lastFsTapTime < 450) return;
+                toggleVideoFullscreen();
+            });
+        }
+
+        // 유튜브 외부 링크 이동 차단 및 영상 화면 탭 시 재생/일시정지 토글
+        if (dom.videoTouchShield) {
+            dom.videoTouchShield.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (player && typeof player.togglePlay === 'function') {
+                    player.togglePlay();
+                }
             });
         }
 
@@ -6890,6 +7093,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 1. 모달이 열려있는 경우
+        if (dom.modalMoodDetail && dom.modalMoodDetail.classList.contains('open')) {
+            if (window.__moodModals && typeof window.__moodModals.closeMoodDetail === 'function') {
+                window.__moodModals.closeMoodDetail(true);
+            } else {
+                dom.modalMoodDetail.classList.remove('open');
+                if (dom.modalMoodPicker) dom.modalMoodPicker.classList.add('open');
+            }
+            return true;
+        }
+        if (dom.modalMoodPicker && dom.modalMoodPicker.classList.contains('open')) {
+            if (window.__moodModals && typeof window.__moodModals.closeMoodPicker === 'function') {
+                window.__moodModals.closeMoodPicker();
+            } else {
+                dom.modalMoodPicker.classList.remove('open');
+            }
+            return true;
+        }
         if (dom.modalSelectPlaylist && dom.modalSelectPlaylist.classList.contains('open')) {
             closeAddToPlaylistModal();
             return true;
@@ -6956,6 +7176,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 homeBtn.click();
                 return true;
             }
+        }
+
+        // 7.5. 홈 검색 드로어가 열려있는 경우 -> 검색창 닫기
+        if (state.isSearchOpen && typeof window.__toggleHomeSearchDrawer === 'function') {
+            window.__toggleHomeSearchDrawer(false);
+            return true;
         }
 
         // 8. 메인 홈 화면에 있는 경우 -> 2초 내 2회 누르면 앱 종료, 1회 누르면 안내 토스트

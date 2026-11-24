@@ -753,6 +753,7 @@ class MobilePlayer {
                     el.setAttribute('allowfullscreen', 'true');
                     el.setAttribute('loading', 'eager');
                     el.setAttribute('importance', 'high');
+                    el.style.pointerEvents = 'none';
                 }
             });
         } catch (e) {}
