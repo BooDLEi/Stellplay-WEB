@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.11.8';
-    const CURRENT_OTA_BUILD = 2026112401;
+    const CURRENT_APP_VERSION = '1.11.9';
+    const CURRENT_OTA_BUILD = 2026112402;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // DOM 캐싱
     const dom = {
         // 헤더 & 계층형 멤버 필터
+        mobileHeader: document.getElementById('m-mobile-header') || document.querySelector('.mobile-header'),
         searchInput: document.getElementById('m-search-input'),
         searchClear: document.getElementById('m-search-clear'),
         searchClose: document.getElementById('m-search-close'),
@@ -1304,6 +1305,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    const MEMBER_LOGO_MAP = {
+        yuni: './assets/icons/members/yuni.png',
+        huya: './assets/icons/members/huya.png',
+        kanna: './assets/icons/members/kanna.png',
+        hina: './assets/icons/members/hina.png',
+        mashiro: './assets/icons/members/mashiro.png',
+        lize: './assets/icons/members/lize.png',
+        tabi: './assets/icons/members/tabi.png',
+        shibuki: './assets/icons/members/shibuki.png',
+        rin: './assets/icons/members/rin.png',
+        nana: './assets/icons/members/nana.png',
+        riko: './assets/icons/members/riko.png',
+        toa: './assets/icons/members/toa.png',
+        rang: './assets/icons/members/rang.png',
+        hiyori: './assets/icons/members/hiyori.png',
+        mary: './assets/icons/members/mary.png'
+    };
+
     function renderSubFilterRow() {
         if (!dom.membersSubRow) return;
         const items = SUB_FILTER_CONFIG[state.selectedMajor] || [];
@@ -1312,17 +1331,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (items.length === 0) {
             dom.membersSubRow.classList.remove('has-items');
             dom.membersSubRow.style.display = 'none';
+            if (dom.membersContainer) dom.membersContainer.classList.remove('has-sub-row');
             return;
         }
 
         dom.membersSubRow.classList.add('has-items');
         dom.membersSubRow.style.display = 'flex';
+        if (dom.membersContainer) dom.membersContainer.classList.add('has-sub-row');
 
         items.forEach(item => {
             const btn = document.createElement('button');
-            btn.className = `member-sub-btn ${item.btnClass || 'btn-white'} ${state.selectedSub === item.id ? 'active' : ''}`;
+            const logoUrl = MEMBER_LOGO_MAP[item.id] || '';
+            btn.className = `member-sub-btn ${item.btnClass || 'btn-white'} ${logoUrl ? 'has-logo' : ''} ${state.selectedSub === item.id ? 'active' : ''}`;
             btn.dataset.sub = item.id;
-            btn.textContent = item.name;
+            if (logoUrl) {
+                btn.innerHTML = `<img class="member-sub-logo" src="${logoUrl}" alt="" width="19" height="19" loading="eager" decoding="async"><span>${escapeHtml(item.name)}</span>`;
+            } else {
+                btn.textContent = item.name;
+            }
 
             btn.addEventListener('click', () => {
                 if (state.selectedSub === item.id) {
@@ -4373,9 +4399,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 dom.tabBtns.forEach(b => b.classList.toggle('active', b === btn));
                 dom.viewSections.forEach(sec => sec.classList.toggle('active', sec.id === targetViewId));
 
-                // 설정 및 재생목록 탭에서는 상단 멤버 바 숨김 처리
+                // 설정 및 재생목록 탭에서는 상단 멤버 바 숨김 처리 + 헤더 상하 여백 균형 유지
                 const hideTopBars = (targetViewId === 'view-settings' || targetViewId === 'view-playlists');
                 const memBar = dom.membersContainer || dom.membersGrid;
+                if (dom.mobileHeader) {
+                    dom.mobileHeader.classList.toggle('header-no-tabs', hideTopBars);
+                }
                 if (memBar) {
                     if (hideTopBars) {
                         memBar.classList.add('hidden');
@@ -4384,6 +4413,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         memBar.classList.remove('hidden');
                         memBar.style.display = 'flex';
                     }
+                }
+                // 홈 탭을 벗어날 때 열려 있던 모바일 검색 키보드 자동 정리
+                if (targetViewId !== 'view-home' && dom.searchInput && document.activeElement === dom.searchInput) {
+                    try { dom.searchInput.blur(); } catch (_) {}
                 }
 
                 if (targetViewId === 'view-offline') {
@@ -5567,11 +5600,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 유튜브 외부 링크 이동 차단 및 영상 화면 탭 시 재생/일시정지 토글
+        // 유튜브 외부 링크 이동 차단 및 영상 화면 탭 시 재생/일시정지 토글 (드래그 스와이프와 충돌 방지)
         if (dom.videoTouchShield) {
+            let shieldStartX = 0;
+            let shieldStartY = 0;
+            let shieldDragged = false;
+            dom.videoTouchShield.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length > 0) {
+                    shieldStartX = e.touches[0].clientX;
+                    shieldStartY = e.touches[0].clientY;
+                    shieldDragged = false;
+                }
+            }, { passive: true });
+            dom.videoTouchShield.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches.length > 0) {
+                    const dx = Math.abs(e.touches[0].clientX - shieldStartX);
+                    const dy = Math.abs(e.touches[0].clientY - shieldStartY);
+                    if (dx > 10 || dy > 10) shieldDragged = true;
+                }
+            }, { passive: true });
             dom.videoTouchShield.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (shieldDragged) {
+                    shieldDragged = false;
+                    return;
+                }
                 if (player && typeof player.togglePlay === 'function') {
                     player.togglePlay();
                 }
@@ -5773,7 +5827,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 el.closest('a') || 
                 el.closest('.sheet-menu-dropdown') || 
                 el.closest('#m-modal-sabi-editor') || 
-                el.closest('.m-video-box') ||
+                el.closest('#m-ad-shield-overlay') ||
+                el.closest('#m-btn-video-fullscreen') ||
+                (el.closest('.m-video-box') && el.closest('.m-video-box').classList.contains('video-fullscreen-active')) ||
                 el.closest('.sheet-seek-wrap')
             ));
 
@@ -7093,6 +7149,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 1. 모달이 열려있는 경우
+        const confirmModal = document.getElementById('m-modal-confirm');
+        if (confirmModal && confirmModal.classList.contains('open')) {
+            confirmModal.classList.remove('open');
+            return true;
+        }
+        if (dom.modalSabiEditor && dom.modalSabiEditor.classList.contains('open')) {
+            closeSabiEditor();
+            return true;
+        }
+        if (dom.modalPatchnotes && dom.modalPatchnotes.classList.contains('open')) {
+            dom.modalPatchnotes.classList.remove('open');
+            return true;
+        }
+        if (dom.modalOtaRestore && dom.modalOtaRestore.classList.contains('open')) {
+            dom.modalOtaRestore.classList.remove('open');
+            return true;
+        }
         if (dom.modalMoodDetail && dom.modalMoodDetail.classList.contains('open')) {
             if (window.__moodModals && typeof window.__moodModals.closeMoodDetail === 'function') {
                 window.__moodModals.closeMoodDetail(true);

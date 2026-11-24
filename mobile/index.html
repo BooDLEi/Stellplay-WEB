@@ -24,7 +24,7 @@
 <body>
     <div id="app-container">
         <!-- 상단 고정 헤더 -->
-        <header class="mobile-header">
+        <header class="mobile-header" id="m-mobile-header">
             <div class="header-top">
                 <div class="logo-group">
                     <div class="logo-icon">
@@ -35,17 +35,7 @@
                     <span class="logo-title">StellPlay</span>
                 </div>
 
-                <!-- 중앙: 사비 메들리 모드 버튼 -->
-                <div class="header-center">
-                    <button class="header-sabi-btn" id="m-header-sabi-btn" type="button" title="사비 메들리 모드 온/오프">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                        </svg>
-                        <span id="m-header-sabi-text">사비 OFF</span>
-                    </button>
-                </div>
-
-                <!-- 우측 끝: 테마 전환 & 신곡 탐색 버튼 -->
+                <!-- 우측: PC전환(웹) · 사비 모드 · 테마 전환 · 신곡 탐색 -->
                 <div class="header-actions">
                     <!-- 웹 브라우저 접속 시 PC 버전 전환 버튼 (모바일 앱에서는 기본 display: none !important 유지) -->
                     <button class="m-header-pc-btn" id="m-btn-switch-pc" type="button" title="PC 웹 버전으로 전환" style="display: none !important;">
@@ -55,6 +45,12 @@
                             <line x1="12" y1="17" x2="12" y2="21"/>
                         </svg>
                         <span>PC</span>
+                    </button>
+                    <button class="header-sabi-btn" id="m-header-sabi-btn" type="button" title="사비 메들리 모드 온/오프">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        <span id="m-header-sabi-text">사비 OFF</span>
                     </button>
                     <button class="theme-toggle-switch" id="m-btn-top-theme" type="button" role="switch" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환">
                         <div class="theme-switch-track">
@@ -367,7 +363,7 @@
                                 </div>
                             </div>
                             <span id="m-app-version-badge" style="font-size:0.72rem; padding:3px 8px; border-radius:10px; background:rgba(99,102,241,0.15); color:#818cf8; font-weight:700; white-space:nowrap;">
-                                v1.11.8
+                                v1.11.9
                             </span>
                         </div>
                         <div id="m-ota-info-text" style="font-size:0.75rem; color:var(--text-secondary); background:rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; border:1px solid var(--border-glass); line-height:1.4;">
