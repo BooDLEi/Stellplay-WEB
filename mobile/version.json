@@ -1,7 +1,7 @@
 {
   "otaVersion": 2026112403,
   "otaReleaseDate": "2026-11-24",
-  "apkVersionName": "1.11.4",
+  "apkVersionName": "1.11.10",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -48,10 +48,10 @@
     "patchnotes_web.txt"
   ],
   "apk": {
-    "versionCode": 14,
-    "versionName": "1.11.4",
+    "versionCode": 15,
+    "versionName": "1.11.10",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "0초 즉각 탭 반응 시스템, 전체화면 플레이어 1:1 실시간 드래그 제스처, 불필요한 APK 유도 차단 및 수동 APK 다운로드 지원",
+    "changelog": "신규 스텔플레이 원형 앱 아이콘 및 위젯 아이콘 전면 교체, 5열 세로형 멤버·유닛 로고 카드 및 크롬 탭 UI 기본 탑재",
     "minRequiredVersionCode": 10,
     "nativeRequired": false
   },
@@ -63,7 +63,7 @@
     "assets/js/songs.js": "ea38b85b96152827981a8ad66e46c2441281846e82ea5a8c2d15cd3dad8244dc",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
-    "songs-latest.json": "ebba1064f046dc58a551a885032a8fd79f3e29e3430d9f457c1c8682760453d8",
+    "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
     "patchnotes_android.txt": "15e3aedfdc4b83e8c9dfc8461ec0a97c2a4a62257b074616226837a5d9725618",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
