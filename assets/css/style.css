@@ -694,10 +694,41 @@ body::after {
 .brand-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     padding: 0 12px 28px 12px;
     text-decoration: none;
     color: var(--text-primary);
+}
+
+.brand-app-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 12px rgba(124, 92, 252, 0.45));
+    transition: var(--transition-smooth);
+}
+
+.brand-wordmark {
+    height: 16px;
+    width: auto;
+    max-width: 152px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+.brand-wordmark-light {
+    display: none;
+}
+
+[data-theme="light"] .brand-wordmark-dark {
+    display: none;
+}
+
+[data-theme="light"] .brand-wordmark-light {
+    display: block;
 }
 
 .brand-icon-wrapper {

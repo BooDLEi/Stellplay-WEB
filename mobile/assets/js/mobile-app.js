@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.11.9';
-    const CURRENT_OTA_BUILD = 2026112402;
+    const CURRENT_APP_VERSION = '1.11.10';
+    const CURRENT_OTA_BUILD = 2026112403;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -1306,6 +1306,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const MEMBER_LOGO_MAP = {
+        mystic: './assets/icons/members/mystic.png',
+        everlys: './assets/icons/members/everlys.png',
+        universe: './assets/icons/members/universe.png',
+        cliche: './assets/icons/members/cliche.png',
+        abyss: './assets/icons/members/abyss.png',
         yuni: './assets/icons/members/yuni.png',
         huya: './assets/icons/members/huya.png',
         kanna: './assets/icons/members/kanna.png',
@@ -1323,31 +1328,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         mary: './assets/icons/members/mary.png'
     };
 
+    const UNIT_LOGO_IDS = new Set(['mystic', 'everlys', 'universe', 'cliche', 'abyss']);
+
     function renderSubFilterRow() {
         if (!dom.membersSubRow) return;
         const items = SUB_FILTER_CONFIG[state.selectedMajor] || [];
         dom.membersSubRow.innerHTML = '';
 
         if (items.length === 0) {
-            dom.membersSubRow.classList.remove('has-items');
+            dom.membersSubRow.classList.remove('has-items', 'sub-grid-5', 'sub-grid-2');
             dom.membersSubRow.style.display = 'none';
             if (dom.membersContainer) dom.membersContainer.classList.remove('has-sub-row');
             return;
         }
 
+        const isFiveTileGrid = items.length >= 4;
         dom.membersSubRow.classList.add('has-items');
-        dom.membersSubRow.style.display = 'flex';
+        dom.membersSubRow.classList.toggle('sub-grid-5', isFiveTileGrid);
+        dom.membersSubRow.classList.toggle('sub-grid-2', !isFiveTileGrid);
+        dom.membersSubRow.style.display = 'grid';
         if (dom.membersContainer) dom.membersContainer.classList.add('has-sub-row');
 
         items.forEach(item => {
             const btn = document.createElement('button');
             const logoUrl = MEMBER_LOGO_MAP[item.id] || '';
-            btn.className = `member-sub-btn ${item.btnClass || 'btn-white'} ${logoUrl ? 'has-logo' : ''} ${state.selectedSub === item.id ? 'active' : ''}`;
+            const isUnitLogo = UNIT_LOGO_IDS.has(item.id);
+            btn.className = `member-sub-btn ${item.btnClass || 'btn-white'} ${logoUrl ? 'has-logo' : ''} ${isUnitLogo ? 'is-unit-logo' : ''} ${state.selectedSub === item.id ? 'active' : ''}`;
             btn.dataset.sub = item.id;
             if (logoUrl) {
-                btn.innerHTML = `<img class="member-sub-logo" src="${logoUrl}" alt="" width="19" height="19" loading="eager" decoding="async"><span>${escapeHtml(item.name)}</span>`;
+                btn.innerHTML = `<span class="member-sub-logo-box"><img class="member-sub-logo" src="${logoUrl}" alt="" loading="eager" decoding="async"></span><span class="member-sub-label">${escapeHtml(item.name)}</span>`;
             } else {
-                btn.textContent = item.name;
+                btn.innerHTML = `<span class="member-sub-label">${escapeHtml(item.name)}</span>`;
             }
 
             btn.addEventListener('click', () => {

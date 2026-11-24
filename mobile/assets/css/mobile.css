@@ -524,6 +524,35 @@ body::before {
     flex-shrink: 0;
 }
 
+.logo-app-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.4));
+}
+
+.logo-wordmark {
+    height: 10.5px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+.logo-wordmark-light {
+    display: none;
+}
+
+[data-theme="light"] .logo-wordmark-dark {
+    display: none;
+}
+
+[data-theme="light"] .logo-wordmark-light {
+    display: block;
+}
+
 .logo-title {
     font-size: 1.03rem;
     font-weight: 800;
@@ -679,16 +708,16 @@ body::before {
     color: #334155;
 }
 
-/* 360px급 좁은 모바일 화면(웹 PC 버튼 노출 포함) 헤더 오버플로우 방지 */
-@media (max-width: 385px) {
+/* 415px 이하 화면(웹 PC 버튼 노출 포함) 헤더 오버플로우 방지 */
+@media (max-width: 415px) {
     .mobile-header {
         padding-left: 10px;
         padding-right: 10px;
     }
     .member-sub-row {
         margin: 0 -10px;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding: 8px 6px 9px;
+        gap: 4px;
     }
     .logo-group {
         gap: 4px;
@@ -696,6 +725,13 @@ body::before {
     .logo-icon {
         width: 22px;
         height: 22px;
+    }
+    .logo-app-icon {
+        width: 22px;
+        height: 22px;
+    }
+    .logo-wordmark {
+        height: 9px;
     }
     .logo-title {
         font-size: 0.92rem;
@@ -721,6 +757,20 @@ body::before {
         width: 16px;
         height: 16px;
         transform: translateX(16px);
+    }
+}
+
+@media (max-width: 385px) {
+    .logo-app-icon {
+        width: 20px;
+        height: 20px;
+    }
+    .logo-wordmark {
+        height: 8.2px;
+    }
+    .member-sub-row.sub-grid-5 .member-sub-label {
+        font-size: 0.56rem;
+        letter-spacing: -0.65px;
     }
 }
 
@@ -931,28 +981,24 @@ body::before {
     background: linear-gradient(90deg, #7c5cfc, #3b82f6);
 }
 
-/* 2열 (소분류 멤버 북마크 바): 크롬 탭 바로 아래에 붙는 멤버 로고 칩 영역 */
+/* 2열 (소분류 멤버/유닛 로고 카드 그리드): 좌우 스크롤 없이 한눈에 5개 전부 표시 */
 .member-sub-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+    align-items: stretch;
+    overflow: visible;
     background: #151828;
     border-top: 1px solid rgba(255, 255, 255, 0.14);
     margin: 0 -12px;
-    padding: 7px 12px 8px;
-    min-height: 45px;
+    padding: 8px 10px 9px;
     position: relative;
     z-index: 2;
     animation: fadeInSubRow 0.16s ease-out;
 }
-.member-sub-row::-webkit-scrollbar {
-    display: none;
+.member-sub-row.sub-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
 }
 
 .member-sub-btn,
@@ -961,11 +1007,11 @@ body::before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    height: 30px;
+    gap: 4px;
+    height: 32px;
     padding: 0 10px;
-    border-radius: 15px;
-    font-size: 0.73rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: -0.3px;
     text-align: center;
@@ -979,29 +1025,90 @@ body::before {
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
-.member-sub-btn {
-    flex-shrink: 0;
-    min-width: fit-content;
+.member-sub-row.sub-grid-5 .member-sub-btn {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 64px;
+    padding: 6px 2px 5px;
+    border-radius: 11px;
 }
-.member-sub-btn.has-logo {
-    padding: 0 10px 0 6px;
+.member-sub-row.sub-grid-2 .member-sub-btn {
+    width: 100%;
+    height: 34px;
+    border-radius: 10px;
 }
 .member-sub-btn:active,
 .member-text-btn:active {
     transform: scale(0.96);
 }
 
+.member-sub-logo-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 34px;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
 .member-sub-logo {
-    width: 19px;
-    height: 19px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
     flex-shrink: 0;
     pointer-events: none;
-    filter: drop-shadow(0 0 1.4px rgba(255, 255, 255, 0.26)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+    filter: drop-shadow(0 0 1.8px rgba(255, 255, 255, 0.26)) drop-shadow(0 1px 2.5px rgba(0, 0, 0, 0.45));
+}
+
+/* 유닛 로고 (미스틱 / 에버리스 / 유니버스 / 클리셰 / 어비스): 가로형 로고 전용 규격 */
+.member-sub-btn.is-unit-logo .member-sub-logo-box {
+    width: calc(100% - 6px);
+    height: 32px;
+    padding: 3px 4px;
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.28);
+}
+
+.member-sub-btn.is-unit-logo .member-sub-logo {
+    width: 100%;
+    height: 100%;
+    max-width: 56px;
+    max-height: 24px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.member-sub-btn.is-unit-logo.active .member-sub-logo-box {
+    background: #141726;
+}
+
+.member-sub-label {
+    display: block;
+    width: 100%;
+    font-size: 0.63rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.55px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 1px;
+}
+
+.member-sub-row.sub-grid-2 .member-sub-label {
+    font-size: 0.74rem;
+    letter-spacing: -0.3px;
 }
 
 .member-sub-btn.active .member-sub-logo {
-    filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 0 1.6px rgba(0, 0, 0, 0.35));
 }
 
 .member-sub-btn.btn-yuni.active .member-sub-logo,
@@ -1010,7 +1117,7 @@ body::before {
 .member-sub-btn.btn-riko.active .member-sub-logo,
 .member-sub-btn.btn-hiyori.active .member-sub-logo,
 .member-sub-btn.btn-mary.active .member-sub-logo {
-    filter: drop-shadow(0 0 1.4px rgba(15, 23, 42, 0.5));
+    filter: drop-shadow(0 0 1.5px rgba(15, 23, 42, 0.5));
 }
 
 @keyframes fadeInSubRow {
@@ -4921,6 +5028,17 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
 
 [data-theme="light"] .member-sub-logo {
     filter: drop-shadow(0 0 0.75px rgba(15, 23, 42, 0.3));
+}
+
+/* 라이트 모드 유닛 투명 실버 로고 전용 다크 배지 배경 (미스틱/에버리스/유니버스/클리셰/어비스 고대비 확보) */
+[data-theme="light"] .member-sub-btn.is-unit-logo .member-sub-logo-box {
+    background: linear-gradient(145deg, #121524, #20253c);
+    border: 1px solid rgba(15, 23, 42, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .member-sub-btn.is-unit-logo .member-sub-logo {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 /* 설정 탭 카드 및 다크모드/라이트모드 섹션 구분선 스타일 */

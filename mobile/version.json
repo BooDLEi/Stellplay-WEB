@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026112402,
+  "otaVersion": 2026112403,
   "otaReleaseDate": "2026-11-24",
   "apkVersionName": "1.11.4",
   "files": [
@@ -26,7 +26,15 @@
     "assets/icons/members/toa.png",
     "assets/icons/members/rang.png",
     "assets/icons/members/hiyori.png",
-    "assets/icons/members/mary.png"
+    "assets/icons/members/mary.png",
+    "assets/icons/app-icon.png",
+    "assets/icons/logo-dark.png",
+    "assets/icons/logo-light.png",
+    "assets/icons/members/mystic.png",
+    "assets/icons/members/everlys.png",
+    "assets/icons/members/universe.png",
+    "assets/icons/members/cliche.png",
+    "assets/icons/members/abyss.png"
   ],
   "pcFiles": [
     "index.html",
@@ -48,18 +56,18 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "8932b041266b4618bd11c6566136742a595e0ab50be29698c9cb7bea90e84f5f",
-    "assets/css/mobile.css": "78c178df5d203f09688e0bde789224cf6ada8e7c9bd9f030170d2b526ffa3891",
-    "assets/js/mobile-app.js": "2e2a7b4669aee9c6af708b3c1b002af8f2e10bdcf914c305ffada8232c18b9f8",
+    "index.html": "2100885f0cadf15938538253d3e89c2a5f034a5a5305f7a508cf47e42fa80e83",
+    "assets/css/mobile.css": "504de88786de158233d7d23576af641704d34242be1c06a781c3250603a4f123",
+    "assets/js/mobile-app.js": "367cc6a7add3a5a08d849d09fc1a2f8d201f506f8166dd4766142936e6562de7",
     "assets/js/mobile-player.js": "700a66bc028027cb903f17cbbf712c7af190f93534d8c452e5d9288a0eafbcfb",
     "assets/js/songs.js": "ea38b85b96152827981a8ad66e46c2441281846e82ea5a8c2d15cd3dad8244dc",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "ebba1064f046dc58a551a885032a8fd79f3e29e3430d9f457c1c8682760453d8",
-    "patchnotes_android.txt": "11de44f0cdf5b3e07d582740af31a56983195394ed31fe582b2bcc80578afc4c",
+    "patchnotes_android.txt": "15e3aedfdc4b83e8c9dfc8461ec0a97c2a4a62257b074616226837a5d9725618",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
-    "assets/icons/members/kanna.png": "bb23b21192348029877ba2a71bc49924901075f85338f83c748600a2939a9529",
+    "assets/icons/members/kanna.png": "84597dcdd8f2465714fc721423efddcce400fbb4b39d8091ea2921ed92f0048a",
     "assets/icons/members/hina.png": "8ecb2067d931ff1c1b0c7428f4887ead7731620625f171f4b794c817484f92c4",
     "assets/icons/members/mashiro.png": "fc5b6cbbd438cddd111bd1967963a5ab1a1b5c1001241f825792da36cb3f17cc",
     "assets/icons/members/lize.png": "9bfe709ab6529653f70668f74bf0b7ad113a5d7819dae59e09a9c34d23d6fc2e",
@@ -71,17 +79,25 @@
     "assets/icons/members/toa.png": "8a355d1185595121573afe6f75b612bfe3a6809f010b9fe07a3243a7ce212cf2",
     "assets/icons/members/rang.png": "88e8f8d40db6ed32a2967d3327b7980e6b08378f36042b875f38f901cf01b674",
     "assets/icons/members/hiyori.png": "ddc8ad822f6b9ea45a9136265b594e46bac7f667f3725cb1c6cd10d7f3e362a7",
-    "assets/icons/members/mary.png": "a11ad419e35df185f1a2573aa0af4bf2c39e1c6549064ef806b5b33ff04517c8"
+    "assets/icons/members/mary.png": "a11ad419e35df185f1a2573aa0af4bf2c39e1c6549064ef806b5b33ff04517c8",
+    "assets/icons/app-icon.png": "ec7aa8525711ecea7317091421dc813aeb0e0c0cd745b7fd518bef5df8589a6a",
+    "assets/icons/logo-dark.png": "030e7360fa488d6873570fbe4492bcd35341b94b20837aeaaa144d98e36ce2f2",
+    "assets/icons/logo-light.png": "d352c9a894cb66ec292a3f052f73a3ec0113fd30f9ce8b41e6d6e697d5360a50",
+    "assets/icons/members/mystic.png": "6b4e1e67b18dca15434801890823a186ca54b7387181a7c2eafae3033219b27b",
+    "assets/icons/members/everlys.png": "462ba3260e15d1991d7badc4c53ae506421070209d647deef9c22c16b8c9d8f5",
+    "assets/icons/members/universe.png": "a348ca5fdcdd394c1da0319149dbcba8ec30e42d6e4744371166aa9239b46a64",
+    "assets/icons/members/cliche.png": "c77b6b473ba4e2ef61637dab13e71bf969c6dc044c3da10fc7e5500753e70240",
+    "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "a314ac973e90c19272fdc5d5da3603eba6d8c4e0625f4ab327b1fc0546d1136f",
-    "assets/css/style.css": "a94b64922c5e81a7a0f9115f28ecff1e632c3754701a8f6c5ea8e0392bb400fc",
+    "index.html": "9612a80182698566550cc42c7a2a38d03d6f3892cbb2f2007e53f93beb812767",
+    "assets/css/style.css": "3d55629ff247ae38fa6dd52e773d5a80c9b86c176f3b49a5da8c614f01d43e56",
     "assets/js/songs.js": "4f5a463157213bc4d51c3bf0133f6203f92ed9438efab63f73453e23695d0578",
     "assets/js/storage.js": "6f3f06727cb97bbb0691138b8cbd9bf67c0ca51b0ae8e08461f43cb28f6c2c88",
     "assets/js/player.js": "89b0ec8793de607f24587a818007415b4bf7cf40d27cbf4cecc84504e25fd04f",
     "assets/js/app.js": "9466c1fddfd4f6c1dc4b8190477f266b189e8ea7423b9b87f84bf8ed0ae5cdec",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
     "patchnotes_pc.txt": "380278bdea3ee0111cc7afafafb3f4146d2d670a684197822e180290b795b854",
-    "patchnotes_web.txt": "6ff753bd44c4ffed124d0c88c09c5deba6c1ad743f44c1625a95209c5fc8044c"
+    "patchnotes_web.txt": "78a29e1c697f9166e7ba4e277ff0f2f65d034b69490c861067ebbc737b1498a3"
   }
 }
