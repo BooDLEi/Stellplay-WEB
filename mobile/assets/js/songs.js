@@ -218,18 +218,18 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "g4",
         "members": [
-                "toa"
+            "toa"
         ],
         "youtubeId": "QuPmTX-GcAU",
         "duration": 188,
         "sabi": {
-                "start": 42,
-                "end": 76,
-                "title": "후렴구: HELP!!"
+            "start": 42,
+            "end": 76,
+            "title": "후렴구: HELP!!"
         },
         "publishedAt": "2026-11-22",
         "mood": "upbeat"
-},
+    },
     {
         "id": "stel-lae-GcDKZjo",
         "title": "자그만 기적 (A Tiny Miracle)",
@@ -238,18 +238,18 @@ const DEFAULT_SONGS = [
         "type": "original",
         "gen": "g1",
         "members": [
-                "yuni"
+            "yuni"
         ],
         "youtubeId": "lae-GcDKZjo",
         "duration": 81,
         "sabi": {
-                "start": 25,
-                "end": 55,
-                "title": "후렴구: 자그만 기적"
+            "start": 25,
+            "end": 55,
+            "title": "후렴구: 자그만 기적"
         },
         "publishedAt": "2026-11-20",
         "mood": "bright"
-},
+    },
     {
         "id": "stel-8lD-6Xyq4Lg",
         "title": "발랄라이카 (BALALAIKA)",
@@ -258,18 +258,18 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "g3",
         "members": [
-                "nana"
+            "nana"
         ],
         "youtubeId": "8lD-6Xyq4Lg",
         "duration": 192,
         "sabi": {
-                "start": 45,
-                "end": 85,
-                "title": "후렴구: 발랄라이카"
+            "start": 45,
+            "end": 85,
+            "title": "후렴구: 발랄라이카"
         },
         "publishedAt": "2026-11-11",
         "mood": "upbeat"
-},
+    },
     {
         "id": "stel-Z5N_XqM9Nl8",
         "title": "BUMPA",
@@ -278,18 +278,18 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "g2",
         "members": [
-                "mashiro"
+            "mashiro"
         ],
         "youtubeId": "Z5N_XqM9Nl8",
         "duration": 216,
         "sabi": {
-                "start": 50,
-                "end": 90,
-                "title": "후렴구: BUMPA"
+            "start": 50,
+            "end": 90,
+            "title": "후렴구: BUMPA"
         },
         "publishedAt": "2026-11-08",
         "mood": "dreamy"
-},
+    },
     {
         "id": "stel-TM-uVDKQxhg",
         "title": "Loveit?",
@@ -298,18 +298,18 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "g3",
         "members": [
-                "riko"
+            "riko"
         ],
         "youtubeId": "TM-uVDKQxhg",
         "duration": 155,
         "sabi": {
-                "start": 40,
-                "end": 75,
-                "title": "후렴구: Loveit?"
+            "start": 40,
+            "end": 75,
+            "title": "후렴구: Loveit?"
         },
         "publishedAt": "2026-11-07",
         "mood": "upbeat"
-},
+    },
     {
         "id": "stel-liPEQZJLQh4",
         "title": "로스트원의 호곡 (ロストワンの号哭)",
@@ -318,18 +318,18 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "g2",
         "members": [
-                "lize"
+            "lize"
         ],
         "youtubeId": "liPEQZJLQh4",
         "duration": 217,
         "sabi": {
-                "start": 48,
-                "end": 88,
-                "title": "후렴구: 로스트원의 호곡"
+            "start": 48,
+            "end": 88,
+            "title": "후렴구: 로스트원의 호곡"
         },
         "publishedAt": "2026-11-06",
         "mood": "upbeat"
-},
+    },
     {
         "id": "stel-qNOFi7GzpfM",
         "title": "괴도 F의 대본 ~사라진 다이아몬드의 수수께끼~ (怪盗Fの台本〜消えたダイヤの謎〜)",
@@ -338,27 +338,27 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "group",
         "members": [
-                "yuni",
-                "huya",
-                "hina",
-                "mashiro",
-                "lize",
-                "tabi",
-                "shibuki",
-                "rin",
-                "nana",
-                "riko"
+            "yuni",
+            "huya",
+            "hina",
+            "mashiro",
+            "lize",
+            "tabi",
+            "shibuki",
+            "rin",
+            "nana",
+            "riko"
         ],
         "youtubeId": "qNOFi7GzpfM",
         "duration": 246,
         "sabi": {
-                "start": 60,
-                "end": 105,
-                "title": "후렴구: 괴도 F의 대본"
+            "start": 60,
+            "end": 105,
+            "title": "후렴구: 괴도 F의 대본"
         },
         "publishedAt": "2026-10-31",
         "mood": "upbeat"
-},
+    },
     {
         "id": "stel-SRMTyNLUnZY",
         "title": "Letters to me",
@@ -367,18 +367,18 @@ const DEFAULT_SONGS = [
         "type": "cover",
         "gen": "g1",
         "members": [
-                "huya"
+            "huya"
         ],
         "youtubeId": "SRMTyNLUnZY",
         "duration": 250,
         "sabi": {
-                "start": 65,
-                "end": 105,
-                "title": "후렴구: Letters to me"
+            "start": 65,
+            "end": 105,
+            "title": "후렴구: Letters to me"
         },
         "publishedAt": "2026-10-23",
         "mood": "emotional"
-},
+    },
     {
         "id": "stel-LmOl01G4DR4",
         "title": "打上花火 (타상연화)",
@@ -386,7 +386,10 @@ const DEFAULT_SONGS = [
         "originalArtist": "DAOKO × 요네즈 켄시",
         "type": "cover",
         "gen": "group",
-        "members": ["hina", "rin"],
+        "members": [
+            "hina",
+            "rin"
+        ],
         "youtubeId": "LmOl01G4DR4",
         "duration": 289,
         "sabi": {
@@ -404,7 +407,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "アイナ・ジ・エンド (AiNA THE END)",
         "type": "cover",
         "gen": "cliche",
-        "members": ["shibuki"],
+        "members": [
+            "shibuki"
+        ],
         "youtubeId": "3Xf1Wt7Z-RY",
         "duration": 197,
         "sabi": {
@@ -422,7 +427,12 @@ const DEFAULT_SONGS = [
         "originalArtist": "스텔라이브 4기생 어비스 오리지널 (Original)",
         "type": "original",
         "gen": "g4",
-        "members": ["toa", "rang", "hiyori", "mary"],
+        "members": [
+            "toa",
+            "rang",
+            "hiyori",
+            "mary"
+        ],
         "youtubeId": "EKEts5IShas",
         "duration": 207,
         "sabi": {
@@ -440,7 +450,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "Giga",
         "type": "cover",
         "gen": "cliche",
-        "members": ["riko"],
+        "members": [
+            "riko"
+        ],
         "youtubeId": "VuyZF2VYAfU",
         "duration": 133,
         "sabi": {
@@ -458,7 +470,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "Neru",
         "type": "cover",
         "gen": "g4",
-        "members": ["mary"],
+        "members": [
+            "mary"
+        ],
         "youtubeId": "rKQptWhAvO0",
         "duration": 194,
         "sabi": {
@@ -476,7 +490,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "유이카 (Yuika)",
         "type": "cover",
         "gen": "g4",
-        "members": ["hiyori"],
+        "members": [
+            "hiyori"
+        ],
         "youtubeId": "ouKcRBeyKbk",
         "duration": 243,
         "sabi": {
@@ -494,7 +510,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "나와 호랑이님 OST",
         "type": "cover",
         "gen": "g4",
-        "members": ["rang"],
+        "members": [
+            "rang"
+        ],
         "youtubeId": "iAoU1UGPoXc",
         "duration": 253,
         "sabi": {
@@ -512,7 +530,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "Reol",
         "type": "cover",
         "gen": "g4",
-        "members": ["toa"],
+        "members": [
+            "toa"
+        ],
         "youtubeId": "MZNKiadMo3U",
         "duration": 195,
         "sabi": {
@@ -530,7 +550,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "Mrs. GREEN APPLE",
         "type": "cover",
         "gen": "g3",
-        "members": ["rin"],
+        "members": [
+            "rin"
+        ],
         "youtubeId": "JLM7z8afU4s",
         "duration": 206,
         "sabi": {
@@ -548,7 +570,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "吉田夜世 (요시다 야세이)",
         "type": "cover",
         "gen": "g1",
-        "members": ["yuni"],
+        "members": [
+            "yuni"
+        ],
         "youtubeId": "kNzGpNEdBqw",
         "duration": 139,
         "sabi": {
@@ -566,7 +590,9 @@ const DEFAULT_SONGS = [
         "originalArtist": "Vaundy",
         "type": "cover",
         "gen": "g3",
-        "members": ["rin"],
+        "members": [
+            "rin"
+        ],
         "youtubeId": "Qi_JLmXBFFo",
         "duration": 201,
         "sabi": {
@@ -2517,7 +2543,8 @@ const DEFAULT_SONGS = [
             "hina",
             "mashiro",
             "lize",
-            "tabi"
+            "tabi",
+            "kangji"
         ],
         "youtubeId": "hGzklPRul4w",
         "duration": 228,
@@ -3880,12 +3907,13 @@ const DEFAULT_SONGS = [
     {
         "id": "stel-m5XU_4r1yV0",
         "title": "いーあるふぁんくらぶ (하나 둘 팬클럽)",
-        "artist": "네네코 마시로",
+        "artist": "네네코 마시로 x 강지",
         "originalArtist": "커버 (Cover)",
         "type": "cover",
         "gen": "g2",
         "members": [
-            "mashiro"
+            "mashiro",
+            "kangji"
         ],
         "youtubeId": "m5XU_4r1yV0",
         "duration": 239,
@@ -7556,7 +7584,8 @@ const DEFAULT_SONGS = [
         "type": "featuring",
         "gen": "group",
         "members": [
-            "group"
+            "group",
+            "kangji"
         ],
         "youtubeId": "2jSW47-0smE",
         "duration": 163,
@@ -7576,7 +7605,8 @@ const DEFAULT_SONGS = [
         "type": "featuring",
         "gen": "group",
         "members": [
-            "group"
+            "group",
+            "kangji"
         ],
         "youtubeId": "eEnEH7IpQtc",
         "duration": 191,
@@ -8186,7 +8216,8 @@ function addCustomSong(songData) {
         originalArtist: songData.originalArtist ? songData.originalArtist.trim() : (songData.type === 'original' ? '스텔라이브 (STELLIVE)' : '커버 (Cover)'),
         type: songData.type || 'cover',
         gen: songData.gen || 'custom',
-        members: songData.members && songData.members.length > 0 ? songData.members : ['group'],
+        members: Array.isArray(songData.members) ? songData.members : ['group'],
+        customGroupId: songData.customGroupId || null,
         youtubeId: vid,
         duration: 200,
         publishedAt: songData.publishedAt || new Date().toISOString().split('T')[0],

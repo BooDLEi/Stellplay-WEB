@@ -300,7 +300,7 @@
                                 </div>
                             </div>
                             <span id="m-app-version-badge" style="font-size:0.72rem; padding:3px 8px; border-radius:10px; background:rgba(99,102,241,0.15); color:#818cf8; font-weight:700; white-space:nowrap;">
-                                v1.12.0
+                                v1.12.1
                             </span>
                         </div>
                         <div id="m-ota-info-text" style="font-size:0.75rem; color:var(--text-secondary); background:rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; border:1px solid var(--border-glass); line-height:1.4;">
@@ -807,22 +807,22 @@
                         <input type="text" id="m-add-original-artist" class="form-input" placeholder="예: Kanaria, Mrs. GREEN APPLE">
                     </div>
                     <div class="form-group">
-                        <label>분류</label>
-                        <div class="custom-pill-select" id="m-add-type-pills">
-                            <button type="button" class="form-pill-btn active" data-value="cover">커버곡</button>
+                        <label>음원 유형</label>
+                        <div class="custom-pill-select unified-pill-select" id="m-add-type-pills">
                             <button type="button" class="form-pill-btn" data-value="original">오리지널</button>
-                            <button type="button" class="form-pill-btn" data-value="live">3D 라이브</button>
-                            <button type="button" class="form-pill-btn" data-value="featuring">피처링 & OST</button>
+                            <button type="button" class="form-pill-btn active" data-value="cover">커버</button>
+                            <button type="button" class="form-pill-btn" data-value="featuring">OST &amp; 피처링</button>
+                            <button type="button" class="form-pill-btn" data-value="live">LIVE</button>
                         </div>
                         <input type="hidden" id="m-add-type" value="cover">
                     </div>
                     <div class="form-group">
-                        <label>곡 분위기 (분위기 추천 연동)</label>
-                        <div class="custom-pill-select mood-pill-select" id="m-add-mood-pills">
+                        <label>분위기</label>
+                        <div class="custom-pill-select unified-pill-select mood-pill-select" id="m-add-mood-pills">
                             <button type="button" class="form-pill-btn active" data-value="none">선택 안 함</button>
                             <button type="button" class="form-pill-btn" data-value="upbeat">🔥 파워풀</button>
-                            <button type="button" class="form-pill-btn" data-value="chill">🌙 감성</button>
-                            <button type="button" class="form-pill-btn" data-value="bright">✨ 청량</button>
+                            <button type="button" class="form-pill-btn" data-value="chill">🌙 감성힐링</button>
+                            <button type="button" class="form-pill-btn" data-value="bright">☀️ 청량상쾌</button>
                             <button type="button" class="form-pill-btn" data-value="groovy">🎧 그루비</button>
                             <button type="button" class="form-pill-btn" data-value="cute">💖 큐트</button>
                         </div>
@@ -836,52 +836,24 @@
                         </div>
                     </div>
                     <div class="form-group member-picker-container">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <label style="margin:0;">참여 멤버 설정 *</label>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <label style="margin:0;">아티스트 · 그룹 및 참여 멤버 *</label>
                             <button type="button" class="btn-text-detect" id="m-btn-detect-add-members">⚡ 자동 감지</button>
                         </div>
-                        <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브(단체) -->
-                        <div class="member-scope-selector" id="m-add-member-scope-selector">
-                            <label class="member-scope-btn active">
-                                <input type="radio" name="m-add-member-scope" value="individual" checked>
-                                <span>개인 / 듀엣 / 유닛</span>
-                            </label>
-                            <label class="member-scope-btn">
-                                <input type="radio" name="m-add-member-scope" value="stellive">
-                                <span>스텔라이브 (단체)</span>
-                            </label>
-                        </div>
-                        <!-- 2분류: 유닛 및 멤버별 체크박스 -->
-                        <div class="member-selection-sub" id="m-add-member-selection-sub">
-                            <div class="member-unit-group">
-                                <span class="member-picker-sublabel">유닛</span>
-                                <div class="member-chips-container unit-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
+                        <!-- 분류·필터 팝업과 동일한 디자인의 통합 그룹/기수/로고 선택기 -->
+                        <div class="m-unified-picker" id="m-add-unified-picker">
+                            <div class="filter-group-tabs-row m-picker-group-tabs" id="m-add-group-tabs"></div>
+                            <div class="filter-stellive-panel m-picker-stellive-panel" id="m-add-stellive-panel">
+                                <div class="filter-sub-pills m-picker-sub-pills" id="m-add-sub-pills">
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="group">단체곡</button>
+                                    <button type="button" class="filter-sub-pill active" data-picker-cat="g1">1기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="g2">2기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="g3">3기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="g4">4기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="kangji">강지</button>
                                 </div>
-                            </div>
-                            <div class="member-individual-group">
-                                <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
-                                <div class="member-chips-container member-chips" id="m-add-member-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-add-member-item" value="kangji" data-name="강지"> <span>강지</span></label>
-                                </div>
+                                <div class="member-sub-row sub-grid-5 filter-member-grid m-picker-member-grid" id="m-add-member-grid"></div>
+                                <div class="m-picker-selected-row" id="m-add-selected-summary"></div>
                             </div>
                         </div>
                     </div>
@@ -929,22 +901,22 @@
                         <input type="text" id="m-edit-original-artist" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label>분류</label>
-                        <div class="custom-pill-select" id="m-edit-type-pills">
-                            <button type="button" class="form-pill-btn active" data-value="cover">커버곡</button>
+                        <label>음원 유형</label>
+                        <div class="custom-pill-select unified-pill-select" id="m-edit-type-pills">
                             <button type="button" class="form-pill-btn" data-value="original">오리지널</button>
-                            <button type="button" class="form-pill-btn" data-value="live">3D 라이브</button>
-                            <button type="button" class="form-pill-btn" data-value="featuring">피처링 & OST</button>
+                            <button type="button" class="form-pill-btn active" data-value="cover">커버</button>
+                            <button type="button" class="form-pill-btn" data-value="featuring">OST &amp; 피처링</button>
+                            <button type="button" class="form-pill-btn" data-value="live">LIVE</button>
                         </div>
                         <input type="hidden" id="m-edit-type" value="cover">
                     </div>
                     <div class="form-group">
-                        <label>곡 분위기 (분위기 추천 연동)</label>
-                        <div class="custom-pill-select mood-pill-select" id="m-edit-mood-pills">
+                        <label>분위기</label>
+                        <div class="custom-pill-select unified-pill-select mood-pill-select" id="m-edit-mood-pills">
                             <button type="button" class="form-pill-btn active" data-value="none">선택 안 함</button>
                             <button type="button" class="form-pill-btn" data-value="upbeat">🔥 파워풀</button>
-                            <button type="button" class="form-pill-btn" data-value="chill">🌙 감성</button>
-                            <button type="button" class="form-pill-btn" data-value="bright">✨ 청량</button>
+                            <button type="button" class="form-pill-btn" data-value="chill">🌙 감성힐링</button>
+                            <button type="button" class="form-pill-btn" data-value="bright">☀️ 청량상쾌</button>
                             <button type="button" class="form-pill-btn" data-value="groovy">🎧 그루비</button>
                             <button type="button" class="form-pill-btn" data-value="cute">💖 큐트</button>
                         </div>
@@ -958,52 +930,24 @@
                         </div>
                     </div>
                     <div class="form-group member-picker-container">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <label style="margin:0;">참여 멤버 설정 *</label>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <label style="margin:0;">아티스트 · 그룹 및 참여 멤버 *</label>
                             <button type="button" class="btn-text-detect" id="m-btn-detect-edit-members">⚡ 자동 감지</button>
                         </div>
-                        <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브(단체) -->
-                        <div class="member-scope-selector" id="m-edit-member-scope-selector">
-                            <label class="member-scope-btn active">
-                                <input type="radio" name="m-edit-member-scope" value="individual" checked>
-                                <span>개인 / 듀엣 / 유닛</span>
-                            </label>
-                            <label class="member-scope-btn">
-                                <input type="radio" name="m-edit-member-scope" value="stellive">
-                                <span>스텔라이브 (단체)</span>
-                            </label>
-                        </div>
-                        <!-- 2분류: 유닛 및 멤버별 체크박스 -->
-                        <div class="member-selection-sub" id="m-edit-member-selection-sub">
-                            <div class="member-unit-group">
-                                <span class="member-picker-sublabel">유닛</span>
-                                <div class="member-chips-container unit-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
+                        <!-- 분류·필터 팝업과 동일한 디자인의 통합 그룹/기수/로고 선택기 -->
+                        <div class="m-unified-picker" id="m-edit-unified-picker">
+                            <div class="filter-group-tabs-row m-picker-group-tabs" id="m-edit-group-tabs"></div>
+                            <div class="filter-stellive-panel m-picker-stellive-panel" id="m-edit-stellive-panel">
+                                <div class="filter-sub-pills m-picker-sub-pills" id="m-edit-sub-pills">
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="group">단체곡</button>
+                                    <button type="button" class="filter-sub-pill active" data-picker-cat="g1">1기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="g2">2기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="g3">3기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="g4">4기생</button>
+                                    <button type="button" class="filter-sub-pill" data-picker-cat="kangji">강지</button>
                                 </div>
-                            </div>
-                            <div class="member-individual-group">
-                                <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
-                                <div class="member-chips-container member-chips" id="m-edit-member-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="m-edit-member-item" value="kangji" data-name="강지"> <span>강지</span></label>
-                                </div>
+                                <div class="member-sub-row sub-grid-5 filter-member-grid m-picker-member-grid" id="m-edit-member-grid"></div>
+                                <div class="m-picker-selected-row" id="m-edit-selected-summary"></div>
                             </div>
                         </div>
                     </div>
