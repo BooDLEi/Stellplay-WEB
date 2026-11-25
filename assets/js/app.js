@@ -4624,13 +4624,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026102302;
+                const verNum = v.otaVersion || 2026112503;
                 return {
                     success: true,
-                    versionName: v.apkVersionName || '1.11.3',
+                    versionName: v.webVersionName || '1.12.2',
                     currentVersion: verNum,
                     bundledVersion: verNum,
-                    otaReleaseDate: v.otaReleaseDate || '2026-10-23',
+                    otaReleaseDate: v.otaReleaseDate || '2026-11-25',
                     hasPrevious: false,
                     previousVersion: -1,
                     history: [{
@@ -4644,14 +4644,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.11.3',
-            currentVersion: 2026102302,
-            bundledVersion: 2026102302,
+            versionName: '1.12.2',
+            currentVersion: 2026112503,
+            bundledVersion: 2026112503,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026102302,
-                label: '현재 적용 버전 (#2026102302)',
+                version: 2026112503,
+                label: '현재 적용 버전 (#2026112503)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -4664,7 +4664,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.11.3'} (패치 #${info.currentVersion || 2026102302})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.12.2'} (패치 #${info.currentVersion || 2026112503})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';

@@ -8218,6 +8218,7 @@ function addCustomSong(songData) {
         gen: songData.gen || 'custom',
         members: Array.isArray(songData.members) ? songData.members : ['group'],
         customGroupId: songData.customGroupId || null,
+        customSubId: songData.customSubId || null,
         youtubeId: vid,
         duration: 200,
         publishedAt: songData.publishedAt || new Date().toISOString().split('T')[0],

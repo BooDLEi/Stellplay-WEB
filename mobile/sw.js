@@ -1,5 +1,5 @@
-// StellPlay Mobile - Service Worker (v8 Web)
-const CACHE_NAME = 'stellplay-mobile-shell-v8';
+// StellPlay Mobile - Service Worker (v12 Network-First No-Cache)
+const CACHE_NAME = 'stellplay-mobile-shell-v12';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -38,9 +38,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First 전략: 최신 서버 파일을 우선 가져오고, 오프라인(비행기 모드 등)일 때만 캐시에서 서빙
+  // Network-First 전략: 항상 서버 최신 파일을 재검증(no-cache)하여 가져오고 오프라인일 때만 캐시 서빙
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-cache' })
       .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();

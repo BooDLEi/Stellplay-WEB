@@ -1,5 +1,5 @@
-// StellPlay PC Web - Service Worker (v1 Network-First)
-const CACHE_NAME = 'stellplay-pc-web-v1';
+// StellPlay PC Web - Service Worker (v12 Network-First No-Cache)
+const CACHE_NAME = 'stellplay-pc-web-v12';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -39,7 +39,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-cache' })
       .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();

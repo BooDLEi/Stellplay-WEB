@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.12.1';
-    const CURRENT_OTA_BUILD = 2026112502;
+    const CURRENT_APP_VERSION = '1.12.2';
+    const CURRENT_OTA_BUILD = 2026112503;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -63,7 +63,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const raw = localStorage.getItem('stellplay_custom_artist_groups');
             const parsed = raw ? JSON.parse(raw) : [];
-            return Array.isArray(parsed) ? parsed.filter(g => g && g.id && g.name) : [];
+            if (!Array.isArray(parsed)) return [];
+            return parsed
+                .filter(g => g && g.id && g.name)
+                .map(g => ({
+                    id: String(g.id),
+                    name: String(g.name),
+                    color: (typeof g.color === 'string' && /^#[0-9a-f]{6}$/i.test(g.color)) ? g.color : '#7c5cfc',
+                    keywords: Array.isArray(g.keywords) && g.keywords.length > 0 ? g.keywords : [String(g.name)],
+                    subItems: Array.isArray(g.subItems)
+                        ? g.subItems.filter(s => s && s.id && s.name).map(s => ({
+                            id: String(s.id),
+                            name: String(s.name),
+                            color: (typeof s.color === 'string' && /^#[0-9a-f]{6}$/i.test(s.color)) ? s.color : '#38bdf8',
+                            keywords: Array.isArray(s.keywords) && s.keywords.length > 0 ? s.keywords : [String(s.name)]
+                        }))
+                        : []
+                }));
         } catch (_) {
             return [];
         }
@@ -75,6 +91,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (_) {}
     }
 
+    function loadTabColorOverrides() {
+        try {
+            const raw = localStorage.getItem('stellplay_tab_color_overrides');
+            const parsed = raw ? JSON.parse(raw) : {};
+            return (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
+        } catch (_) {
+            return {};
+        }
+    }
+
+    function saveTabColorOverrides(map) {
+        try {
+            localStorage.setItem('stellplay_tab_color_overrides', JSON.stringify(map || {}));
+        } catch (_) {}
+    }
+
     // 모바일 상태
     const state = {
         activeView: 'view-home',
@@ -82,8 +114,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         selectedMember: 'all',
         selectedMajor: 'all',
         selectedSub: null,
+        selectedCustomSub: null,
         selectedMoods: new Set(),
         customGroups: loadCustomGroups(),
+        tabColorOverrides: loadTabColorOverrides(),
         sortOrder: 'latest',
         selectedType: 'all',
         selectedTypes: new Set(),
@@ -130,6 +164,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         headerSabiText: document.getElementById('m-header-sabi-text'),
         btnSwitchPc: document.getElementById('m-btn-switch-pc'),
         sortSelect: document.getElementById('m-sort-select'),
+        sortDropdownWrap: document.getElementById('m-sort-dropdown-wrap'),
+        sortDropdownBtn: document.getElementById('m-sort-dropdown-btn'),
+        sortDropdownLabel: document.getElementById('m-sort-dropdown-label'),
+        sortDropdownMenu: document.getElementById('m-sort-dropdown-menu'),
         btnRandomPlayFiltered: document.getElementById('btn-random-play-filtered'),
 
         // 뷰
@@ -154,15 +192,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnAddCustomGroup: document.getElementById('m-btn-add-custom-group'),
         filterStellivePanel: document.getElementById('m-filter-stellive-panel'),
         filterStelliveSub: document.getElementById('m-filter-stellive-sub'),
+        filterCustomPanel: document.getElementById('m-filter-custom-panel'),
+        filterCustomSub: document.getElementById('m-filter-custom-sub'),
         filterMoodPills: document.querySelectorAll('#m-filter-mood-pills .filter-mood-pill'),
         btnFilterReset: document.getElementById('m-btn-filter-reset'),
         btnFilterApply: document.getElementById('m-btn-filter-apply'),
         modalCustomGroup: document.getElementById('m-modal-custom-group'),
         formCustomGroup: document.getElementById('m-form-custom-group'),
+        customGroupModalTitle: document.getElementById('m-custom-group-modal-title'),
+        customGroupEditId: document.getElementById('m-custom-group-edit-id'),
         inputCustomGroupName: document.getElementById('m-custom-group-name'),
+        customGroupSwatches: document.getElementById('m-custom-group-swatches'),
+        inputCustomGroupColor: document.getElementById('m-custom-group-color'),
+        customGroupColorHex: document.getElementById('m-custom-group-color-hex'),
         inputCustomGroupKeywords: document.getElementById('m-custom-group-keywords'),
+        customSubList: document.getElementById('m-custom-sub-list'),
+        inputCustomSubName: document.getElementById('m-custom-sub-name'),
+        inputCustomSubColor: document.getElementById('m-custom-sub-color'),
+        btnAddCustomSub: document.getElementById('m-btn-add-custom-sub'),
+        btnSubmitCustomGroup: document.getElementById('m-btn-submit-custom-group'),
         btnCloseCustomGroup: document.getElementById('m-btn-close-custom-group'),
         btnCancelCustomGroup: document.getElementById('m-btn-cancel-custom-group'),
+        settingsAddCustomGroup: document.getElementById('m-settings-add-custom-group'),
+        settingsCustomGroupsList: document.getElementById('m-settings-custom-groups-list'),
+        settingsBuiltinColors: document.getElementById('m-settings-builtin-colors'),
+        btnResetBuiltinColors: document.getElementById('m-btn-reset-builtin-colors'),
         btnOpenQueueHome: document.getElementById('btn-open-queue-home'),
         btnQueueHomeText: document.getElementById('btn-queue-home-text'),
         btnOpenMoodHome: document.getElementById('btn-open-mood-home'),
@@ -571,7 +625,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         mary: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' }
     };
 
+    function hexToRgba(hex, alpha = 0.45) {
+        if (!hex || !/^#[0-9a-f]{6}$/i.test(hex)) return `rgba(124, 92, 252, ${alpha})`;
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function applyCustomAccentTheme(hex) {
+        if (!hex || !/^#[0-9a-f]{6}$/i.test(hex)) {
+            applyMemberTheme('all');
+            return;
+        }
+        const root = document.documentElement;
+        const isLight = root.getAttribute('data-theme') === 'light';
+        const glow = hexToRgba(hex, 0.45);
+        root.style.setProperty('--theme-color', hex);
+        root.style.setProperty('--theme-glow', glow);
+        root.style.setProperty('--theme-gradient', `linear-gradient(135deg, ${hex}, #3b82f6)`);
+        root.style.setProperty('--theme-gradient-subtle', isLight ? `linear-gradient(135deg, ${glow}, rgba(0,0,0,0.02))` : `linear-gradient(135deg, ${glow}, rgba(255,255,255,0.02))`);
+    }
+
     function applyMemberTheme(memberKey) {
+        const overrideHex = state && state.tabColorOverrides ? state.tabColorOverrides[memberKey] : null;
+        if (overrideHex && /^#[0-9a-f]{6}$/i.test(overrideHex)) {
+            applyCustomAccentTheme(overrideHex);
+            return;
+        }
         const theme = MEMBER_BUTTON_COLORS[memberKey] || MEMBER_BUTTON_COLORS.all;
         const root = document.documentElement;
         const isLight = root.getAttribute('data-theme') === 'light';
@@ -593,9 +674,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (dom.btnThemeDark) dom.btnThemeDark.classList.toggle('active', theme === 'dark');
         if (dom.btnThemeLight) dom.btnThemeLight.classList.toggle('active', theme === 'light');
-        if (dom.topThemeIcon) {
-            dom.topThemeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
-        }
         if (dom.btnTopTheme) {
             dom.btnTopTheme.setAttribute('title', theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환');
             dom.btnTopTheme.setAttribute('aria-checked', theme === 'light' ? 'true' : 'false');
@@ -789,7 +867,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (historyData.hasPrevious && historyData.previousVersion > 0) {
                     dom.btnQuickRollbackOta.style.display = 'flex';
                     if (dom.btnQuickRollbackText) {
-                        dom.btnQuickRollbackText.textContent = `⚡ 직전 버전(#${historyData.previousVersion})으로 즉시 롤백`;
+                        dom.btnQuickRollbackText.textContent = `직전 버전(#${historyData.previousVersion})으로 즉시 롤백`;
                     }
                     dom.btnQuickRollbackOta.onclick = () => {
                         showAppConfirmModal({
@@ -951,12 +1029,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (data.status === 'up_to_date') {
                 if (data.isNewerApkAvailable && !data.nativeUpdateRequired) {
-                    showToast(`✨ 최신 패치 v${CURRENT_APP_VERSION} (#${data.otaVersion}) 적용됨`);
+                    showToast(`최신 패치 v${CURRENT_APP_VERSION} (#${data.otaVersion}) 적용됨`);
                 } else {
-                    showToast(`✨ 현재 최신 버전입니다 (v${CURRENT_APP_VERSION} / #${data.otaVersion})`);
+                    showToast(`현재 최신 버전입니다 (v${CURRENT_APP_VERSION} / #${data.otaVersion})`);
                 }
             } else if (data.status === 'error') {
-                showToast('⚠️ ' + (data.message || '업데이트 확인에 실패했습니다.'));
+                showToast('' + (data.message || '업데이트 확인에 실패했습니다.'));
             }
         };
 
@@ -968,7 +1046,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 dom.liveUpdateToast.style.display = 'block';
             }
-            showToast(`🎉 새로운 업데이트가 다운로드되었습니다 (패치 #${data.otaVersion})`);
+            showToast(`새로운 업데이트가 다운로드되었습니다 (패치 #${data.otaVersion})`);
         };
 
         window.onApkDownloadProgress = function(percent) {
@@ -1176,12 +1254,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     const res = await fetch(`${formatted}/api/songs`, { signal: AbortSignal.timeout(3000) });
                     if (res.ok) {
-                        showToast('🎉 PC 서버와 정상 연결되었습니다! (고음질 스트리밍 & 다운로드 활성화)');
+                        showToast('PC 서버와 정상 연결되었습니다! (고음질 스트리밍 & 다운로드 활성화)');
                     } else {
-                        showToast('⚠️ PC 서버 응답 확인 필요 (PC에서 서버가 켜져 있는지 확인)');
+                        showToast('PC 서버 응답 확인 필요 (PC에서 서버가 켜져 있는지 확인)');
                     }
                 } catch (e) {
-                    showToast('ℹ️ IP 저장 완료 (같은 Wi-Fi 공유기에 연결되어 있는지 확인해주세요)');
+                    showToast('ℹIP 저장 완료 (같은 Wi-Fi 공유기에 연결되어 있는지 확인해주세요)');
                 }
             });
         }
@@ -1335,12 +1413,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const FILTER_MOOD_LABELS = {
-        upbeat: '🔥 파워풀',
-        chill: '🌙 감성힐링',
-        bright: '☀️ 청량상쾌',
-        groovy: '🎧 그루비',
-        cute: '💖 큐트'
+        upbeat: '파워풀',
+        chill: '감성힐링',
+        bright: '청량상쾌',
+        groovy: '그루비',
+        cute: '큐트'
     };
+
+    const TAB_COLOR_PRESETS = [
+        '#7c5cfc', '#ec4899', '#ef4444', '#f59e0b', '#10b981',
+        '#06b6d4', '#3b82f6', '#8b5cf6', '#f43f5e', '#84cc16'
+    ];
+
+    const BUILTIN_COLOR_ITEMS = [
+        { id: 'stellive', label: '스텔라이브', defaultColor: '#7c5cfc' },
+        { id: 'unclassified', label: '미분류', defaultColor: '#64748b' },
+        { id: 'group', label: '유닛/단체', defaultColor: '#818cf8' },
+        { id: 'g1', label: '1기생', defaultColor: '#c084fc' },
+        { id: 'g2', label: '2기생', defaultColor: '#38bdf8' },
+        { id: 'g3', label: '3기생', defaultColor: '#fb7185' },
+        { id: 'g4', label: '4기생', defaultColor: '#34d399' },
+        { id: 'kangji', label: '강지', defaultColor: '#f59e0b' }
+    ];
+
+    let customGroupDraftSubs = [];
 
     function getSubItemLabel(subId) {
         for (const list of Object.values(SUB_FILTER_CONFIG)) {
@@ -1360,9 +1456,77 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.filterSheet) dom.filterSheet.classList.remove('open');
     }
 
-    function openCustomGroupModal() {
-        if (dom.inputCustomGroupName) dom.inputCustomGroupName.value = '';
-        if (dom.inputCustomGroupKeywords) dom.inputCustomGroupKeywords.value = '';
+    function renderCustomGroupSwatches(selectedHex) {
+        if (!dom.customGroupSwatches) return;
+        const norm = (selectedHex || '#7c5cfc').toLowerCase();
+        dom.customGroupSwatches.innerHTML = '';
+        TAB_COLOR_PRESETS.forEach(hex => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `m-color-swatch ${hex.toLowerCase() === norm ? 'active' : ''}`;
+            btn.style.background = hex;
+            btn.title = hex;
+            btn.addEventListener('click', () => {
+                if (dom.inputCustomGroupColor) dom.inputCustomGroupColor.value = hex;
+                if (dom.customGroupColorHex) dom.customGroupColorHex.textContent = hex.toUpperCase();
+                renderCustomGroupSwatches(hex);
+            });
+            dom.customGroupSwatches.appendChild(btn);
+        });
+    }
+
+    function renderCustomGroupDraftSubs() {
+        if (!dom.customSubList) return;
+        dom.customSubList.innerHTML = '';
+        if (customGroupDraftSubs.length === 0) return;
+
+        customGroupDraftSubs.forEach((sub, idx) => {
+            const row = document.createElement('div');
+            row.className = 'm-custom-sub-item';
+            row.innerHTML = `
+                <input type="color" class="m-sub-color-input" value="${escapeHtml(sub.color || '#38bdf8')}" title="하위 메뉴 색상 변경" style="width:24px; height:24px; border-radius:6px;">
+                <span class="m-custom-sub-item-name">${escapeHtml(sub.name)}</span>
+                <button type="button" class="m-custom-sub-del" aria-label="${escapeHtml(sub.name)} 삭제">✕</button>
+            `;
+            row.querySelector('input[type="color"]').addEventListener('input', (e) => {
+                customGroupDraftSubs[idx].color = e.target.value;
+            });
+            row.querySelector('.m-custom-sub-del').addEventListener('click', () => {
+                customGroupDraftSubs.splice(idx, 1);
+                renderCustomGroupDraftSubs();
+            });
+            dom.customSubList.appendChild(row);
+        });
+    }
+
+    function openCustomGroupModal(editId = null) {
+        const existing = editId ? (state.customGroups || []).find(g => g.id === editId) : null;
+        if (dom.customGroupEditId) dom.customGroupEditId.value = existing ? existing.id : '';
+        if (dom.customGroupModalTitle) {
+            dom.customGroupModalTitle.textContent = existing ? '아티스트 / 그룹 탭 수정' : '새 아티스트 / 그룹 탭 추가';
+        }
+        if (dom.btnSubmitCustomGroup) {
+            dom.btnSubmitCustomGroup.textContent = existing ? '저장 완료' : '탭 추가';
+        }
+        if (dom.inputCustomGroupName) dom.inputCustomGroupName.value = existing ? existing.name : '';
+        const colorHex = (existing && existing.color) ? existing.color : '#7c5cfc';
+        if (dom.inputCustomGroupColor) dom.inputCustomGroupColor.value = colorHex;
+        if (dom.customGroupColorHex) dom.customGroupColorHex.textContent = colorHex.toUpperCase();
+        renderCustomGroupSwatches(colorHex);
+
+        if (dom.inputCustomGroupKeywords) {
+            const kws = existing && Array.isArray(existing.keywords) ? existing.keywords : [];
+            const isDefaultOnly = existing && kws.length === 1 && kws[0] === existing.name;
+            dom.inputCustomGroupKeywords.value = isDefaultOnly ? '' : kws.join(', ');
+        }
+
+        customGroupDraftSubs = existing && Array.isArray(existing.subItems)
+            ? existing.subItems.map(s => ({ ...s, keywords: [...(s.keywords || [s.name])] }))
+            : [];
+        if (dom.inputCustomSubName) dom.inputCustomSubName.value = '';
+        if (dom.inputCustomSubColor) dom.inputCustomSubColor.value = TAB_COLOR_PRESETS[(customGroupDraftSubs.length + 5) % TAB_COLOR_PRESETS.length];
+        renderCustomGroupDraftSubs();
+
         if (dom.modalCustomGroup) dom.modalCustomGroup.classList.add('open');
         setTimeout(() => {
             try { dom.inputCustomGroupName?.focus(); } catch (_) {}
@@ -1373,15 +1537,104 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.modalCustomGroup) dom.modalCustomGroup.classList.remove('open');
     }
 
+    function deleteCustomGroupWithConfirm(tab) {
+        if (!tab) return;
+        showAppConfirmModal({
+            title: '탭 삭제',
+            message: `'${tab.name}' 분류 탭과 하위 메뉴를 삭제하시겠습니까?`,
+            confirmText: '삭제',
+            isDestructive: true,
+            onConfirm: () => {
+                state.customGroups = (state.customGroups || []).filter(g => g.id !== tab.id);
+                saveCustomGroups(state.customGroups);
+                if (state.selectedGroupTab === tab.id) {
+                    state.selectedGroupTab = 'all';
+                    state.selectedCustomSub = null;
+                    applyMemberTheme('all');
+                }
+                renderFilterGroupTabs();
+                syncFilterSheetUI();
+                renderSettingsFilterManager();
+                renderAllViews();
+                showToast(`'${tab.name}' 탭이 삭제되었습니다.`);
+            }
+        });
+    }
+
+    function renderSettingsFilterManager() {
+        if (dom.settingsCustomGroupsList) {
+            dom.settingsCustomGroupsList.innerHTML = '';
+            const groups = state.customGroups || [];
+            if (groups.length === 0) {
+                dom.settingsCustomGroupsList.innerHTML = '<div class="m-settings-empty-note">등록된 사용자 분류 탭이 없습니다. 우측 상단 [새 탭] 버튼으로 추가해보세요.</div>';
+            } else {
+                groups.forEach(grp => {
+                    const row = document.createElement('div');
+                    row.className = 'm-settings-group-row';
+                    const subBadgesHtml = (grp.subItems && grp.subItems.length > 0)
+                        ? `<div class="m-settings-sub-badges">${grp.subItems.map(s => `<span class="m-settings-sub-badge"><span class="m-settings-group-dot" style="width:6px; height:6px; background:${escapeHtml(s.color || '#38bdf8')};"></span>${escapeHtml(s.name)}</span>`).join('')}</div>`
+                        : '';
+                    row.innerHTML = `
+                        <div class="m-settings-group-top">
+                            <div class="m-settings-group-info">
+                                <span class="m-settings-group-dot" style="background:${escapeHtml(grp.color || '#7c5cfc')};"></span>
+                                <span class="m-settings-group-name">${escapeHtml(grp.name)}</span>
+                            </div>
+                            <div class="m-settings-group-btns">
+                                <button type="button" class="m-settings-group-btn btn-edit-grp">수정</button>
+                                <button type="button" class="m-settings-group-btn danger btn-del-grp">삭제</button>
+                            </div>
+                        </div>
+                        ${subBadgesHtml}
+                    `;
+                    row.querySelector('.btn-edit-grp').addEventListener('click', () => openCustomGroupModal(grp.id));
+                    row.querySelector('.btn-del-grp').addEventListener('click', () => deleteCustomGroupWithConfirm(grp));
+                    dom.settingsCustomGroupsList.appendChild(row);
+                });
+            }
+        }
+
+        if (dom.settingsBuiltinColors) {
+            dom.settingsBuiltinColors.innerHTML = '';
+            BUILTIN_COLOR_ITEMS.forEach(item => {
+                const curColor = (state.tabColorOverrides && state.tabColorOverrides[item.id]) || item.defaultColor;
+                const label = document.createElement('label');
+                label.className = 'm-builtin-color-chip';
+                label.innerHTML = `<input type="color" value="${escapeHtml(curColor)}" data-builtin-key="${item.id}"><span>${escapeHtml(item.label)}</span>`;
+                label.querySelector('input').addEventListener('input', (e) => {
+                    const hex = e.target.value;
+                    state.tabColorOverrides = { ...(state.tabColorOverrides || {}), [item.id]: hex };
+                    saveTabColorOverrides(state.tabColorOverrides);
+                    renderFilterGroupTabs();
+                    syncFilterSheetUI();
+                    if (state.selectedGroupTab === item.id || (state.selectedGroupTab === 'stellive' && state.selectedMajor === item.id)) {
+                        applyCustomAccentTheme(hex);
+                    }
+                });
+                dom.settingsBuiltinColors.appendChild(label);
+            });
+        }
+    }
+
     function selectGroupTab(tabId) {
         state.selectedGroupTab = tabId || 'all';
-        if (state.selectedGroupTab !== 'stellive') {
+        state.selectedCustomSub = null;
+        if (state.selectedGroupTab === 'stellive') {
+            applyMemberTheme(state.selectedSub || state.selectedMajor || 'stellive');
+        } else if (state.selectedGroupTab === 'all' || state.selectedGroupTab === 'unclassified') {
             state.selectedMajor = 'all';
             state.selectedSub = null;
             state.selectedMember = 'all';
-            applyMemberTheme('all');
+            const ov = state.tabColorOverrides && state.tabColorOverrides[state.selectedGroupTab];
+            if (ov) applyCustomAccentTheme(ov);
+            else applyMemberTheme('all');
         } else {
-            applyMemberTheme(state.selectedSub || state.selectedMajor || 'group');
+            state.selectedMajor = 'all';
+            state.selectedSub = null;
+            state.selectedMember = 'all';
+            const cg = (state.customGroups || []).find(g => g.id === state.selectedGroupTab);
+            if (cg && cg.color) applyCustomAccentTheme(cg.color);
+            else applyMemberTheme('all');
         }
         renderFilterGroupTabs();
         syncFilterSheetUI();
@@ -1393,19 +1646,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         dom.filterGroupTabs.innerHTML = '';
 
         const builtInTabs = [
-            { id: 'all', name: '전체', isBuiltIn: true },
-            { id: 'stellive', name: '스텔라이브', isBuiltIn: true, isStellive: true },
-            { id: 'unclassified', name: '미분류', isBuiltIn: true }
+            { id: 'all', name: '전체', isBuiltIn: true, color: state.tabColorOverrides?.all || null },
+            { id: 'stellive', name: '스텔라이브', isBuiltIn: true, isStellive: true, color: state.tabColorOverrides?.stellive || null },
+            { id: 'unclassified', name: '미분류', isBuiltIn: true, color: state.tabColorOverrides?.unclassified || null }
         ];
         const allTabs = [...builtInTabs, ...(state.customGroups || []).map(g => ({ ...g, isBuiltIn: false }))];
 
         allTabs.forEach(tab => {
             const isActive = state.selectedGroupTab === tab.id;
             const tabEl = document.createElement('div');
-            tabEl.className = `filter-group-tab ${tab.isStellive ? 'is-stellive' : ''} ${isActive ? 'active' : ''}`;
+            const hasColor = !!(tab.color && /^#[0-9a-f]{6}$/i.test(tab.color));
+            tabEl.className = `filter-group-tab ${tab.isStellive ? 'is-stellive' : ''} ${hasColor ? 'has-custom-color' : ''} ${isActive ? 'active' : ''}`;
             tabEl.dataset.groupTab = tab.id;
             tabEl.setAttribute('role', 'tab');
             tabEl.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            if (hasColor) {
+                tabEl.style.setProperty('--tab-accent', tab.color);
+            }
+
+            if (hasColor && !tab.isBuiltIn) {
+                const dot = document.createElement('span');
+                dot.className = 'filter-group-tab-dot';
+                tabEl.appendChild(dot);
+            }
 
             const labelSpan = document.createElement('span');
             labelSpan.className = 'filter-group-tab-name';
@@ -1413,6 +1676,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             tabEl.appendChild(labelSpan);
 
             if (!tab.isBuiltIn) {
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'filter-group-tab-edit';
+                editBtn.title = `'${tab.name}' 탭 수정`;
+                editBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openCustomGroupModal(tab.id);
+                });
+                tabEl.appendChild(editBtn);
+
                 const delBtn = document.createElement('button');
                 delBtn.type = 'button';
                 delBtn.className = 'filter-group-tab-del';
@@ -1420,23 +1694,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 delBtn.textContent = '×';
                 delBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    showAppConfirmModal({
-                        title: '탭 삭제',
-                        message: `'${tab.name}' 분류 탭을 삭제하시겠습니까?`,
-                        confirmText: '삭제',
-                        isDestructive: true,
-                        onConfirm: () => {
-                            state.customGroups = (state.customGroups || []).filter(g => g.id !== tab.id);
-                            saveCustomGroups(state.customGroups);
-                            if (state.selectedGroupTab === tab.id) {
-                                state.selectedGroupTab = 'all';
-                            }
-                            renderFilterGroupTabs();
-                            syncFilterSheetUI();
-                            renderAllViews();
-                            showToast(`'${tab.name}' 탭이 삭제되었습니다.`);
-                        }
-                    });
+                    deleteCustomGroupWithConfirm(tab);
                 });
                 tabEl.appendChild(delBtn);
             }
@@ -1448,20 +1706,83 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function renderFilterCustomSubPanel() {
+        if (!dom.filterCustomPanel || !dom.filterCustomSub) return;
+        const customGrp = (state.customGroups || []).find(g => g.id === state.selectedGroupTab);
+        const subs = (customGrp && Array.isArray(customGrp.subItems)) ? customGrp.subItems : [];
+        if (!customGrp || subs.length === 0) {
+            dom.filterCustomPanel.style.display = 'none';
+            dom.filterCustomSub.innerHTML = '';
+            return;
+        }
+
+        dom.filterCustomPanel.style.display = 'flex';
+        dom.filterCustomSub.innerHTML = '';
+
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = `filter-sub-pill ${!state.selectedCustomSub ? 'active' : ''}`;
+        allBtn.textContent = '전체';
+        if (customGrp.color) {
+            allBtn.classList.add('has-custom-color');
+            allBtn.style.setProperty('--pill-accent', customGrp.color);
+        }
+        allBtn.addEventListener('click', () => {
+            state.selectedCustomSub = null;
+            if (customGrp.color) applyCustomAccentTheme(customGrp.color);
+            syncFilterSheetUI();
+            requestAnimationFrame(() => renderAllViews());
+        });
+        dom.filterCustomSub.appendChild(allBtn);
+
+        subs.forEach(sub => {
+            const isAct = state.selectedCustomSub === sub.id;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `filter-sub-pill has-custom-color ${isAct ? 'active' : ''}`;
+            btn.style.setProperty('--pill-accent', sub.color || customGrp.color || '#38bdf8');
+            btn.innerHTML = `<span class="filter-sub-pill-dot"></span>${escapeHtml(sub.name)}`;
+            btn.addEventListener('click', () => {
+                if (state.selectedCustomSub === sub.id) {
+                    state.selectedCustomSub = null;
+                    if (customGrp.color) applyCustomAccentTheme(customGrp.color);
+                } else {
+                    state.selectedCustomSub = sub.id;
+                    if (sub.color) applyCustomAccentTheme(sub.color);
+                }
+                syncFilterSheetUI();
+                requestAnimationFrame(() => renderAllViews());
+            });
+            dom.filterCustomSub.appendChild(btn);
+        });
+    }
+
     function syncFilterSheetUI() {
         const isStellive = state.selectedGroupTab === 'stellive';
+        const customGrp = (state.customGroups || []).find(g => g.id === state.selectedGroupTab);
+        const hasCustomSubPanel = !!(customGrp && Array.isArray(customGrp.subItems) && customGrp.subItems.length > 0);
         if (dom.filterGroupTabsWrap) {
-            dom.filterGroupTabsWrap.classList.toggle('has-sub-panel', isStellive);
+            dom.filterGroupTabsWrap.classList.toggle('has-sub-panel', isStellive || hasCustomSubPanel);
         }
         if (dom.filterStellivePanel) {
             dom.filterStellivePanel.style.display = isStellive ? 'flex' : 'none';
         }
         if (dom.filterStelliveSub) {
             dom.filterStelliveSub.querySelectorAll('.filter-sub-pill').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.subCat === (state.selectedMajor || 'all'));
+                const cat = btn.dataset.subCat || 'all';
+                btn.classList.toggle('active', cat === (state.selectedMajor || 'all'));
+                const ovColor = state.tabColorOverrides && state.tabColorOverrides[cat];
+                if (ovColor && /^#[0-9a-f]{6}$/i.test(ovColor)) {
+                    btn.classList.add('has-custom-color');
+                    btn.style.setProperty('--pill-accent', ovColor);
+                } else {
+                    btn.classList.remove('has-custom-color');
+                    btn.style.removeProperty('--pill-accent');
+                }
             });
         }
         renderSubFilterRow();
+        renderFilterCustomSubPanel();
 
         // 음원 유형 버튼 동기화
         if (dom.typePills) {
@@ -1508,7 +1829,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 parts.push('미분류');
             } else {
                 const cg = (state.customGroups || []).find(g => g.id === state.selectedGroupTab);
-                if (cg) parts.push(cg.name);
+                if (cg) {
+                    const activeSub = state.selectedCustomSub ? (cg.subItems || []).find(s => s.id === state.selectedCustomSub) : null;
+                    parts.push(activeSub ? `${cg.name} · ${activeSub.name}` : cg.name);
+                }
             }
         }
 
@@ -1547,6 +1871,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         state.selectedGroupTab = 'all';
         state.selectedMajor = 'all';
         state.selectedSub = null;
+        state.selectedCustomSub = null;
         state.selectedMember = 'all';
         state.selectedType = 'all';
         if (state.selectedTypes) state.selectedTypes.clear();
@@ -1559,6 +1884,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function initMemberButtons() {
         renderFilterGroupTabs();
+        renderSettingsFilterManager();
         if (dom.filterStelliveSub) {
             dom.filterStelliveSub.querySelectorAll('.filter-sub-pill').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2095,9 +2421,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             artist.includes('에버리스') || artist.includes('미스틱');
     }
 
+    function matchesCustomSub(s, subObj) {
+        if (!s || !subObj) return false;
+        if (s.customSubId && s.customSubId === subObj.id) return true;
+        const haystack = `${s.artist || ''} ${s.title || ''} ${s.originalArtist || ''} ${(s.members || []).join(' ')}`.toLowerCase();
+        const kws = (Array.isArray(subObj.keywords) && subObj.keywords.length > 0)
+            ? subObj.keywords
+            : [subObj.name];
+        return kws.some(k => k && haystack.includes(String(k).trim().toLowerCase()));
+    }
+
     function matchesCustomGroup(s, groupObj) {
         if (!s || !groupObj) return false;
         if (s.customGroupId && s.customGroupId === groupObj.id) return true;
+        if (Array.isArray(groupObj.subItems) && groupObj.subItems.some(sub => matchesCustomSub(s, sub))) return true;
         const haystack = `${s.artist || ''} ${s.title || ''} ${s.originalArtist || ''} ${(s.members || []).join(' ')}`.toLowerCase();
         const kws = (Array.isArray(groupObj.keywords) && groupObj.keywords.length > 0)
             ? groupObj.keywords
@@ -2184,6 +2521,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const customGrp = (state.customGroups || []).find(g => g.id === state.selectedGroupTab);
                 if (customGrp) {
                     res = res.filter(s => matchesCustomGroup(s, customGrp));
+                    if (state.selectedCustomSub && Array.isArray(customGrp.subItems)) {
+                        const subObj = customGrp.subItems.find(sub => sub.id === state.selectedCustomSub);
+                        if (subObj) {
+                            res = res.filter(s => matchesCustomSub(s, subObj));
+                        }
+                    }
                 }
             }
         }
@@ -2343,7 +2686,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             state.currentOfflineSongs = [];
             dom.trackListOffline.innerHTML = `
                 <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
-                    <div style="font-size:1.8rem; margin-bottom:8px;">✈️</div>
+                    <div style="margin-bottom:8px; opacity:0.65;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
                     <div style="font-weight:700; margin-bottom:4px; color:var(--text-primary);">오프라인 보관함이 비어있습니다</div>
                     <div style="font-size:0.8rem;">곡 우측의 ⋮ 메뉴나 플레이어 상단의 다운로드 버튼을 눌러 오프라인에서도 자유롭게 감상해보세요!</div>
                 </div>
@@ -2415,7 +2758,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (playlists.length === 0) {
             dom.playlistsGrid.innerHTML = `
                 <div style="grid-column:1 / -1; text-align:center; padding:30px 10px; color:var(--text-muted); background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed var(--border-glass);">
-                    <div style="font-size:1.6rem; margin-bottom:6px;">📑</div>
+                    <div style="margin-bottom:6px; opacity:0.65;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg></div>
                     <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:4px;">생성된 재생목록이 없습니다</div>
                     <div style="font-size:0.75rem;">상단의 '+ 새 목록' 버튼 또는 홈 화면에서 곡을 선택하여 나만의 재생목록을 만들어보세요!</div>
                 </div>
@@ -2427,7 +2770,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         playlists.forEach(pl => {
             const count = pl.songIds ? pl.songIds.length : 0;
-            const icon = pl.isHistory ? '🕒' : '🎵';
+            const icon = pl.isHistory ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
             const countText = pl.isHistory ? `${count}곡 기록` : `${count}곡 수록됨`;
             const thumbs = [];
             if (Array.isArray(pl.songIds)) {
@@ -2536,7 +2879,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.detailPlaylistCount.textContent = isHistory ? `최근 감상 기록 총 ${songIds.length}곡 (최대 100곡)` : `${songIds.length}곡 수록됨`;
         }
         if (dom.detailPlaylistIcon) {
-            dom.detailPlaylistIcon.textContent = isFavList ? '❤️' : (isHistory ? '🕒' : '🎵');
+            dom.detailPlaylistIcon.innerHTML = isFavList ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' : (isHistory ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>');
         }
 
         if (dom.btnPlaylistDetailDelete) {
@@ -2556,7 +2899,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const emptyMsg = isHistory ? '최근 감상한 곡 기록이 없습니다.<br>곡을 재생하면 자동으로 이곳에 최대 100곡까지 기록됩니다.' : '재생목록이 비어있습니다.<br>상단 [+ 곡 추가] 또는 홈 화면에서 곡을 추가해보세요!';
             dom.detailPlaylistTracks.innerHTML = `
                 <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
-                    <div style="font-size:1.8rem; margin-bottom:8px;">${isFavList ? '❤️' : (isHistory ? '🕒' : '🎵')}</div>
+                    <div style="margin-bottom:8px; opacity:0.65;">${isFavList ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' : (isHistory ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>')}</div>
                     <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px;">${isHistory ? '감상 기록이 없습니다' : '재생목록이 비어있습니다'}</div>
                     <div style="font-size:0.8rem; line-height:1.4;">${emptyMsg}</div>
                 </div>
@@ -2819,7 +3162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const titleEl = document.getElementById('m-pl-add-title');
         const subEl = document.getElementById('m-pl-add-subtitle');
-        if (titleEl) titleEl.textContent = `➕ '${targetPl.name}'에 곡 추가`;
+        if (titleEl) titleEl.textContent = `'${targetPl.name}'에 곡 추가`;
         if (subEl) subEl.textContent = `현재 ${(targetPl.songIds || []).length}곡 수록됨 · 추가할 곡을 선택하세요`;
 
         const searchInput = document.getElementById('m-pl-add-search-input');
@@ -2922,7 +3265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="m-pl-add-title">${escapeHtml(song.title)}</div>
                         <div class="m-pl-add-artist">${escapeHtml(song.artist)}</div>
                     </div>
-                    ${isAlready ? '<span class="m-badge-already-in-pl">✓ 수록됨</span>' : ''}
+                    ${isAlready ? '<span class="m-badge-already-in-pl">✓수록됨</span>' : ''}
                 </div>
             `;
         });
@@ -2992,7 +3335,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             item.className = 'modal-playlist-item';
             item.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <span>🎵</span>
+                    <span style="display:inline-flex; align-items:center; opacity:0.75;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
                     <span class="modal-playlist-item-name">${escapeHtml(pl.name)}</span>
                 </div>
                 <span class="modal-playlist-item-count">${pl.songIds ? pl.songIds.length : 0}곡</span>
@@ -3639,6 +3982,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!pickerStates[prefix]) {
             pickerStates[prefix] = {
                 groupTab: 'stellive',
+                customSubId: null,
                 activeGen: 'g1',
                 isWholeGroup: false,
                 units: new Set(),
@@ -3655,6 +3999,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const pState = getOrCreatePickerState(prefix);
         const groupTabsEl = document.getElementById(`${prefix}-group-tabs`);
         const stellivePanel = document.getElementById(`${prefix}-stellive-panel`);
+        const customSubPanel = document.getElementById(`${prefix}-custom-sub-panel`);
         const subPillsEl = document.getElementById(`${prefix}-sub-pills`);
         const memberGridEl = document.getElementById(`${prefix}-member-grid`);
         const summaryEl = document.getElementById(`${prefix}-selected-summary`);
@@ -3664,25 +4009,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 1. 최상위 크롬 탭 스타일 그룹 탭 (스텔라이브 / 미분류 / 커스텀 탭)
         groupTabsEl.innerHTML = '';
         const tabs = [
-            { id: 'stellive', name: '스텔라이브', isStellive: true },
-            { id: 'unclassified', name: '미분류', isStellive: false },
-            ...(state.customGroups || []).map(g => ({ id: g.id, name: g.name, isStellive: false }))
+            { id: 'stellive', name: '스텔라이브', isStellive: true, color: state.tabColorOverrides?.stellive || null },
+            { id: 'unclassified', name: '미분류', isStellive: false, color: state.tabColorOverrides?.unclassified || null },
+            ...(state.customGroups || []).map(g => ({ id: g.id, name: g.name, isStellive: false, color: g.color || '#7c5cfc', subItems: g.subItems || [] }))
         ];
 
         // 존재하지 않는 커스텀 탭이면 stellive로 폴백
         if (!tabs.some(t => t.id === pState.groupTab)) {
             pState.groupTab = 'stellive';
+            pState.customSubId = null;
         }
 
         tabs.forEach(tab => {
             const isActive = pState.groupTab === tab.id;
+            const hasColor = !!(tab.color && /^#[0-9a-f]{6}$/i.test(tab.color));
             const tabEl = document.createElement('button');
             tabEl.type = 'button';
-            tabEl.className = `filter-group-tab ${tab.isStellive ? 'is-stellive' : ''} ${isActive ? 'active' : ''}`;
+            tabEl.className = `filter-group-tab ${tab.isStellive ? 'is-stellive' : ''} ${hasColor ? 'has-custom-color' : ''} ${isActive ? 'active' : ''}`;
             tabEl.dataset.pickerGroup = tab.id;
-            tabEl.textContent = tab.name;
+            if (hasColor) tabEl.style.setProperty('--tab-accent', tab.color);
+            tabEl.innerHTML = (hasColor && !tab.isStellive && tab.id !== 'unclassified')
+                ? `<span class="filter-group-tab-dot"></span><span>${escapeHtml(tab.name)}</span>`
+                : `<span>${escapeHtml(tab.name)}</span>`;
             tabEl.addEventListener('click', () => {
                 pState.groupTab = tab.id;
+                pState.customSubId = null;
                 if (tab.id !== 'stellive' && tab.id !== 'unclassified') {
                     const cg = (state.customGroups || []).find(g => g.id === tab.id);
                     if (cg && pState.artistInput && (!pState.artistInput.value.trim() || pState.artistInput.value.trim() === '스텔라이브 (STELLIVE)')) {
@@ -3698,6 +4049,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const isStelliveTab = pState.groupTab === 'stellive';
         stellivePanel.style.display = isStelliveTab ? 'flex' : 'none';
+
+        // 커스텀 그룹 하위 메뉴(세부 탭) 선택 패널
+        if (customSubPanel) {
+            const customGrp = !isStelliveTab && pState.groupTab !== 'unclassified'
+                ? (state.customGroups || []).find(g => g.id === pState.groupTab)
+                : null;
+            const subs = (customGrp && Array.isArray(customGrp.subItems)) ? customGrp.subItems : [];
+            if (customGrp && subs.length > 0) {
+                customSubPanel.style.display = 'flex';
+                customSubPanel.innerHTML = '';
+                const pillsWrap = document.createElement('div');
+                pillsWrap.className = 'filter-sub-pills m-picker-sub-pills';
+
+                const noneBtn = document.createElement('button');
+                noneBtn.type = 'button';
+                noneBtn.className = `filter-sub-pill ${!pState.customSubId ? 'active' : ''}`;
+                noneBtn.textContent = '그룹 전체';
+                noneBtn.addEventListener('click', () => {
+                    pState.customSubId = null;
+                    renderUnifiedPicker(prefix);
+                });
+                pillsWrap.appendChild(noneBtn);
+
+                subs.forEach(sub => {
+                    const isAct = pState.customSubId === sub.id;
+                    const sBtn = document.createElement('button');
+                    sBtn.type = 'button';
+                    sBtn.className = `filter-sub-pill has-custom-color ${isAct ? 'active' : ''}`;
+                    sBtn.style.setProperty('--pill-accent', sub.color || customGrp.color || '#38bdf8');
+                    sBtn.innerHTML = `<span class="filter-sub-pill-dot"></span>${escapeHtml(sub.name)}`;
+                    sBtn.addEventListener('click', () => {
+                        pState.customSubId = isAct ? null : sub.id;
+                        if (!isAct && pState.artistInput) {
+                            pState.artistInput.value = sub.name;
+                        }
+                        renderUnifiedPicker(prefix);
+                    });
+                    pillsWrap.appendChild(sBtn);
+                });
+                customSubPanel.appendChild(pillsWrap);
+            } else {
+                customSubPanel.style.display = 'none';
+                customSubPanel.innerHTML = '';
+            }
+        }
+
         if (!isStelliveTab) return;
 
         // 2. 스텔라이브 하위 카테고리 알약 버튼 동기화 (단체곡 / 1~4기생 / 강지)
@@ -3841,9 +4238,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function setMemberPickerState(prefix, { isStellive = false, groupTab = 'stellive', units = [], members = [], activeGen = null }, artistInput) {
+    function setMemberPickerState(prefix, { isStellive = false, groupTab = 'stellive', customSubId = null, units = [], members = [], activeGen = null }, artistInput) {
         const pState = getOrCreatePickerState(prefix, artistInput);
         pState.groupTab = groupTab || 'stellive';
+        pState.customSubId = customSubId || null;
         pState.isWholeGroup = !!isStellive;
         pState.units = new Set(units || []);
         pState.members = new Set((members || []).filter(m => m && m !== 'group'));
@@ -3888,6 +4286,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 isStellive: false,
                 groupTab: 'unclassified',
                 customGroupId: null,
+                customSubId: null,
                 members: [],
                 gen: 'other',
                 units: []
@@ -3899,6 +4298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 isStellive: false,
                 groupTab: pState.groupTab,
                 customGroupId: pState.groupTab,
+                customSubId: pState.customSubId || null,
                 members: [],
                 gen: 'other',
                 units: []
@@ -3910,6 +4310,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 isStellive: true,
                 groupTab: 'stellive',
                 customGroupId: null,
+                customSubId: null,
                 members: ['group'],
                 gen: 'group',
                 units: []
@@ -4171,6 +4572,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setMemberPickerState('m-edit', {
             groupTab,
+            customSubId: freshSong.customSubId || null,
             isStellive: groupTab === 'stellive' && isStelliveGroup && detectedUnits.length === 0 && activeMembers.length === 0,
             units: detectedUnits,
             members: activeMembers
@@ -4500,7 +4902,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         window.StorageManager.addAutoDetectedSongs(newTracks);
                     }
                     renderAllViews();
-                    showToast(`🎉 새로운 공식 신곡 ${newTracks.length}곡이 등록되었습니다!`);
+                    showToast(`새로운 공식 신곡 ${newTracks.length}곡이 등록되었습니다!`);
                 } else if (isManual) {
                     showToast('현재 모든 공식 신곡이 최신 상태입니다.');
                 }
@@ -4636,11 +5038,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             await window.OfflineDB.downloadSong(song, (percent) => {});
-            showToast(`🎉 [${song.title}] 오프라인 보관함에 저장되었습니다!`);
+            showToast(`[${song.title}] 오프라인 보관함에 저장되었습니다!`);
         } catch (err) {
             const hasPc = !!(localStorage.getItem('stellplay_pc_server') || '').trim();
             if (!hasPc && !window.AndroidBridge) {
-                showToast(`ℹ️ 오프라인 음원 다운로드는 PC 서버 연동(설정 탭)이 필요합니다.`);
+                showToast(`ℹ오프라인 음원 다운로드는 PC 서버 연동(설정 탭)이 필요합니다.`);
             } else {
                 showToast(`다운로드 실패: ${err.message || '네트워크 오류'}`);
             }
@@ -4681,7 +5083,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await refreshOfflineCacheState();
         renderAllViews();
         if (failCount === 0) {
-            showToast(`🎉 ${successCount}곡 오프라인 다운로드가 완료되었습니다!`);
+            showToast(`${successCount}곡 오프라인 다운로드가 완료되었습니다!`);
         } else {
             showToast(`다운로드 완료: ${successCount}곡 성공, ${failCount}곡 실패`);
         }
@@ -5013,11 +5415,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         bindFastTrackList(dom.detailPlaylistTracks, () => state.currentPlaylistTracks || []);
         bindFastTrackList(dom.moodTrackList, () => currentMoodSongs || []);
 
-        // 정렬 셀렉트 (최신순 / 오래된순 / 곡명순)
+        // 커스텀 정렬 드롭다운 (최신순 / 오래된순 / 가나다순)
+        const SORT_LABELS = { latest: '최신순', oldest: '오래된순', title: '가나다순' };
+        function syncSortDropdownUI(val) {
+            const v = val || 'latest';
+            if (dom.sortSelect) dom.sortSelect.value = v;
+            if (dom.sortDropdownLabel) dom.sortDropdownLabel.textContent = SORT_LABELS[v] || '최신순';
+            if (dom.sortDropdownMenu) {
+                dom.sortDropdownMenu.querySelectorAll('.m-sort-option').forEach(opt => {
+                    const isAct = opt.dataset.sort === v;
+                    opt.classList.toggle('active', isAct);
+                    opt.setAttribute('aria-selected', isAct ? 'true' : 'false');
+                });
+            }
+        }
+        syncSortDropdownUI(state.sortOrder || 'latest');
+
+        if (dom.sortDropdownBtn && dom.sortDropdownWrap) {
+            dom.sortDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = dom.sortDropdownWrap.classList.toggle('open');
+                dom.sortDropdownBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+            document.addEventListener('click', (e) => {
+                if (dom.sortDropdownWrap && !dom.sortDropdownWrap.contains(e.target)) {
+                    dom.sortDropdownWrap.classList.remove('open');
+                    dom.sortDropdownBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+        if (dom.sortDropdownMenu) {
+            dom.sortDropdownMenu.querySelectorAll('.m-sort-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const nextVal = opt.dataset.sort || 'latest';
+                    state.sortOrder = nextVal;
+                    syncSortDropdownUI(nextVal);
+                    if (dom.sortDropdownWrap) dom.sortDropdownWrap.classList.remove('open');
+                    if (dom.sortDropdownBtn) dom.sortDropdownBtn.setAttribute('aria-expanded', 'false');
+                    renderAllViews();
+                });
+            });
+        }
         if (dom.sortSelect) {
-            dom.sortSelect.value = state.sortOrder || 'latest';
             dom.sortSelect.addEventListener('change', (e) => {
                 state.sortOrder = e.target.value;
+                syncSortDropdownUI(state.sortOrder);
                 renderAllViews();
             });
         }
@@ -5036,7 +5478,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
                 }
                 player.setQueue(shuffled, 0, true);
-                showToast(`🔀 ${songs.length}곡을 셔플 재생합니다.`);
+                showToast(`${songs.length}곡을 셔플 재생합니다.`);
             });
         }
 
@@ -5045,7 +5487,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             upbeat: {
                 id: 'upbeat',
                 title: '파워풀',
-                icon: '🔥',
+                icon: '#fb7185',
                 desc: '강렬한 비트와 폭발적인 락 & 고음 보컬 컬렉션',
                 keywords: [
                     'hit on shot', 'king', '에고 록', 'ego rock', 'star walkin', 'w●rk', 'apt.', 'apt ', '아이덴티티',
@@ -5066,7 +5508,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             chill: {
                 id: 'chill',
                 title: '감성힐링',
-                icon: '🌙',
+                icon: '#a78bfa',
                 desc: '새벽 감성과 따뜻한 위로를 전하는 잔잔한 발라드',
                 keywords: [
                     '점묘의 노래', '잿빛과 푸름', '여로', '별자리', '히로인', '그저 네게 맑아라', 'dear my fairy',
@@ -5085,7 +5527,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             bright: {
                 id: 'bright',
                 title: '청량상쾌',
-                icon: '☀️',
+                icon: '#34d399',
                 desc: '맑고 투명한 청춘 에너지, 밝고 희망찬 멜로디',
                 keywords: [
                     'milky way', 'stars align', 'our tales', '유성우', 'summertime', '마음 예보', '보석과 어린 용',
@@ -5101,7 +5543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             groovy: {
                 id: 'groovy',
                 title: '그루비',
-                icon: '🎧',
+                icon: '#f472b6',
                 desc: '트렌디한 비트와 감각적인 리듬, R&B & 힙합 스타일',
                 keywords: [
                     'golden', 'apt', 'beyond the way', 'joker', 'w●rk', '야화', 'jane doe', 'lonely universe',
@@ -5116,7 +5558,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             cute: {
                 id: 'cute',
                 title: '큐트',
-                icon: '💖',
+                icon: '#f9a8d4',
                 desc: '사랑스럽고 통통 튀는 요정들의 깜찍한 보이스',
                 keywords: [
                     '팝핀 캔디', 'onegai darling', '오네가이 달링', 'chewing luv', '악마가 아닌걸', '네, 기꺼이', '해피 신디사이저',
@@ -5225,7 +5667,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 실시간 전체 곡 풀에서 신선한 랜덤 플레이리스트 20곡 생성
             currentMoodSongs = rollRandomMoodPlaylist(moodKey, 20);
 
-            if (dom.moodModalIcon) dom.moodModalIcon.textContent = preset.icon;
+            if (dom.moodModalIcon) { dom.moodModalIcon.textContent = ''; dom.moodModalIcon.style.background = preset.icon || 'var(--theme-color)'; }
             if (dom.moodModalTitle) dom.moodModalTitle.textContent = `${preset.title} (${currentMoodSongs.length}곡 추천)`;
             if (dom.moodModalSub) dom.moodModalSub.textContent = `${preset.desc}`;
 
@@ -5282,7 +5724,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     dom.moodModalTitle.textContent = `${currentMoodPreset.title} (${currentMoodSongs.length}곡 추천)`;
                 }
                 renderMoodTrackList();
-                showToast(`🔀 새로운 '${currentMoodPreset ? currentMoodPreset.title : '분위기'}' 추천 곡 목록을 불러왔습니다!`);
+                showToast(`새로운 '${currentMoodPreset ? currentMoodPreset.title : '분위기'}' 추천 곡 목록을 불러왔습니다!`);
             });
         }
 
@@ -5290,7 +5732,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.btnMoodPlayAll.addEventListener('click', () => {
                 if (!currentMoodSongs || currentMoodSongs.length === 0) return;
                 player.setQueue(currentMoodSongs, 0, true);
-                showToast(`🎶 '${currentMoodPreset ? currentMoodPreset.title : '분위기'}' ${currentMoodSongs.length}곡을 재생합니다.`);
+                showToast(`'${currentMoodPreset ? currentMoodPreset.title : '분위기'}' ${currentMoodSongs.length}곡을 재생합니다.`);
                 closeMoodDetail(false);
                 closeMoodPicker();
             });
@@ -5299,11 +5741,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.btnMoodSavePlaylist) {
             dom.btnMoodSavePlaylist.addEventListener('click', () => {
                 if (!currentMoodSongs || currentMoodSongs.length === 0) return;
-                const plName = `${currentMoodPreset.icon} ${currentMoodPreset.title} 믹스`;
+                const plName = `${currentMoodPreset.title} 믹스`;
                 const songIds = currentMoodSongs.map(s => s.id);
                 const newPl = StorageManager.createPlaylist(plName, songIds);
                 if (newPl) {
-                    showToast(`🎉 '${plName}' 재생목록이 생성되었습니다!`);
+                    showToast(`'${plName}' 재생목록이 생성되었습니다!`);
                     renderPlaylists();
                 }
             });
@@ -5360,9 +5802,51 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 커스텀 아티스트/그룹 탭 추가 모달 이벤트
+        // 커스텀 아티스트/그룹 탭 추가·수정 모달 및 설정 관리 이벤트
         if (dom.btnAddCustomGroup) {
-            dom.btnAddCustomGroup.addEventListener('click', () => openCustomGroupModal());
+            dom.btnAddCustomGroup.addEventListener('click', () => openCustomGroupModal(null));
+        }
+        if (dom.settingsAddCustomGroup) {
+            dom.settingsAddCustomGroup.addEventListener('click', () => openCustomGroupModal(null));
+        }
+        if (dom.btnResetBuiltinColors) {
+            dom.btnResetBuiltinColors.addEventListener('click', () => {
+                state.tabColorOverrides = {};
+                saveTabColorOverrides({});
+                renderFilterGroupTabs();
+                syncFilterSheetUI();
+                renderSettingsFilterManager();
+                applyMemberTheme(state.selectedSub || state.selectedMajor || 'all');
+                showToast('기본 탭 및 기수 색상이 초기값으로 복원되었습니다.');
+            });
+        }
+        if (dom.inputCustomGroupColor) {
+            dom.inputCustomGroupColor.addEventListener('input', (e) => {
+                const hex = e.target.value;
+                if (dom.customGroupColorHex) dom.customGroupColorHex.textContent = hex.toUpperCase();
+                renderCustomGroupSwatches(hex);
+            });
+        }
+        if (dom.btnAddCustomSub) {
+            dom.btnAddCustomSub.addEventListener('click', () => {
+                const subName = (dom.inputCustomSubName?.value || '').trim();
+                if (!subName) {
+                    showToast('하위 메뉴 이름을 입력해주세요.');
+                    return;
+                }
+                const subColor = (dom.inputCustomSubColor?.value || '#38bdf8');
+                customGroupDraftSubs.push({
+                    id: 'sub-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                    name: subName,
+                    color: subColor,
+                    keywords: [subName]
+                });
+                if (dom.inputCustomSubName) dom.inputCustomSubName.value = '';
+                if (dom.inputCustomSubColor) {
+                    dom.inputCustomSubColor.value = TAB_COLOR_PRESETS[(customGroupDraftSubs.length + 5) % TAB_COLOR_PRESETS.length];
+                }
+                renderCustomGroupDraftSubs();
+            });
         }
         if (dom.btnCloseCustomGroup) {
             dom.btnCloseCustomGroup.addEventListener('click', () => closeCustomGroupModal());
@@ -5385,18 +5869,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                     showToast('탭 이름을 입력해주세요.');
                     return;
                 }
+                const editId = (dom.customGroupEditId?.value || '').trim();
+                const color = (dom.inputCustomGroupColor?.value || '#7c5cfc');
                 const kwRaw = (dom.inputCustomGroupKeywords?.value || '').trim();
                 const keywords = kwRaw ? kwRaw.split(',').map(s => s.trim()).filter(Boolean) : [name];
-                const newGroup = {
-                    id: 'custom-' + Date.now(),
-                    name,
-                    keywords
-                };
-                state.customGroups = [...(state.customGroups || []), newGroup];
-                saveCustomGroups(state.customGroups);
-                closeCustomGroupModal();
-                selectGroupTab(newGroup.id);
-                showToast(`'${name}' 분류 탭이 추가되었습니다!`);
+                const subItems = customGroupDraftSubs.map(s => ({
+                    id: s.id,
+                    name: s.name,
+                    color: s.color || '#38bdf8',
+                    keywords: Array.isArray(s.keywords) && s.keywords.length > 0 ? s.keywords : [s.name]
+                }));
+
+                if (editId) {
+                    state.customGroups = (state.customGroups || []).map(g =>
+                        g.id === editId ? { ...g, name, color, keywords, subItems } : g
+                    );
+                    saveCustomGroups(state.customGroups);
+                    closeCustomGroupModal();
+                    renderFilterGroupTabs();
+                    syncFilterSheetUI();
+                    renderSettingsFilterManager();
+                    if (state.selectedGroupTab === editId) {
+                        applyCustomAccentTheme(color);
+                    }
+                    renderAllViews();
+                    showToast(`'${name}' 분류 탭이 수정되었습니다.`);
+                } else {
+                    const newGroup = {
+                        id: 'custom-' + Date.now(),
+                        name,
+                        color,
+                        keywords,
+                        subItems
+                    };
+                    state.customGroups = [...(state.customGroups || []), newGroup];
+                    saveCustomGroups(state.customGroups);
+                    closeCustomGroupModal();
+                    renderSettingsFilterManager();
+                    selectGroupTab(newGroup.id);
+                    showToast(`'${name}' 분류 탭이 추가되었습니다.`);
+                }
             });
         }
 
@@ -5820,9 +6332,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     player.setAudioQuality(q);
                     updateSettingsCacheInfo();
                     const toastMap = {
-                        'data_saver': '🌱 항상 데이터 절약 (저음질/초고속 모드) 적용',
-                        'wifi_only': '📶 Wi-Fi 연결 시에만 고음질로 스트리밍합니다.',
-                        'high_always': '✨ 항상 고음질 모드로 스트리밍합니다.'
+                        'data_saver': '항상 데이터 절약 (저음질/초고속 모드) 적용',
+                        'wifi_only': 'Wi-Fi 연결 시에만 고음질로 스트리밍합니다.',
+                        'high_always': '항상 고음질 모드로 스트리밍합니다.'
                     };
                     showToast(toastMap[q] || '음질 설정이 변경되었습니다.');
                 });
@@ -5947,7 +6459,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             window.StorageManager.restoreAllHiddenSongs();
                         }
                         renderAllViews();
-                        showToast('🎉 모든 숨긴 곡이 정상 복원되었습니다!');
+                        showToast('모든 숨긴 곡이 정상 복원되었습니다!');
                         closeHiddenSongsModal();
                     }
                 });
@@ -6303,7 +6815,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     player.shuffleQueue();
                     renderMobileQueue(true);
-                    showToast('🔀 현재 재생목록 순서를 무작위로 섞었습니다.');
+                    showToast('현재 재생목록 순서를 무작위로 섞었습니다.');
                 }
             });
         }
@@ -7171,7 +7683,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const detected = detectMembersFromText(text);
                 if (detected.length > 0) {
                     applyDetectedMembersToPicker('m-add', detected, dom.addArtist);
-                    showToast(`⚡ ${detected.length}명의 멤버가 감지되어 선택되었습니다.`);
+                    showToast(`${detected.length}명의 멤버가 감지되어 선택되었습니다.`);
                 } else {
                     showToast('감지된 멤버가 없습니다. 아래에서 그룹/멤버를 직접 선택해주세요.');
                 }
@@ -7205,10 +7717,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             members: memberData.members,
                             gen: memberData.gen,
                             customGroupId: memberData.customGroupId || null,
+                            customSubId: memberData.customSubId || null,
                             sabiStart: sStart,
                             sabiEnd: sEnd
                         });
-                        showToast(`🎉 [${title}] 새 곡이 등록되었습니다!`);
+                        showToast(`[${title}] 새 곡이 등록되었습니다!`);
                         closeAddSongModal();
                         renderAllViews();
                     }
@@ -7228,7 +7741,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const detected = detectMembersFromText(text);
                 if (detected.length > 0) {
                     applyDetectedMembersToPicker('m-edit', detected, dom.editArtist);
-                    showToast(`⚡ ${detected.length}명의 멤버가 감지되어 선택되었습니다.`);
+                    showToast(`${detected.length}명의 멤버가 감지되어 선택되었습니다.`);
                 } else {
                     showToast('감지된 멤버가 없습니다. 아래에서 그룹/멤버를 직접 선택해주세요.');
                 }
@@ -7263,7 +7776,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     releaseDate: publishedAt,
                     members: memberData.members,
                     gen: memberData.gen,
-                    customGroupId: memberData.customGroupId || null
+                    customGroupId: memberData.customGroupId || null,
+                    customSubId: memberData.customSubId || null
                 };
 
                 if (!isNaN(sStart) && !isNaN(sEnd) && sEnd > sStart) {
@@ -7305,7 +7819,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const origBtnText = btnEl ? btnEl.textContent : '';
             if (btnEl) {
                 btnEl.disabled = true;
-                btnEl.textContent = '⏳ 재감지 중...';
+                btnEl.textContent = '재감지 중...';
             }
             try {
                 if (window.StorageManager) {
@@ -7433,7 +7947,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 renderAllViews();
                 renderMobileQueue(false);
-                showToast(`🔄 [${redetectedTitle}] 표준 양식으로 곡 정보가 재감지 및 복원되었습니다!`);
+                showToast(`[${redetectedTitle}] 표준 양식으로 곡 정보가 재감지 및 복원되었습니다!`);
             } catch (e) {
                 console.warn('Redetect error:', e);
                 showToast('곡 정보 재감지 중 오류가 발생했습니다.');

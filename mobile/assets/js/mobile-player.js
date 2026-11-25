@@ -342,7 +342,7 @@ class MobilePlayer {
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
                         width: '100%',
-                        host: 'https://www.youtube-nocookie.com',
+                        host: 'https://www.youtube.com',
                         playerVars: pVars,
                         events: {
                             onError: (event) => {
@@ -503,7 +503,26 @@ class MobilePlayer {
             try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
         }
 
-        // 3. 광고 즉시 및 주기적 스킵 시도 (600ms 간격 스킵 재시도)
+        // 3. 트랙당 1회 스마트 재로드로 프리롤 광고 슬롯 탈출 시도
+        const songId = this.currentSong?.youtubeId;
+        if (songId && this._adReloadSongId !== songId && !this._adReloadTimer) {
+            this._adReloadSongId = songId;
+            this._adReloadTimer = setTimeout(() => {
+                this._adReloadTimer = null;
+                if (!this.isAdShieldActive || !this.currentSong || this.currentSong.youtubeId !== songId || this.activeEngine !== 'youtube') return;
+                if (this.ytPlayer && typeof this.ytPlayer.loadVideoById === 'function') {
+                    try {
+                        const startSec = (this.sabiMode && this.currentSong.sabi && typeof this.currentSong.sabi.start === 'number') ? this.currentSong.sabi.start : 0;
+                        this.ytPlayer.mute();
+                        this.ytPlayer.setVolume(0);
+                        this.ytPlayer.loadVideoById({ videoId: songId, startSeconds: startSec });
+                        this.ytPlayer.playVideo();
+                    } catch (e) {}
+                }
+            }, 650);
+        }
+
+        // 4. 광고 즉시 및 주기적 스킵 시도 (600ms 간격 스킵 재시도)
         const now = Date.now();
         if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 600)) {
             this._lastAdSeekTime = now;
@@ -566,9 +585,9 @@ class MobilePlayer {
                     return;
                 }
 
-                if (attempts > 80) { // 8초 경과 시
+                if (attempts > 160) {
                     // 광고 영상이 여전히 재생 중이면 광고 소리가 터져나오지 않도록 음소거 유지
-                    if (!isAdVideo) {
+                    if (!isAdVideo && !isAdDuration) {
                         clearInterval(this._adShieldPollTimer);
                         this._adShieldPollTimer = null;
                         this._handleAdFinished();
@@ -1157,9 +1176,10 @@ class MobilePlayer {
             return;
         }
 
-        // PC 서버 IP(설정에서 지정) 또는 로컬 파이썬 서버(localhost:8888)가 명시되어 있을 때만 /api/audio 스트림 시도
+        // PC 서버 IP(설정에서 지정) 또는 로컬 파이썬 서버(localhost:8000~8999)가 실행 중이면 Zero-Ad /api/audio 스트림 우선 시도
         const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
-        const isLocalApi = ['localhost', '127.0.0.1'].includes(window.location.hostname) && (window.location.port === '8888' || window.location.port === '8000');
+        const localPortNum = Number(window.location.port);
+        const isLocalApi = ['localhost', '127.0.0.1'].includes(window.location.hostname) && localPortNum >= 8000 && localPortNum <= 8999;
         const effectiveServer = pcServer || (isLocalApi ? window.location.origin : '');
         if (effectiveServer) {
             this.activeEngine = 'audio';

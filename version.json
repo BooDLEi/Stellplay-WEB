@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026112502,
+  "otaVersion": 2026112503,
   "otaReleaseDate": "2026-11-25",
   "apkVersionName": "1.11.10",
   "files": [
@@ -56,15 +56,15 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "874dbf0946d417e854fc6b3f131020c46c1bd0e343c876b2cde90cf45b7bdbc8",
-    "assets/css/mobile.css": "ab8e25153be09eab640674e3c09d26f973560701fcc8c29e773fadfdbb9dd05c",
-    "assets/js/mobile-app.js": "71b914aaeb3809c02d041c84e60d4bfccd9d66e5800fa85f3f9ac0e2cedf88fc",
-    "assets/js/mobile-player.js": "700a66bc028027cb903f17cbbf712c7af190f93534d8c452e5d9288a0eafbcfb",
-    "assets/js/songs.js": "be751e200a304fe3521cf476d06460a7331cabe06db5b033b78b8c52245ee7b6",
+    "index.html": "2db5e7340149d743001f8ac4b9759ef68d73f494c27b20569dd029b5d126c905",
+    "assets/css/mobile.css": "3d6a46eedbb87f63810723b32f4b9ad7129dd85ca3569cca469c32f272c61b4e",
+    "assets/js/mobile-app.js": "cffca0d7723f52ec75bedc8c6fb34c8be0c4bacd6fc6dbb0fc9914680e73cace",
+    "assets/js/mobile-player.js": "55f28221e5757d25eccc396e866722c048ae0da7fa1d45e35e766260a4dd05b3",
+    "assets/js/songs.js": "f6a00c1563ea8dd705e359f8b4d506da39812d125756fb9ccd53dc64e99158c9",
     "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_android.txt": "56c2e49097fff2dbd3e90dd872d39e60a85d69d7535d5f47bff1c58931c02b71",
+    "patchnotes_android.txt": "f2951cc29f8962950aff5dfa72fc915fa9741719cf69ea06db36e7967132cc7f",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
     "assets/icons/members/kanna.png": "84597dcdd8f2465714fc721423efddcce400fbb4b39d8091ea2921ed92f0048a",
@@ -90,14 +90,15 @@
     "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "9612a80182698566550cc42c7a2a38d03d6f3892cbb2f2007e53f93beb812767",
+    "index.html": "33192404a9d990bd4ce2513611ce300a8df6e67debb0b51f3dc86ae7552b4ae2",
     "assets/css/style.css": "3d55629ff247ae38fa6dd52e773d5a80c9b86c176f3b49a5da8c614f01d43e56",
     "assets/js/songs.js": "f2eb4a1eba4a9b52ae30c3da4f55f06bb83da3f1bb079d9f99aa916aab507411",
     "assets/js/storage.js": "6f3f06727cb97bbb0691138b8cbd9bf67c0ca51b0ae8e08461f43cb28f6c2c88",
-    "assets/js/player.js": "89b0ec8793de607f24587a818007415b4bf7cf40d27cbf4cecc84504e25fd04f",
-    "assets/js/app.js": "9466c1fddfd4f6c1dc4b8190477f266b189e8ea7423b9b87f84bf8ed0ae5cdec",
+    "assets/js/player.js": "8fcc753e4dd1c611d9dddbdfef0323ad21c5bf2f20c36619e900d3b1d0f4e2b9",
+    "assets/js/app.js": "93077b5a1e008b7d2759890e9e948c4f850372385200d97cbef3e68853b01196",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_pc.txt": "380278bdea3ee0111cc7afafafb3f4146d2d670a684197822e180290b795b854",
-    "patchnotes_web.txt": "cf2485f22d3cfa5426a3ea19282243edc8d858a1a07c7c08c588f3536fa7e83e"
-  }
+    "patchnotes_pc.txt": "90dbc6187e6d59f3378351eb27ca0e8fe2e0796fd54252b5924755a40682a0d8",
+    "patchnotes_web.txt": "a8c3478a4d7494779df1fe248687b0d84fdc5c4be8111b6259b2bc4d6d660fbe"
+  },
+  "webVersionName": "1.12.2"
 }

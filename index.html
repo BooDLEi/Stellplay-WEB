@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=2026112503">
 </head>
 <body>
 
@@ -88,7 +88,7 @@
                                     <line x1="12" y1="18" x2="12.01" y2="18"/>
                                 </svg>
                             </span>
-                            <span>📱 모바일 모드로 보기</span>
+                            <span>모바일 모드로 보기</span>
                         </a>
                     </li>
                 </ul>
@@ -500,7 +500,7 @@
                                         <div class="settings-label">앱 버전 및 실시간 업데이트 (OTA)</div>
                                         <span class="settings-badge" id="pc-update-status-badge" style="background: rgba(124,92,252,0.2); color:#a78bfa;">최신 상태</span>
                                     </div>
-                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.11.3 (패치 #2026102302)</div>
+                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.12.2 (패치 #2026112503)</div>
                                     <div class="settings-desc" id="pc-update-sub-desc" style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">GitHub 보안 검증 채널을 통해 재설치 없이 최신 기능·곡 DB를 실시간 반영하고 이전 버전으로 언제든 복원할 수 있습니다.</div>
                                 </div>
                                 <div class="settings-row-ctrl" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -1322,9 +1322,11 @@
         </button>
         <!-- 광고 차단 쉴드 오버레이 (영상 모드 시 광고 화면 은폐 및 수동 스킵 제공) -->
         <div id="pc-ad-shield-overlay" style="display:none; position:absolute; inset:0; z-index:30; background:rgba(15, 12, 29, 0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:16px; pointer-events:auto;">
-            <div style="font-size:2.2rem; margin-bottom:8px;">🛡️</div>
+            <div style="margin-bottom:10px; color:#a78bfa;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
             <div style="font-size:1.05rem; font-weight:700; margin-bottom:4px; letter-spacing:-0.3px;">제로 광고 쉴드 작동 중</div>
-            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:14px;">광고 음소거 및 초고속 스킵 진행 중...</div>
+            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:14px;">광고 음소거 및 자동 전환 대기 중...</div>
             <button id="btn-pc-skip-ad" type="button" style="background:#7c5cfc; color:#fff; border:none; border-radius:8px; padding:6px 16px; font-weight:700; font-size:0.8rem; cursor:pointer; box-shadow:0 4px 12px rgba(124,92,252,0.4); transition:all 0.2s ease;">광고 건너뛰기</button>
         </div>
     </div>
@@ -1333,13 +1335,13 @@
     <div class="modal-backdrop" id="modal-pc-patchnotes">
         <div class="modal-box" style="max-width: 680px; width: 92%; max-height: 85vh; display: flex; flex-direction: column;">
             <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 class="modal-title">📜 StellPlay 패치노트 (업데이트 내역)</h3>
+                <h3 class="modal-title">StellPlay 패치노트 (업데이트 내역)</h3>
                 <button class="btn-close-full" id="btn-close-pc-patchnotes">✕</button>
             </div>
             <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <span style="font-size:0.8rem; color:var(--text-muted);">최신 업데이트 및 보안·기능 개선 히스토리</span>
-                    <button type="button" class="btn-secondary" id="btn-copy-pc-patchnotes" style="padding:4px 10px; font-size:0.76rem;">📋 전체 복사</button>
+                    <button type="button" class="btn-secondary" id="btn-copy-pc-patchnotes" style="padding:4px 10px; font-size:0.76rem;">전체 복사</button>
                 </div>
                 <pre id="pc-patchnotes-content" style="white-space:pre-wrap; word-break:break-word; font-family:inherit; font-size:0.84rem; line-height:1.65; color:var(--text-primary); background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:12px; padding:16px; max-height:56vh; overflow-y:auto; margin:0;">패치노트를 불러오는 중...</pre>
             </div>
@@ -1350,7 +1352,7 @@
     <div class="modal-backdrop" id="modal-pc-ota-restore">
         <div class="modal-box" style="max-width: 520px; width: 92%; max-height: 82vh; display: flex; flex-direction: column;">
             <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 class="modal-title">⏪ 업데이트 버전 복원 관리</h3>
+                <h3 class="modal-title">업데이트 버전 복원 관리</h3>
                 <button class="btn-close-full" id="btn-close-pc-ota-restore">✕</button>
             </div>
             <div style="padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
@@ -1358,12 +1360,12 @@
                     실시간 업데이트(OTA) 적용 후 이전 버전으로 되돌리고 싶을 때, <b>직전 버전으로 즉시 롤백</b>하거나 <b>원하는 백업 버전을 직접 선택</b>하여 복원할 수 있습니다.
                 </div>
                 <div id="pc-ota-quick-rollback-box" style="display:none; background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.35); border-radius:12px; padding:14px;">
-                    <div style="font-size:0.82rem; font-weight:700; color:#fbbf24; margin-bottom:4px;">⚡ 직전 버전으로 빠른 복원</div>
+                    <div style="font-size:0.82rem; font-weight:700; color:#fbbf24; margin-bottom:4px;">직전 버전으로 빠른 복원</div>
                     <div id="pc-ota-quick-rollback-desc" style="font-size:0.76rem; color:var(--text-secondary); margin-bottom:10px;">현재 적용된 패치 바로 이전 상태로 즉시 되돌립니다.</div>
-                    <button type="button" class="btn-primary" id="btn-pc-rollback-previous" style="width:100%; background:linear-gradient(135deg, #f59e0b, #d97706); border:none;">⏪ 직전 버전으로 즉시 복원</button>
+                    <button type="button" class="btn-primary" id="btn-pc-rollback-previous" style="width:100%; background:linear-gradient(135deg, #f59e0b, #d97706); border:none;">직전 버전으로 즉시 복원</button>
                 </div>
                 <div>
-                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">📋 저장된 버전 목록 (선택하여 복원)</div>
+                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">저장된 버전 목록 (선택하여 복원)</div>
                     <div id="pc-ota-versions-list" style="display:flex; flex-direction:column; gap:8px;">
                         <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:14px;">버전 기록을 불러오는 중...</div>
                     </div>
@@ -1376,9 +1378,9 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- JavaScript Scripts -->
-    <script src="assets/js/songs.js?v=2.8"></script>
-    <script src="assets/js/storage.js?v=2.8"></script>
-    <script src="assets/js/player.js?v=2.8"></script>
-    <script src="assets/js/app.js?v=2.8"></script>
+    <script src="assets/js/songs.js?v=2026112503"></script>
+    <script src="assets/js/storage.js?v=2026112503"></script>
+    <script src="assets/js/player.js?v=2026112503"></script>
+    <script src="assets/js/app.js?v=2026112503"></script>
 </body>
 </html>

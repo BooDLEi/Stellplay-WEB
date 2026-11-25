@@ -30,7 +30,7 @@ class MusicPlayer {
         this.repeatMode = settings.repeatMode ?? 'all';
         this.isShuffle = settings.isShuffle ?? false;
         this.sabiMode = settings.sabiMode ?? false;
-        this.isWeb = (window.location.port !== '8888');
+        this.isWeb = !(['localhost', '127.0.0.1'].includes(window.location.hostname) && !!window.location.port);
         this.engineMode = settings.engineMode ?? 'audio';
         this.sabiDuration = settings.sabiDuration ?? 35;
         this.crossfade = settings.crossfade ?? 0;
@@ -163,7 +163,7 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-deck-a', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube-nocookie.com',
+                    host: 'https://www.youtube.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -177,7 +177,7 @@ class MusicPlayer {
                 this.deckB = new YT.Player('youtube-player-deck-b', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube-nocookie.com',
+                    host: 'https://www.youtube.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('B', event),
@@ -189,7 +189,7 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-embed', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube-nocookie.com',
+                    host: 'https://www.youtube.com',
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -267,7 +267,29 @@ class MusicPlayer {
             try { player.setPlaybackRate(2); } catch (e) {}
         }
 
-        // 3. 광고 즉시 및 주기적 스킵 시도 (600ms 간격 스킵 재시도)
+        // 3. 트랙당 1회 스마트 재로드로 프리롤 광고 슬롯 탈출 시도
+        const songId = this.currentSong?.youtubeId;
+        if (songId && this._adReloadSongId !== songId && !this._adReloadTimer) {
+            this._adReloadSongId = songId;
+            this._adReloadTimer = setTimeout(() => {
+                this._adReloadTimer = null;
+                if (!this.isAdShieldActive || !this.currentSong || this.currentSong.youtubeId !== songId) return;
+                const active = this.activeDeck;
+                if (active && typeof active.loadVideoById === 'function') {
+                    try {
+                        active.mute();
+                        active.setVolume(0);
+                        active.loadVideoById({
+                            videoId: songId,
+                            startSeconds: this.getInitialStartSeconds(this.currentSong)
+                        });
+                        active.playVideo();
+                    } catch (e) {}
+                }
+            }, 650);
+        }
+
+        // 4. 광고 주기적 스킵 시도 (600ms 간격)
         const now = Date.now();
         if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 600)) {
             this._lastAdSeekTime = now;
@@ -306,26 +328,23 @@ class MusicPlayer {
 
                 const isCurrentVideo = vData && vData.video_id === song.youtubeId;
                 const isPlaying = pState === (window.YT?.PlayerState?.PLAYING ?? 1);
-                const isAdVideo = vData && vData.video_id && vData.video_id !== song.youtubeId;
-                const isAdDuration = (dur > 0 && dur <= 35 && song.duration > 60);
+                const isAdVideo = vData && (vData.isAd === true || (vData.video_id && vData.video_id !== song.youtubeId));
+                const isAdDuration = (dur > 0 && dur <= 40 && song.duration > 60);
 
                 if (isAdVideo || isAdDuration) {
-                    try { player.mute(); } catch (e) {}
-                    try { player.setVolume(0); } catch (e) {}
-                    try { player.setPlaybackRate(2); } catch (e) {}
-                    this.isAdShieldActive = true;
-                    window.dispatchEvent(new CustomEvent('stellplay:adShieldState', { detail: { isAd: true } }));
+                    this.handleAdDetected(dur);
                     return;
                 }
 
-                if (isCurrentVideo && isPlaying && curTime >= 0) {
+                if (isCurrentVideo && isPlaying && curTime >= 0 && !isAdDuration) {
                     clearInterval(this._adShieldPollTimer);
                     this._adShieldPollTimer = null;
                     this.handleAdFinished();
                     return;
                 }
 
-                if (attempts > 80) {
+                // 광고가 재생 중일 때는 절대 강제 언뮤트하지 않음 (일반 곡 로딩 지연 시에만 안전 해제)
+                if (attempts > 160 && !isAdVideo && !isAdDuration) {
                     clearInterval(this._adShieldPollTimer);
                     this._adShieldPollTimer = null;
                     this.handleAdFinished();
@@ -599,16 +618,20 @@ class MusicPlayer {
 
         if (this.isYtReady && activeDeck && typeof activeDeck.loadVideoById === 'function') {
             try {
-                // 음소거 해제 및 원래 볼륨 유지 (광고가 아닌 곡 전환 시 블랙아웃/음소거 원천 방지)
-                if (!this.isMuted && typeof activeDeck.unMute === 'function') {
-                    try { activeDeck.unMute(); } catch (e) {}
-                    try { activeDeck.setVolume(this.volume); } catch (e) {}
+                if (this._adReloadTimer) {
+                    clearTimeout(this._adReloadTimer);
+                    this._adReloadTimer = null;
                 }
+                this._adReloadSongId = null;
 
-                // 이전 트랙의 잔여 광고 쉴드가 있을 경우 해제
-                if (this.isAdShieldActive) {
-                    this.handleAdFinished();
+                // Mute-First: 프리롤 광고 오디오가 먼저 터지는 현상 원천 차단 (본곡 시작 감지 즉시 복원)
+                if (typeof activeDeck.mute === 'function') {
+                    try { activeDeck.mute(); } catch (e) {}
                 }
+                if (typeof activeDeck.setVolume === 'function') {
+                    try { activeDeck.setVolume(0); } catch (e) {}
+                }
+                this.isAdShieldActive = true;
 
                 activeDeck.loadVideoById({
                     videoId: song.youtubeId,
@@ -623,7 +646,7 @@ class MusicPlayer {
                     this.isPlaying = false;
                 }
 
-                // 고빈도 광고 감시 (실제 광고가 탐지될 경우에만 쉴드 작동)
+                // 고빈도 광고 감시 (본곡 시작 확인 즉시 음소거 해제 및 원래 볼륨 복원)
                 this.startAdShieldPolling();
             } catch (e) {
                 console.error('[switchToVideoEngine] Failed to play video', e);
