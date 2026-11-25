@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="assets/css/style.css?v=2026112503">
+    <link rel="stylesheet" href="assets/css/style.css?v=2026112504">
 </head>
 <body>
 
@@ -70,6 +70,16 @@
                         </button>
                     </li>
                     <li class="nav-item">
+                        <button id="nav-mood">
+                            <span class="nav-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/>
+                                </svg>
+                            </span>
+                            <span>분위기 추천</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
                         <button id="nav-settings">
                             <span class="nav-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -94,9 +104,9 @@
                 </ul>
             </div>
 
-            <!-- 사이드바 하단 테마 전환 및 신곡 등록 버튼 -->
+            <!-- 사이드바 하단 테마 스위치 · 사비 원형 토글 · 곡 추가 · 신곡 탐색 -->
             <div class="sidebar-footer">
-                <div class="theme-switch-wrapper">
+                <div class="sidebar-footer-utility-row">
                     <button class="theme-toggle-switch" id="btn-theme-toggle" type="button" role="switch" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환">
                         <div class="theme-switch-track">
                             <span class="track-icon track-sun" aria-hidden="true">
@@ -139,20 +149,34 @@
                             </div>
                         </div>
                     </button>
+                    <!-- 사비 메들리 원형 토글 버튼 -->
+                    <button id="btn-sabi-quick" class="sidebar-sabi-circle-btn" type="button" title="사비(후렴구) 메들리 모드 ON/OFF" aria-label="사비 메들리 모드">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </button>
                 </div>
-                <button class="btn-add-song" id="btn-add-song">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-                    </svg>
-                    <span>새 노래 직접 추가</span>
-                </button>
+                <div class="sidebar-footer-action-row">
+                    <button class="btn-add-song" id="btn-add-song" title="새 노래 직접 추가">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span>곡 추가</span>
+                    </button>
+                    <button id="btn-sync-new-songs" class="btn-sync-songs sidebar-sync-btn" title="공식 채널 최신 신곡 자동 탐색">
+                        <svg class="icon-sync" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                        </svg>
+                        <span>신곡 탐색</span>
+                    </button>
+                </div>
             </div>
         </aside>
 
         <!-- 메인 콘텐츠 영역 -->
         <main class="main-content">
-            <!-- 상단 탑바 -->
-            <header class="topbar">
+            <!-- 상단 고정 검색 탑바 (검색창 전용) -->
+            <header class="topbar topbar-search-only">
                 <div class="search-box-wrapper">
                     <span class="search-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -163,152 +187,79 @@
                     <button id="search-clear-btn" class="search-clear-btn">✕</button>
                 </div>
 
-                <div class="topbar-actions">
-                    <!-- 모바일 웹 버전 전환 버튼 (웹 전용) -->
-                    <a href="./mobile/" id="topbar-btn-switch-mobile" class="btn-topbar-mobile" title="모바일 전용 웹 플레이어로 전환" style="display: none !important; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-full); background: rgba(124, 92, 252, 0.12); border: 1px solid rgba(124, 92, 252, 0.3); color: var(--theme-color); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                            <line x1="12" y1="18" x2="12.01" y2="18"/>
-                        </svg>
-                        <span>모바일 모드</span>
-                    </a>
-                    <!-- 신곡 자동 탐색 버튼 -->
-                    <button id="btn-sync-new-songs" class="btn-sync-songs" title="스텔라이브 공식 채널 및 멤버 채널의 최신 신곡을 확인하여 자동 추가합니다.">
-                        <svg class="icon-sync" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                        </svg>
-                        <span>신곡 탐색</span>
-                    </button>
-                    <!-- 사비 메들리 퀵 토글 -->
-                    <button id="btn-sabi-quick" class="btn-sabi-quick-toggle" title="곡들의 후렴구(사비) 구간만 연속으로 들을 수 있는 하이라이트 연속 재생 모드입니다.">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-                        </svg>
-                        <span>사비 메들리</span>
-                    </button>
-                </div>
+                <!-- 모바일 웹 버전 전환 버튼 (웹 모바일 접속 시에만 노출) -->
+                <a href="./mobile/" id="topbar-btn-switch-mobile" class="btn-topbar-mobile" title="모바일 전용 웹 플레이어로 전환" style="display: none !important; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-full); background: rgba(124, 92, 252, 0.12); border: 1px solid rgba(124, 92, 252, 0.3); color: var(--theme-color); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.2s;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                    <span>모바일 모드</span>
+                </a>
             </header>
 
             <!-- 본문 스크롤 영역 -->
             <div class="content-body">
                 <!-- ===================================================
-                     홈 화면 (Home Tab View)
+                     홈 화면 (Home Tab View - 미니멀 PC 컨트롤 바)
                 =================================================== -->
                 <div id="view-home" class="main-tab-view active">
-                    <!-- 히어로 배너 -->
-                    <section class="hero-banner" id="hero-banner">
-                        <div class="hero-text">
-                            <div class="hero-tag">
-                                <span>StelLive Official Music Archive</span>
-                            </div>
-                            <h1 class="hero-title">스텔라이브의 모든 울림을 하나의 플레이어로.</h1>
-                            <p class="hero-desc">스텔라이브의 오리지널 음원, 커버곡, 공식 피처링 & OST 전곡을 감성적인 <strong>사비 메들리</strong>와 함께 즐겨보세요.</p>
-                            <div class="hero-btn-group">
-                                <button class="btn-primary" id="btn-hero-play-all">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                        <polygon points="6 4 20 12 6 20 6 4"/>
-                                    </svg>
-                                    <span>전체 재생</span>
-                                </button>
-                                <button class="btn-secondary" id="btn-hero-sabi-mode">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-                                    </svg>
-                                    <span>사비 메들리 모드</span>
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- 분위기 & 바이브 추천 셸프 -->
-                    <section class="mood-shelf-container" id="mood-shelf-container">
-                        <div class="mood-shelf-header">
-                            <div class="mood-shelf-title-wrap">
-                                <span class="mood-shelf-icon">✨</span>
-                                <span class="mood-shelf-title">분위기 & 바이브 추천</span>
-                            </div>
-                            <span class="mood-shelf-sub">지금 기분에 맞는 곡을 맞춤 추천으로 들어보세요</span>
-                        </div>
-                        <div class="mood-cards-row" id="mood-cards-row">
-                            <div class="mood-chip-card" data-mood="upbeat" style="--mood-grad: linear-gradient(135deg, #ff416c, #ff4b2b);">
-                                <span class="mood-chip-icon">🔥</span>
-                                <span class="mood-chip-name">파워풀</span>
-                            </div>
-                            <div class="mood-chip-card" data-mood="chill" style="--mood-grad: linear-gradient(135deg, #654ea3, #eaafc8);">
-                                <span class="mood-chip-icon">🌙</span>
-                                <span class="mood-chip-name">감성힐링</span>
-                            </div>
-                            <div class="mood-chip-card" data-mood="bright" style="--mood-grad: linear-gradient(135deg, #00b09b, #96c93d);">
-                                <span class="mood-chip-icon">☀️</span>
-                                <span class="mood-chip-name">청량상쾌</span>
-                            </div>
-                            <div class="mood-chip-card" data-mood="groovy" style="--mood-grad: linear-gradient(135deg, #8a2387, #e94057, #f27121);">
-                                <span class="mood-chip-icon">🎧</span>
-                                <span class="mood-chip-name">그루비</span>
-                            </div>
-                            <div class="mood-chip-card" data-mood="cute" style="--mood-grad: linear-gradient(135deg, #f093fb, #f5576c);">
-                                <span class="mood-chip-icon">💖</span>
-                                <span class="mood-chip-name">큐트</span>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- 멤버 & 기수별 계층형 컬렉션 필터 바 -->
-                    <section class="members-bar-container">
-                        <div class="section-header">
-                            <h2 class="section-title">멤버 & 기수별 컬렉션</h2>
-                            <button class="btn-secondary" id="btn-member-radio" style="padding: 7px 16px; font-size: 0.84rem; border-radius: var(--radius-full);">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/>
+                    <section class="pc-home-toolbar">
+                        <div class="pc-home-toolbar-left">
+                            <button type="button" class="pc-filter-trigger-btn" id="btn-open-pc-filter">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="currentColor"/>
+                                    <line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="currentColor"/>
+                                    <line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.2" fill="currentColor"/>
                                 </svg>
-                                <span id="member-radio-text">스텔 라디오 믹스</span>
+                                <span>분류 · 필터</span>
+                                <span class="pc-filter-badge" id="pc-filter-active-badge" style="display:none;">0</span>
                             </button>
-                        </div>
-                        <!-- 1단: 대분류 버튼 행 -->
-                        <div class="member-major-row" id="member-major-row">
-                            <button class="member-major-btn member-text-btn btn-white active" data-major="all">곡 전체</button>
-                            <button class="member-major-btn member-text-btn btn-gradient-stellive" data-major="group">스텔라이브</button>
-                            <button class="member-major-btn member-text-btn btn-white" data-major="g1">1기생</button>
-                            <button class="member-major-btn member-text-btn btn-white" data-major="g2">2기생</button>
-                            <button class="member-major-btn member-text-btn btn-white" data-major="g3">3기생</button>
-                            <button class="member-major-btn member-text-btn btn-white" data-major="g4">4기생</button>
-                        </div>
-                        <!-- 구분선 -->
-                        <div class="member-sub-divider" id="member-sub-divider"></div>
-                        <!-- 2단: 소분류 버튼 행 (동적 렌더링) -->
-                        <div class="member-sub-row" id="member-sub-row">
-                            <!-- js에서 대분류 선택에 맞춰 동적 렌더링 -->
-                        </div>
-                    </section>
 
-                    <!-- 유형별 필터 & 정렬 & 총 곡 수 -->
-                    <section class="filter-tabs-row">
-                        <div class="type-filter-group">
-                            <button class="type-filter-btn active" data-type="all">전체</button>
-                            <button class="type-filter-btn" data-type="original">오리지널</button>
-                            <button class="type-filter-btn" data-type="cover">커버곡</button>
-                            <button class="type-filter-btn" data-type="live">3D 라이브</button>
-                            <button class="type-filter-btn" data-type="featuring">피처링 & OST</button>
-                        </div>
-                        <div class="filter-right-controls">
-                            <button class="btn-toggle-select-mode" id="btn-toggle-multiselect" title="곡을 여러 개 선택하여 한 번에 재생하거나 플레이리스트에 담습니다">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                                </svg>
-                                <span>선택 모드</span>
-                            </button>
-                            <div class="sort-select-wrapper">
-                                <select id="sort-order-select" class="sort-order-select" title="정렬 기준">
+                            <div class="pc-sort-dropdown-wrap" id="pc-sort-dropdown-wrap">
+                                <button type="button" class="pc-sort-trigger-btn" id="pc-sort-dropdown-btn" aria-haspopup="listbox" aria-expanded="false">
+                                    <span id="pc-sort-dropdown-label">최신 발매순</span>
+                                    <svg class="pc-sort-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="pc-sort-dropdown-menu" id="pc-sort-dropdown-menu" role="listbox">
+                                    <button type="button" class="pc-sort-option active" data-sort="latest" role="option" aria-selected="true">
+                                        <span>최신 발매순</span>
+                                        <svg class="pc-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </button>
+                                    <button type="button" class="pc-sort-option" data-sort="oldest" role="option" aria-selected="false">
+                                        <span>오래된순</span>
+                                        <svg class="pc-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </button>
+                                    <button type="button" class="pc-sort-option" data-sort="title" role="option" aria-selected="false">
+                                        <span>곡명 가나다순</span>
+                                        <svg class="pc-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </button>
+                                </div>
+                                <select id="sort-order-select" class="sort-order-select" style="display:none;" aria-hidden="true" tabindex="-1">
                                     <option value="latest">최신 발매순</option>
                                     <option value="oldest">오래된순</option>
                                     <option value="title">곡명 가나다순</option>
                                 </select>
                             </div>
-                            <button class="btn-shuffle-play" id="btn-shuffle-play" title="현재 목록 전체 랜덤 재생">
+
+                            <button type="button" class="btn-shuffle-play" id="btn-shuffle-play" title="현재 목록 전체 랜덤 재생">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/>
                                 </svg>
                                 <span>랜덤 재생</span>
+                            </button>
+
+                            <button type="button" class="btn-toggle-select-mode" id="btn-toggle-multiselect" title="곡을 여러 개 선택하여 한 번에 재생하거나 플레이리스트에 담습니다">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                                <span>곡 선택</span>
+                            </button>
+                        </div>
+
+                        <div class="pc-home-toolbar-right">
+                            <button type="button" class="pc-active-filter-chip" id="pc-active-filter-summary" style="display:none;" title="클릭하여 필터 초기화">
+                                <span id="pc-active-filter-summary-text"></span>
+                                <span class="pc-chip-x">✕</span>
                             </button>
                             <div class="track-count-info" id="track-count-text">총 0곡</div>
                         </div>
@@ -323,6 +274,65 @@
                     <section class="tracks-container" id="tracks-list-container">
                         <!-- js에서 동적 렌더링 -->
                     </section>
+                </div>
+
+                <!-- ===================================================
+                     분위기 추천 탭 (Mood Recommendation Tab View)
+                =================================================== -->
+                <div id="view-mood" class="main-tab-view" style="display: none;">
+                    <div class="pc-mood-view-header">
+                        <div>
+                            <h2 class="section-title">분위기 추천</h2>
+                            <p class="pc-mood-view-sub">원하는 분위기를 선택하면 스텔라이브 라이브러리에서 20곡을 맞춤 선곡해드립니다.</p>
+                        </div>
+                    </div>
+                    <div class="pc-mood-cards-grid" id="mood-cards-row">
+                        <button type="button" class="pc-mood-card mood-chip-card" data-mood="upbeat" style="--mood-grad: linear-gradient(135deg, #ff416c, #ff4b2b);">
+                            <span class="pc-mood-card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </span>
+                            <span class="pc-mood-card-body">
+                                <span class="pc-mood-card-name">파워풀</span>
+                                <span class="pc-mood-card-desc">강렬한 비트와 폭발적인 락 &amp; 고음 보컬 컬렉션</span>
+                            </span>
+                        </button>
+                        <button type="button" class="pc-mood-card mood-chip-card" data-mood="chill" style="--mood-grad: linear-gradient(135deg, #654ea3, #8b5cf6);">
+                            <span class="pc-mood-card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            </span>
+                            <span class="pc-mood-card-body">
+                                <span class="pc-mood-card-name">감성힐링</span>
+                                <span class="pc-mood-card-desc">새벽 감성과 따뜻한 위로를 전하는 잔잔한 발라드</span>
+                            </span>
+                        </button>
+                        <button type="button" class="pc-mood-card mood-chip-card" data-mood="bright" style="--mood-grad: linear-gradient(135deg, #00b09b, #10b981);">
+                            <span class="pc-mood-card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+                            </span>
+                            <span class="pc-mood-card-body">
+                                <span class="pc-mood-card-name">청량상쾌</span>
+                                <span class="pc-mood-card-desc">맑고 투명한 청춘 에너지, 밝고 경쾌한 멜로디</span>
+                            </span>
+                        </button>
+                        <button type="button" class="pc-mood-card mood-chip-card" data-mood="groovy" style="--mood-grad: linear-gradient(135deg, #8a2387, #e94057, #f27121);">
+                            <span class="pc-mood-card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                            </span>
+                            <span class="pc-mood-card-body">
+                                <span class="pc-mood-card-name">그루비</span>
+                                <span class="pc-mood-card-desc">트렌디한 비트와 감각적인 리듬, R&amp;B / 힙합</span>
+                            </span>
+                        </button>
+                        <button type="button" class="pc-mood-card mood-chip-card" data-mood="cute" style="--mood-grad: linear-gradient(135deg, #ec4899, #f5576c);">
+                            <span class="pc-mood-card-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </span>
+                            <span class="pc-mood-card-body">
+                                <span class="pc-mood-card-name">큐트</span>
+                                <span class="pc-mood-card-desc">사랑스럽고 통통 튀는 요정들의 달콤한 보이스</span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- ===================================================
@@ -359,7 +369,9 @@
                             </button>
                         </div>
                         <div class="playlist-detail-header">
-                            <div class="playlist-detail-cover" id="playlist-detail-cover">🎵</div>
+                            <div class="playlist-detail-cover" id="playlist-detail-cover">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                            </div>
                             <div class="playlist-detail-meta" style="flex: 1;">
                                 <h2 class="playlist-detail-title" id="playlist-detail-title">플레이리스트 이름</h2>
                                 <span class="playlist-detail-sub" id="playlist-detail-sub">0곡 수록됨</span>
@@ -416,10 +428,31 @@
                             <h2 class="section-title">앱 설정 (Settings)</h2>
                         </div>
 
+                        <!-- 분류 탭 및 하위 메뉴 · 색상 관리 -->
+                        <div class="settings-card" id="pc-card-filter-manage">
+                            <div class="pc-settings-card-head">
+                                <div>
+                                    <h3 class="settings-card-title" style="margin-bottom:4px;">분류 탭 및 하위 메뉴 관리</h3>
+                                    <div class="settings-desc">다른 가수/그룹 탭과 세부 하위 메뉴, 각 탭·기수별 색상을 자유롭게 추가·수정할 수 있습니다.</div>
+                                </div>
+                                <button type="button" class="btn-primary" id="pc-settings-add-custom-group" style="padding: 7px 14px; font-size: 0.82rem;">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    <span>새 탭 추가</span>
+                                </button>
+                            </div>
+                            <div class="pc-settings-custom-groups-list" id="pc-settings-custom-groups-list"></div>
+                            <div class="pc-settings-builtin-colors-wrap">
+                                <div class="pc-settings-builtin-head">
+                                    <span>기본 탭 · 기수 색상 설정</span>
+                                    <button type="button" class="pc-settings-link-reset" id="pc-btn-reset-builtin-colors">기본색 복원</button>
+                                </div>
+                                <div class="pc-settings-builtin-grid" id="pc-settings-builtin-colors"></div>
+                            </div>
+                        </div>
 
                         <!-- 오디오 & 재생 설정 -->
                         <div class="settings-card">
-                            <h3 class="settings-card-title">🎵 오디오 & 재생 제어</h3>
+                            <h3 class="settings-card-title">오디오 &amp; 재생 제어</h3>
                             
                             <!-- 크로스페이드 -->
                             <div class="settings-row">
@@ -462,7 +495,7 @@
 
                         <!-- 데이터 & 캐시 관리 -->
                         <div class="settings-card">
-                            <h3 class="settings-card-title">💾 데이터 및 라이브러리 관리</h3>
+                            <h3 class="settings-card-title">데이터 및 라이브러리 관리</h3>
                             
                             <div class="settings-row">
                                 <div class="settings-row-info">
@@ -500,13 +533,13 @@
                                         <div class="settings-label">앱 버전 및 실시간 업데이트 (OTA)</div>
                                         <span class="settings-badge" id="pc-update-status-badge" style="background: rgba(124,92,252,0.2); color:#a78bfa;">최신 상태</span>
                                     </div>
-                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.12.2 (패치 #2026112503)</div>
+                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.13.0 (패치 #2026112504)</div>
                                     <div class="settings-desc" id="pc-update-sub-desc" style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">GitHub 보안 검증 채널을 통해 재설치 없이 최신 기능·곡 DB를 실시간 반영하고 이전 버전으로 언제든 복원할 수 있습니다.</div>
                                 </div>
                                 <div class="settings-row-ctrl" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                                    <button type="button" class="btn-primary" id="btn-pc-check-update" style="padding:7px 14px; font-size:0.82rem;">🔄 업데이트 확인</button>
-                                    <button type="button" class="btn-secondary" id="btn-pc-open-patchnotes" style="padding:7px 12px; font-size:0.82rem;">📜 패치노트</button>
-                                    <button type="button" class="btn-secondary" id="btn-pc-open-restore" style="padding:7px 12px; font-size:0.82rem; color:#38bdf8; border-color:rgba(56,189,248,0.4);">⏪ 복원</button>
+                                    <button type="button" class="btn-primary" id="btn-pc-check-update" style="padding:7px 14px; font-size:0.82rem;">업데이트 확인</button>
+                                    <button type="button" class="btn-secondary" id="btn-pc-open-patchnotes" style="padding:7px 12px; font-size:0.82rem;">패치노트</button>
+                                    <button type="button" class="btn-secondary" id="btn-pc-open-restore" style="padding:7px 12px; font-size:0.82rem; color:#38bdf8; border-color:rgba(56,189,248,0.4);">복원</button>
                                 </div>
                             </div>
                         </div>
@@ -811,11 +844,11 @@
                         <label class="form-label">곡 분위기 (분위기 추천 연동)</label>
                         <div class="custom-pill-select mood-pill-select" id="add-mood-pills">
                             <button type="button" class="form-pill-btn active" data-value="none">선택 안 함</button>
-                            <button type="button" class="form-pill-btn" data-value="upbeat">🔥 파워풀</button>
-                            <button type="button" class="form-pill-btn" data-value="chill">🌙 감성</button>
-                            <button type="button" class="form-pill-btn" data-value="bright">✨ 청량</button>
-                            <button type="button" class="form-pill-btn" data-value="groovy">🎧 그루비</button>
-                            <button type="button" class="form-pill-btn" data-value="cute">💖 큐트</button>
+                            <button type="button" class="form-pill-btn" data-value="upbeat"><span class="pc-mood-dot pc-mood-dot-upbeat"></span>파워풀</button>
+                            <button type="button" class="form-pill-btn" data-value="chill"><span class="pc-mood-dot pc-mood-dot-chill"></span>감성힐링</button>
+                            <button type="button" class="form-pill-btn" data-value="bright"><span class="pc-mood-dot pc-mood-dot-bright"></span>청량상쾌</button>
+                            <button type="button" class="form-pill-btn" data-value="groovy"><span class="pc-mood-dot pc-mood-dot-groovy"></span>그루비</button>
+                            <button type="button" class="form-pill-btn" data-value="cute"><span class="pc-mood-dot pc-mood-dot-cute"></span>큐트</button>
                         </div>
                         <input type="hidden" id="select-song-mood" value="none">
                     </div>
@@ -833,7 +866,7 @@
                     <div class="form-group member-picker-container">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <label class="form-label" style="margin-bottom: 0;">참여 멤버 설정 *</label>
-                            <button type="button" class="btn-detect-chips" id="btn-auto-detect-members" style="font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; background: rgba(124, 92, 252, 0.15); color: #a78bfa; border: 1px solid rgba(124, 92, 252, 0.3); cursor: pointer;">⚡ 제목에서 자동 감지</button>
+                            <button type="button" class="btn-detect-chips" id="btn-auto-detect-members" style="font-size: 0.75rem; padding: 3px 10px; border-radius: 999px; background: rgba(124, 92, 252, 0.15); color: #a78bfa; border: 1px solid rgba(124, 92, 252, 0.3); cursor: pointer;">제목에서 자동 감지</button>
                         </div>
                         <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브 -->
                         <div class="member-scope-selector" id="add-member-scope-selector">
@@ -920,7 +953,7 @@
                         <div class="form-group" style="flex: 1.5;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                                 <label class="form-label" style="margin:0;">곡 제목 *</label>
-                                <button type="button" class="btn-secondary" id="btn-redetect-song" style="padding:3px 10px; font-size:0.76rem; color:#a78bfa; border-color:rgba(167,139,250,0.4); background:rgba(124,92,252,0.12);" title="표준 양식 사전 및 유튜브 원본 데이터를 기반으로 곡명·가수·멤버 정보를 재감지하고 원래대로 되돌립니다">🔄 곡 정보 재감지</button>
+                                <button type="button" class="btn-secondary" id="btn-redetect-song" style="padding:3px 10px; font-size:0.76rem; color:#a78bfa; border-color:rgba(167,139,250,0.4); background:rgba(124,92,252,0.12);" title="표준 양식 사전 및 유튜브 원본 데이터를 기반으로 곡명·가수·멤버 정보를 재감지하고 원래대로 되돌립니다">곡 정보 재감지</button>
                             </div>
                             <input type="text" class="form-input" id="edit-song-title" required placeholder="곡 제목 입력">
                         </div>
@@ -956,11 +989,11 @@
                         <label class="form-label">곡 분위기 (분위기 추천 연동)</label>
                         <div class="custom-pill-select mood-pill-select" id="edit-mood-pills">
                             <button type="button" class="form-pill-btn active" data-value="none">선택 안 함</button>
-                            <button type="button" class="form-pill-btn" data-value="upbeat">🔥 파워풀</button>
-                            <button type="button" class="form-pill-btn" data-value="chill">🌙 감성</button>
-                            <button type="button" class="form-pill-btn" data-value="bright">✨ 청량</button>
-                            <button type="button" class="form-pill-btn" data-value="groovy">🎧 그루비</button>
-                            <button type="button" class="form-pill-btn" data-value="cute">💖 큐트</button>
+                            <button type="button" class="form-pill-btn" data-value="upbeat"><span class="pc-mood-dot pc-mood-dot-upbeat"></span>파워풀</button>
+                            <button type="button" class="form-pill-btn" data-value="chill"><span class="pc-mood-dot pc-mood-dot-chill"></span>감성힐링</button>
+                            <button type="button" class="form-pill-btn" data-value="bright"><span class="pc-mood-dot pc-mood-dot-bright"></span>청량상쾌</button>
+                            <button type="button" class="form-pill-btn" data-value="groovy"><span class="pc-mood-dot pc-mood-dot-groovy"></span>그루비</button>
+                            <button type="button" class="form-pill-btn" data-value="cute"><span class="pc-mood-dot pc-mood-dot-cute"></span>큐트</button>
                         </div>
                         <input type="hidden" id="edit-song-mood" value="none">
                     </div>
@@ -1024,7 +1057,7 @@
                 <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn-secondary" id="btn-delete-song" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);" title="이 곡을 라이브러리에서 숨깁니다 (설정 탭에서 언제든 복원 가능)">라이브러리에서 숨기기</button>
-                        <button type="button" class="btn-secondary" id="btn-reset-song-edit" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);" title="곡명이 양식을 따르지 않거나 잘못 수정되었을 때 표준 양식으로 재감지 및 기본값 복원합니다">🔄 곡 정보 재감지 / 기본값 복원</button>
+                        <button type="button" class="btn-secondary" id="btn-reset-song-edit" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);" title="곡명이 양식을 따르지 않거나 잘못 수정되었을 때 표준 양식으로 재감지 및 기본값 복원합니다">곡 정보 재감지 / 기본값 복원</button>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn-secondary" id="btn-cancel-edit-song">취소</button>
@@ -1042,7 +1075,6 @@
         <div class="modal-card" style="max-width: 540px; width: 92%;">
             <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1.2rem;">👁️</span>
                     <h3 class="modal-title">숨긴 곡 보관함</h3>
                     <span class="settings-badge" id="hidden-songs-count" style="margin-left: 6px;">0곡</span>
                 </div>
@@ -1160,7 +1192,6 @@
         <div class="modal-card modal-card-wide" style="max-width: 760px; max-height: 88vh; display: flex; flex-direction: column;">
             <div class="modal-header" style="flex-shrink: 0;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">➕</span>
                     <div>
                         <h3 class="modal-title" id="pl-add-modal-title">재생목록에 곡 추가</h3>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;" id="pl-add-modal-subtitle">원하는 곡을 검색하고 선택하여 재생목록에 담으세요</div>
@@ -1251,7 +1282,7 @@
         <div class="modal-card modal-mood-card">
             <div class="modal-header">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <span id="mood-modal-icon" style="font-size:1.8rem;">🔥</span>
+                    <span id="mood-modal-icon" class="pc-mood-modal-dot"></span>
                     <div>
                         <h3 class="modal-title" id="mood-modal-title">분위기 추천</h3>
                         <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;" id="mood-modal-sub">스텔라이브 큐레이션 컬렉션</div>
@@ -1374,13 +1405,187 @@
         </div>
     </div>
 
+    <!-- ===================================================================
+         PC 전용 분류 및 필터 모달 (크롬 탭 · 멤버/유닛 로고 카드 · 음원유형 · 분위기)
+    =================================================================== -->
+    <div class="modal-backdrop" id="modal-pc-filter">
+        <div class="modal-card pc-filter-modal-card">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--theme-color)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="var(--theme-color)"/>
+                        <line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="var(--theme-color)"/>
+                        <line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.2" fill="var(--theme-color)"/>
+                    </svg>
+                    <h3 class="modal-title">분류 및 필터</h3>
+                </div>
+                <button type="button" class="btn-close-full" id="btn-close-pc-filter" title="닫기">✕</button>
+            </div>
+
+            <div class="pc-filter-body">
+                <!-- 1. 아티스트 · 그룹 분류 (크롬 탭) -->
+                <div class="pc-filter-section">
+                    <div class="pc-filter-section-head">
+                        <span class="pc-filter-section-label">아티스트 · 그룹 분류</span>
+                        <button type="button" class="pc-filter-add-tab-btn" id="pc-btn-add-custom-group">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>탭 추가</span>
+                        </button>
+                    </div>
+                    <div class="pc-filter-group-tabs-wrap" id="pc-filter-group-tabs-wrap">
+                        <div class="pc-filter-group-tabs-row" id="pc-filter-group-tabs"></div>
+
+                        <!-- 스텔라이브 하위 메뉴 (7개) + 5열 멤버/유닛 로고 카드 -->
+                        <div class="pc-filter-sub-panel" id="pc-filter-stellive-panel" style="display:none;">
+                            <div class="pc-filter-sub-pills" id="pc-filter-stellive-sub">
+                                <button type="button" class="pc-filter-sub-pill active" data-sub-cat="all">전체</button>
+                                <button type="button" class="pc-filter-sub-pill" data-sub-cat="group">유닛/단체/듀엣</button>
+                                <button type="button" class="pc-filter-sub-pill" data-sub-cat="g1">1기생</button>
+                                <button type="button" class="pc-filter-sub-pill" data-sub-cat="g2">2기생</button>
+                                <button type="button" class="pc-filter-sub-pill" data-sub-cat="g3">3기생</button>
+                                <button type="button" class="pc-filter-sub-pill" data-sub-cat="g4">4기생</button>
+                                <button type="button" class="pc-filter-sub-pill" data-sub-cat="kangji">강지</button>
+                            </div>
+                            <div class="pc-filter-member-grid" id="pc-filter-member-grid" style="display:none;"></div>
+                        </div>
+
+                        <!-- 커스텀 그룹 하위 메뉴 (세부 탭) -->
+                        <div class="pc-filter-sub-panel" id="pc-filter-custom-panel" style="display:none;">
+                            <div class="pc-filter-sub-pills" id="pc-filter-custom-sub"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 음원 유형 -->
+                <div class="pc-filter-section">
+                    <span class="pc-filter-section-label">음원 유형</span>
+                    <div class="pc-filter-pills-row" id="pc-filter-type-pills">
+                        <button type="button" class="pc-filter-pill type-filter-btn active" data-type="all">전체</button>
+                        <button type="button" class="pc-filter-pill type-filter-btn" data-type="original">오리지널</button>
+                        <button type="button" class="pc-filter-pill type-filter-btn" data-type="cover">커버</button>
+                        <button type="button" class="pc-filter-pill type-filter-btn" data-type="featuring">OST &amp; 피처링</button>
+                        <button type="button" class="pc-filter-pill type-filter-btn" data-type="live">LIVE</button>
+                    </div>
+                </div>
+
+                <!-- 3. 분위기 (단일 선택) -->
+                <div class="pc-filter-section">
+                    <span class="pc-filter-section-label">분위기</span>
+                    <div class="pc-filter-pills-row" id="pc-filter-mood-pills">
+                        <button type="button" class="pc-filter-mood-pill" data-mood="upbeat"><span class="pc-mood-dot pc-mood-dot-upbeat"></span>파워풀</button>
+                        <button type="button" class="pc-filter-mood-pill" data-mood="chill"><span class="pc-mood-dot pc-mood-dot-chill"></span>감성힐링</button>
+                        <button type="button" class="pc-filter-mood-pill" data-mood="bright"><span class="pc-mood-dot pc-mood-dot-bright"></span>청량상쾌</button>
+                        <button type="button" class="pc-filter-mood-pill" data-mood="groovy"><span class="pc-mood-dot pc-mood-dot-groovy"></span>그루비</button>
+                        <button type="button" class="pc-filter-mood-pill" data-mood="cute"><span class="pc-mood-dot pc-mood-dot-cute"></span>큐트</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pc-filter-footer">
+                <button type="button" class="btn-secondary" id="pc-btn-filter-reset" style="min-width:104px;">초기화</button>
+                <button type="button" class="btn-primary" id="pc-btn-filter-apply" style="flex:1; justify-content:center;">0곡 보기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         PC 사용자 커스텀 아티스트/그룹 탭 추가·수정 모달
+    =================================================================== -->
+    <div class="modal-backdrop" id="modal-pc-custom-group">
+        <div class="modal-card" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="pc-custom-group-modal-title">새 아티스트 / 그룹 탭 추가</h3>
+                <button type="button" class="btn-close-full" id="btn-close-pc-custom-group" title="닫기">✕</button>
+            </div>
+            <form id="form-pc-custom-group">
+                <input type="hidden" id="pc-custom-group-edit-id" value="">
+                <div class="modal-form-body">
+                    <div class="form-group">
+                        <label class="form-label">탭 이름 (가수 또는 그룹명) *</label>
+                        <input type="text" id="pc-custom-group-name" class="form-input" placeholder="예: 이세계아이돌, 아이유, 요아소비" maxlength="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">탭 색상</label>
+                        <div class="pc-color-picker-row">
+                            <div class="pc-color-swatches" id="pc-custom-group-swatches"></div>
+                            <label class="pc-color-custom-pill" title="직접 색상 선택">
+                                <input type="color" id="pc-custom-group-color" value="#7c5cfc">
+                                <span id="pc-custom-group-color-hex">#7C5CFC</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">자동 분류 키워드 (쉼표로 구분, 선택)</label>
+                        <input type="text" id="pc-custom-group-keywords" class="form-input" placeholder="예: 아이네, 징버거, 릴파 (비워두면 탭 이름으로 자동 매칭)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">하위 메뉴 · 세부 탭 (멤버·유닛 등, 선택)</label>
+                        <div class="pc-custom-sub-list" id="pc-custom-sub-list"></div>
+                        <div class="pc-custom-sub-add-row">
+                            <input type="color" id="pc-custom-sub-color" class="pc-sub-color-input" value="#38bdf8" title="하위 메뉴 색상">
+                            <input type="text" id="pc-custom-sub-name" class="form-input" placeholder="하위 메뉴 이름 (예: 아이네)" maxlength="18" style="flex:1;">
+                            <button type="button" class="btn-secondary" id="pc-btn-add-custom-sub" style="padding:0 14px; height:38px;">추가</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="btn-cancel-pc-custom-group">취소</button>
+                    <button type="submit" class="btn-primary" id="btn-submit-pc-custom-group">탭 추가</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         PC 트랙 컨텍스트 메뉴 (우클릭 및 점 3개 버튼 통합)
+    =================================================================== -->
+    <div class="pc-context-menu" id="pc-track-context-menu" role="menu">
+        <div class="pc-ctx-header">
+            <img id="pc-ctx-thumb" class="pc-ctx-thumb" src="" alt="">
+            <div class="pc-ctx-meta">
+                <div id="pc-ctx-title" class="pc-ctx-title">곡 제목</div>
+                <div id="pc-ctx-artist" class="pc-ctx-artist">아티스트</div>
+            </div>
+        </div>
+        <div class="pc-ctx-divider"></div>
+        <button type="button" class="pc-ctx-item" id="pc-ctx-play-next" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            <span>다음 곡으로 재생</span>
+        </button>
+        <button type="button" class="pc-ctx-item" id="pc-ctx-add-end" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>대기열 맨 끝에 추가</span>
+        </button>
+        <button type="button" class="pc-ctx-item" id="pc-ctx-station" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/><path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+            <span>뮤직 스테이션 시작</span>
+        </button>
+        <button type="button" class="pc-ctx-item" id="pc-ctx-playlist" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span>플레이리스트에 담기</span>
+        </button>
+        <button type="button" class="pc-ctx-item" id="pc-ctx-sabi" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>사비(후렴구) 구간 편집</span>
+        </button>
+        <button type="button" class="pc-ctx-item" id="pc-ctx-edit" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>곡 정보 직접 수정</span>
+        </button>
+        <div class="pc-ctx-divider"></div>
+        <button type="button" class="pc-ctx-item danger" id="pc-ctx-hide" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span>라이브러리에서 숨기기</span>
+        </button>
+    </div>
+
     <!-- 토스트 알림 컨테이너 -->
     <div class="toast-container" id="toast-container"></div>
 
     <!-- JavaScript Scripts -->
-    <script src="assets/js/songs.js?v=2026112503"></script>
-    <script src="assets/js/storage.js?v=2026112503"></script>
-    <script src="assets/js/player.js?v=2026112503"></script>
-    <script src="assets/js/app.js?v=2026112503"></script>
+    <script src="assets/js/songs.js?v=2026112504"></script>
+    <script src="assets/js/storage.js?v=2026112504"></script>
+    <script src="assets/js/player.js?v=2026112504"></script>
+    <script src="assets/js/app.js?v=2026112504"></script>
 </body>
 </html>
