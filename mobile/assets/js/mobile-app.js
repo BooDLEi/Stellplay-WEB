@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.13.1';
-    const CURRENT_OTA_BUILD = 2026112505;
+    const CURRENT_APP_VERSION = '1.13.2';
+    const CURRENT_OTA_BUILD = 2026112601;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -1499,6 +1499,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function normalizeCustomChannelsList(raw) {
+        if (!raw) return [];
+        const items = String(raw).split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+        const out = [];
+        const seen = new Set();
+        items.forEach(item => {
+            let url = '';
+            if (/^https?:\/\/(www\.|m\.)?youtube\.com\//i.test(item)) {
+                url = item.replace(/^http:\/\//i, 'https://');
+            } else if (/^@[A-Za-z0-9._-]+$/.test(item)) {
+                url = `https://www.youtube.com/${item}`;
+            } else if (/^UC[A-Za-z0-9_-]{20,}$/.test(item)) {
+                url = `https://www.youtube.com/channel/${item}`;
+            } else if (/^(www\.)?youtube\.com\//i.test(item)) {
+                url = `https://${item}`;
+            }
+            if (url && !seen.has(url)) {
+                seen.add(url);
+                out.push(url);
+            }
+        });
+        return out;
+    }
+
     function openCustomGroupModal(editId = null) {
         const existing = editId ? (state.customGroups || []).find(g => g.id === editId) : null;
         if (dom.customGroupEditId) dom.customGroupEditId.value = existing ? existing.id : '';
@@ -1518,6 +1542,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const kws = existing && Array.isArray(existing.keywords) ? existing.keywords : [];
             const isDefaultOnly = existing && kws.length === 1 && kws[0] === existing.name;
             dom.inputCustomGroupKeywords.value = isDefaultOnly ? '' : kws.join(', ');
+        }
+        const channelsEl = document.getElementById('m-custom-group-channels');
+        if (channelsEl) {
+            channelsEl.value = (existing && Array.isArray(existing.channels)) ? existing.channels.join('\n') : '';
         }
 
         customGroupDraftSubs = existing && Array.isArray(existing.subItems)
@@ -1571,8 +1599,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 groups.forEach(grp => {
                     const row = document.createElement('div');
                     row.className = 'm-settings-group-row';
-                    const subBadgesHtml = (grp.subItems && grp.subItems.length > 0)
-                        ? `<div class="m-settings-sub-badges">${grp.subItems.map(s => `<span class="m-settings-sub-badge"><span class="m-settings-group-dot" style="width:6px; height:6px; background:${escapeHtml(s.color || '#38bdf8')};"></span>${escapeHtml(s.name)}</span>`).join('')}</div>`
+                    const chCount = Array.isArray(grp.channels) ? grp.channels.length : 0;
+                    const chBadgeHtml = chCount > 0
+                        ? `<span class="m-settings-sub-badge"><span class="m-settings-group-dot" style="width:6px; height:6px; background:#38bdf8;"></span>채널 ${chCount}개</span>`
+                        : '';
+                    const subBadgesHtml = (grp.subItems && grp.subItems.length > 0) || chBadgeHtml
+                        ? `<div class="m-settings-sub-badges">${(grp.subItems || []).map(s => `<span class="m-settings-sub-badge"><span class="m-settings-group-dot" style="width:6px; height:6px; background:${escapeHtml(s.color || '#38bdf8')};"></span>${escapeHtml(s.name)}</span>`).join('')}${chBadgeHtml}</div>`
                         : '';
                     row.innerHTML = `
                         <div class="m-settings-group-top">
@@ -2224,21 +2256,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function detectSongMood(song) {
         if (!song) return null;
-        if (song.mood && song.mood !== 'none') return song.mood;
-        const text = `${song.title || ''} ${song.artist || ''} ${song.originalArtist || ''}`.toLowerCase();
-        let bestMood = null;
-        let maxHits = 0;
-        for (const [mood, kws] of Object.entries(STATION_MOOD_KEYWORDS)) {
-            let hits = 0;
-            for (const kw of kws) {
-                if (text.includes(kw)) hits++;
-            }
-            if (hits > maxHits) {
-                maxHits = hits;
-                bestMood = mood;
-            }
+        if (typeof window.classifySongMood === 'function') {
+            return window.classifySongMood(song);
         }
-        return bestMood;
+        return (song.mood && song.mood !== 'none') ? song.mood : 'bright';
     }
 
     function buildMusicStationQueue(seedSong, catalog) {
@@ -2444,9 +2465,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function matchesSongMood(s, moodKey) {
         if (!s || !moodKey) return false;
-        if (s.mood && s.mood !== 'none') {
-            return s.mood === moodKey;
-        }
         return detectSongMood(s) === moodKey;
     }
 
@@ -2468,6 +2486,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // 1. 최상위 아티스트/그룹 탭 + 스텔라이브 2단/3단 필터 (오프라인 탭 전용 호출 시 홈 필터 무시)
+        if (!options.ignoreHomeFilters && state.selectedGroupTab && state.selectedGroupTab !== 'all') {
+            if (state.selectedGroupTab !== 'stellive' && state.selectedGroupTab !== 'unclassified') {
+                const existsCustom = (state.customGroups || []).some(g => g.id === state.selectedGroupTab);
+                if (!existsCustom) {
+                    state.selectedGroupTab = 'all';
+                    state.selectedCustomSub = null;
+                }
+            }
+        }
         if (!options.ignoreHomeFilters && state.selectedGroupTab && state.selectedGroupTab !== 'all') {
             if (state.selectedGroupTab === 'unclassified') {
                 res = res.filter(s => {
@@ -2542,7 +2569,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 return false;
             });
-        } else if (applyType && !customTypeSet && state.selectedType && state.selectedType !== 'all') {
+        } else if (applyType && !customTypeSet && state.selectedType && state.selectedType !== 'all' && state.selectedType !== 'custom') {
             if (state.selectedType === 'featuring') {
                 res = res.filter(s => s.type === 'featuring' || s.type === 'ost');
             } else if (state.selectedType === 'ost') {
@@ -4939,23 +4966,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                             detected = [t.defaultMember];
                         }
                         if (detected.length === 0) {
-                            detected = ['group'];
+                            detected = t.customGroupId ? [] : ['group'];
                         }
 
                         // 3. 아티스트명 및 세대(gen) 자동 판별
-                        let artistName = '스텔라이브';
-                        let genKey = 'group';
-                        if (detected.length === 1 && detected[0] !== 'group') {
-                            const memberObj = window.MEMBERS ? window.MEMBERS[detected[0]] : null;
-                            artistName = memberObj ? memberObj.name : detected[0];
-                            genKey = memberObj ? memberObj.gen : 'group';
-                        } else if (detected.length > 1) {
-                            const memberNames = detected
-                                .filter(m => m !== 'group')
-                                .map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].name : m);
-                            artistName = memberNames.length > 0 ? memberNames.join(', ') : '스텔라이브';
-                            const gens = new Set(detected.map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].gen : null).filter(Boolean));
-                            genKey = (gens.size === 1) ? Array.from(gens)[0] : 'group';
+                        let artistName = t.customGroupId ? (t.customGroupName || t.uploader || t.channelTitle || '커스텀 아티스트') : '스텔라이브';
+                        let genKey = t.customGroupId ? 'custom' : 'group';
+                        if (!t.customGroupId) {
+                            if (detected.length === 1 && detected[0] !== 'group') {
+                                const memberObj = window.MEMBERS ? window.MEMBERS[detected[0]] : null;
+                                artistName = memberObj ? memberObj.name : detected[0];
+                                genKey = memberObj ? memberObj.gen : 'group';
+                            } else if (detected.length > 1) {
+                                const memberNames = detected
+                                    .filter(m => m !== 'group')
+                                    .map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].name : m);
+                                artistName = memberNames.length > 0 ? memberNames.join(', ') : '스텔라이브';
+                                const gens = new Set(detected.map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].gen : null).filter(Boolean));
+                                genKey = (gens.size === 1) ? Array.from(gens)[0] : 'group';
+                            }
                         }
 
                         const finalDur = dur > 0 ? dur : 200;
@@ -4971,13 +5000,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                             /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
                             (t.id && t.id.startsWith('ost-')));
                         const trackType = isLive ? 'live' : (isOst ? 'ost' : (t.defaultType || 'cover'));
-                        const origArtistText = isLive ? '3D 라이브' : (isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡'));
+                        const origArtistText = isLive ? '3D 라이브' : (isOst ? '공식 OST' : (t.defaultType === 'original' ? '오리지널' : '커버곡'));
 
                         const trackMood = t.mood || (typeof detectSongMood === 'function' ? detectSongMood({
                             title: cleanedTitle,
                             artist: artistName,
                             originalArtist: origArtistText,
-                            members: detected
+                            members: detected,
+                            type: trackType,
+                            youtubeId: ytId
                         }) : null) || 'bright';
 
                         newTracks.push({
@@ -4998,7 +5029,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 end: sEnd,
                                 title: '하이라이트'
                             },
-                            isAutoAdded: true
+                            isAutoAdded: true,
+                            ...(t.customGroupId ? { customGroupId: t.customGroupId } : {})
                         });
                         existingYtIds.add(ytId);
                     }
@@ -5039,22 +5071,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         syncNewSongsHttp(true);
     };
 
+    function collectCustomChannelsPayload() {
+        const list = [];
+        (state.customGroups || []).forEach(g => {
+            if (Array.isArray(g.channels) && g.channels.length > 0) {
+                g.channels.forEach(chUrl => {
+                    if (chUrl) {
+                        list.push({
+                            groupId: g.id,
+                            groupName: g.name || '커스텀',
+                            channelUrl: chUrl
+                        });
+                    }
+                });
+            }
+        });
+        return list;
+    }
+
     async function syncNewSongsHttp(isManual = false) {
         try {
             const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
+            const customChannelsPayload = collectCustomChannelsPayload();
+            const isLocalOrigin = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
             const endpoints = [];
             if (pcServer) {
-                endpoints.push(`${pcServer}/api/sync-new-songs`);
+                endpoints.push({ url: `${pcServer}/api/sync-new-songs`, post: customChannelsPayload.length > 0 });
             }
-            endpoints.push(`./songs-latest.json?t=${Date.now()}`);
-            endpoints.push(`../songs-latest.json?t=${Date.now()}`);
-            endpoints.push(`songs-latest.json?t=${Date.now()}`);
-            endpoints.push('/api/sync-new-songs');
+            if (isLocalOrigin) {
+                endpoints.push({ url: '/api/sync-new-songs', post: customChannelsPayload.length > 0 });
+            }
+            endpoints.push({ url: `./songs-latest.json?t=${Date.now()}`, post: false });
+            endpoints.push({ url: `../songs-latest.json?t=${Date.now()}`, post: false });
+            endpoints.push({ url: `songs-latest.json?t=${Date.now()}`, post: false });
+            if (!isLocalOrigin) {
+                endpoints.push({ url: '/api/sync-new-songs', post: false });
+            }
 
             let data = null;
             for (const ep of endpoints) {
                 try {
-                    const res = await fetch(ep, { signal: AbortSignal.timeout(5000) });
+                    const res = ep.post
+                        ? await fetch(ep.url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ customChannels: customChannelsPayload }),
+                            signal: AbortSignal.timeout(20000)
+                        })
+                        : await fetch(ep.url, { signal: AbortSignal.timeout(5000) });
                     if (res.ok) {
                         const parsed = await res.json();
                         if (parsed && parsed.success && Array.isArray(parsed.tracks) && parsed.tracks.length > 0) {
@@ -5098,10 +5162,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.querySelector('svg')?.classList.add('syncing');
 
         if (isManual) {
-            showToast('스텔라이브 공식 채널의 신곡을 확인 중...');
+            showToast('공식 및 커스텀 채널의 신곡을 확인 중...');
         }
 
         // 1. 네이티브 안드로이드 브리지 (앱 내 자체 yt-dlp) 지원 시 우선 실행
+        const customChannelsPayload = collectCustomChannelsPayload();
+        if (window.AndroidBridge && typeof window.AndroidBridge.syncNewSongsWithChannelsNative === 'function') {
+            try {
+                window.AndroidBridge.syncNewSongsWithChannelsNative(JSON.stringify(customChannelsPayload));
+                return;
+            } catch (e) {
+                console.warn('[Native Channels Sync Failed, Fallback]', e);
+            }
+        }
         if (window.AndroidBridge && typeof window.AndroidBridge.syncNewSongsNative === 'function') {
             try {
                 window.AndroidBridge.syncNewSongsNative();
@@ -5687,49 +5760,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             const preset = MOOD_PRESETS[moodKey];
             if (!preset) return [];
             const all = window.getAllSongs ? window.getAllSongs() : [];
-            const scored = [];
+            const result = [];
 
             all.forEach(song => {
-                // 숏폼 영상 원천 제외
-                if (song.duration && song.duration > 0 && song.duration < 65) return;
-                const titleLower = (song.title || '').toLowerCase();
-                const fullText = `${titleLower} ${song.artist || ''} ${song.originalArtist || ''} ${song.id || ''}`.toLowerCase();
-                
-                // 1. 직접 지정된 분위기(mood)가 있는 경우 최우선 반영
-                let score = 0;
-                let hasExplicitMood = false;
-                if (song.mood && song.mood !== 'none') {
-                    if (song.mood === moodKey) {
-                        hasExplicitMood = true;
-                        score += 100; // 사용자가 직접 지정한 분위기 곡은 최상위 점수(+100점)
-                    } else {
-                        // 다른 분위기로 지정된 곡은 이 분위기 추천 풀에서 완전히 제외
-                        return;
-                    }
-                }
-
-                if (!hasExplicitMood) {
-                    // 2. 제외 키워드 필터링 (분위기에 어울리지 않는 곡 원천 차단)
-                    if (preset.exclude_titles && preset.exclude_titles.some(ex => titleLower.includes(ex) || fullText.includes(ex))) {
-                        return;
-                    }
-
-                    // 3. 긍정 키워드 매칭
-                    for (const kw of preset.keywords) {
-                        if (fullText.includes(kw.toLowerCase())) {
-                            score += 5;
-                        }
-                    }
-                }
-
-                if (score > 0) {
-                    scored.push({ song, score });
+                if (!song || (song.duration && song.duration > 0 && song.duration < 65)) return;
+                if (detectSongMood(song) === moodKey) {
+                    result.push(song);
                 }
             });
 
-            // 순수 일치 곡만 점수순으로 정렬하여 반환 (무작위 패딩 전면 제거)
-            scored.sort((a, b) => b.score - a.score);
-            return scored.map(item => item.song);
+            return result;
         }
 
         function rollRandomMoodPlaylist(moodKey, count = 20) {
@@ -5979,6 +6019,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const color = (dom.inputCustomGroupColor?.value || '#7c5cfc');
                 const kwRaw = (dom.inputCustomGroupKeywords?.value || '').trim();
                 const keywords = kwRaw ? kwRaw.split(',').map(s => s.trim()).filter(Boolean) : [name];
+                const chRaw = (document.getElementById('m-custom-group-channels')?.value || '').trim();
+                const channels = normalizeCustomChannelsList(chRaw);
                 const subItems = customGroupDraftSubs.map(s => ({
                     id: s.id,
                     name: s.name,
@@ -5988,7 +6030,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (editId) {
                     state.customGroups = (state.customGroups || []).map(g =>
-                        g.id === editId ? { ...g, name, color, keywords, subItems } : g
+                        g.id === editId ? { ...g, name, color, keywords, channels, subItems } : g
                     );
                     saveCustomGroups(state.customGroups);
                     closeCustomGroupModal();
@@ -6006,6 +6048,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         name,
                         color,
                         keywords,
+                        channels,
                         subItems
                     };
                     state.customGroups = [...(state.customGroups || []), newGroup];
@@ -6475,6 +6518,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.addEventListener('click', () => syncNewSongs(true));
+
+        const mYtStdHostToggle = document.getElementById('m-yt-standard-host-toggle');
+        if (mYtStdHostToggle) {
+            try {
+                const s = window.StorageManager?.getSettings?.();
+                mYtStdHostToggle.checked = !!(s && s.ytStandardHost);
+            } catch (_) {}
+            mYtStdHostToggle.addEventListener('change', (e) => {
+                const enabled = !!e.target.checked;
+                window.StorageManager?.setSetting?.('ytStandardHost', enabled);
+                showToast(enabled
+                    ? '표준 YouTube 호스트가 활성화되었습니다. 새로고침 시 반영됩니다.'
+                    : '저광고 임베드 호스트(youtube-nocookie)로 전환되었습니다. 새로고침 시 반영됩니다.');
+            });
+        }
         function openHiddenSongsModal() {
             const hiddenIds = window.StorageManager ? window.StorageManager.getHiddenSongs() : [];
             if (!hiddenIds || hiddenIds.length === 0) {
@@ -6736,10 +6794,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 dockYouTubePlayer(false);
                 if (dom.sheetArtBox) dom.sheetArtBox.style.display = 'flex';
-                // 앨범 아트 모드일 때는 비디오 광고 오버레이 및 배너 강제 은폐
+                const sheetBox = dom.sheetVideoBox || document.getElementById('m-sheet-video-box');
+                const isWebInteractiveAd = !!(player && player.isAdShieldActive && !window.AndroidBridge && !window.__IS_CAPACITOR__);
+                if (sheetBox) sheetBox.classList.toggle('ad-interactive', isWebInteractiveAd);
                 const mOverlay = document.getElementById('m-ad-shield-overlay');
-                if (mOverlay) mOverlay.style.display = 'none';
-                if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
+                if (mOverlay) mOverlay.style.display = isWebInteractiveAd ? 'flex' : 'none';
+                if (dom.adFloatingBanner && !isWebInteractiveAd) dom.adFloatingBanner.style.display = 'none';
             }
         }
 
@@ -6953,11 +7013,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.addEventListener('mobileplayer:adShieldState', (e) => {
             const isAd = !!e.detail?.isAd;
             const mOverlay = document.getElementById('m-ad-shield-overlay');
-            // 앨범 아트 모드일 때는 영상 광고 오버레이 및 상단 배너 노출을 원천 차단
-            if (mobilePlayerViewMode !== 'video') {
+            const sheetBox = dom.sheetVideoBox || document.getElementById('m-sheet-video-box');
+            const isWebEnv = !window.AndroidBridge && !window.__IS_CAPACITOR__;
+
+            if (mobilePlayerViewMode !== 'video' && !(isWebEnv && isAd)) {
+                if (sheetBox) sheetBox.classList.remove('ad-interactive');
                 if (mOverlay) mOverlay.style.display = 'none';
                 if (dom.adFloatingBanner) dom.adFloatingBanner.style.display = 'none';
                 return;
+            }
+            if (sheetBox) {
+                sheetBox.classList.toggle('ad-interactive', isAd && isWebEnv);
             }
             if (mOverlay) {
                 mOverlay.style.display = isAd ? 'flex' : 'none';

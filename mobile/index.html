@@ -19,7 +19,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
-    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112505">
+    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112601">
 </head>
 <body>
     <div id="app-container">
@@ -27,7 +27,7 @@
         <header class="mobile-header" id="m-mobile-header">
             <div class="header-top">
                 <div class="logo-group">
-                    <img class="logo-app-icon" src="./assets/icons/app-icon.png" alt="StellPlay" width="26" height="26">
+                    <img class="logo-app-icon" src="./assets/icons/app-icon.png" alt="StellPlay" width="32" height="32">
                     <img class="logo-wordmark logo-wordmark-dark" src="./assets/icons/logo-dark.png" alt="STELLPLAY">
                     <img class="logo-wordmark logo-wordmark-light" src="./assets/icons/logo-light.png" alt="STELLPLAY">
                 </div>
@@ -48,8 +48,8 @@
                         </svg>
                     </button>
                     <button class="header-sabi-btn" id="m-header-sabi-btn" type="button" title="사비 메들리 모드 온/오프">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
                         </svg>
                         <span id="m-header-sabi-text">사비</span>
                     </button>
@@ -496,6 +496,28 @@
 
                     <hr class="m-settings-divider">
 
+                    <!-- 웹 유튜브 호스트 선택 (기본 무쿠키 저광고 vs YouTube Premium) -->
+                    <div class="m-settings-card" id="m-yt-host-settings-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                            <div style="min-width:0; flex:1;">
+                                <div class="m-settings-title-row">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                    <span>YouTube Premium 호스트 연동 (웹)</span>
+                                </div>
+                                <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
+                                    끄면 저광고 임베드(nocookie) 사용. YouTube Premium 로그인 브라우저일 때만 켜세요.
+                                </div>
+                            </div>
+                            <label style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer; flex-shrink:0; margin:0;">
+                                <input type="checkbox" id="m-yt-standard-host-toggle" style="opacity:0; width:0; height:0;">
+                                <span id="m-yt-host-toggle-switch" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:rgba(255,255,255,0.16); transition:0.3s; border-radius:24px;"></span>
+                                <span id="m-yt-host-toggle-knob" style="position:absolute; height:18px; width:18px; left:3px; bottom:3px; background-color:white; transition:0.3s; border-radius:50%; transform:translateX(0); pointer-events:none;"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr class="m-settings-divider">
+
                     <!-- 재생 옵션 (크로스페이드 설정) -->
                     <div class="m-settings-card">
                         <div class="m-settings-card-head">
@@ -612,8 +634,8 @@
                         </svg>
                     </button>
                     <button class="sheet-ctrl-btn sheet-sabi-btn" id="sheet-sabi-btn" title="사비 메들리 모드">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
                         </svg>
                     </button>
                     <button class="sheet-ctrl-btn" id="sheet-menu-btn" title="곡 옵션 더보기">
@@ -648,14 +670,10 @@
                                 <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
                             </svg>
                         </button>
-                        <!-- 모바일 영상 전용 광고 차단 쉴드 오버레이 -->
-                        <div id="m-ad-shield-overlay" style="display:none; position:absolute; inset:0; z-index:30; background:rgba(15, 12, 29, 0.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:16px;">
-                            <div style="margin-bottom:8px; color:#a78bfa;">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            </div>
-                            <div style="font-size:0.95rem; font-weight:700; margin-bottom:4px;">제로 광고 쉴드 작동 중</div>
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:12px;">유튜브 광고 음소거 및 자동 전환 대기 중...</div>
-                            <button id="m-btn-overlay-skip-ad" type="button" style="background:#7c5cfc; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-weight:700; font-size:0.75rem; cursor:pointer; box-shadow:0 3px 10px rgba(124,92,252,0.4);">광고 건너뛰기</button>
+                        <!-- 모바일 광고 음소거 및 건너뛰기 안내 비간섭 상단 바 -->
+                        <div id="m-ad-shield-overlay" class="m-ad-shield-bar" style="display:none;">
+                            <span class="m-ad-shield-pill">광고 음소거 중 · 영상 내 건너뛰기 탭 가능</span>
+                            <button id="m-btn-overlay-skip-ad" type="button" class="m-ad-shield-retry-btn">재시도</button>
                         </div>
                     </div>
                 </div>
@@ -810,8 +828,8 @@
                         <span id="m-act-playlist-text">재생목록에 저장</span>
                     </button>
                     <button class="actions-item" id="m-act-sabi">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
                         </svg>
                         <span>사비(하이라이트) 구간 설정</span>
                     </button>
@@ -1166,6 +1184,10 @@
                         <input type="text" id="m-custom-group-keywords" class="form-input" placeholder="예: 아이네, 징버거, 릴파 (비워두면 탭 이름으로 자동 매칭)">
                     </div>
                     <div class="form-group">
+                        <label>신곡 탐색용 유튜브 채널 (선택 · 줄바꿈/쉼표 구분)</label>
+                        <textarea id="m-custom-group-channels" class="form-input" rows="2" placeholder="예: https://www.youtube.com/@artist_official 또는 @channel" style="resize:vertical; min-height:52px; line-height:1.45;"></textarea>
+                    </div>
+                    <div class="form-group">
                         <label>하위 메뉴 · 세부 탭 (멤버·유닛 등, 선택)</label>
                         <div class="m-custom-sub-list" id="m-custom-sub-list"></div>
                         <div class="m-custom-sub-add-row">
@@ -1196,7 +1218,7 @@
                 <div class="mood-picker-grid" id="m-mood-picker-grid">
                     <button type="button" class="mood-picker-btn" data-mood="upbeat" style="--mood-grad: linear-gradient(135deg, #ff416c, #ff4b2b);">
                         <span class="mood-picker-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3.5l2.5-7 4 14 3-9 2 2H22"/></svg>
                         </span>
                         <span class="mood-picker-text">
                             <span class="mood-picker-name">파워풀</span>
@@ -1206,7 +1228,7 @@
                     </button>
                     <button type="button" class="mood-picker-btn" data-mood="chill" style="--mood-grad: linear-gradient(135deg, #654ea3, #eaafc8);">
                         <span class="mood-picker-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.5A8.5 8.5 0 1 1 10.5 3.5a6.8 6.8 0 0 0 10 10z"/></svg>
                         </span>
                         <span class="mood-picker-text">
                             <span class="mood-picker-name">감성힐링</span>
@@ -1216,7 +1238,7 @@
                     </button>
                     <button type="button" class="mood-picker-btn" data-mood="bright" style="--mood-grad: linear-gradient(135deg, #00b09b, #96c93d);">
                         <span class="mood-picker-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>
                         </span>
                         <span class="mood-picker-text">
                             <span class="mood-picker-name">청량상쾌</span>
@@ -1226,7 +1248,7 @@
                     </button>
                     <button type="button" class="mood-picker-btn" data-mood="groovy" style="--mood-grad: linear-gradient(135deg, #8a2387, #e94057, #f27121);">
                         <span class="mood-picker-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14a9 9 0 0 1 18 0"/><path d="M21 15v2a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 15v2a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
                         </span>
                         <span class="mood-picker-text">
                             <span class="mood-picker-name">그루비</span>
@@ -1236,7 +1258,7 @@
                     </button>
                     <button type="button" class="mood-picker-btn" data-mood="cute" style="--mood-grad: linear-gradient(135deg, #f093fb, #f5576c);">
                         <span class="mood-picker-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.4l-1.25-1.14C5.4 14.42 2 11.34 2 7.56A4.56 4.56 0 0 1 6.56 3c1.74 0 3.41.81 4.44 2.09A5.95 5.95 0 0 1 15.44 3 4.56 4.56 0 0 1 20 7.56c0 3.78-3.4 6.86-8.75 11.7L12 20.4z"/></svg>
                         </span>
                         <span class="mood-picker-text">
                             <span class="mood-picker-name">큐트</span>
@@ -1588,11 +1610,11 @@
     </div>
 
     <!-- 스크립트 로드 순서 -->
-    <script src="./assets/js/storage.js?v=2026112505"></script>
-    <script src="./assets/js/songs.js?v=2026112505"></script>
-    <script src="./assets/js/offline-db.js?v=2026112505"></script>
-    <script src="./assets/js/mobile-player.js?v=2026112505"></script>
-    <script src="./assets/js/mobile-app.js?v=2026112505"></script>
+    <script src="./assets/js/storage.js?v=2026112601"></script>
+    <script src="./assets/js/songs.js?v=2026112601"></script>
+    <script src="./assets/js/offline-db.js?v=2026112601"></script>
+    <script src="./assets/js/mobile-player.js?v=2026112601"></script>
+    <script src="./assets/js/mobile-app.js?v=2026112601"></script>
 
     <!-- [핵심] PWA Service Worker 등록 스크립트 (네이티브 앱 내장 WebView에서는 OTA 최신 파일 우선 반영을 위해 SW 비활성화) -->
     <script>

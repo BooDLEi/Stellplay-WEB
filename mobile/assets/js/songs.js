@@ -7721,11 +7721,10 @@ function getAllSongs() {
             if (isLive) {
                 song.type = 'live';
             } else if (!song.type || song.type === 'cover' || song.type === 'ost') {
-                if (song.youtubeId !== 'iAoU1UGPoXc' && (
-                    OST_DETECTION_REGEX.test(song.title || '') ||
+                if (OST_DETECTION_REGEX.test(song.title || '') ||
                     OST_DETECTION_REGEX.test(song.rawTitle || '') ||
                     OST_DETECTION_REGEX.test(song.originalArtist || '') ||
-                    (song.id && song.id.startsWith('ost-')))) {
+                    (song.id && song.id.startsWith('ost-'))) {
                     song.type = 'ost';
                 }
             }
@@ -8010,7 +8009,7 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     t = t.replace(/[\s\|ㅣ/]*[\[【\(]?(?:3D\s*)?(?:Live\s*)?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\]】\)]?.*$/gi, '');
     t = t.replace(/\s*\(Feat\.[^\)]+\)/gi, '');
 
-    // 1-1. 아티스트 커버 후미 태그 안전 제거
+    // 1-1. 아티스트 커버 후미 태그 안전 제거 (중첩 괄호 및 영문명 포함)
     t = t.replace(/[\/\|ㅣ\-]\s*[^\]】」』\/\|ㅣ\-]*?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\s\S]*$/gi, '').trim();
     t = t.replace(/(?<=[\]】」』\)])\s*[^\[\(\]】」』\/\|ㅣ\-]*?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\s\S]*$/gi, '').trim();
     t = t.replace(/\s*(?:시즈키\s*토아|코가네\s*랑|하나요\s*히요리|토키노\s*메리|아야츠노\s*유니|아오쿠모\s*린|시라유키\s*히나|유즈하\s*리코|하나코\s*나나|텐코\s*시부키|아카네\s*리제|아라하시\s*타비|아이리\s*칸나|네네코\s*마시로)\s*Cover.*$/gi, '').trim();
@@ -8283,3 +8282,296 @@ window.getSongsByType = getSongsByType;
 window.getSabiMedleyQueue = getSabiMedleyQueue;
 window.getMemberRadioQueue = getMemberRadioQueue;
 window.addCustomSong = addCustomSong;
+
+// ===================================================================
+// v1.13.2: 3단계 스마트 분위기 자동 분류 엔진 (365곡 전곡 + 신곡·커스텀 곡 대응)
+// ===================================================================
+const CURATED_MOOD_BY_YTID = {
+    // upbeat (강렬·파워풀)
+    'liPEQZJLQh4': 'upbeat', '3Xf1Wt7Z-RY': 'upbeat', 'rKQptWhAvO0': 'upbeat',
+    'MZNKiadMo3U': 'upbeat', 'OlJ-7k9Trm0': 'upbeat', 'Da77IyHlwao': 'upbeat',
+    'j_RAn7yvq_0': 'upbeat', 'pgxzbTzvYdY': 'upbeat', 'GhHcaH6bAHQ': 'upbeat',
+    'QXUxnxoOIOI': 'upbeat', 'hGzklPRul4w': 'upbeat', 'bJqdy8925Oc': 'upbeat',
+    'Ei1WobzwsVI': 'upbeat', 'eNlXPUp9WBw': 'upbeat', 'MhtScZvcsiQ': 'upbeat',
+    '_nYgmgYMdW0': 'upbeat', 'q-QjjmJjU_8': 'upbeat', '8gDsaqNwUbo': 'upbeat',
+    'PlbkHHlKO7U': 'upbeat', '8vQfO5tT85k': 'upbeat', '5iYsqcKaQuw': 'upbeat',
+    'vCHNh5E4eDU': 'upbeat', 'naWmFCbwi3M': 'upbeat', '9KFsI34I1bs': 'upbeat',
+    'Nt9LQLycIZk': 'upbeat', 'Bhe35DpMlzk': 'upbeat', 'pKPPV1RMk-c': 'upbeat',
+    'lfxl4YlY0lE': 'upbeat', 'OzncrMNY7cw': 'upbeat', 'kPdB6iGYBBc': 'upbeat',
+    'RbQv87f4mvg': 'upbeat', 'zVNbcnSQrCU': 'upbeat', 'R_B4tmy2DVA': 'upbeat',
+    'eYaX9aDtlmA': 'upbeat', 'noKfckxJ2PU': 'upbeat', 'wu2a0AeQOCc': 'upbeat',
+    'xqaLEv-Vff4': 'upbeat', '6gEc7lUi6xs': 'upbeat', 'rxarDgejkZg': 'upbeat',
+    'Ip25Jhh5zU0': 'upbeat', 'L-pn_xrqQkQ': 'upbeat', 'DHG3s8GF1DM': 'upbeat',
+    'qpBCZ6kYVb4': 'upbeat', 'nknH0KshgpY': 'upbeat', 'Y3McmrSFy1E': 'upbeat',
+    'P51Wh7FO28I': 'upbeat', '3_0Ut2tlxLM': 'upbeat', 'lBtlpVXmbYY': 'upbeat',
+    'ebnM6X6B1Yg': 'upbeat', 'DrZMMirj4zo': 'upbeat', '76CJ6U2nxeY': 'upbeat',
+    'jyU6GkzD2CA': 'upbeat', 'Pgd_XVwBVU0': 'upbeat', 'JLM7z8afU4s': 'upbeat',
+    'iAoU1UGPoXc': 'upbeat', 'LcGrXP-xfHY': 'upbeat', 'Am36NHSuCWQ': 'upbeat',
+    'OgwD6f_tdIY': 'upbeat', 'd_YvT_ULGkc': 'upbeat', 'h7l0Ho1Fjkg': 'upbeat',
+
+    // chill (감성·힐링)
+    'SRMTyNLUnZY': 'chill', 'LmOl01G4DR4': 'chill', 'fXoGiuE6e-I': 'chill',
+    'FzefgoF26Ac': 'chill', 'blFr5w6o2jQ': 'chill', 'uBtFoUXR9Qc': 'chill',
+    'y1nUYj_D1Es': 'chill', '39_zaFVluAw': 'chill',
+    'yRKJ5-vcMUI': 'chill', 'SUJm8SX87DY': 'chill', 'KmH0RhhenzE': 'chill',
+    'C0hOHzutBRI': 'chill', 'CU8hsIhmkwc': 'chill', '5rQSMZLi5z4': 'chill',
+    'prBtBX0wGxc': 'chill', 'IoBUWPQ3dwc': 'chill', 'NAu_CVmP-bw': 'chill',
+    'aurVmylo4_Y': 'chill', 'qao2gYtY7bs': 'chill', 'YorjOBy85ck': 'chill',
+    '30dd8K_i-38': 'chill', 'lZHyUw7LWSw': 'chill', 'KSCTkOn5Niw': 'chill',
+    'B5tz8rOMPlU': 'chill', '1HCo6-YL9AY': 'chill', 'HgHP9deY17g': 'chill',
+    '5u6yVIVXF60': 'chill', 'VsRyh2LOtBk': 'chill', 'x534cEGwAEA': 'chill',
+    '3qRN6mQJ4K4': 'chill', 'EPRYt6d8oEY': 'chill', 'I6bslYOW8Xk': 'chill',
+    'ItUC9TPcb08': 'chill', 'EtkolJZEmpg': 'chill', 'L1haw5kPB7Q': 'chill',
+    'gXJMNur50m8': 'chill', 'cGjgCLuyAro': 'chill', 'G5tTozKJRD4': 'chill',
+    'QDIdN_eBvl0': 'chill', 'CmaLZo-DTlU': 'chill', 'c6G7vRuJyhs': 'chill',
+    'D938bjFYmII': 'chill', 'G5A-UDCxUiI': 'chill', 'rQaluJS-Tc0': 'chill',
+    'PybjJ4CUDF8': 'chill', 'Pag28N1mzxg': 'chill', 'Nr3AhMP1lVg': 'chill',
+    'CyOAmEihVHs': 'chill', 'RGrSmTKmBA4': 'chill', 'v7UNI2YuqFc': 'chill',
+    'UWa_OiXDiQA': 'chill', 'IRvrDhVYXHQ': 'chill', 'Tmjy9uLbMFc': 'chill',
+    'uTj88854gZ0': 'chill', 'tmk0qlr4AeM': 'chill', 'NcXfMM_TL3A': 'chill',
+    'HBoqsgRoDw4': 'chill', 'xRkZVxvk55U': 'chill', 'iCCqSFvz9kM': 'chill',
+    'ajDAmJYPQ-U': 'chill', 't6EzltrzGNo': 'chill', 'dxsiVSbpm8k': 'chill',
+    '_-uHa5KiR90': 'chill', 'cOLX5n5q4yc': 'chill',
+    '66axQApR3rM': 'chill', '5j8voUwxzmU': 'chill', 'lbBbNysWWCo': 'chill',
+    '8VdlQZQ46D4': 'chill', 'pnU-h63twZM': 'chill',
+    'nYgMMdYDGak': 'chill', 'W-Xr4ceMOXI': 'chill', 'gBWIv6NvLcU': 'chill',
+    'v8MjiqzLKTs': 'chill', '3PxbqWrDCz4': 'chill', 'YJJbVAPTZLg': 'chill',
+    '2jSW47-0smE': 'chill', 'eEnEH7IpQtc': 'chill', 'VTTQJNcmlD0': 'chill',
+    'LOpOiL7S_0I': 'chill', '6Q78RPXk2es': 'chill', 'Nmkp68aUw1o': 'chill',
+    '9kvoxFiYmWU': 'chill', 'sWZoIawG0tA': 'chill', '-uRxUMJ-exw': 'chill',
+    'DzSb5b8ehdg': 'chill', '-a6y64hn4DA': 'chill',
+
+    // bright (청량·상쾌)
+    'EKEts5IShas': 'bright', 'Qngf5HNfl6Q': 'bright', '9S3if_u5n_Q': 'bright',
+    'F7kdEX0VRss': 'bright', 'yuxa6o1_scc': 'bright', 'ekINzN4PQmo': 'bright',
+    'SiBzI2htX2o': 'bright', 'nwqIoe_3zbE': 'bright', '8shKFjkHabo': 'bright',
+    'vM_XT3MeLrc': 'bright', 'Akx45HCYgf0': 'bright', 'dhudKbeIMJg': 'bright',
+    '3Y7Ek6YSGPE': 'bright', 'AH8sMk7otKU': 'bright', 'yiprl7-dU04': 'bright',
+    '4nVjnxK4j0c': 'bright', '_t4OxKtCHrg': 'bright', 'zxVe7IxFbgU': 'bright',
+    'XR81lQrRceg': 'bright', 'xwuVYaJYERo': 'bright', 'tD9N1BhSrCI': 'bright',
+    'v094-E3Pmtk': 'bright', '6mVByQMyxdY': 'bright', '-RrbCkl3YJo': 'bright',
+    'WykYeuqGxh8': 'bright', 'ZMgLAy-VKe4': 'bright', 'LxqwR1KE81o': 'bright',
+    'Xo1Q-RPAk2c': 'bright', 'yA25-F9SJh0': 'bright', 'UcFBb927-kU': 'bright',
+    'he2W_4xY5Zo': 'bright', 'LOD3cnxgoZ0': 'bright', '6eb-U8R0nHQ': 'bright',
+    'X4nHbp5Rm08': 'bright', '7idkUwtf-0I': 'bright', 'I8hFyN32Ysk': 'bright',
+    'rRvumOvx21Y': 'bright', 'J49wnPBsyrU': 'bright', '6RKyMwilHJ0': 'bright',
+    'q2uHl6EJh-k': 'bright', 'eeIMg68ug9Y': 'bright', '1HSTjpAEgVY': 'bright',
+    'DeXGjW0baLo': 'bright', 'm0Db3CAxzsE': 'bright', 'd281GlN0nWo': 'bright',
+    'xlXotzq2NqM': 'bright', 'WKY-KFCvm-A': 'bright', 'i5ZEIsWt0Fk': 'bright',
+    'apj5_-osMd4': 'bright', 'QgqiJKX0yq0': 'bright', 'RpX0r_l7FzI': 'bright',
+    '5kTp7SQCR_Y': 'bright', '00pp5w9_Cr0': 'bright', 'fTqvR0U0EC4': 'bright',
+    '6cv-HiNVgqA': 'bright', '9hLbsRU2neM': 'bright', 'Rr2GjXAgJ9E': 'bright',
+    '_8uoathMY0A': 'bright', '6A04OifrfR0': 'bright', 'GN-rdF8tEpU': 'bright',
+    'T10fmu7T4eA': 'bright', 'CtXv2_NBBOU': 'bright', 'yCVZq40vqLk': 'bright',
+    'of5l0st1kA8': 'bright', 'gGQqeRJub3E': 'bright', 'VhBXWT6Oqto': 'bright',
+    '6-Kz5sWJBg4': 'bright', 'Y52kljOrCsc': 'bright', 'u1UbWeVxhpY': 'bright',
+    'Jt6UCd7JhAA': 'bright', 'YcyDo-jp4YM': 'bright', 'bdapY46xR7A': 'bright',
+    'DMk4_4Xytz4': 'bright', 'zcaAsuA54pI': 'bright', 'rRMDL8lcSOY': 'bright',
+    'fLLX2R-RwVE': 'bright', 'e2Jn_8JWtNw': 'bright', 'CbuiRlGeA-g': 'bright',
+    'L-GJ9pYICDM': 'bright', 'H4T4ihraPic': 'bright', 'f3bB5GgEZxw': 'bright',
+
+    // groovy (리드미컬·그루비)
+    '8lD-6Xyq4Lg': 'groovy', 'Z5N_XqM9Nl8': 'groovy', 'TM-uVDKQxhg': 'groovy',
+    '_pTBkDP1TE0': 'groovy', 'VuyZF2VYAfU': 'groovy', 'Qi_JLmXBFFo': 'groovy',
+    'jHc5yW6iOPk': 'groovy', 'y-rdBQSrzSs': 'groovy', 'eHiPI6fybFo': 'groovy',
+    'Zetk77I6_s8': 'groovy', 'Rkd03AguDJ4': 'groovy', 'YC-QnlIEbJU': 'groovy',
+    'gkmnG2pWzys': 'groovy', 'ZYSQLv_L26Y': 'groovy', 'jvZRK7W7S9Y': 'groovy',
+    'P_oxx3_VpIY': 'groovy', 'NGyCzUHjorI': 'groovy', 'jTUOSAmCqeI': 'groovy',
+    'cWnykOC5b_c': 'groovy', 'RLKm8ymJPlo': 'groovy', 'mdPLl3he6A0': 'groovy',
+    'fAgAE9JmnOs': 'groovy', 'GdH0TsPznUs': 'groovy', 'yitS4QCqCdU': 'groovy',
+    'td73oLSQug0': 'groovy', 'O8p_SsnHGhM': 'groovy', 'c_xvBZNKa9g': 'groovy',
+    'AXfEu8_-d-k': 'groovy', '1rPwUSi_1SA': 'groovy', 'cu9oCSWGFIM': 'groovy',
+    'KJzmhOkm4-E': 'groovy', 'JarYu85ctNY': 'groovy', 'wfZANe71KcM': 'groovy',
+    '209_dJOJa0Y': 'groovy', 'ZJ7TFaFyYwc': 'groovy', 'PdiTCYldc6k': 'groovy',
+    'vT3xY5UE4Q4': 'groovy', 'TqQFF_wLlR4': 'groovy', '8m8xom23aDY': 'groovy',
+    'Ho-tW7OsO54': 'groovy', 'lsshc8umnE4': 'groovy', 'Nse1CbmfIj4': 'groovy',
+    'JTMAVnFAff0': 'groovy', 'pM8_wnJ7JsE': 'groovy', 'lqU0yh_u7Qo': 'groovy',
+    '090EFw_FDjU': 'groovy', '7CQuc6Jf4UE': 'groovy', '7zsY6Ex9dMI': 'groovy',
+    'O1MqvWf7q58': 'groovy', 'oAa_PoRopSs': 'groovy', 'DvFUMLxvyvw': 'groovy',
+    'eLJENPbBe8A': 'groovy', 'kNzGpNEdBqw': 'groovy', 'bEgwL-XL05U': 'groovy',
+    'YXIz7U42pgk': 'groovy', 'vW2U2ZheON4': 'groovy', 'N_vYUNEktsA': 'groovy',
+    'f7uaxrWNIdE': 'groovy', 'SIBtVNjRois': 'groovy', 'EIii4EXsfsU': 'groovy',
+    'aH8Io8klASU': 'groovy', 'xDsvYAnq324': 'groovy', '_C4t1yi0WDQ': 'groovy',
+    '-yY4Ijb06zg': 'groovy',
+
+    // cute (큐트·러블리)
+    'QuPmTX-GcAU': 'cute', 'lae-GcDKZjo': 'cute', 'qNOFi7GzpfM': 'cute',
+    'ouKcRBeyKbk': 'cute', 'bmFg-paLaMI': 'cute', 'JsnnXkxNGQU': 'cute',
+    'qv_VVUJOt0M': 'cute', 'npwilOOckxY': 'cute', 'zQp6ZZAT6ew': 'cute',
+    '2qEGFmXROQ4': 'cute', 'xhBUCzzfcw8': 'cute', 'SeDPbIKzmmI': 'cute',
+    'MhdJaaEhiHc': 'cute', '_g29-2fUPSA': 'cute', 'NYN7FHVktsk': 'cute',
+    'nsZmnwC9ukE': 'cute', 'CokAlegAnsM': 'cute', 'VITNdv2ZywY': 'cute',
+    'xKA5wKYMFhM': 'cute', 'bRa_zAaaCCE': 'cute', 'm-rIYEw5uAs': 'cute',
+    '5uOxZswwBx4': 'cute', '9a_qB79ntPQ': 'cute', 'Sj51pWOnW1o': 'cute',
+    'TDn37k6Ccw0': 'cute', 'vD5g9qVz4zg': 'cute', 'vPFzWl54pt0': 'cute',
+    'zHbh6KO1dFo': 'cute', 'IQbeBUIVmdw': 'cute', 'fc8eV7D-ANs': 'cute',
+    'xn1sosP6kKw': 'cute', 'aUZPqPyLD9s': 'cute', 'icR-Tg7YZwY': 'cute',
+    'Tejq1P1TF-M': 'cute', 'Dy90S1wHTpM': 'cute', 'WICzT2lsQa8': 'cute',
+    'qCUeBAUMv80': 'cute', 'm5XU_4r1yV0': 'cute', 'hasPSCi2Q0g': 'cute',
+    'DLFDx_CZwf8': 'cute', 'bW_htBZ_emA': 'cute', 'ffF1XHKR5Ug': 'cute',
+    'obS6uOy8vGs': 'cute', 'YVplo9mgtcs': 'cute', '_iNHQuaKuig': 'cute',
+    '7gYDCoiV7cc': 'cute', '4OzmA6a8sqY': 'cute', 'QQYjoOGbUSQ': 'cute',
+    'HVBL6xHcMRY': 'cute', 'y84L-0bz4zo': 'cute', 'PBh8a0GaNFs': 'cute',
+    'lXB628gwlzs': 'cute', 'JCJyXMJMLRM': 'cute', 'QbSMSvVMHqU': 'cute',
+    '3EPEqL_ap-M': 'cute', 'dglNAGJiDT8': 'cute', 'CGYa8wsbii4': 'cute',
+    'gq3gzxPBOK0': 'cute', 'sEYBQaw1vRs': 'cute', 'KtZi0BN6lwg': 'cute',
+    'suyhkCwKX48': 'cute', 'a6imWKGILZA': 'cute', '0nVQggWAzyE': 'cute',
+    'RoPzUi4rt9A': 'cute', 'pkypi5nXSYM': 'cute', 'ZL5m1EDh-z8': 'cute',
+    '4_Aknw7fm_8': 'cute', 'AsoPg-h-644': 'cute', 'ZokeGI54Kqo': 'cute',
+    'yXemOzx8Cw8': 'cute', 'futqIdI0rOY': 'cute', 'UKzvG2SP5wg': 'cute',
+    'TFkPG0r-W5U': 'cute', 'R_RAWjqdgTs': 'cute'
+};
+
+const ORIGINAL_ARTIST_MOOD_MAP = {
+    'mrs. green apple': 'bright',
+    'orangestar': 'bright',
+    'bump of chicken': 'bright',
+    'hump back': 'bright',
+    'day6': 'bright',
+    '녹황색사회': 'bright',
+    '결속밴드': 'bright',
+    'vaundy': 'groovy',
+    'king gnu': 'groovy',
+    'giga': 'groovy',
+    'kanaria': 'groovy',
+    'biz': 'groovy',
+    'zutomayo': 'groovy',
+    'bibi': 'groovy',
+    '비비': 'groovy',
+    'paul blanco': 'groovy',
+    'yorushika': 'chill',
+    'back number': 'chill',
+    'yuuri': 'chill',
+    '優里': 'chill',
+    'radwimps': 'chill',
+    '우타다 히카루': 'chill',
+    '태연': 'chill',
+    '아이유': 'chill',
+    '이선희': 'chill',
+    '이한울': 'chill',
+    'mimi': 'chill',
+    'tani yuuki': 'chill',
+    'woodz': 'chill',
+    '안예은': 'chill',
+    'honeyworks': 'cute',
+    'mitchie m': 'cute',
+    '오렌지캬라멜': 'cute',
+    'twice': 'cute',
+    '피노키오피': 'cute',
+    '이요와': 'cute',
+    '도쿄 마나카': 'cute',
+    '카사네 테토': 'cute',
+    'tokotoko': 'cute',
+    'b-komachi': 'cute',
+    'one ok rock': 'upbeat',
+    'reol': 'upbeat',
+    'ado': 'upbeat',
+    'neru': 'upbeat',
+    'wowaka': 'upbeat',
+    'kikuo': 'upbeat',
+    '요네즈 켄시': 'upbeat',
+    'yoasobi': 'bright'
+};
+
+const MOOD_CLASSIFIER_RULES = {
+    upbeat: [
+        'rock', '록', 'metal', 'alive', 'confrontation', 'enemy', 'kick back',
+        '혁명', '프라이드', '전쟁', '괴물', '사신', '제육감', 'error', 'king',
+        'dive', 'ready to fire', 'unbreakable', 'viva', '용사', 'dreamer', 'dream',
+        'addict', '특수', 'specialz', '역광', '최종병기', '호곡', '심판', '불꽃',
+        '배틀', 'battle', 'fighter', 'storm', 'fire', 'thunder', 'blast'
+    ],
+    chill: [
+        'ballad', 'acoustic', '발라드', '어쿠스틱', '잔잔', '여로', '새벽', '밤',
+        '달', '별자리', '선잠', '눈', '비', 'rain', '봄을 기다', '첫사랑', '이별',
+        '기억', '편지', 'letters', '사랑하고 있는', '안녕', '수평선', '혼자', 'drowning',
+        '만찬가', '레오', 'leo', '베텔기우스', '지구본', '물떼새', '스즈메', '아이와 나의',
+        'one last kiss', 'drivers license', 'deja vu', 'piano', '피아노', '힐링', 'sleep'
+    ],
+    bright: [
+        'summer', '여름', '청춘', '바다', '하늘', '푸른', '산호초', '라일락', 'lilac',
+        'start', 'high hopes', 'stars', 'milky way', 'twinkle', '유성우', 'our tales',
+        '행운', '맑은 날', '군청', '아틀란티스', '개화', '케세라세라', '스마일', 'mela',
+        '한 페이지', 'henceforth', 'surges', 'daybreak', 'colorful', 'hope', '기적'
+    ],
+    groovy: [
+        'groove', 'funk', 'disco', 'jazz', 'city pop', 'r&b', 'hip hop', 'trap',
+        'dynamite', 'apt', 'golden', 'overdose', 'rumor', 'choreo', 'dancehall',
+        '무희', '비행정', '희극', '포니', 'ch4nge', 'bumpa', 'villain', 'hush', 'maid',
+        'vampire', '뱀파이어', '아이덴티티', 'jane doe', 'monitor', '모니터링', '불가행력',
+        '마음', 'w●rk', 'work', '오도루프', 'getcha', 'joker', 'beyond the way'
+    ],
+    cute: [
+        'cute', 'kawaii', '큐트', '귀여', '사랑', '좋아하니까', '달링', 'darling',
+        '츄', 'chu', 'berry', 'strawberry', '딸기', 'candy', '캔디', 'sugar', '슈가',
+        '초코', 'choco', '메이드', '바니', '비바해피', '까탈레나', '히로인', '팝핀',
+        '아이돌', 'idol', '텔레파시', '네모네모', '팬클럽', '두근', '보물', '선물',
+        '룰라라', '삐질게', '내꺼', '애교', '토끼', '고양이', '냥', 'bunny', 'magic',
+        'help!!', 'booo', '너에게 메롱'
+    ]
+};
+
+function classifySongMood(song) {
+    if (!song) return 'bright';
+    const valid = new Set(['upbeat', 'chill', 'bright', 'groovy', 'cute']);
+
+    // 0. 사용자가 곡 수정/추가 시 직접 지정한 분위기 오버라이드가 있으면 최우선 반영
+    try {
+        const ovMap = (typeof window !== 'undefined' && window.StorageManager && typeof window.StorageManager.getSongOverrides === 'function')
+            ? window.StorageManager.getSongOverrides()
+            : null;
+        const userOvMood = ovMap && song.id && ovMap[song.id] ? ovMap[song.id].mood : null;
+        if (userOvMood && valid.has(userOvMood)) return userOvMood;
+    } catch (_) {}
+    if (song.isCustomAdded && song.mood && valid.has(song.mood)) return song.mood;
+
+    // 1. 카탈로그 365곡 큐레이션 테이블 우선 적용 (구형 DEFAULT_SONGS 정적 태그보다 우선)
+    if (song.youtubeId && CURATED_MOOD_BY_YTID[song.youtubeId]) {
+        return CURATED_MOOD_BY_YTID[song.youtubeId];
+    }
+
+    if (song.mood && valid.has(song.mood)) return song.mood;
+    if (song.mood === 'dreamy' || song.mood === 'emotional') return 'chill';
+
+    const origLower = (song.originalArtist || '').toLowerCase();
+    for (const [artistKey, mood] of Object.entries(ORIGINAL_ARTIST_MOOD_MAP)) {
+        if (origLower.includes(artistKey)) {
+            return mood;
+        }
+    }
+
+    const text = `${song.title || ''} ${song.originalArtist || ''} ${song.artist || ''}`.toLowerCase();
+    const scores = { upbeat: 0, chill: 0, bright: 0, groovy: 0, cute: 0 };
+    for (const [mood, kws] of Object.entries(MOOD_CLASSIFIER_RULES)) {
+        for (const kw of kws) {
+            if (text.includes(kw)) scores[mood] += (kw.length >= 4 ? 2 : 1);
+        }
+    }
+    // 가벼운 가중 보정 (뮤지컬/3D라이브 -> 파워풀, OST 발라드 성향 등)
+    if (song.type === 'live' && /(?:alive|confrontation|dreamer|enemy)/i.test(text)) scores.upbeat += 2;
+    if (song.type === 'ost' && !scores.upbeat && !scores.cute) scores.chill += 1;
+
+    let bestMood = null;
+    let bestScore = 0;
+    for (const m of ['upbeat', 'chill', 'bright', 'groovy', 'cute']) {
+        if (scores[m] > bestScore) {
+            bestScore = scores[m];
+            bestMood = m;
+        }
+    }
+    if (bestMood) return bestMood;
+
+    // 3단계: 멤버 보컬 색깔 및 곡 유형 기반 스마트 폴백 (미분류 방지)
+    const members = Array.isArray(song.members) ? song.members : [];
+    const primary = members[0] || '';
+    if (['kanna', 'lize', 'toa'].includes(primary)) return 'upbeat';
+    if (['hina', 'tabi', 'rang'].includes(primary)) return 'chill';
+    if (['yuni', 'mashiro', 'hiyori', 'mary'].includes(primary)) return 'cute';
+    if (['nana', 'riko'].includes(primary)) return 'groovy';
+    if (['shibuki', 'huya', 'rin'].includes(primary)) return 'bright';
+    return 'bright';
+}
+
+window.CURATED_MOOD_BY_YTID = CURATED_MOOD_BY_YTID;
+window.classifySongMood = classifySongMood;
+

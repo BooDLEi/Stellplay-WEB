@@ -1,7 +1,7 @@
 {
-  "otaVersion": 2026112505,
-  "otaReleaseDate": "2026-11-25",
-  "apkVersionName": "1.11.10",
+  "otaVersion": 2026112601,
+  "otaReleaseDate": "2026-11-26",
+  "apkVersionName": "1.13.2",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -79,15 +79,15 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "9c777f70bfde7dc4b62c440daa4d007db5a6d1edf5cd3db11980ce4fc0546981",
-    "assets/css/mobile.css": "5f24ea365d781a788b8f6a3d44ecb864ee0c436687f23c4d48a8df9701789892",
-    "assets/js/mobile-app.js": "29e0872163886fd4babf54303ca607b8446c2c970bfb1762d8fc223f6b928f37",
-    "assets/js/mobile-player.js": "55f28221e5757d25eccc396e866722c048ae0da7fa1d45e35e766260a4dd05b3",
-    "assets/js/songs.js": "e8b0b9076fee2eac2dadc1851f479f8a76dbd43b7bfba3eab2f4d668cfa791fe",
+    "index.html": "b71191bf30416c98c16c3731428b1f1977264b70e5e83708421f398cba74ca18",
+    "assets/css/mobile.css": "7449292781fce21b921e0b046a39314f7e948d81ac22931a645be4a3de336a41",
+    "assets/js/mobile-app.js": "5592ffa2d47c8da7c964d8dc0f1d6afabc0e3e82c549410d3dcb25f5b01ca1ec",
+    "assets/js/mobile-player.js": "adb4ca81fee22ba84ee7e07b8f3cc89ea5c0ae2f5d9b4d48f56f328fd64ccd1b",
+    "assets/js/songs.js": "858a67f0fbd8c2ded1b90954ff51787846336d21becb6f0183fceb9e38c627d3",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_android.txt": "1cd26dcba796520817b45aa8a759f5151428b6f7babbde2ab5a74c438daa6ade",
+    "patchnotes_android.txt": "779fa94fa987fdab240a4231171b51c4659fe309105d09921255db2c2f1a32bf",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
     "assets/icons/members/kanna.png": "84597dcdd8f2465714fc721423efddcce400fbb4b39d8091ea2921ed92f0048a",
@@ -113,15 +113,15 @@
     "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "82fc9f7c1f9598e3bd8d845dbdfc1d6d10b7cd5471cd9fa4fdf611a94e47c594",
-    "assets/css/style.css": "48eb80583e6e70d1df38736fbfd470236369765f80542975069e99c67eb03233",
-    "assets/js/songs.js": "13fa118c3d5a715e56bb3d8aeffbc953415a11911be96541b68d7fbfd89a9615",
+    "index.html": "895f7bed868424d6a03cde55aa1857f6a1d6d55f9276fd1f28a2bd7fcd37d41d",
+    "assets/css/style.css": "3e4eab8ed80c914e469c32f4535e3cf3adeb6a819017336e4bc9dc79ed3d5c8e",
+    "assets/js/songs.js": "858a67f0fbd8c2ded1b90954ff51787846336d21becb6f0183fceb9e38c627d3",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
-    "assets/js/player.js": "8fcc753e4dd1c611d9dddbdfef0323ad21c5bf2f20c36619e900d3b1d0f4e2b9",
-    "assets/js/app.js": "c7df28e1d8625df7e0b528a8ac422108eeaa20b54d51d3162f1b5c8efb834dad",
+    "assets/js/player.js": "1901a99ede322f43c2df40fb0b23fdc413c91ede8b13dde3f079b9bae781c50f",
+    "assets/js/app.js": "380b59bee366dadd52df4c51dedce7b93f8200d14288d82902b15f1d5695966f",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_pc.txt": "3c780a0fb0faa57223f79516705bb6cf120dc05c776dd74afd3ce79ed2241df6",
-    "patchnotes_web.txt": "3e16e53adb725293dd72030979eeae40f0ee5a1c078299dd77a0ad28c13bcd00",
+    "patchnotes_pc.txt": "c983d64397212e75b642ae73e63f36c90d106ef65f9b2bc0c561183657311b50",
+    "patchnotes_web.txt": "f1e72fc952bf8a0baf8c40f284020567675daf0d327730ac9b83523314814e09",
     "assets/icons/app-icon.png": "ec7aa8525711ecea7317091421dc813aeb0e0c0cd745b7fd518bef5df8589a6a",
     "assets/icons/logo-dark.png": "030e7360fa488d6873570fbe4492bcd35341b94b20837aeaaa144d98e36ce2f2",
     "assets/icons/logo-light.png": "d352c9a894cb66ec292a3f052f73a3ec0113fd30f9ce8b41e6d6e697d5360a50",
@@ -146,5 +146,7 @@
     "assets/icons/members/hiyori.png": "ddc8ad822f6b9ea45a9136265b594e46bac7f667f3725cb1c6cd10d7f3e362a7",
     "assets/icons/members/mary.png": "a11ad419e35df185f1a2573aa0af4bf2c39e1c6549064ef806b5b33ff04517c8"
   },
-  "webVersionName": "1.13.1"
+  "webVersionName": "1.13.2",
+  "nativeRequired": false,
+  "nativeUpdateRequired": false
 }

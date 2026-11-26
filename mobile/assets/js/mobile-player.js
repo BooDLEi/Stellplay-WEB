@@ -324,9 +324,17 @@ class MobilePlayer {
                     let appOrigin = (window.location.origin && window.location.origin.startsWith('http')) 
                         ? window.location.origin 
                         : undefined;
+                    let isYtStd = false;
+                    try {
+                        const s = window.StorageManager?.getSettings?.();
+                        if (s && s.ytStandardHost) isYtStd = true;
+                    } catch (_) {}
+                    const ytHost = isYtStd ? 'https://www.youtube.com' : 'https://www.youtube-nocookie.com';
+
                     const pVars = {
                         autoplay: 0,
-                        controls: 0,
+                        controls: 1,
+                        modestbranding: 1,
                         disablekb: 1,
                         fs: 0,
                         rel: 0,
@@ -342,7 +350,7 @@ class MobilePlayer {
                     this.ytPlayer = new window.YT.Player('m-youtube-hidden-player', {
                         height: '100%',
                         width: '100%',
-                        host: 'https://www.youtube.com',
+                        host: ytHost,
                         playerVars: pVars,
                         events: {
                             onError: (event) => {
@@ -503,28 +511,10 @@ class MobilePlayer {
             try { this.ytPlayer.setPlaybackRate(2); } catch (e) {}
         }
 
-        // 3. 트랙당 1회 스마트 재로드로 프리롤 광고 슬롯 탈출 시도
-        const songId = this.currentSong?.youtubeId;
-        if (songId && this._adReloadSongId !== songId && !this._adReloadTimer) {
-            this._adReloadSongId = songId;
-            this._adReloadTimer = setTimeout(() => {
-                this._adReloadTimer = null;
-                if (!this.isAdShieldActive || !this.currentSong || this.currentSong.youtubeId !== songId || this.activeEngine !== 'youtube') return;
-                if (this.ytPlayer && typeof this.ytPlayer.loadVideoById === 'function') {
-                    try {
-                        const startSec = (this.sabiMode && this.currentSong.sabi && typeof this.currentSong.sabi.start === 'number') ? this.currentSong.sabi.start : 0;
-                        this.ytPlayer.mute();
-                        this.ytPlayer.setVolume(0);
-                        this.ytPlayer.loadVideoById({ videoId: songId, startSeconds: startSec });
-                        this.ytPlayer.playVideo();
-                    } catch (e) {}
-                }
-            }, 650);
-        }
-
-        // 4. 광고 즉시 및 주기적 스킵 시도 (600ms 간격 스킵 재시도)
+        // 3. 자동 재로드 루프 제거 (반복 광고 슬롯 트리거 방지)
+        //    youtube-nocookie 기본 호스트 + controls:1 로 유튜브 건너뛰기 탭 직접 허용
         const now = Date.now();
-        if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 600)) {
+        if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 1200)) {
             this._lastAdSeekTime = now;
             if (this.ytPlayer && typeof this.ytPlayer.seekTo === 'function') {
                 try {
@@ -534,8 +524,9 @@ class MobilePlayer {
             }
         }
 
-        // 앨범 모드일 때는 UI 광고 이벤트 송출 차단 (영상 모드일 때만 비주얼 쉴드 표시)
-        if (this.playerViewMode === 'video') {
+        // 웹 환경(AndroidBridge 미존재)에서는 앨범 아트 모드에서도 소형 인터랙티브 플레이어를 띄워 건너뛰기 탭 보장
+        const isWebEnv = !window.AndroidBridge && !window.__IS_CAPACITOR__;
+        if (this.playerViewMode === 'video' || isWebEnv) {
             window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true, adDuration } }));
         }
     }

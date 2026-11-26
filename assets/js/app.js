@@ -543,89 +543,37 @@ document.addEventListener('DOMContentLoaded', () => {
         upbeat: {
             id: 'upbeat',
             title: '파워풀',
-            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff4b2b" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l2.5-6.5 3.5 13 3.5-10 2.5 5 2-1.5h3"/></svg>',
             desc: '강렬한 비트와 폭발적인 락 & 고음 보컬 컬렉션',
-            keywords: [
-                'hit on shot', 'king', '에고 록', 'ego rock', 'star walkin', 'w●rk', 'apt.', 'apt ', '아이덴티티',
-                '역몽', 'joker', '숙명', '언노운 마더구스', 'phony', '히비카세', 'hibikase', '왕가는 이상해',
-                '절대적대', '자이언트', 'giant', 'god-ish', '신인류', '불꽃', 'flame', 'kick back', '괴수',
-                'chu-bura', 'adrenaline', 'rock', 'metal', 'power', 'fire', 'blast', 'shout',
-                'battle', 'chouwa', 'overdose', '격정', '폭발', '뜨거워', 'blaze', 'ignition', 'revolution',
-                '카르마', 'karma', 'ready to', 'unravel', 'vampire', '우타카타', '괴도', '골리앗', 'goliath',
-                '패배자', '로스트원의 호곡', '천본앵', '뇌융해', '멜트다운', '아지랑이 데이즈', '육조 년',
-                '롤링걸', 'rolling girl', '월즈 엔드 댄스홀', '신시대', '역광', 'tot musica', '괴수의 꽃노래',
-                'black rock shooter', '블랙 록 슈터', '텔레캐스터', 'telecaster', 'monster',
-                'bocca della verità', '보카 델라 베리타', '엔비 베이비', 'envy baby', '더블 래리어트', 'double lariat',
-                '하우투 세계정복', '아우터 사이언스', '러브 카오틱', '불협화음', '노심융해', '고스트 룰', 'ghost rule',
-                '히바나', 'hibana', '판도라', '충동', '질주', '개화', '치사', '괴물', '괴수', 'bloodulator', '통증'
-            ],
-            exclude_titles: ['점묘', '사요나라', '자장가', '마음악보', 'dear my fairy', '편지', '눈물', '소나기', '취중진담']
+            keywords: []
         },
         chill: {
             id: 'chill',
             title: '감성힐링',
-            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
             desc: '새벽 감성과 따뜻한 위로를 전하는 잔잔한 발라드',
-            keywords: [
-                '점묘의 노래', '잿빛과 푸름', '여로', '별자리', '히로인', '그저 네게 맑아라', 'dear my fairy',
-                '마음악보', '8.32', 'leo', 'constel', '사요나라', '산호초', 'melt', '야화', '소녀a',
-                '호시아이', '마음 예보', '편지', '새벽', '달빛', '눈물', '기억', 'acoustic', 'ballad',
-                'snow', '위로', '겨울', '가을', '추억', '개화', '치사',
-                '어쿠스틱', '잔잔', '위안', '포근', '소나기', '노스탤지어', 'nostalgia', '꽃길',
-                '너에게 닿기를', '바람기억', '눈의 꽃', '취중진담', '야상곡', 'moon', '달밤',
-                '그리움', '회상', 'quiet', 'calm', 'peace', 'sleep', 'dream signal',
-                '푸른 밤', '새벽달', '플라네타륨', 'planetarium', '첫눈', '너를 보내고', '서른 즈음에',
-                '바람이 분다', '안개', '기억을 걷는 시간', '우주 비행사의 노래', '마음', '밤하늘',
-                '비와 당신', '비가 내리는 날에는', '소녀', '너의 모든 순간', '스물다섯', '시간을 달리는 소녀'
-            ],
-            exclude_titles: ['rock', 'metal', 'kick back', '불꽃', 'god-ish', 'king', '신인류', 'hit on shot', 'w●rk', 'apt']
+            keywords: []
         },
         bright: {
             id: 'bright',
             title: '청량상쾌',
-            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>',
+            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>',
             desc: '맑고 투명한 청춘 에너지, 밝고 희망찬 멜로디',
-            keywords: [
-                'milky way', 'stars align', 'our tales', '유성우', 'summertime', '마음 예보', '보석과 어린 용',
-                '네가 아니면 안 될 것 같아', '꿈의 신호', '봄꿈', 'step back', '달빛천사', '너의 이름은', 'shine',
-                'summer', '청춘', '바다', '하늘', '바람', '햇살', 'smile', '희망',
-                'rainbow', 'lulala', 'colorful', 'strokes', 'cliché', '기적', 'fly', '날개', 'sparkle',
-                'spring', 'fresh', '푸른 하늘', '초여름', '드라이브', '행복', '설렘', '청량', '청춘가', '상큼',
-                'sparkling', 'twinkle', 'starlight', '하늘바라기', '비행기', '여행', 'blue bird',
-                '햇살처럼', '너와 나의 이야기', '해피 신디사이저', '푸른 하늘의 랩소디', '스마일', '피크닉', '스파클'
-            ],
-            exclude_titles: ['dark', 'gloom', '슬픔', '비극', '절망', 'metal', 'doom', '폭발', '우울', '언노운 마더구스']
+            keywords: []
         },
         groovy: {
             id: 'groovy',
             title: '그루비',
-            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>',
+            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>',
             desc: '트렌디한 비트와 감각적인 리듬, R&B & 힙합 스타일',
-            keywords: [
-                'golden', 'apt', 'beyond the way', 'joker', 'w●rk', '야화', 'jane doe', 'lonely universe',
-                'getcha', 'trash', '분리수거단', '도쿄 플래시', 'groove', 'r&b', 'funk', 'hip hop', 'hiphop',
-                'dance', 'trap', 'bounce', 'city pop', 'club', 'trendy', 'plastic love', 'stay with me',
-                'mayonaka no door', 'telecaster b-boy', '스마트폰', 'chupa', '신인류', 'god-ish', '러브 카오틱',
-                '리듬', '그루브', '바운스', 'hush trap', 'dancehall', '시티', 'night tempo', 'hype', '미드나잇',
-                '찰나', 'city pop', '오버도즈', 'overdose', '루머', 'rumor', '댄스', 'beat'
-            ],
-            exclude_titles: ['ballad', '자장가', '동요', '어쿠스틱 잔잔', '눈물', '이별', '최종화', 'drivers license']
+            keywords: []
         },
         cute: {
             id: 'cute',
             title: '큐트',
-            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+            iconSvg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
             desc: '사랑스럽고 통통 튀는 요정들의 깜찍한 보이스',
-            keywords: [
-                '팝핀 캔디', 'onegai darling', '오네가이 달링', 'chewing luv', '악마가 아닌걸', '네, 기꺼이', '해피 신디사이저',
-                '텔레파시', '당신의 연인이 되고 싶어', '쿵쿵', 'booo', 'choco', '초코', '프랑크', 'frank', 'cute',
-                'candy', 'sweet', '귀여운', '요정', '하트', 'magic', 'lulala',
-                '애교', '발랄', '러블리', '달콤', 'chu', '츄', '냥', '고양이', '토끼',
-                'strawberry', '딸기', '케이크', 'pink', '핑크', '슈가', 'sugar', 'marshmallow',
-                '스위트', 'maid my way', '애교송', '큐티', '귀여워', '소악마', '마법소녀', '두근두근',
-                'berry verry strawberry', '퐁퐁', '냥냥', '달링', '오시노코', '최애의 아이', '아이돌', '사인파'
-            ],
-            exclude_titles: ['death', 'metal', '비극', '절망', '괴수', '폭발', '격정', '어둠', '록', '사랑해줘']
+            keywords: []
         }
     };
 
@@ -637,45 +585,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const preset = MOOD_PRESETS[moodKey];
         if (!preset) return [];
         const all = window.getAllSongs ? window.getAllSongs() : [];
-        const scored = [];
+        const result = [];
 
         all.forEach(song => {
-            if (song.duration && song.duration > 0 && song.duration < 65) return;
-            const titleLower = (song.title || '').toLowerCase();
-            const fullText = `${titleLower} ${song.artist || ''} ${song.originalArtist || ''} ${song.id || ''}`.toLowerCase();
-
-            // 1. 직접 지정된 분위기(mood)가 있는 경우 최우선 반영
-            let score = 0;
-            let hasExplicitMood = false;
-            if (song.mood && song.mood !== 'none') {
-                if (song.mood === moodKey) {
-                    hasExplicitMood = true;
-                    score += 100; // 사용자가 직접 지정한 분위기 곡은 최상위 점수(+100점)
-                } else {
-                    // 다른 분위기로 지정된 곡은 이 분위기 추천 풀에서 완전히 제외
-                    return;
-                }
-            }
-
-            if (!hasExplicitMood) {
-                if (preset.exclude_titles && preset.exclude_titles.some(ex => titleLower.includes(ex) || fullText.includes(ex))) {
-                    return;
-                }
-
-                for (const kw of preset.keywords) {
-                    if (fullText.includes(kw.toLowerCase())) {
-                        score += 5;
-                    }
-                }
-            }
-
-            if (score > 0) {
-                scored.push({ song, score });
+            if (!song || (song.duration && song.duration > 0 && song.duration < 65)) return;
+            const resolved = detectSongMood(song);
+            if (resolved === moodKey) {
+                result.push(song);
             }
         });
-
-        scored.sort((a, b) => b.score - a.score);
-        return scored.map(item => item.song);
+        return result;
     }
 
     function rollRandomMoodPlaylist(moodKey, count = 20) {
@@ -1039,7 +958,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 2. 아티스트/그룹 탭 + 기수·멤버 계층형 필터
-        const groupTab = state.selectedGroupTab || 'all';
+        let groupTab = state.selectedGroupTab || 'all';
+        if (groupTab !== 'all' && groupTab !== 'stellive' && groupTab !== 'unclassified') {
+            const existsCustom = (state.customGroups || []).some(g => g.id === groupTab);
+            if (!existsCustom) {
+                groupTab = 'all';
+                state.selectedGroupTab = 'all';
+                state.selectedCustomSub = null;
+            }
+        }
         if (groupTab === 'stellive') {
             songs = songs.filter(s => isStelliveSong(s));
             if (state.selectedMajor && state.selectedMajor !== 'all') {
@@ -1104,10 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2.5 분위기 필터 (단일 선택)
         if (state.selectedMoods && state.selectedMoods.size > 0) {
             const targetMood = Array.from(state.selectedMoods)[0];
-            songs = songs.filter(s => {
-                const m = (s.mood && s.mood !== 'none') ? s.mood : detectSongMood(s);
-                return m === targetMood;
-            });
+            songs = songs.filter(s => detectSongMood(s) === targetMood);
         }
 
         // 3. 타입 필터 (다중 토글 카테고리 지원)
@@ -1121,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return false;
             });
-        } else if (state.currentFilterType !== 'all') {
+        } else if (state.currentFilterType && state.currentFilterType !== 'all' && state.currentFilterType !== 'custom') {
             if (state.currentFilterType === 'featuring') {
                 songs = songs.filter(s => s.type === 'featuring' || s.type === 'ost');
             } else if (state.currentFilterType === 'ost') {
@@ -1283,21 +1207,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function detectSongMood(song) {
         if (!song) return null;
-        if (song.mood && song.mood !== 'none') return song.mood;
-        const text = `${song.title || ''} ${song.artist || ''} ${song.originalArtist || ''}`.toLowerCase();
-        let bestMood = null;
-        let maxHits = 0;
-        for (const [mood, kws] of Object.entries(STATION_MOOD_KEYWORDS)) {
-            let hits = 0;
-            for (const kw of kws) {
-                if (text.includes(kw)) hits++;
-            }
-            if (hits > maxHits) {
-                maxHits = hits;
-                bestMood = mood;
-            }
+        if (typeof window.classifySongMood === 'function') {
+            return window.classifySongMood(song);
         }
-        return bestMood;
+        return (song.mood && song.mood !== 'none') ? song.mood : 'bright';
     }
 
     function buildMusicStationQueue(seedSong, catalog) {
@@ -1463,22 +1376,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const sabiStr = effectiveSabi ? `${formatTime(effectiveSabi.start)} ~ ${formatTime(effectiveSabi.end)}` : '전체';
 
         let badgeClass = 'badge-cover';
-        let badgeText = '커버곡';
+        let badgeText = 'COVER';
         if (song.type === 'original') {
             badgeClass = 'badge-original';
-            badgeText = '오리지널';
+            badgeText = 'ORIGINAL';
         } else if (song.type === 'ost') {
             badgeClass = 'badge-ost';
-            badgeText = '공식 OST';
+            badgeText = 'OST';
         } else if (song.type === 'featuring') {
             badgeClass = 'badge-featuring';
-            badgeText = '피처링';
+            badgeText = 'FEAT';
         } else if (song.type === 'live') {
             badgeClass = 'badge-live';
-            badgeText = '3D 라이브';
+            badgeText = '3D LIVE';
         } else if (song.type === 'stream') {
             badgeClass = 'badge-stream';
-            badgeText = '노래방송 Live';
+            badgeText = 'LIVE';
         }
 
         const isSelected = selectedSongIds.has(song.id);
@@ -1513,8 +1426,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>
                 </div>
                 <div class="track-col-sabi" data-id="${song.id}" style="cursor: pointer;" title="클릭하여 사비(후렴구) 구간 편집">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
                     </svg>
                     <span>${sabiStr}</span>
                     ${isCustomSabi ? '<span class="track-sabi-custom-tag">MY</span>' : ''}
@@ -3144,15 +3057,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 제로 광고 스마트 쉴드 (PC Web 영상모드 오버레이 연동)
+        // 제로 광고 스마트 쉴드 (PC Web 영상모드 및 오디오모드 PIP 인터랙티브 오버레이)
         window.addEventListener('stellplay:adShieldState', (e) => {
             const isAd = !!e.detail?.isAd;
+            const wrap = document.getElementById('pc-youtube-player-wrap');
             const pcOverlay = document.getElementById('pc-ad-shield-overlay');
+            const isLocalNative = !!(window.pywebview || window.__STELLPLAY_DESKTOP__);
+            if (wrap) {
+                wrap.classList.toggle('ad-interactive', isAd && !isLocalNative);
+            }
             if (pcOverlay) {
-                const wrap = document.getElementById('pc-youtube-player-wrap');
                 const isDocked = wrap && wrap.classList.contains('docked');
+                const isPipInteractive = wrap && wrap.classList.contains('ad-interactive');
                 const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-                pcOverlay.style.display = (isAd && (isDocked || isFs)) ? 'flex' : 'none';
+                pcOverlay.style.display = (isAd && (isDocked || isPipInteractive || isFs)) ? 'flex' : 'none';
             }
         });
 
@@ -3377,17 +3295,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         wrap.classList.remove('docked');
-        wrap.style.position = 'fixed';
-        wrap.style.top = 'auto';
-        wrap.style.left = 'auto';
-        wrap.style.bottom = '0';
-        wrap.style.right = '0';
-        wrap.style.width = '240px';
-        wrap.style.height = '135px';
-        wrap.style.opacity = '0.001';
-        wrap.style.pointerEvents = 'none';
-        wrap.style.zIndex = '-9999';
-        wrap.style.borderRadius = '0';
+        if (!wrap.classList.contains('ad-interactive')) {
+            wrap.style.position = 'fixed';
+            wrap.style.top = 'auto';
+            wrap.style.left = 'auto';
+            wrap.style.bottom = '0';
+            wrap.style.right = '0';
+            wrap.style.width = '240px';
+            wrap.style.height = '135px';
+            wrap.style.opacity = '0.001';
+            wrap.style.pointerEvents = 'none';
+            wrap.style.zIndex = '-9999';
+            wrap.style.borderRadius = '0';
+        }
 
         const fsBtn = document.getElementById('btn-video-fullscreen');
         if (fsBtn) {
@@ -3396,7 +3316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const pcOverlay = document.getElementById('pc-ad-shield-overlay');
-        if (pcOverlay) {
+        if (pcOverlay && !wrap.classList.contains('ad-interactive')) {
             pcOverlay.style.display = 'none';
         }
     }
@@ -4311,22 +4231,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sabiStr = song.sabi ? `${formatTime(song.sabi.start)} ~ ${formatTime(song.sabi.end)}` : '전체';
 
                 let plBadgeClass = 'badge-cover';
-                let plBadgeText = '커버곡';
+                let plBadgeText = 'COVER';
                 if (song.type === 'original') {
                     plBadgeClass = 'badge-original';
-                    plBadgeText = '오리지널';
+                    plBadgeText = 'ORIGINAL';
                 } else if (song.type === 'ost') {
                     plBadgeClass = 'badge-ost';
-                    plBadgeText = '공식 OST';
+                    plBadgeText = 'OST';
                 } else if (song.type === 'featuring') {
                     plBadgeClass = 'badge-featuring';
-                    plBadgeText = '피처링';
+                    plBadgeText = 'FEAT';
                 } else if (song.type === 'live') {
                     plBadgeClass = 'badge-live';
-                    plBadgeText = '3D 라이브';
+                    plBadgeText = '3D LIVE';
                 } else if (song.type === 'stream') {
                     plBadgeClass = 'badge-stream';
-                    plBadgeText = '노래방송 Live';
+                    plBadgeText = 'LIVE';
                 }
 
                 const isPlaying = player.currentSong && player.currentSong.id === song.id;
@@ -5176,6 +5096,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectEngine = document.getElementById('setting-engine-select');
         if (selectEngine) selectEngine.value = engineVal;
 
+        const ytStdCheck = document.getElementById('setting-yt-standard-host');
+        if (ytStdCheck) ytStdCheck.checked = !!settings.ytStandardHost;
+
         if (typeof renderPcSettingsFilterManager === 'function') {
             renderPcSettingsFilterManager();
         }
@@ -5200,13 +5123,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112505;
+                const verNum = v.otaVersion || 2026112601;
                 return {
                     success: true,
-                    versionName: v.webVersionName || '1.13.1',
+                    versionName: v.webVersionName || '1.13.2',
                     currentVersion: verNum,
                     bundledVersion: verNum,
-                    otaReleaseDate: v.otaReleaseDate || '2026-11-25',
+                    otaReleaseDate: v.otaReleaseDate || '2026-11-26',
                     hasPrevious: false,
                     previousVersion: -1,
                     history: [{
@@ -5220,14 +5143,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.13.1',
-            currentVersion: 2026112505,
-            bundledVersion: 2026112505,
+            versionName: '1.13.2',
+            currentVersion: 2026112601,
+            bundledVersion: 2026112601,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112505,
-                label: '현재 적용 버전 (#2026112505)',
+                version: 2026112601,
+                label: '현재 적용 버전 (#2026112601)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5240,7 +5163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.1'} (패치 #${info.currentVersion || 2026112505})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.2'} (패치 #${info.currentVersion || 2026112601})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';
@@ -5503,6 +5426,17 @@ document.addEventListener('DOMContentLoaded', () => {
             window.StorageManager.setSetting('engine', e.target.value);
             player.setEngineMode(e.target.value);
             showToast(e.target.value === 'audio' ? '재생 엔진이 고음질 오디오로 설정되었습니다.' : '재생 엔진이 유튜브 MV 영상으로 설정되었습니다.');
+        });
+    }
+
+    const chkYtStandardHost = document.getElementById('setting-yt-standard-host');
+    if (chkYtStandardHost) {
+        chkYtStandardHost.addEventListener('change', (e) => {
+            const enabled = !!e.target.checked;
+            window.StorageManager.setSetting('ytStandardHost', enabled);
+            showToast(enabled
+                ? '표준 YouTube 호스트가 활성화되었습니다. 새로고침 시 반영됩니다.'
+                : '저광고 임베드 호스트(youtube-nocookie)로 전환되었습니다. 새로고침 시 반영됩니다.');
         });
     }
 
@@ -5992,11 +5926,32 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             let data = null;
             const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+            const customChannelsPayload = [];
+            (state.customGroups || []).forEach(g => {
+                if (Array.isArray(g.channels) && g.channels.length > 0) {
+                    g.channels.forEach(chUrl => {
+                        if (chUrl) {
+                            customChannelsPayload.push({
+                                groupId: g.id,
+                                groupName: g.name || '커스텀',
+                                channelUrl: chUrl
+                            });
+                        }
+                    });
+                }
+            });
 
             if (isLocal) {
-                // 로컬 PC 앱 환경: 파이썬 백엔드 API 호출 시도 (타임아웃 12초)
+                // 로컬 PC 앱 환경: 파이썬 백엔드 API 호출 시도 (커스텀 유튜브 채널 포함, 타임아웃 20초)
                 try {
-                    const res = await fetch('/api/sync-new-songs', { signal: AbortSignal.timeout(12000) });
+                    const res = customChannelsPayload.length > 0
+                        ? await fetch('/api/sync-new-songs', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ customChannels: customChannelsPayload }),
+                            signal: AbortSignal.timeout(22000)
+                        })
+                        : await fetch('/api/sync-new-songs', { signal: AbortSignal.timeout(12000) });
                     if (res.ok) {
                         const parsed = await res.json();
                         if (parsed && parsed.success && Array.isArray(parsed.tracks) && parsed.tracks.length > 0) {
@@ -6076,22 +6031,24 @@ document.addEventListener('DOMContentLoaded', () => {
                             detected = [t.defaultMember];
                         }
                         if (detected.length === 0) {
-                            detected = ['group'];
+                            detected = t.customGroupId ? [] : ['group'];
                         }
 
-                        let artistName = '스텔라이브';
-                        let genKey = 'group';
-                        if (detected.length === 1 && detected[0] !== 'group') {
-                            const memberObj = window.MEMBERS ? window.MEMBERS[detected[0]] : null;
-                            artistName = memberObj ? memberObj.name : detected[0];
-                            genKey = memberObj ? memberObj.gen : 'group';
-                        } else if (detected.length > 1) {
-                            const memberNames = detected
-                                .filter(m => m !== 'group')
-                                .map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].name : m);
-                            artistName = memberNames.length > 0 ? memberNames.join(', ') : '스텔라이브';
-                            const gens = new Set(detected.map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].gen : null).filter(Boolean));
-                            genKey = (gens.size === 1) ? Array.from(gens)[0] : 'group';
+                        let artistName = t.customGroupId ? (t.customGroupName || t.uploader || t.channelTitle || '커스텀 아티스트') : '스텔라이브';
+                        let genKey = t.customGroupId ? 'custom' : 'group';
+                        if (!t.customGroupId) {
+                            if (detected.length === 1 && detected[0] !== 'group') {
+                                const memberObj = window.MEMBERS ? window.MEMBERS[detected[0]] : null;
+                                artistName = memberObj ? memberObj.name : detected[0];
+                                genKey = memberObj ? memberObj.gen : 'group';
+                            } else if (detected.length > 1) {
+                                const memberNames = detected
+                                    .filter(m => m !== 'group')
+                                    .map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].name : m);
+                                artistName = memberNames.length > 0 ? memberNames.join(', ') : '스텔라이브';
+                                const gens = new Set(detected.map(m => (window.MEMBERS && window.MEMBERS[m]) ? window.MEMBERS[m].gen : null).filter(Boolean));
+                                genKey = (gens.size === 1) ? Array.from(gens)[0] : 'group';
+                            }
                         }
 
                         const finalDur = dur > 0 ? dur : 200;
@@ -6107,13 +6064,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             /(?<![a-zA-Z])(?:OST|O\.S\.T)(?![a-zA-Z])/i.test(`${t.title || ''} ${t.rawTitle || ''}`) ||
                             (t.id && t.id.startsWith('ost-')));
                         const trackType = isLive ? 'live' : (isOst ? 'ost' : (t.defaultType || 'cover'));
-                        const origArtistText = isLive ? '3D 라이브' : (isOst ? '공식 OST' : (t.defaultType === 'original' ? '스텔라이브 오리지널' : '커버곡'));
+                        const origArtistText = isLive ? '3D 라이브' : (isOst ? '공식 OST' : (t.defaultType === 'original' ? '오리지널' : '커버곡'));
 
                         const trackMood = t.mood || (typeof detectSongMood === 'function' ? detectSongMood({
                             title: cleanedTitle,
                             artist: artistName,
                             originalArtist: origArtistText,
-                            members: detected
+                            members: detected,
+                            type: trackType,
+                            youtubeId: ytId
                         }) : null) || 'bright';
 
                         newTracks.push({
@@ -6134,7 +6093,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 end: sEnd,
                                 title: '하이라이트'
                             },
-                            isAutoAdded: true
+                            isAutoAdded: true,
+                            ...(t.customGroupId ? { customGroupId: t.customGroupId } : {})
                         });
                         existingYtIds.add(ytId);
                     }
@@ -6559,6 +6519,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     label: typeNames[t] || t,
                     onClear: () => {
                         state.selectedTypes.delete(t);
+                        if (state.selectedTypes.size === 0) {
+                            state.currentFilterType = 'all';
+                        }
                         syncPcFilterUI();
                         refreshTrackList();
                     }
@@ -6699,6 +6662,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function normalizeCustomChannelsList(raw) {
+        if (!raw) return [];
+        const items = String(raw).split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+        const out = [];
+        const seen = new Set();
+        items.forEach(item => {
+            let url = '';
+            if (/^https?:\/\/(www\.)?(youtube\.com|m\.youtube\.com)\//i.test(item)) {
+                url = item.replace(/^http:\/\//i, 'https://');
+            } else if (/^@[A-Za-z0-9._-]+$/.test(item)) {
+                url = `https://www.youtube.com/${item}`;
+            } else if (/^UC[A-Za-z0-9_-]{20,}$/.test(item)) {
+                url = `https://www.youtube.com/channel/${item}`;
+            } else if (/^(www\.)?youtube\.com\//i.test(item)) {
+                url = `https://${item}`;
+            }
+            if (url && !seen.has(url)) {
+                seen.add(url);
+                out.push(url);
+            }
+        });
+        return out;
+    }
+
     function openPcCustomGroupModal(editGroup = null) {
         const modal = dom.modalPcCustomGroup;
         if (!modal) return;
@@ -6707,6 +6694,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const editIdEl = document.getElementById('pc-custom-group-edit-id');
         const nameEl = document.getElementById('pc-custom-group-name');
         const kwEl = document.getElementById('pc-custom-group-keywords');
+        const chEl = document.getElementById('pc-custom-group-channels');
         const colorEl = document.getElementById('pc-custom-group-color');
         const hexEl = document.getElementById('pc-custom-group-color-hex');
         const subNameEl = document.getElementById('pc-custom-sub-name');
@@ -6715,6 +6703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (editIdEl) editIdEl.value = editGroup ? editGroup.id : '';
         if (nameEl) nameEl.value = editGroup ? editGroup.name : '';
         if (kwEl) kwEl.value = (editGroup && Array.isArray(editGroup.keywords)) ? editGroup.keywords.join(', ') : '';
+        if (chEl) chEl.value = (editGroup && Array.isArray(editGroup.channels)) ? editGroup.channels.join('\n') : '';
         if (colorEl) colorEl.value = activeColor;
         if (hexEl) hexEl.textContent = activeColor.toUpperCase();
         if (subNameEl) subNameEl.value = '';
@@ -6818,6 +6807,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const color = document.getElementById('pc-custom-group-color')?.value || '#7c5cfc';
                 const kwRaw = document.getElementById('pc-custom-group-keywords')?.value || '';
                 const keywords = kwRaw.split(',').map(k => k.trim()).filter(Boolean);
+                const chRaw = document.getElementById('pc-custom-group-channels')?.value || '';
+                const channels = normalizeCustomChannelsList(chRaw);
 
                 if (editId) {
                     const target = (state.customGroups || []).find(g => g.id === editId);
@@ -6825,6 +6816,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         target.name = name;
                         target.color = color;
                         target.keywords = keywords;
+                        target.channels = channels;
                         target.subItems = pcPendingCustomSubs.map(s => ({ ...s }));
                     }
                     showToast(`"${name}" 분류 탭이 수정되었습니다.`);
@@ -6834,6 +6826,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         name,
                         color,
                         keywords,
+                        channels,
                         subItems: pcPendingCustomSubs.map(s => ({ ...s }))
                     };
                     state.customGroups = [...(state.customGroups || []), newGroup];
@@ -6886,13 +6879,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const subNames = Array.isArray(g.subItems) && g.subItems.length > 0
                         ? `하위 메뉴: ${g.subItems.map(s => s.name).join(', ')}`
                         : (Array.isArray(g.keywords) && g.keywords.length > 0 ? `키워드: ${g.keywords.join(', ')}` : '탭 이름 자동 매칭');
+                    const chBadge = (Array.isArray(g.channels) && g.channels.length > 0) ? ` · 채널 ${g.channels.length}개` : '';
 
                     row.innerHTML = `
                         <div class="pc-settings-group-left">
                             <span class="pc-settings-group-dot" style="background:${g.color || '#7c5cfc'};"></span>
                             <div>
                                 <div class="pc-settings-group-name">${g.name}</div>
-                                <div class="pc-settings-group-meta">${subNames}</div>
+                                <div class="pc-settings-group-meta">${subNames}${chBadge}</div>
                             </div>
                         </div>
                         <div class="pc-settings-group-actions">

@@ -137,10 +137,19 @@ class MusicPlayer {
         }
 
         window.onYouTubeIframeAPIReady = () => {
+            const getYtHost = () => {
+                try {
+                    const s = window.StorageManager?.getSettings?.();
+                    if (s && s.ytStandardHost) return 'https://www.youtube.com';
+                } catch (_) {}
+                return 'https://www.youtube-nocookie.com';
+            };
+            const ytHost = getYtHost();
             const getPlayerVars = () => {
                 const pVars = {
                     autoplay: 0,
-                    controls: 0,
+                    controls: 1,
+                    modestbranding: 1,
                     disablekb: 1,
                     fs: 0,
                     rel: 0,
@@ -163,7 +172,7 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-deck-a', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube.com',
+                    host: ytHost,
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -177,7 +186,7 @@ class MusicPlayer {
                 this.deckB = new YT.Player('youtube-player-deck-b', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube.com',
+                    host: ytHost,
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('B', event),
@@ -189,7 +198,7 @@ class MusicPlayer {
                 this.deckA = new YT.Player('youtube-player-embed', {
                     height: '100%',
                     width: '100%',
-                    host: 'https://www.youtube.com',
+                    host: ytHost,
                     playerVars: getPlayerVars(),
                     events: {
                         onReady: (event) => this.onDeckReady('A', event),
@@ -267,31 +276,10 @@ class MusicPlayer {
             try { player.setPlaybackRate(2); } catch (e) {}
         }
 
-        // 3. 트랙당 1회 스마트 재로드로 프리롤 광고 슬롯 탈출 시도
-        const songId = this.currentSong?.youtubeId;
-        if (songId && this._adReloadSongId !== songId && !this._adReloadTimer) {
-            this._adReloadSongId = songId;
-            this._adReloadTimer = setTimeout(() => {
-                this._adReloadTimer = null;
-                if (!this.isAdShieldActive || !this.currentSong || this.currentSong.youtubeId !== songId) return;
-                const active = this.activeDeck;
-                if (active && typeof active.loadVideoById === 'function') {
-                    try {
-                        active.mute();
-                        active.setVolume(0);
-                        active.loadVideoById({
-                            videoId: songId,
-                            startSeconds: this.getInitialStartSeconds(this.currentSong)
-                        });
-                        active.playVideo();
-                    } catch (e) {}
-                }
-            }, 650);
-        }
-
-        // 4. 광고 주기적 스킵 시도 (600ms 간격)
+        // 3. 자동 재로드 루프 제거 (재로드 시 프리롤 광고가 반복 재할당되는 현상 방지)
+        //    youtube-nocookie 기본 호스트 + controls:1 로 유튜브 건너뛰기(Skip Ad) 직접 클릭 허용
         const now = Date.now();
-        if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 600)) {
+        if (!this._lastAdSeekTime || (now - this._lastAdSeekTime > 1200)) {
             this._lastAdSeekTime = now;
             if (typeof player.seekTo === 'function') {
                 try {

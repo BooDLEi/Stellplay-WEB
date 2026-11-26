@@ -555,8 +555,8 @@ body::before {
 }
 
 .logo-app-icon {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     object-fit: contain;
     flex-shrink: 0;
@@ -564,7 +564,7 @@ body::before {
 }
 
 .logo-wordmark {
-    height: 10.5px;
+    height: 15px;
     width: auto;
     object-fit: contain;
     display: block;
@@ -757,11 +757,11 @@ body::before {
         height: 22px;
     }
     .logo-app-icon {
-        width: 22px;
-        height: 22px;
+        width: 30px;
+        height: 30px;
     }
     .logo-wordmark {
-        height: 9px;
+        height: 13.5px;
     }
     .logo-title {
         font-size: 0.92rem;
@@ -792,11 +792,11 @@ body::before {
 
 @media (max-width: 385px) {
     .logo-app-icon {
-        width: 20px;
-        height: 20px;
+        width: 28px;
+        height: 28px;
     }
     .logo-wordmark {
-        height: 8.2px;
+        height: 12.5px;
     }
     .member-sub-row.sub-grid-5 .member-sub-label {
         font-size: 0.56rem;
@@ -1607,6 +1607,11 @@ body::before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.mood-picker-icon svg {
+    display: block;
+    flex-shrink: 0;
 }
 .mood-picker-text {
     display: flex;
@@ -4823,10 +4828,40 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     overflow: hidden !important;
 }
 
-.m-video-box:not(.active-video) #m-ad-shield-overlay,
-.m-video-box:not(.active-video) .m-btn-video-fullscreen,
+.m-video-box:not(.active-video):not(.ad-interactive) #m-ad-shield-overlay,
+.m-video-box:not(.active-video):not(.ad-interactive) .m-btn-video-fullscreen,
 .m-video-box:not(.active-video) .m-video-touch-shield {
     display: none !important;
+}
+
+.m-video-box.ad-interactive:not(.active-video) {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 340px !important;
+    aspect-ratio: 16 / 9 !important;
+    margin: 0 auto 10px auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 25 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background: #000 !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55) !important;
+    border: 1px solid rgba(124, 92, 252, 0.45) !important;
+}
+
+.m-video-box.ad-interactive #m-youtube-player-wrap iframe,
+.m-video-box.ad-interactive #m-youtube-hidden-player {
+    pointer-events: auto !important;
+}
+
+.m-video-box.ad-interactive .m-video-touch-shield {
+    display: none !important;
+    pointer-events: none !important;
 }
 
 .m-video-box.active-video {
@@ -6533,11 +6568,12 @@ html, body, button, input, select, textarea, optgroup, pre {
 .m-sort-trigger-btn {
     display: inline-flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    text-align: center;
     gap: 5px;
     height: 30px;
-    min-width: 78px;
-    padding: 0 10px 0 11px;
+    min-width: 82px;
+    padding: 0 11px;
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.06);
@@ -6587,20 +6623,20 @@ html, body, button, input, select, textarea, optgroup, pre {
     animation: fadeInSlideDown 0.14s ease;
 }
 .m-sort-option {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: center;
     width: 100%;
     height: 32px;
-    padding: 0 10px;
+    padding: 0 26px;
     border-radius: 9px;
     border: none;
     background: transparent;
     color: #cbd5e1;
     font-size: 0.76rem;
     font-weight: 600;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
     transition: background 0.14s ease, color 0.14s ease;
 }
@@ -6609,6 +6645,8 @@ html, body, button, input, select, textarea, optgroup, pre {
     background: rgba(255, 255, 255, 0.07);
 }
 .m-sort-option .m-sort-check {
+    position: absolute;
+    right: 9px;
     opacity: 0;
     color: #a78bfa;
     flex-shrink: 0;
@@ -6788,6 +6826,11 @@ html, body, button, input, select, textarea, optgroup, pre {
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.16);
     color: #ffffff;
+    flex-shrink: 0;
+}
+
+.mood-picker-icon svg {
+    display: block;
     flex-shrink: 0;
 }
 
@@ -7292,4 +7335,45 @@ html, body, button, input, select, textarea, optgroup, pre {
 [data-theme="light"] #m-modal-ota-restore #m-modal-apk-badge {
     background: rgba(99, 102, 241, 0.16) !important;
     color: #4338ca !important;
+}
+
+/* v1.13.2: 모바일 비간섭 광고 상단 바 (유튜브 자체 건너뛰기 탭 보장) */
+.m-ad-shield-bar {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    z-index: 35;
+    pointer-events: none;
+}
+
+.m-ad-shield-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(15, 17, 28, 0.84);
+    border: 1px solid rgba(124, 92, 252, 0.45);
+    color: #ede9fe;
+    font-size: 0.66rem;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.m-ad-shield-retry-btn {
+    pointer-events: auto;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(124, 92, 252, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.66rem;
+    font-weight: 700;
+    cursor: pointer;
 }
