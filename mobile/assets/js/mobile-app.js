@@ -11,7 +11,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     const CURRENT_APP_VERSION = '1.13.2';
-    const CURRENT_OTA_BUILD = 2026112601;
+    const CURRENT_OTA_BUILD = 2026112602;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -6823,6 +6823,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (dom.btnOpenAdSkip) {
             dom.btnOpenAdSkip.addEventListener('click', () => {
+                const isWebEnv = !window.AndroidBridge && !window.__IS_CAPACITOR__;
+                if (isWebEnv && dom.fullscreenSheet) {
+                    // 웹/iPhone에서는 시트를 열어 인터랙티브 광고 화면 내 실제 건너뛰기 버튼을 즉시 터치 가능하게 안내
+                    dom.fullscreenSheet.style.transition = '';
+                    dom.fullscreenSheet.style.transform = '';
+                    dom.fullscreenSheet.classList.add('open');
+                }
                 if (player && typeof player.skipAd === 'function') {
                     player.skipAd();
                 }

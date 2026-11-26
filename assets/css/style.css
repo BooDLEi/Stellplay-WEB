@@ -2990,8 +2990,11 @@ body::after {
 }
 
 .pc-yt-player-wrap.ad-interactive #pc-youtube-player-container,
-.pc-yt-player-wrap.ad-interactive #pc-youtube-player-container iframe {
+.pc-yt-player-wrap.ad-interactive #pc-youtube-player-container iframe,
+.pc-yt-player-wrap.ad-interactive .yt-deck-active {
+    opacity: 1 !important;
     pointer-events: auto !important;
+    z-index: 2 !important;
 }
 
 /* 언독 상태에서는 전체화면 버튼 및 광고 쉴드 절대 노출 금지 (ad-interactive 제외) */

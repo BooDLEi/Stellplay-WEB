@@ -559,13 +559,7 @@ class MobilePlayer {
                 const isAdDuration = (dur > 0 && dur <= 35 && song.duration > 60);
 
                 if (isAdVideo || isAdDuration) {
-                    try { player.mute(); } catch (e) {}
-                    try { player.setVolume(0); } catch (e) {}
-                    try { player.setPlaybackRate(2); } catch (e) {}
-                    this.isAdShieldActive = true;
-                    if (this.playerViewMode === 'video') {
-                        window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
-                    }
+                    this._handleAdDetected(dur);
                     return;
                 }
 
@@ -792,12 +786,11 @@ class MobilePlayer {
         this.audio.pause();
         this.audio.src = '';
         this.isOfflinePlayback = false;
-        this.isAdShieldActive = true;
+        if (this.isAdShieldActive) {
+            this._handleAdFinished();
+        }
         this._updateMediaSessionMetadata();
         this._updateMediaSessionState();
-        if (this.playerViewMode === 'video') {
-            window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
-        }
 
         const startSec = (typeof startSecOverride === 'number')
             ? startSecOverride
@@ -809,20 +802,6 @@ class MobilePlayer {
 
         if (this.ytPlayer && this.isYtReady && this.ytPlayer.loadVideoById) {
             try {
-                // 1. Mute-First: 즉시 0 볼륨 및 음소거 강제 (광고 소리 노출 원천 차단)
-                if (typeof this.ytPlayer.mute === 'function') {
-                    try { this.ytPlayer.mute(); } catch (e) {}
-                }
-                if (typeof this.ytPlayer.setVolume === 'function') {
-                    try { this.ytPlayer.setVolume(0); } catch (e) {}
-                }
-
-                // 2. 비주얼 쉴드 즉시 작동 (광고 화면 은폐 - 영상 모드일 때만 표시)
-                this.isAdShieldActive = true;
-                if (this.playerViewMode === 'video') {
-                    window.dispatchEvent(new CustomEvent('mobileplayer:adShieldState', { detail: { isAd: true } }));
-                }
-
                 const quality = this._getTargetVideoQuality();
                 this.ytPlayer.loadVideoById({
                     videoId: song.youtubeId,
@@ -836,7 +815,7 @@ class MobilePlayer {
                 this._requestWakeLock();
                 try { this.silentAudio.play().catch(() => {}); } catch (e) {}
 
-                // 3. 100ms 고빈도 감시 가동 (본곡 감지 즉시 부드럽게 언뮤트)
+                // 실제 광고가 감지될 때만 쉴드가 활성화되도록 100ms 감시 가동
                 this._startAdShieldPolling();
             } catch (e) {
                 console.warn('[YT Engine error]', e);
@@ -1194,14 +1173,6 @@ class MobilePlayer {
         // 웹 버전 환경: 항상 유튜브 엔진으로 다이렉트 스트리밍 (오프라인 제외)
         console.log('[MobilePlayer] Web mode: Playing directly via YouTube engine');
         this._playWithYouTubeEngine(song);
-        return;
-
-        window.dispatchEvent(new CustomEvent('mobileplayer:trackChanged', {
-            detail: {
-                song: this.currentSong,
-                isOffline: false
-            }
-        }));
     }
 
     toggleOnlinePlayFromNative() {

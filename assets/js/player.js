@@ -547,9 +547,14 @@ class MusicPlayer {
 
         // 덱 가시성 모드별 분기 (오디오 모드에서는 비디오 창 완전 숨김)
         const activeEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-a' : 'youtube-player-deck-b');
+        const standbyEl = document.getElementById(this.activeDeckId === 'A' ? 'youtube-player-deck-b' : 'youtube-player-deck-a');
         if (activeEl) {
+            activeEl.classList.add('yt-deck-active');
             activeEl.style.opacity = (this.engineMode === 'video') ? '1' : '0';
             activeEl.style.pointerEvents = (this.engineMode === 'video') ? 'auto' : 'none';
+        }
+        if (standbyEl) {
+            standbyEl.classList.remove('yt-deck-active');
         }
 
         const pcServer = (localStorage.getItem('stellplay_pc_server') || '').trim().replace(/\/+$/, '');
@@ -598,6 +603,8 @@ class MusicPlayer {
 
         if (activeEl && standbyEl) {
             const isVideoMode = (this.engineMode === 'video');
+            activeEl.classList.add('yt-deck-active');
+            standbyEl.classList.remove('yt-deck-active');
             activeEl.style.opacity = isVideoMode ? '1' : '0';
             activeEl.style.pointerEvents = isVideoMode ? 'auto' : 'none';
             standbyEl.style.opacity = '0';
@@ -606,20 +613,9 @@ class MusicPlayer {
 
         if (this.isYtReady && activeDeck && typeof activeDeck.loadVideoById === 'function') {
             try {
-                if (this._adReloadTimer) {
-                    clearTimeout(this._adReloadTimer);
-                    this._adReloadTimer = null;
+                if (this.isAdShieldActive) {
+                    this.handleAdFinished();
                 }
-                this._adReloadSongId = null;
-
-                // Mute-First: 프리롤 광고 오디오가 먼저 터지는 현상 원천 차단 (본곡 시작 감지 즉시 복원)
-                if (typeof activeDeck.mute === 'function') {
-                    try { activeDeck.mute(); } catch (e) {}
-                }
-                if (typeof activeDeck.setVolume === 'function') {
-                    try { activeDeck.setVolume(0); } catch (e) {}
-                }
-                this.isAdShieldActive = true;
 
                 activeDeck.loadVideoById({
                     videoId: song.youtubeId,
@@ -1383,6 +1379,8 @@ class MusicPlayer {
                 } catch (e) {}
 
                 if (activeEl && standbyEl) {
+                    activeEl.classList.remove('yt-deck-active');
+                    standbyEl.classList.add('yt-deck-active');
                     activeEl.style.opacity = '0';
                     activeEl.style.pointerEvents = 'none';
                     standbyEl.style.opacity = '1';

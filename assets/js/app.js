@@ -5123,7 +5123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112601;
+                const verNum = v.otaVersion || 2026112602;
                 return {
                     success: true,
                     versionName: v.webVersionName || '1.13.2',
@@ -5144,13 +5144,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return {
             success: true,
             versionName: '1.13.2',
-            currentVersion: 2026112601,
-            bundledVersion: 2026112601,
+            currentVersion: 2026112602,
+            bundledVersion: 2026112602,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112601,
-                label: '현재 적용 버전 (#2026112601)',
+                version: 2026112602,
+                label: '현재 적용 버전 (#2026112602)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5163,7 +5163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.2'} (패치 #${info.currentVersion || 2026112601})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.2'} (패치 #${info.currentVersion || 2026112602})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';

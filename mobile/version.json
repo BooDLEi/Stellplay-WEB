@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026112601,
+  "otaVersion": 2026112602,
   "otaReleaseDate": "2026-11-26",
   "apkVersionName": "1.13.2",
   "files": [
@@ -79,10 +79,10 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "b71191bf30416c98c16c3731428b1f1977264b70e5e83708421f398cba74ca18",
+    "index.html": "cd9ef8cce7d77003fa0941b3b0edcd9c8c0dbea50ae14cd1685269280ca8e235",
     "assets/css/mobile.css": "7449292781fce21b921e0b046a39314f7e948d81ac22931a645be4a3de336a41",
-    "assets/js/mobile-app.js": "5592ffa2d47c8da7c964d8dc0f1d6afabc0e3e82c549410d3dcb25f5b01ca1ec",
-    "assets/js/mobile-player.js": "adb4ca81fee22ba84ee7e07b8f3cc89ea5c0ae2f5d9b4d48f56f328fd64ccd1b",
+    "assets/js/mobile-app.js": "8c8a9f127a36a7fd193146b816832df16f747fefbb611a6227fcbf8e9073c6c6",
+    "assets/js/mobile-player.js": "754a12387c0d574bf85a5b053f363fcaf94424614b2ac187567f04f126c3ae0d",
     "assets/js/songs.js": "858a67f0fbd8c2ded1b90954ff51787846336d21becb6f0183fceb9e38c627d3",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
@@ -113,12 +113,12 @@
     "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "895f7bed868424d6a03cde55aa1857f6a1d6d55f9276fd1f28a2bd7fcd37d41d",
-    "assets/css/style.css": "d93e5c2c702d182a3b7692b38e0f17afca5d35f4465b84e06c12f6f5fb1e0172",
+    "index.html": "728e0435a6d9d45a6be2c45eba2af7054f31e3c9d19f2cdb8978c2e644e2445f",
+    "assets/css/style.css": "b6dc894244e4f751d02cd4c818d1aae0a8e973e664028566c4e33ad21d064137",
     "assets/js/songs.js": "858a67f0fbd8c2ded1b90954ff51787846336d21becb6f0183fceb9e38c627d3",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
-    "assets/js/player.js": "1901a99ede322f43c2df40fb0b23fdc413c91ede8b13dde3f079b9bae781c50f",
-    "assets/js/app.js": "380b59bee366dadd52df4c51dedce7b93f8200d14288d82902b15f1d5695966f",
+    "assets/js/player.js": "47e768526690b313ef3c5ef4bdcbf2b193b5c17151f0cf48cfcf914fbaa349f2",
+    "assets/js/app.js": "211f5e0d4be57869e794952c40e5686458bb4b14a6f53277d64ae2ee290f292c",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
     "patchnotes_pc.txt": "c983d64397212e75b642ae73e63f36c90d106ef65f9b2bc0c561183657311b50",
     "patchnotes_web.txt": "f1e72fc952bf8a0baf8c40f284020567675daf0d327730ac9b83523314814e09",
