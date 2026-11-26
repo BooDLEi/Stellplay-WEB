@@ -5224,16 +5224,25 @@ body.multiselect-active .track-number {
 
 .pc-mood-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+}
+
+@media (max-width: 780px) {
+    .pc-mood-cards-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .pc-mood-card {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: flex-start !important;
     gap: 16px;
-    padding: 22px 20px;
+    width: 100%;
+    min-height: 92px;
+    padding: 20px 22px;
     border-radius: 18px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: var(--mood-grad, linear-gradient(135deg, #7c5cfc, #3b82f6));
@@ -5285,7 +5294,9 @@ body.multiselect-active .track-number {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1;
     min-width: 0;
+    text-align: left;
 }
 
 .pc-mood-card-name {
