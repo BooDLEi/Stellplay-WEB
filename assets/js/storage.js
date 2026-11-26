@@ -15,14 +15,38 @@ const STORAGE_KEYS = {
 };
 
 const StorageManager = {
+    // 인메모리 캐시 (매 프레임/렌더링마다 localStorage JSON.parse 반복 호출 완벽 제거)
+    _memCache: {
+        favorites: null,
+        playlists: null,
+        history: null,
+        settings: null,
+        customSabis: null,
+        customSongs: null,
+        songOverrides: null,
+        autoSongs: null,
+        hiddenSongs: null
+    },
+
+    _invalidate(cacheKey, affectsCatalog = false) {
+        if (cacheKey && Object.prototype.hasOwnProperty.call(this._memCache, cacheKey)) {
+            this._memCache[cacheKey] = null;
+        }
+        if (affectsCatalog && typeof window !== 'undefined' && typeof window.invalidateSongsCache === 'function') {
+            window.invalidateSongsCache();
+        }
+    },
+
     // --- 즐겨찾기 (Favorites) ---
     getFavorites() {
+        if (this._memCache.favorites !== null) return this._memCache.favorites;
         try {
             const data = localStorage.getItem(STORAGE_KEYS.FAVORITES);
-            return data ? JSON.parse(data) : [];
+            this._memCache.favorites = data ? JSON.parse(data) : [];
         } catch (e) {
-            return [];
+            this._memCache.favorites = [];
         }
+        return this._memCache.favorites;
     },
 
     isFavorite(songId) {
@@ -31,7 +55,7 @@ const StorageManager = {
     },
 
     toggleFavorite(songId) {
-        let favs = this.getFavorites();
+        const favs = [...this.getFavorites()];
         const index = favs.indexOf(songId);
         let isFav = false;
         if (index > -1) {
@@ -41,6 +65,7 @@ const StorageManager = {
             favs.unshift(songId);
             isFav = true;
         }
+        this._memCache.favorites = favs;
         localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favs));
         window.dispatchEvent(new CustomEvent('stellplay:favoritesUpdated', { detail: { songId, isFavorite: isFav } }));
         this.triggerServerBackup();
@@ -52,7 +77,7 @@ const StorageManager = {
         const hist = this.getHistory();
         return {
             id: 'pl-history',
-            name: '🕒 최근 감상한 곡',
+            name: '최근 감상한 곡',
             isHistory: true,
             isPermanent: true,
             createdAt: null,
@@ -62,27 +87,43 @@ const StorageManager = {
 
     getPlaylists(includeHistory = true) {
         try {
-            const data = localStorage.getItem(STORAGE_KEYS.PLAYLISTS);
-            let userLists = [];
-            if (!data) {
-                // 기본 추천 플레이리스트 자동 초기화
-                userLists = [
-                    {
-                        id: 'pl-originals',
-                        name: '✨ 스텔라이브 명곡 오리지널선',
-                        createdAt: new Date().toISOString(),
-                        songIds: ['stel-milkyway', 'yuni-how-to-be-mine', 'kanna-the-last-flower', 'stel-stars-align', 'stel-our-tales', 'stel-hit-on-shot']
-                    },
-                    {
-                        id: 'pl-chill',
-                        name: '🌙 감성 충만 힐링 트랙',
-                        createdAt: new Date().toISOString(),
-                        songIds: ['stel-dear-my-fairy', 'hina-dream-signal', 'mashiro-spring-dream', 'tabi-journey', 'stel-heart-score']
+            let userLists = this._memCache.playlists;
+            if (userLists === null) {
+                const data = localStorage.getItem(STORAGE_KEYS.PLAYLISTS);
+                if (!data) {
+                    // 기본 추천 플레이리스트 자동 초기화 (이모지 미포함)
+                    userLists = [
+                        {
+                            id: 'pl-originals',
+                            name: '스텔라이브 명곡 오리지널선',
+                            createdAt: new Date().toISOString(),
+                            songIds: ['stel-milkyway', 'yuni-how-to-be-mine', 'kanna-the-last-flower', 'stel-stars-align', 'stel-our-tales', 'stel-hit-on-shot']
+                        },
+                        {
+                            id: 'pl-chill',
+                            name: '감성 충만 힐링 트랙',
+                            createdAt: new Date().toISOString(),
+                            songIds: ['stel-dear-my-fairy', 'hina-dream-signal', 'mashiro-spring-dream', 'tabi-journey', 'stel-heart-score']
+                        }
+                    ];
+                    localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(userLists));
+                } else {
+                    userLists = JSON.parse(data).filter(p => p && p.id !== 'pl-history');
+                    let healed = false;
+                    userLists.forEach(p => {
+                        if (p.id === 'pl-originals' && typeof p.name === 'string' && /^✨\s*/.test(p.name)) {
+                            p.name = p.name.replace(/^✨\s*/, '').trim() || '스텔라이브 명곡 오리지널선';
+                            healed = true;
+                        } else if (p.id === 'pl-chill' && typeof p.name === 'string' && /^🌙\s*/.test(p.name)) {
+                            p.name = p.name.replace(/^🌙\s*/, '').trim() || '감성 충만 힐링 트랙';
+                            healed = true;
+                        }
+                    });
+                    if (healed) {
+                        try { localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(userLists)); } catch (_) {}
                     }
-                ];
-                localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(userLists));
-            } else {
-                userLists = JSON.parse(data).filter(p => p && p.id !== 'pl-history');
+                }
+                this._memCache.playlists = userLists;
             }
 
             if (includeHistory) {
@@ -97,7 +138,7 @@ const StorageManager = {
 
     createPlaylist(name, songIds = []) {
         if (!name || !name.trim()) return null;
-        const playlists = this.getPlaylists(false);
+        const playlists = [...this.getPlaylists(false)];
         const newPlaylist = {
             id: 'pl-' + Date.now(),
             name: name.trim(),
@@ -105,6 +146,7 @@ const StorageManager = {
             songIds: Array.isArray(songIds) ? [...songIds] : []
         };
         playlists.push(newPlaylist);
+        this._memCache.playlists = playlists;
         localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(playlists));
         window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
         this.triggerServerBackup();
@@ -113,8 +155,8 @@ const StorageManager = {
 
     deletePlaylist(playlistId) {
         if (playlistId === 'pl-history') return false; // 최근 감상 기록은 영구 고정으로 삭제 불가
-        let playlists = this.getPlaylists(false);
-        playlists = playlists.filter(p => p.id !== playlistId);
+        let playlists = this.getPlaylists(false).filter(p => p.id !== playlistId);
+        this._memCache.playlists = playlists;
         localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(playlists));
         window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
         this.triggerServerBackup();
@@ -130,7 +172,7 @@ const StorageManager = {
         if (!Array.isArray(newSongIds) || newSongIds.length === 0) return 0;
 
         if (playlistId === 'pl-favorites') {
-            let favs = this.getFavorites();
+            const favs = [...this.getFavorites()];
             let added = 0;
             newSongIds.forEach(id => {
                 if (!favs.includes(id)) {
@@ -139,6 +181,7 @@ const StorageManager = {
                 }
             });
             if (added > 0) {
+                this._memCache.favorites = favs;
                 localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favs));
                 window.dispatchEvent(new CustomEvent('stellplay:favoritesUpdated'));
                 this.triggerServerBackup();
@@ -157,6 +200,7 @@ const StorageManager = {
                 }
             });
             if (addedCount > 0) {
+                this._memCache.playlists = playlists;
                 localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(playlists));
                 window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
                 this.triggerServerBackup();
@@ -174,6 +218,7 @@ const StorageManager = {
         const pl = playlists.find(p => p.id === playlistId);
         if (pl) {
             pl.songIds = pl.songIds.filter(id => id !== songId);
+            this._memCache.playlists = playlists;
             localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(playlists));
             window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
             this.triggerServerBackup();
@@ -184,10 +229,11 @@ const StorageManager = {
 
     reorderPlaylistSongs(playlistId, fromIndex, toIndex) {
         if (playlistId === 'pl-favorites' || playlistId === 'card-playlist-favorites') {
-            const favs = this.getFavorites();
+            const favs = [...this.getFavorites()];
             if (fromIndex >= 0 && fromIndex < favs.length && toIndex >= 0 && toIndex < favs.length) {
                 const [moved] = favs.splice(fromIndex, 1);
                 favs.splice(toIndex, 0, moved);
+                this._memCache.favorites = favs;
                 localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favs));
                 window.dispatchEvent(new CustomEvent('stellplay:favoritesUpdated'));
                 this.triggerServerBackup();
@@ -201,6 +247,7 @@ const StorageManager = {
         if (fromIndex >= 0 && fromIndex < pl.songIds.length && toIndex >= 0 && toIndex < pl.songIds.length) {
             const [moved] = pl.songIds.splice(fromIndex, 1);
             pl.songIds.splice(toIndex, 0, moved);
+            this._memCache.playlists = playlists;
             localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(playlists));
             window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
             this.triggerServerBackup();
@@ -211,20 +258,22 @@ const StorageManager = {
 
     // --- 최근 재생 기록 (History, 최대 100곡) ---
     getHistory() {
+        if (this._memCache.history !== null) return this._memCache.history;
         try {
             const data = localStorage.getItem(STORAGE_KEYS.HISTORY);
-            return data ? JSON.parse(data) : [];
+            this._memCache.history = data ? JSON.parse(data) : [];
         } catch (e) {
-            return [];
+            this._memCache.history = [];
         }
+        return this._memCache.history;
     },
 
     addToHistory(songId) {
         if (!songId) return;
-        let hist = this.getHistory();
-        hist = hist.filter(id => id !== songId);
+        let hist = this.getHistory().filter(id => id !== songId);
         hist.unshift(songId);
         if (hist.length > 100) hist = hist.slice(0, 100); // 최대 100곡 보관
+        this._memCache.history = hist;
         localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(hist));
         window.dispatchEvent(new CustomEvent('stellplay:historyUpdated', { detail: { songId, history: hist } }));
         window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
@@ -232,10 +281,10 @@ const StorageManager = {
     },
 
     removeFromHistory(songId) {
-        let hist = this.getHistory();
-        const initialLen = hist.length;
-        hist = hist.filter(id => id !== songId);
-        if (hist.length !== initialLen) {
+        const prev = this.getHistory();
+        const hist = prev.filter(id => id !== songId);
+        if (hist.length !== prev.length) {
+            this._memCache.history = hist;
             localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(hist));
             window.dispatchEvent(new CustomEvent('stellplay:historyUpdated', { detail: { removedSongId: songId, history: hist } }));
             window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
@@ -245,6 +294,7 @@ const StorageManager = {
     },
 
     clearHistory() {
+        this._memCache.history = [];
         localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify([]));
         window.dispatchEvent(new CustomEvent('stellplay:historyUpdated', { detail: { history: [] } }));
         window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
@@ -253,9 +303,10 @@ const StorageManager = {
 
     // --- 플레이어 설정 및 상태 (Settings) ---
     getSettings() {
+        if (this._memCache.settings !== null) return this._memCache.settings;
         try {
             const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-            return data ? JSON.parse(data) : {
+            this._memCache.settings = data ? JSON.parse(data) : {
                 volume: 50,
                 repeatMode: 'all', // 'off', 'all', 'one'
                 isShuffle: false,
@@ -267,7 +318,7 @@ const StorageManager = {
                 theme: 'dark'
             };
         } catch (e) {
-            return {
+            this._memCache.settings = {
                 volume: 50,
                 repeatMode: 'all',
                 isShuffle: false,
@@ -279,12 +330,14 @@ const StorageManager = {
                 theme: 'dark'
             };
         }
+        return this._memCache.settings;
     },
 
     saveSettings(partialSettings) {
         try {
             const current = this.getSettings();
             const updated = { ...current, ...partialSettings };
+            this._memCache.settings = updated;
             localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
             this.triggerServerBackup();
             return updated;
@@ -299,19 +352,24 @@ const StorageManager = {
 
     // --- 사용자 맞춤 사비 (Custom Sabi) ---
     getCustomSabis() {
+        if (this._memCache.customSabis !== null) return this._memCache.customSabis;
         try {
             const data = localStorage.getItem('stellplay_custom_sabi');
-            return data ? JSON.parse(data) : {};
+            this._memCache.customSabis = data ? JSON.parse(data) : {};
         } catch (e) {
-            return {};
+            this._memCache.customSabis = {};
         }
+        return this._memCache.customSabis;
     },
 
     saveCustomSabi(songId, sabiObj) {
         try {
-            const sabis = this.getCustomSabis();
-            sabis[songId] = sabiObj;
+            const sabis = { ...this.getCustomSabis(), [songId]: sabiObj };
+            this._memCache.customSabis = sabis;
             localStorage.setItem('stellplay_custom_sabi', JSON.stringify(sabis));
+            if (typeof window !== 'undefined' && typeof window.invalidateSongsCache === 'function') {
+                window.invalidateSongsCache();
+            }
             window.dispatchEvent(new CustomEvent('stellplay:sabiUpdated', { detail: { songId, sabi: sabiObj } }));
             this.triggerServerBackup();
             return sabiObj;
@@ -323,19 +381,22 @@ const StorageManager = {
 
     // --- 사용자 직접 추가 곡 (Custom Songs) ---
     getCustomSongs() {
+        if (this._memCache.customSongs !== null) return this._memCache.customSongs;
         try {
             const data = localStorage.getItem('stellplay_custom_songs');
-            return data ? JSON.parse(data) : [];
+            this._memCache.customSongs = data ? JSON.parse(data) : [];
         } catch (e) {
-            return [];
+            this._memCache.customSongs = [];
         }
+        return this._memCache.customSongs;
     },
 
     addCustomSong(song) {
         try {
-            const songs = this.getCustomSongs();
-            songs.unshift(song);
+            const songs = [song, ...this.getCustomSongs()];
+            this._memCache.customSongs = songs;
             localStorage.setItem('stellplay_custom_songs', JSON.stringify(songs));
+            this._invalidate(null, true);
             this.triggerServerBackup();
             return true;
         } catch (e) {
@@ -346,9 +407,10 @@ const StorageManager = {
 
     deleteCustomSong(songId) {
         try {
-            let songs = this.getCustomSongs();
-            songs = songs.filter(s => s.id !== songId);
+            const songs = this.getCustomSongs().filter(s => s.id !== songId);
+            this._memCache.customSongs = songs;
             localStorage.setItem('stellplay_custom_songs', JSON.stringify(songs));
+            this._invalidate(null, true);
             this.triggerServerBackup();
             return true;
         } catch (e) {
@@ -358,6 +420,7 @@ const StorageManager = {
 
     // --- 곡 정보 사용자 직접 수정 (Song Metadata Overrides) ---
     getSongOverrides() {
+        if (this._memCache.songOverrides !== null) return this._memCache.songOverrides;
         try {
             const data = localStorage.getItem(STORAGE_KEYS.SONG_OVERRIDES);
             const parsed = data ? JSON.parse(data) : {};
@@ -377,17 +440,21 @@ const StorageManager = {
             if (healed) {
                 try { localStorage.setItem(STORAGE_KEYS.SONG_OVERRIDES, JSON.stringify(parsed)); } catch (e) {}
             }
+            this._memCache.songOverrides = parsed;
             return parsed;
         } catch (e) {
+            this._memCache.songOverrides = {};
             return {};
         }
     },
 
     saveSongOverride(songId, overrideData) {
         try {
-            const overrides = this.getSongOverrides();
+            const overrides = { ...this.getSongOverrides() };
             overrides[songId] = { ...(overrides[songId] || {}), ...overrideData };
+            this._memCache.songOverrides = overrides;
             localStorage.setItem(STORAGE_KEYS.SONG_OVERRIDES, JSON.stringify(overrides));
+            this._invalidate(null, true);
             window.dispatchEvent(new CustomEvent('stellplay:songOverrideUpdated', {
                 detail: { songId, override: overrides[songId] }
             }));
@@ -401,10 +468,12 @@ const StorageManager = {
 
     resetSongOverride(songId) {
         try {
-            const overrides = this.getSongOverrides();
+            const overrides = { ...this.getSongOverrides() };
             if (overrides[songId]) {
                 delete overrides[songId];
+                this._memCache.songOverrides = overrides;
                 localStorage.setItem(STORAGE_KEYS.SONG_OVERRIDES, JSON.stringify(overrides));
+                this._invalidate(null, true);
                 window.dispatchEvent(new CustomEvent('stellplay:songOverrideReset', {
                     detail: { songId }
                 }));
@@ -419,11 +488,18 @@ const StorageManager = {
 
     // --- 백그라운드 자동 감지 신곡 (Auto-Detected Songs) ---
     getAutoDetectedSongs() {
+        if (this._memCache.autoSongs !== null) return this._memCache.autoSongs;
         try {
             const data = localStorage.getItem(STORAGE_KEYS.AUTO_SONGS);
-            if (!data) return [];
+            if (!data) {
+                this._memCache.autoSongs = [];
+                return [];
+            }
             let songs = JSON.parse(data);
-            if (!Array.isArray(songs)) return [];
+            if (!Array.isArray(songs)) {
+                this._memCache.autoSongs = [];
+                return [];
+            }
             songs = songs.map(s => {
                 if (s && s.title && (s.title.includes('Where Stars Begin') || s.title.includes('Where stars begin') || s.id === 'auto-EKEts5IShas')) {
                     s.title = '별이 시작되는 곳';
@@ -455,11 +531,11 @@ const StorageManager = {
                 return nonSongKeywords.some(kw => combined.includes(kw));
             };
 
-            const defaultYtIds = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS)) 
-                ? new Set(window.DEFAULT_SONGS.map(s => s.youtubeId).filter(Boolean)) 
+            const defaultYtIds = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS))
+                ? new Set(window.DEFAULT_SONGS.map(s => s.youtubeId).filter(Boolean))
                 : null;
-            const defaultIds = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS)) 
-                ? new Set(window.DEFAULT_SONGS.map(s => s.id).filter(Boolean)) 
+            const defaultIds = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_SONGS))
+                ? new Set(window.DEFAULT_SONGS.map(s => s.id).filter(Boolean))
                 : null;
             const seenYt = new Set();
             const filtered = songs.filter(s => {
@@ -475,8 +551,10 @@ const StorageManager = {
                 localStorage.setItem(STORAGE_KEYS.AUTO_SONGS, JSON.stringify(filtered));
                 songs = filtered;
             }
+            this._memCache.autoSongs = songs;
             return songs;
         } catch (e) {
+            this._memCache.autoSongs = [];
             return [];
         }
     },
@@ -526,7 +604,9 @@ const StorageManager = {
             }
             if (toAdd.length > 0) {
                 const updated = [...toAdd, ...current];
+                this._memCache.autoSongs = updated;
                 localStorage.setItem(STORAGE_KEYS.AUTO_SONGS, JSON.stringify(updated));
+                this._invalidate(null, true);
                 window.dispatchEvent(new CustomEvent('stellplay:newSongsAdded', {
                     detail: { addedSongs: toAdd }
                 }));
@@ -556,20 +636,24 @@ const StorageManager = {
 
     // --- 숨긴 곡 목록 (Hidden / Deleted Songs) ---
     getHiddenSongs() {
+        if (this._memCache.hiddenSongs !== null) return this._memCache.hiddenSongs;
         try {
             const data = localStorage.getItem('stellplay_hidden_songs');
-            return data ? JSON.parse(data) : [];
+            this._memCache.hiddenSongs = data ? JSON.parse(data) : [];
         } catch (e) {
-            return [];
+            this._memCache.hiddenSongs = [];
         }
+        return this._memCache.hiddenSongs;
     },
 
     hideSong(songId) {
         try {
-            const list = this.getHiddenSongs();
+            const list = [...this.getHiddenSongs()];
             if (!list.includes(songId)) {
                 list.push(songId);
+                this._memCache.hiddenSongs = list;
                 localStorage.setItem('stellplay_hidden_songs', JSON.stringify(list));
+                this._invalidate(null, true);
                 window.dispatchEvent(new CustomEvent('stellplay:songHidden', { detail: { songId } }));
             }
             return true;
@@ -580,9 +664,10 @@ const StorageManager = {
 
     unhideSong(songId) {
         try {
-            let list = this.getHiddenSongs();
-            list = list.filter(id => id !== songId);
+            const list = this.getHiddenSongs().filter(id => id !== songId);
+            this._memCache.hiddenSongs = list;
             localStorage.setItem('stellplay_hidden_songs', JSON.stringify(list));
+            this._invalidate(null, true);
             window.dispatchEvent(new CustomEvent('stellplay:songUnhidden', { detail: { songId } }));
             return true;
         } catch (e) {
@@ -592,7 +677,9 @@ const StorageManager = {
 
     restoreAllHiddenSongs() {
         try {
+            this._memCache.hiddenSongs = [];
             localStorage.removeItem('stellplay_hidden_songs');
+            this._invalidate(null, true);
             window.dispatchEvent(new CustomEvent('stellplay:allHiddenSongsRestored'));
             this.triggerServerBackup();
             return true;
@@ -651,6 +738,7 @@ const StorageManager = {
                 const local = localStorage.getItem(STORAGE_KEYS.PLAYLISTS);
                 if (!local || JSON.parse(local).length <= 2) {
                     localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(data.playlists));
+                    this._memCache.playlists = null;
                     needReload = true;
                 }
             }
@@ -660,6 +748,7 @@ const StorageManager = {
                 const local = localStorage.getItem(STORAGE_KEYS.HISTORY);
                 if (!local || JSON.parse(local).length === 0) {
                     localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(data.history));
+                    this._memCache.history = null;
                     needReload = true;
                 }
             }
@@ -669,6 +758,7 @@ const StorageManager = {
                 const local = localStorage.getItem(STORAGE_KEYS.FAVORITES);
                 if (!local || JSON.parse(local).length === 0) {
                     localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(data.favorites));
+                    this._memCache.favorites = null;
                     needReload = true;
                 }
             }
@@ -678,23 +768,34 @@ const StorageManager = {
                 const local = localStorage.getItem(STORAGE_KEYS.SETTINGS);
                 if (!local) {
                     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(data.settings));
+                    this._memCache.settings = null;
                 }
             }
 
             // 4. 사비 / 곡 수정 복원
             if (data.customSabis) {
                 const local = localStorage.getItem('stellplay_custom_sabi');
-                if (!local) localStorage.setItem('stellplay_custom_sabi', JSON.stringify(data.customSabis));
+                if (!local) {
+                    localStorage.setItem('stellplay_custom_sabi', JSON.stringify(data.customSabis));
+                    this._memCache.customSabis = null;
+                }
             }
             if (data.songOverrides) {
                 const local = localStorage.getItem(STORAGE_KEYS.SONG_OVERRIDES);
-                if (!local) localStorage.setItem(STORAGE_KEYS.SONG_OVERRIDES, JSON.stringify(data.songOverrides));
+                if (!local) {
+                    localStorage.setItem(STORAGE_KEYS.SONG_OVERRIDES, JSON.stringify(data.songOverrides));
+                    this._memCache.songOverrides = null;
+                }
             }
             if (data.customSongs) {
                 const local = localStorage.getItem('stellplay_custom_songs');
-                if (!local) localStorage.setItem('stellplay_custom_songs', JSON.stringify(data.customSongs));
+                if (!local) {
+                    localStorage.setItem('stellplay_custom_songs', JSON.stringify(data.customSongs));
+                    this._memCache.customSongs = null;
+                }
             }
 
+            this._invalidate(null, true);
             if (needReload) {
                 window.dispatchEvent(new CustomEvent('stellplay:playlistsUpdated'));
                 window.dispatchEvent(new CustomEvent('stellplay:favoritesUpdated', { detail: {} }));
@@ -706,6 +807,13 @@ const StorageManager = {
 };
 
 window.StorageManager = StorageManager;
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('storage', () => {
+        Object.keys(StorageManager._memCache).forEach(k => { StorageManager._memCache[k] = null; });
+        if (typeof window.invalidateSongsCache === 'function') window.invalidateSongsCache();
+    });
+}
 
 // 백그라운드 서버 데이터 동기화 자동 시작
 try {

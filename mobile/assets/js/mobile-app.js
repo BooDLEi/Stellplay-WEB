@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.12.2';
-    const CURRENT_OTA_BUILD = 2026112503;
+    const CURRENT_APP_VERSION = '1.13.1';
+    const CURRENT_OTA_BUILD = 2026112505;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -2562,14 +2562,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 3. 검색 쿼리 (홈 검색 드로어 전용 - 오프라인 보관함 필터링에는 개입하지 않음)
+        // 3. 검색 쿼리 (홈 검색 드로어 전용 - 사전 계산된 _searchText 활용)
         if (!options.ignoreHomeFilters && state.searchQuery && !customTypeSet) {
             const q = state.searchQuery.toLowerCase();
-            res = res.filter(s =>
-                (s.title && s.title.toLowerCase().includes(q)) ||
-                (s.artist && s.artist.toLowerCase().includes(q)) ||
-                (s.originalArtist && s.originalArtist.toLowerCase().includes(q))
-            );
+            res = res.filter(s => {
+                if (s._searchText) return s._searchText.includes(q);
+                return (s.title && s.title.toLowerCase().includes(q)) ||
+                    (s.artist && s.artist.toLowerCase().includes(q)) ||
+                    (s.originalArtist && s.originalArtist.toLowerCase().includes(q));
+            });
         }
 
         // 4. 정렬 (최신순 / 오래된순 / 곡명순 - 유튜브 업로드일자 publishedAt 우선, 타임스탬프 캐싱으로 O(1) 초고속 정렬)
@@ -2600,9 +2601,87 @@ document.addEventListener('DOMContentLoaded', async () => {
         return filterSongList(all, true);
     }
 
-    let currentHomeRenderId = 0;
+    const HOME_PAGE_SIZE = 50;
+    let mHomeRenderedCount = 0;
+    let mHomeObserver = null;
+    let mHomeScrollBound = false;
+
+    function updateMobileHomeSentinelUI() {
+        const sentinel = document.getElementById('m-home-tracks-sentinel');
+        if (!sentinel) return;
+        const total = (state.currentHomeSongs || []).length;
+        if (mHomeRenderedCount >= total) {
+            sentinel.remove();
+            return;
+        }
+        sentinel.innerHTML = `
+            <span>${mHomeRenderedCount} / ${total}곡 표시 중</span>
+            <button type="button" class="m-tracks-load-more-btn" id="m-btn-load-more-home">50곡 더 보기</button>
+        `;
+        const btn = document.getElementById('m-btn-load-more-home');
+        if (btn) btn.addEventListener('click', () => appendNextMobileHomePage());
+    }
+
+    function appendNextMobileHomePage() {
+        const songs = state.currentHomeSongs || [];
+        if (!dom.trackListHome || mHomeRenderedCount >= songs.length) return;
+        const nextEnd = Math.min(mHomeRenderedCount + HOME_PAGE_SIZE, songs.length);
+        const frag = document.createDocumentFragment();
+        for (let i = mHomeRenderedCount; i < nextEnd; i++) {
+            frag.appendChild(createTrackRowElement(songs[i], songs, i));
+        }
+        const sentinel = document.getElementById('m-home-tracks-sentinel');
+        if (sentinel && sentinel.parentNode === dom.trackListHome) {
+            dom.trackListHome.insertBefore(frag, sentinel);
+        } else {
+            dom.trackListHome.appendChild(frag);
+        }
+        mHomeRenderedCount = nextEnd;
+        updateMobileHomeSentinelUI();
+    }
+
+    function setupMobileHomePaginationObserver() {
+        if (mHomeObserver) {
+            mHomeObserver.disconnect();
+            mHomeObserver = null;
+        }
+        const sentinel = document.getElementById('m-home-tracks-sentinel');
+        const songs = state.currentHomeSongs || [];
+        if (!sentinel || mHomeRenderedCount >= songs.length) return;
+
+        if ('IntersectionObserver' in window) {
+            mHomeObserver = new IntersectionObserver((entries) => {
+                if (entries.some(e => e.isIntersecting)) {
+                    appendNextMobileHomePage();
+                }
+            }, { rootMargin: '420px 0px' });
+            mHomeObserver.observe(sentinel);
+        }
+
+        if (!mHomeScrollBound) {
+            mHomeScrollBound = true;
+            const checkNearBottom = () => {
+                if (state.activeView !== 'view-home' || mHomeRenderedCount >= (state.currentHomeSongs || []).length) return;
+                const s = document.getElementById('m-home-tracks-sentinel');
+                if (!s) return;
+                if (s.getBoundingClientRect().top <= window.innerHeight + 420) {
+                    appendNextMobileHomePage();
+                }
+            };
+            window.addEventListener('scroll', checkNearBottom, { passive: true });
+            const homeViewEl = document.getElementById('view-home');
+            if (homeViewEl) homeViewEl.addEventListener('scroll', checkNearBottom, { passive: true });
+            const mainArea = document.querySelector('.mobile-main-content');
+            if (mainArea) mainArea.addEventListener('scroll', checkNearBottom, { passive: true });
+        }
+    }
+
     function renderHomeTracks() {
         state.homeTracksDirty = false;
+        if (mHomeObserver) {
+            mHomeObserver.disconnect();
+            mHomeObserver = null;
+        }
         const songs = getFilteredSongs();
         state.currentHomeSongs = songs;
         if (dom.trackCountHome) dom.trackCountHome.textContent = `총 ${songs.length}곡`;
@@ -2610,63 +2689,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         dom.trackListHome.innerHTML = '';
 
         if (songs.length === 0) {
+            mHomeRenderedCount = 0;
             dom.trackListHome.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">조건에 맞는 곡이 없습니다.</div>';
             return;
         }
 
-        currentHomeRenderId++;
-        const renderId = currentHomeRenderId;
-        const INITIAL_CHUNK = 35;
-        const firstChunk = songs.slice(0, INITIAL_CHUNK);
-
+        const initialEnd = Math.min(HOME_PAGE_SIZE, songs.length);
         const frag = document.createDocumentFragment();
-        firstChunk.forEach((song, idx) => {
-            frag.appendChild(createTrackRowElement(song, songs, idx));
-        });
+        for (let i = 0; i < initialEnd; i++) {
+            frag.appendChild(createTrackRowElement(songs[i], songs, i));
+        }
+        if (songs.length > initialEnd) {
+            const sentinel = document.createElement('div');
+            sentinel.className = 'm-tracks-sentinel';
+            sentinel.id = 'm-home-tracks-sentinel';
+            frag.appendChild(sentinel);
+        }
+        mHomeRenderedCount = initialEnd;
         dom.trackListHome.appendChild(frag);
-
-        if (songs.length > INITIAL_CHUNK) {
-            let curIdx = INITIAL_CHUNK;
-            const CHUNK_SIZE = 50;
-            function appendNextChunk() {
-                if (renderId !== currentHomeRenderId) return;
-                if (curIdx >= songs.length) return;
-
-                const chunk = songs.slice(curIdx, curIdx + CHUNK_SIZE);
-                const nextFrag = document.createDocumentFragment();
-                chunk.forEach((song, i) => {
-                    nextFrag.appendChild(createTrackRowElement(song, songs, curIdx + i));
-                });
-                dom.trackListHome.appendChild(nextFrag);
-                curIdx += CHUNK_SIZE;
-
-                if (curIdx < songs.length) {
-                    requestAnimationFrame(appendNextChunk);
-                }
-            }
-            requestAnimationFrame(appendNextChunk);
-        }
-    }
-
-    function renderSabiTracks() {
-        if (!dom.trackListSabi || !dom.trackCountSabi) return;
-        const all = window.getAllSongs ? window.getAllSongs() : [];
-        const sabiSongs = all.filter(s => s.sabi && typeof s.sabi.start === 'number');
-        const filteredSabi = filterSongList(sabiSongs, true);
-        state.currentSabiSongs = filteredSabi;
-        dom.trackCountSabi.textContent = `${filteredSabi.length}곡`;
-        dom.trackListSabi.innerHTML = '';
-
-        if (filteredSabi.length === 0) {
-            dom.trackListSabi.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">조건에 맞는 사비 곡이 없습니다.</div>';
-            return;
-        }
-
-        const frag = document.createDocumentFragment();
-        filteredSabi.forEach((song, idx) => {
-            frag.appendChild(createTrackRowElement(song, filteredSabi, idx));
-        });
-        dom.trackListSabi.appendChild(frag);
+        updateMobileHomeSentinelUI();
+        setupMobileHomePaginationObserver();
     }
 
     async function renderOfflineTracks() {
@@ -3229,20 +3271,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    const M_PL_ADD_PAGE_SIZE = 50;
+    let mPlAddFilteredCache = [];
+    let mPlAddRenderedCount = 0;
+    let mPlAddAlreadySet = new Set();
+    let mPlAddObserver = null;
+    let mPlAddDelegationBound = false;
+
+    function buildMobilePlAddItemHtml(song, alreadySongIds) {
+        const isAlready = alreadySongIds.has(song.id);
+        const isChecked = mPlAddSelectedSongIds.has(song.id);
+        const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
+
+        return `
+            <div class="m-pl-add-track-item ${isChecked ? 'selected' : ''} ${isAlready ? 'already-added' : ''}" data-song-id="${song.id}">
+                <input type="checkbox" class="m-pl-add-cb" ${isAlready ? 'disabled checked' : (isChecked ? 'checked' : '')} style="cursor: pointer; pointer-events: none;">
+                <img class="m-pl-add-thumb" src="${thumbUrl}" alt="" loading="lazy">
+                <div class="m-pl-add-meta">
+                    <div class="m-pl-add-title">${escapeHtml(song.title)}</div>
+                    <div class="m-pl-add-artist">${escapeHtml(song.artist)}</div>
+                </div>
+                ${isAlready ? '<span class="m-badge-already-in-pl">✓수록됨</span>' : ''}
+            </div>
+        `;
+    }
+
+    function appendNextMobilePlAddPage() {
+        const listEl = document.getElementById('m-pl-add-tracks-list');
+        if (!listEl || mPlAddRenderedCount >= mPlAddFilteredCache.length) return;
+        const nextEnd = Math.min(mPlAddRenderedCount + M_PL_ADD_PAGE_SIZE, mPlAddFilteredCache.length);
+        let chunk = '';
+        for (let i = mPlAddRenderedCount; i < nextEnd; i++) {
+            chunk += buildMobilePlAddItemHtml(mPlAddFilteredCache[i], mPlAddAlreadySet);
+        }
+        const sentinel = document.getElementById('m-pl-add-tracks-sentinel');
+        if (sentinel) sentinel.insertAdjacentHTML('beforebegin', chunk);
+        else listEl.insertAdjacentHTML('beforeend', chunk);
+        mPlAddRenderedCount = nextEnd;
+
+        if (sentinel) {
+            if (mPlAddRenderedCount >= mPlAddFilteredCache.length) {
+                sentinel.remove();
+            } else {
+                sentinel.textContent = `${mPlAddRenderedCount} / ${mPlAddFilteredCache.length}곡 표시 중 · 스크롤 시 더 불러옴`;
+            }
+        }
+    }
+
     function renderMobilePlaylistAddTracksList() {
         const listEl = document.getElementById('m-pl-add-tracks-list');
         if (!listEl || !mPlAddTargetId) return;
 
+        if (mPlAddObserver) {
+            mPlAddObserver.disconnect();
+            mPlAddObserver = null;
+        }
+
         const playlists = StorageManager.getPlaylists(false);
         const targetPl = playlists.find(p => p.id === mPlAddTargetId);
-        const alreadySongIds = new Set(targetPl ? (targetPl.songIds || []) : []);
+        mPlAddAlreadySet = new Set(targetPl ? (targetPl.songIds || []) : []);
 
-        const filtered = getMobileFilteredSongsForAddModal();
+        mPlAddFilteredCache = getMobileFilteredSongsForAddModal();
 
         const filteredCountEl = document.getElementById('m-pl-add-filtered-count');
-        if (filteredCountEl) filteredCountEl.textContent = `(${filtered.length}곡)`;
+        if (filteredCountEl) filteredCountEl.textContent = `(${mPlAddFilteredCache.length}곡)`;
 
-        if (filtered.length === 0) {
+        if (mPlAddFilteredCache.length === 0) {
+            mPlAddRenderedCount = 0;
             listEl.innerHTML = `
                 <div style="padding: 30px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
                     일치하는 곡이 없습니다.
@@ -3251,30 +3346,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        const initialEnd = Math.min(M_PL_ADD_PAGE_SIZE, mPlAddFilteredCache.length);
         let html = '';
-        filtered.forEach(song => {
-            const isAlready = alreadySongIds.has(song.id);
-            const isChecked = mPlAddSelectedSongIds.has(song.id);
-            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
-
-            html += `
-                <div class="m-pl-add-track-item ${isChecked ? 'selected' : ''} ${isAlready ? 'already-added' : ''}" data-song-id="${song.id}">
-                    <input type="checkbox" class="m-pl-add-cb" ${isAlready ? 'disabled checked' : (isChecked ? 'checked' : '')} style="cursor: pointer; pointer-events: none;">
-                    <img class="m-pl-add-thumb" src="${thumbUrl}" alt="" loading="lazy">
-                    <div class="m-pl-add-meta">
-                        <div class="m-pl-add-title">${escapeHtml(song.title)}</div>
-                        <div class="m-pl-add-artist">${escapeHtml(song.artist)}</div>
-                    </div>
-                    ${isAlready ? '<span class="m-badge-already-in-pl">✓수록됨</span>' : ''}
-                </div>
-            `;
-        });
+        for (let i = 0; i < initialEnd; i++) {
+            html += buildMobilePlAddItemHtml(mPlAddFilteredCache[i], mPlAddAlreadySet);
+        }
+        if (mPlAddFilteredCache.length > initialEnd) {
+            html += `<div class="m-tracks-sentinel" id="m-pl-add-tracks-sentinel">${initialEnd} / ${mPlAddFilteredCache.length}곡 표시 중 · 스크롤 시 더 불러옴</div>`;
+        }
+        mPlAddRenderedCount = initialEnd;
         listEl.innerHTML = html;
 
-        listEl.querySelectorAll('.m-pl-add-track-item').forEach(row => {
-            row.addEventListener('click', () => {
+        if (!mPlAddDelegationBound) {
+            mPlAddDelegationBound = true;
+            listEl.addEventListener('click', (e) => {
+                const row = e.target.closest('.m-pl-add-track-item');
+                if (!row) return;
                 const songId = row.dataset.songId;
-                if (alreadySongIds.has(songId)) return;
+                if (mPlAddAlreadySet.has(songId)) return;
 
                 const cb = row.querySelector('.m-pl-add-cb');
                 if (mPlAddSelectedSongIds.has(songId)) {
@@ -3288,7 +3377,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 updateMobilePlaylistAddModalActions();
             });
-        });
+        }
+
+        const sentinel = document.getElementById('m-pl-add-tracks-sentinel');
+        if (sentinel && 'IntersectionObserver' in window) {
+            mPlAddObserver = new IntersectionObserver((entries) => {
+                if (entries.some(e => e.isIntersecting)) {
+                    appendNextMobilePlAddPage();
+                }
+            }, { root: listEl, rootMargin: '200px 0px' });
+            mPlAddObserver.observe(sentinel);
+        }
     }
 
     function updateMobilePlaylistAddModalActions() {
@@ -3600,16 +3699,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    let mobileQueueDirty = false;
+
     function openQueueSheet() {
         const expectedLen = (player && player.queue) ? player.queue.length : 0;
         const renderedCount = dom.queueList ? dom.queueList.querySelectorAll('.m-queue-item').length : 0;
-        // 이미 대기열 트랙들이 정확히 렌더링되어 있다면 전체 DOM 재구축 없이 0ms 즉각 활성 트랙 갱신 후 시트 오픈
-        if (!dom.queueList || expectedLen === 0 || renderedCount !== expectedLen) {
+        dom.queueSheet.classList.add('open');
+        // 닫힌 상태에서 대기열이 변경됐었거나 미렌더링 시에만 즉시 DOM 재구축
+        if (mobileQueueDirty || !dom.queueList || expectedLen === 0 || renderedCount !== expectedLen) {
             renderMobileQueue(false);
         } else {
             updateQueueActiveItem();
         }
-        dom.queueSheet.classList.add('open');
         requestAnimationFrame(() => {
             scrollQueueToActiveTrack(false);
         });
@@ -3679,6 +3780,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderMobileQueue(scrollToActive) {
         const queue = player.queue || [];
         updateQueueBadge();
+        const isQueueOpen = (dom.queueSheet && dom.queueSheet.classList.contains('open')) || window.innerWidth >= 768;
+        if (!isQueueOpen) {
+            mobileQueueDirty = true;
+            return;
+        }
+        mobileQueueDirty = false;
         updateQueueSelectUI();
         dom.queueList.innerHTML = '';
 
@@ -5115,8 +5222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             state.playlistsDirty = true;
         }
 
-        if (state.activeView === 'view-sabi') renderSabiTracks();
-        else if (state.activeView === 'view-offline') renderOfflineTracks();
+        if (state.activeView === 'view-offline') renderOfflineTracks();
         updateQueueBadge();
     }
 

@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="assets/css/style.css?v=2026112504">
+    <link rel="stylesheet" href="assets/css/style.css?v=2026112505">
 </head>
 <body>
 
@@ -257,13 +257,10 @@
                         </div>
 
                         <div class="pc-home-toolbar-right">
-                            <button type="button" class="pc-active-filter-chip" id="pc-active-filter-summary" style="display:none;" title="클릭하여 필터 초기화">
-                                <span id="pc-active-filter-summary-text"></span>
-                                <span class="pc-chip-x">✕</span>
-                            </button>
                             <div class="track-count-info" id="track-count-text">총 0곡</div>
                         </div>
                     </section>
+                    <div class="pc-active-filters-row" id="pc-active-filters-row" style="display:none;"></div>
 
                     <!-- 상단 좌우 스크롤바 (Narrow Viewport) -->
                     <div class="tracks-top-scrollbar-wrap" id="home-top-scrollbar-wrap">
@@ -533,7 +530,7 @@
                                         <div class="settings-label">앱 버전 및 실시간 업데이트 (OTA)</div>
                                         <span class="settings-badge" id="pc-update-status-badge" style="background: rgba(124,92,252,0.2); color:#a78bfa;">최신 상태</span>
                                     </div>
-                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.13.0 (패치 #2026112504)</div>
+                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.13.1 (패치 #2026112505)</div>
                                     <div class="settings-desc" id="pc-update-sub-desc" style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">GitHub 보안 검증 채널을 통해 재설치 없이 최신 기능·곡 DB를 실시간 반영하고 이전 버전으로 언제든 복원할 수 있습니다.</div>
                                 </div>
                                 <div class="settings-row-ctrl" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -832,10 +829,10 @@
                         <div class="form-group">
                             <label class="form-label">곡 유형</label>
                             <div class="custom-pill-select" id="add-type-pills">
-                                <button type="button" class="form-pill-btn active" data-value="cover">커버곡</button>
                                 <button type="button" class="form-pill-btn" data-value="original">오리지널</button>
-                                <button type="button" class="form-pill-btn" data-value="live">3D 라이브</button>
-                                <button type="button" class="form-pill-btn" data-value="featuring">피처링 & OST</button>
+                                <button type="button" class="form-pill-btn active" data-value="cover">커버</button>
+                                <button type="button" class="form-pill-btn" data-value="featuring">OST & 피처링</button>
+                                <button type="button" class="form-pill-btn" data-value="live">LIVE</button>
                             </div>
                             <input type="hidden" id="select-song-type" value="cover">
                         </div>
@@ -863,54 +860,17 @@
                             <input type="number" class="form-input" id="input-stream-end" placeholder="예: 360 (6분)" value="240">
                         </div>
                     </div>
-                    <div class="form-group member-picker-container">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <label class="form-label" style="margin-bottom: 0;">참여 멤버 설정 *</label>
-                            <button type="button" class="btn-detect-chips" id="btn-auto-detect-members" style="font-size: 0.75rem; padding: 3px 10px; border-radius: 999px; background: rgba(124, 92, 252, 0.15); color: #a78bfa; border: 1px solid rgba(124, 92, 252, 0.3); cursor: pointer;">제목에서 자동 감지</button>
+                    <div class="form-group pc-unified-picker" id="add-unified-picker">
+                        <div class="pc-unified-picker-head">
+                            <label class="form-label" style="margin-bottom: 0;">참여 멤버 / 분류 설정 *</label>
+                            <button type="button" class="btn-detect-chips" id="btn-auto-detect-members">제목에서 자동 감지</button>
                         </div>
-                        <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브 -->
-                        <div class="member-scope-selector" id="add-member-scope-selector">
-                            <label class="member-scope-btn active">
-                                <input type="radio" name="add-member-scope" value="individual" checked>
-                                <span>개인 / 듀엣 / 유닛</span>
-                            </label>
-                            <label class="member-scope-btn">
-                                <input type="radio" name="add-member-scope" value="stellive">
-                                <span>스텔라이브 (단체)</span>
-                            </label>
+                        <div class="pc-filter-group-tabs-row pc-unified-tabs-row" id="add-picker-tabs"></div>
+                        <div class="pc-unified-picker-body" id="add-picker-body">
+                            <div class="pc-filter-sub-pills pc-unified-sub-pills" id="add-picker-sub-pills"></div>
+                            <div class="pc-filter-member-grid pc-unified-member-grid" id="add-picker-grid"></div>
                         </div>
-                        <!-- 2분류: 유닛 및 멤버별 체크박스 -->
-                        <div class="member-selection-sub" id="add-member-selection-sub">
-                            <div class="member-unit-group">
-                                <span class="member-picker-sublabel">유닛</span>
-                                <div class="member-chips-container unit-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
-                                </div>
-                            </div>
-                            <div class="member-individual-group">
-                                <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
-                                <div class="member-chips-container member-chips" id="add-member-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="add-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="pc-unified-selected-bar" id="add-picker-selected-summary"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -977,10 +937,10 @@
                         <div class="form-group">
                             <label class="form-label">곡 유형</label>
                             <div class="custom-pill-select" id="edit-type-pills">
-                                <button type="button" class="form-pill-btn active" data-value="cover">커버곡</button>
                                 <button type="button" class="form-pill-btn" data-value="original">오리지널</button>
-                                <button type="button" class="form-pill-btn" data-value="live">3D 라이브</button>
-                                <button type="button" class="form-pill-btn" data-value="featuring">피처링 & OST</button>
+                                <button type="button" class="form-pill-btn active" data-value="cover">커버</button>
+                                <button type="button" class="form-pill-btn" data-value="featuring">OST & 피처링</button>
+                                <button type="button" class="form-pill-btn" data-value="live">LIVE</button>
                             </div>
                             <input type="hidden" id="edit-song-type" value="cover">
                         </div>
@@ -997,51 +957,17 @@
                         </div>
                         <input type="hidden" id="edit-song-mood" value="none">
                     </div>
-                    <div class="form-group member-picker-container">
-                        <label class="form-label" style="margin-bottom: 8px;">참여 멤버 설정 *</label>
-                        <!-- 1분류: 개인/듀엣/유닛 vs 스텔라이브 -->
-                        <div class="member-scope-selector" id="edit-member-scope-selector">
-                            <label class="member-scope-btn active">
-                                <input type="radio" name="edit-member-scope" value="individual" checked>
-                                <span>개인 / 듀엣 / 유닛</span>
-                            </label>
-                            <label class="member-scope-btn">
-                                <input type="radio" name="edit-member-scope" value="stellive">
-                                <span>스텔라이브 (단체)</span>
-                            </label>
+                    <div class="form-group pc-unified-picker" id="edit-unified-picker">
+                        <div class="pc-unified-picker-head">
+                            <label class="form-label" style="margin-bottom: 0;">참여 멤버 / 분류 설정 *</label>
+                            <button type="button" class="btn-detect-chips" id="btn-edit-detect-members">제목에서 자동 감지</button>
                         </div>
-                        <!-- 2분류: 유닛 및 멤버별 체크박스 -->
-                        <div class="member-selection-sub" id="edit-member-selection-sub">
-                            <div class="member-unit-group">
-                                <span class="member-picker-sublabel">유닛</span>
-                                <div class="member-chips-container unit-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-unit" value="everlys" data-name="에버리스"> <span>에버리스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-unit" value="universe" data-name="유니버스"> <span>유니버스</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-unit" value="cliche" data-name="클리셰"> <span>클리셰</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-unit" value="abyss" data-name="어비스"> <span>어비스</span></label>
-                                </div>
-                            </div>
-                            <div class="member-individual-group">
-                                <span class="member-picker-sublabel">멤버 (중복 선택 가능)</span>
-                                <div class="member-chips-container member-chips" id="edit-member-chips">
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="yuni" data-name="아야츠노 유니"> <span>아야츠노 유니</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="huya" data-name="사키하네 후야"> <span>사키하네 후야</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="kanna" data-name="아이리 칸나"> <span>아이리 칸나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="hina" data-name="시라유키 히나"> <span>시라유키 히나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="mashiro" data-name="네네코 마시로"> <span>네네코 마시로</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="lize" data-name="아카네 리제"> <span>아카네 리제</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="tabi" data-name="아라하시 타비"> <span>아라하시 타비</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="shibuki" data-name="텐코 시부키"> <span>텐코 시부키</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="rin" data-name="아오쿠모 린"> <span>아오쿠모 린</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="nana" data-name="하나코 나나"> <span>하나코 나나</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="riko" data-name="유즈하 리코"> <span>유즈하 리코</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="toa" data-name="시즈키 토아"> <span>시즈키 토아</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="rang" data-name="코가네 랑"> <span>코가네 랑</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="hiyori" data-name="하나요 히요리"> <span>하나요 히요리</span></label>
-                                    <label class="member-chip-label"><input type="checkbox" name="edit-member-item" value="mary" data-name="토키노 메리"> <span>토키노 메리</span></label>
-                                </div>
-                            </div>
+                        <div class="pc-filter-group-tabs-row pc-unified-tabs-row" id="edit-picker-tabs"></div>
+                        <div class="pc-unified-picker-body" id="edit-picker-body">
+                            <div class="pc-filter-sub-pills pc-unified-sub-pills" id="edit-picker-sub-pills"></div>
+                            <div class="pc-filter-member-grid pc-unified-member-grid" id="edit-picker-grid"></div>
                         </div>
+                        <div class="pc-unified-selected-bar" id="edit-picker-selected-summary"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -1364,12 +1290,12 @@
 
     <!-- PC 패치노트 확인 모달 -->
     <div class="modal-backdrop" id="modal-pc-patchnotes">
-        <div class="modal-box" style="max-width: 680px; width: 92%; max-height: 85vh; display: flex; flex-direction: column;">
-            <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="modal-card modal-box" style="max-width: 680px; width: 92%; max-height: 85vh; display: flex; flex-direction: column; padding: 0;">
+            <div class="modal-header" style="padding: 18px 22px 14px 22px; border-bottom: 1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
                 <h3 class="modal-title">StellPlay 패치노트 (업데이트 내역)</h3>
                 <button class="btn-close-full" id="btn-close-pc-patchnotes">✕</button>
             </div>
-            <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
+            <div style="padding: 16px 22px 20px 22px; overflow-y: auto; flex: 1;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <span style="font-size:0.8rem; color:var(--text-muted);">최신 업데이트 및 보안·기능 개선 히스토리</span>
                     <button type="button" class="btn-secondary" id="btn-copy-pc-patchnotes" style="padding:4px 10px; font-size:0.76rem;">전체 복사</button>
@@ -1381,12 +1307,12 @@
 
     <!-- PC 버전 선택 복원 / 롤백 모달 -->
     <div class="modal-backdrop" id="modal-pc-ota-restore">
-        <div class="modal-box" style="max-width: 520px; width: 92%; max-height: 82vh; display: flex; flex-direction: column;">
-            <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="modal-card modal-box" style="max-width: 520px; width: 92%; max-height: 82vh; display: flex; flex-direction: column; padding: 0;">
+            <div class="modal-header" style="padding: 18px 22px 14px 22px; border-bottom: 1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
                 <h3 class="modal-title">업데이트 버전 복원 관리</h3>
                 <button class="btn-close-full" id="btn-close-pc-ota-restore">✕</button>
             </div>
-            <div style="padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
+            <div style="padding: 16px 22px 20px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
                 <div style="font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
                     실시간 업데이트(OTA) 적용 후 이전 버전으로 되돌리고 싶을 때, <b>직전 버전으로 즉시 롤백</b>하거나 <b>원하는 백업 버전을 직접 선택</b>하여 복원할 수 있습니다.
                 </div>
@@ -1583,9 +1509,9 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- JavaScript Scripts -->
-    <script src="assets/js/songs.js?v=2026112504"></script>
-    <script src="assets/js/storage.js?v=2026112504"></script>
-    <script src="assets/js/player.js?v=2026112504"></script>
-    <script src="assets/js/app.js?v=2026112504"></script>
+    <script src="assets/js/songs.js?v=2026112505"></script>
+    <script src="assets/js/storage.js?v=2026112505"></script>
+    <script src="assets/js/player.js?v=2026112505"></script>
+    <script src="assets/js/app.js?v=2026112505"></script>
 </body>
 </html>

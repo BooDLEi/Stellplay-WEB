@@ -7237,3 +7237,59 @@ html, body, button, input, select, textarea, optgroup, pre {
     background: rgba(15, 23, 42, 0.08);
     color: #334155;
 }
+
+/* ===================================================================
+   v1.13.1: 모바일 50곡 무한 스크롤 센티넬 + 라이트모드 OTA 모달 대비 + GPU 레이어
+=================================================================== */
+.mobile-top-header,
+.mobile-bottom-nav,
+.mobile-mini-player {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.m-tracks-sentinel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 12px 24px 12px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.m-tracks-load-more-btn {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+[data-theme="light"] .m-tracks-load-more-btn {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.14);
+    color: #334155;
+}
+
+[data-theme="light"] #m-modal-ota-restore #btn-quick-rollback-ota {
+    background: linear-gradient(135deg, rgba(124, 92, 252, 0.14), rgba(99, 102, 241, 0.12)) !important;
+    border-color: rgba(124, 92, 252, 0.45) !important;
+    color: #5b21b6 !important;
+}
+
+[data-theme="light"] #m-modal-ota-restore #btn-modal-download-apk {
+    background: rgba(99, 102, 241, 0.12) !important;
+    border-color: rgba(99, 102, 241, 0.35) !important;
+    color: #4338ca !important;
+}
+
+[data-theme="light"] #m-modal-ota-restore #m-modal-apk-badge {
+    background: rgba(99, 102, 241, 0.16) !important;
+    color: #4338ca !important;
+}

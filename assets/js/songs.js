@@ -7630,8 +7630,22 @@ const BANNED_NON_SONG_IDS = new Set([
     'lpukv7wjy6o'
 ]);
 
-// 헬퍼 함수들
+// 헬퍼 함수들 (O(1) 메모리 캐시 + 정규식 사전 컴파일 최적화)
+let _cachedAllSongs = null;
+let _cachedSongByIdMap = null;
+const _titleCleanCache = new Map();
+
+function invalidateSongsCache() {
+    _cachedAllSongs = null;
+    _cachedSongByIdMap = null;
+}
+window.invalidateSongsCache = invalidateSongsCache;
+
 function getAllSongs() {
+    if (_cachedAllSongs !== null) {
+        return _cachedAllSongs;
+    }
+
     let custom = [];
     let autoDetected = [];
     try {
@@ -7755,6 +7769,23 @@ function getAllSongs() {
         }
     } catch (e) {}
 
+    // O(1) 검색 및 초고속 정렬용 인덱스 필드 + ID Lookup Map 구축
+    const byIdMap = new Map();
+    for (let i = 0; i < all.length; i++) {
+        const s = all[i];
+        const dStr = s.publishedAt || s.releaseDate || '';
+        s._time = dStr ? (new Date(dStr).getTime() || 0) : (s.addedAt || s._catalogIndex || 0);
+        s._searchText = `${s.title || ''} ${s.artist || ''} ${s.originalArtist || ''} ${s.streamTitle || ''}`.toLowerCase();
+        if (s.id) byIdMap.set(s.id, s);
+        if (s.youtubeId) {
+            if (!byIdMap.has(s.youtubeId)) byIdMap.set(s.youtubeId, s);
+            if (!byIdMap.has(`stel-${s.youtubeId}`)) byIdMap.set(`stel-${s.youtubeId}`, s);
+            if (!byIdMap.has(`auto-${s.youtubeId}`)) byIdMap.set(`auto-${s.youtubeId}`, s);
+        }
+    }
+
+    _cachedAllSongs = all;
+    _cachedSongByIdMap = byIdMap;
     return all;
 }
 
@@ -7933,13 +7964,36 @@ const ENGLISH_TITLES_SET = new Set([
     'kick back', 'pretender', 'lemon', 'tomboy', 'joker', 'aizo'
 ]);
 
+// 사전 컴파일된 일본어 곡 매핑 사전 (매 호출 RegExp 생성 방지)
+const JAPANESE_SONG_EXACT_MAP = new Map();
+const JAPANESE_SONG_REGEX_LIST = [];
+for (const [key, val] of Object.entries(JAPANESE_SONG_MAP)) {
+    if (key === '아이돌' || key === 'アイドル') continue;
+    const formatted = `${val[0]} (${val[1]})`;
+    JAPANESE_SONG_EXACT_MAP.set(key.toLowerCase(), formatted);
+    JAPANESE_SONG_REGEX_LIST.push({
+        re: new RegExp(`(^|[\\s\\[\\(『【])${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[\\s\\]\\)』】])`, 'i'),
+        formatted
+    });
+}
+
 function cleanAndKoreanizeTitle(title, rawTitle = '') {
     if (!title) return '';
+    const cacheKey = rawTitle ? `${title}\u0000${rawTitle}` : title;
+    const cachedTitle = _titleCleanCache.get(cacheKey);
+    if (cachedTitle !== undefined) return cachedTitle;
+
+    const saveCache = (res) => {
+        if (_titleCleanCache.size > 1200) _titleCleanCache.clear();
+        _titleCleanCache.set(cacheKey, res);
+        return res;
+    };
+
     let t = title.trim();
-    if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(t) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return '별이 시작되는 곳';
-    if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(t) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return '打上花火 (타상연화)';
-    if (/혁명도중|革命道中/i.test(t) || /혁명도중|革命道中/i.test(rawTitle)) return '革命道中 (혁명도중)';
-    if (/CH4NGE|체인지/i.test(t) || /CH4NGE|체인지/i.test(rawTitle)) return 'CH4NGE (체인지)';
+    if (/Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(t) || /Where\s*Stars\s*Begin|별이\s*시작되는\s*곳/i.test(rawTitle)) return saveCache('별이 시작되는 곳');
+    if (/타상연화|打上花火|쏘아올린\s*불꽃/i.test(t) || /타상연화|打上花火|쏘아올린\s*불꽃/i.test(rawTitle)) return saveCache('打上花火 (타상연화)');
+    if (/혁명도중|革命道中/i.test(t) || /혁명도중|革命道中/i.test(rawTitle)) return saveCache('革命道中 (혁명도중)');
+    if (/CH4NGE|체인지/i.test(t) || /CH4NGE|체인지/i.test(rawTitle)) return saveCache('CH4NGE (체인지)');
     const raw = rawTitle ? rawTitle.trim() : '';
 
     // 0. 유튜브 메타데이터 및 채널 접두어 제거
@@ -7960,21 +8014,19 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     t = t.replace(/(?<=[\]】」』\)])\s*[^\[\(\]】」』\/\|ㅣ\-]*?(?:Cover|불러보았다|歌ってみた|Cover곡|커버)[\s\S]*$/gi, '').trim();
     t = t.replace(/\s*(?:시즈키\s*토아|코가네\s*랑|하나요\s*히요리|토키노\s*메리|아야츠노\s*유니|아오쿠모\s*린|시라유키\s*히나|유즈하\s*리코|하나코\s*나나|텐코\s*시부키|아카네\s*리제|아라하시\s*타비|아이리\s*칸나|네네코\s*마시로)\s*Cover.*$/gi, '').trim();
 
-    // 1-2. 스마트 정규식: Nested 일본어 인용구 추출 (예: '아 프리오리 (Mrs. GREEN APPLE 「ア・プリオリ」)' -> 'ア・プリオリ (아 프리오리)')
+    // 1-2. 스마트 정규식: Nested 일본어 인용구 추출
     const mNested = t.match(/^([가-힣a-zA-Z0-9\s]+)\s*[\(\[][^\)\]]*?[「『]([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s0-9\.\-!·・]+)[」』][^\)\]]*?[\)\]]$/);
     if (mNested) {
-        const kor = mNested[1].trim();
-        const jap = mNested[2].trim();
-        return `${jap} (${kor})`;
+        return saveCache(`${mNested[2].trim()} (${mNested[1].trim()})`);
     }
 
-    // 1-3. 스마트 정규식: 괄호 내 일본어/원곡자 분리 (예: '제육감 [第六感 l Reol]' -> '第六感 (제육감)', '호랑풍류가 [나와 호랑이님 OST]' -> '호랑풍류가 (나와 호랑이님 OST)')
+    // 1-3. 스마트 정규식: 괄호 내 일본어/원곡자 분리
     const mBracket = t.match(/^([가-힣a-zA-Z0-9\s,\.!\?]+)\s*[\[【「『\(]([\s\S]+?)[\]】」』\)]$/);
     if (mBracket) {
         const prefix = mBracket[1].trim();
         const inside = mBracket[2].trim();
         if (/OST/i.test(inside)) {
-            return `${prefix} (${inside})`;
+            return saveCache(`${prefix} (${inside})`);
         }
         const parts = inside.split(/[\/\|lIㅣ:\-]/).map(p => p.trim()).filter(Boolean);
         let japPart = null;
@@ -7986,14 +8038,9 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
         }
         if (japPart) {
             const japClean = japPart.replace(/^[「『'"“‘]+|[」』'"”’]+$/g, '').trim();
-            if (/[가-힣]/.test(prefix)) {
-                return `${japClean} (${prefix})`;
-            } else {
-                return japClean;
-            }
+            return saveCache(/[가-힣]/.test(prefix) ? `${japClean} (${prefix})` : japClean);
         }
     }
-
 
     // 2. 파이프 분리 (아티스트 | 곡제목)
     const pipeMatch = t.match(/^[^\|ㅣ]+[\|ㅣ]\s*[\'‘"“]([^\'’"”]+)[\'’"”]/);
@@ -8009,7 +8056,7 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
     t = t.replace(/^[\'‘"“](.+)[\'’"”]$/, '$1').trim();
     t = t.replace(/^[\|\-ㅣ/]\s*/, '').replace(/\s*[\|\-ㅣ/]$/, '').trim();
 
-    // 3. 한국어 고유 곡명 표준 정리 (영어 부제 및 한자 제거)
+    // 3. 한국어 고유 곡명 표준 정리
     const KOREAN_EXACT = {
         '히로인이 되고 싶어 (I Want to Be a Heroine)': '히로인이 되고 싶어',
         '삐질게 (BBiJilGe)': '삐질게',
@@ -8031,126 +8078,113 @@ function cleanAndKoreanizeTitle(title, rawTitle = '') {
         '호랑풍류가': '호랑풍류가 (나와 호랑이님 OST)',
         '호랑풍류가 (나와 호랑이님 OST)': '호랑풍류가 (나와 호랑이님 OST)'
     };
-    if (KOREAN_EXACT[t]) return KOREAN_EXACT[t];
+    if (KOREAN_EXACT[t]) return saveCache(KOREAN_EXACT[t]);
 
     const fullText = (t + ' ' + raw).trim();
     const fullLower = fullText.toLowerCase();
 
-    // 특정 OST 및 뮤지컬 곡
-    if (fullLower.includes('loop in june')) return 'Loop in June (명조:워더링 웨이브 OST)';
-    if (fullLower.includes('confrontation') && fullText.includes('지킬')) return 'Confrontation (지킬 앤 하이드 OST)';
-    if (fullLower.includes('alive 2') && fullText.includes('지킬')) return 'Alive 2 (지킬 앤 하이드 OST)';
-    if (fullLower.includes('land of lola') && fullText.includes('킹키부츠')) return 'Land of Lola (킹키부츠 OST)';
-    if (fullText.includes('웃는남자')) return '웃는남자 (뮤지컬 웃는남자 OST)';
-    if (fullText.includes('여우의 별자리') && fullText.includes('명조')) return '여우의 별자리 (명조:워더링 웨이브 OST)';
+    if (fullLower.includes('loop in june')) return saveCache('Loop in June (명조:워더링 웨이브 OST)');
+    if (fullLower.includes('confrontation') && fullText.includes('지킬')) return saveCache('Confrontation (지킬 앤 하이드 OST)');
+    if (fullLower.includes('alive 2') && fullText.includes('지킬')) return saveCache('Alive 2 (지킬 앤 하이드 OST)');
+    if (fullLower.includes('land of lola') && fullText.includes('킹키부츠')) return saveCache('Land of Lola (킹키부츠 OST)');
+    if (fullText.includes('웃는남자')) return saveCache('웃는남자 (뮤지컬 웃는남자 OST)');
+    if (fullText.includes('여우의 별자리') && fullText.includes('명조')) return saveCache('여우의 별자리 (명조:워더링 웨이브 OST)');
 
-    // 3D 라이브 특별 곡
-    if (fullLower.includes('dance the night away')) return 'Dance The Night Away';
-    if (fullLower.includes('dynamite') && (fullLower.includes('bts') || fullText.includes('방탄소년단'))) return 'Dynamite';
-    if (fullText.includes('까탈레나') || fullLower.includes('catallena')) return '까탈레나';
-    if (fullLower.includes('100% for you')) return '100% for You';
+    if (fullLower.includes('dance the night away')) return saveCache('Dance The Night Away');
+    if (fullLower.includes('dynamite') && (fullLower.includes('bts') || fullText.includes('방탄소년단'))) return saveCache('Dynamite');
+    if (fullText.includes('까탈레나') || fullLower.includes('catallena')) return saveCache('까탈레나');
+    if (fullLower.includes('100% for you')) return saveCache('100% for You');
 
-    // 대표 영어 및 일본어 특별 타이틀 정규화
-    if (fullLower.includes('deja vu') && fullLower.includes('olivia')) return 'Deja vu';
-    if (fullLower.includes('drivers license')) return 'drivers license';
-    if (fullLower.includes('mela')) return 'Mela!';
-    if (fullLower.includes('dancehall')) return 'Dancehall';
-    if (fullLower.includes('star trail')) return 'STAR TRAIL';
-    if (fullLower.includes('high hopes')) return 'High Hopes';
-    if (fullLower.includes('acacia') && fullLower.includes('bump')) return 'Acacia';
-    if (fullLower.includes('one last kiss')) return 'One Last Kiss';
-    if (fullLower.includes('stellar stellar')) return 'Stellar Stellar';
-    if (fullLower.includes('milky way')) return 'Milky Way';
-    if (fullLower.includes('onegai darling') || fullText.includes('おねがいダーリン')) return 'おねがいダーリン (부탁해 달링)';
-    if (fullLower.includes('waste sorting squad') || fullLower.includes('gomi bunbetsudan')) return 'われら！ゴミ分別隊 (우리! 쓰레기 분리수거단)';
-    if (fullLower.includes('melt cpk') || (fullLower.includes('melt') && fullLower.includes('supercell'))) return 'メルト (CPK! Remix)';
+    if (fullLower.includes('deja vu') && fullLower.includes('olivia')) return saveCache('Deja vu');
+    if (fullLower.includes('drivers license')) return saveCache('drivers license');
+    if (fullLower.includes('mela')) return saveCache('Mela!');
+    if (fullLower.includes('dancehall')) return saveCache('Dancehall');
+    if (fullLower.includes('star trail')) return saveCache('STAR TRAIL');
+    if (fullLower.includes('high hopes')) return saveCache('High Hopes');
+    if (fullLower.includes('acacia') && fullLower.includes('bump')) return saveCache('Acacia');
+    if (fullLower.includes('one last kiss')) return saveCache('One Last Kiss');
+    if (fullLower.includes('stellar stellar')) return saveCache('Stellar Stellar');
+    if (fullLower.includes('milky way')) return saveCache('Milky Way');
+    if (fullLower.includes('onegai darling') || fullText.includes('おねがいダーリン')) return saveCache('おねがいダーリン (부탁해 달링)');
+    if (fullLower.includes('waste sorting squad') || fullLower.includes('gomi bunbetsudan')) return saveCache('われら！ゴミ分別隊 (우리! 쓰레기 분리수거단)');
+    if (fullLower.includes('melt cpk') || (fullLower.includes('melt') && fullLower.includes('supercell'))) return saveCache('メルト (CPK! Remix)');
 
-    // 후미 아티스트 및 인용구 제거
     t = t.replace(/\s*-\s*[「『【\[].*?[」』】\]]\s*$/, '');
     t = t.replace(/\s*\[(?:타다노\s*카에데|只野\s*楓)[^\]]*\]\s*$/, '');
 
-    // 영어 제목에 한국어 번역이 괄호로 붙은 경우: 'English (한글)' -> 영어 제목 원본 유지 ('영어제목 미번역' 원칙)
     const mEngKor = t.match(/^([a-zA-Z0-9\s\?!\.●\'-]+)\s*\(([가-힣\s\?!\.●\'-]+)\)$/);
     if (mEngKor) {
         const engCandidate = mEngKor[1].trim();
         const engLow = engCandidate.toLowerCase();
         if (ENGLISH_TITLES_SET.has(engLow) || /^[a-zA-Z0-9\s\?!\.●\'-]+$/.test(engCandidate)) {
             if (!JAPANESE_SONG_MAP[engCandidate] && !JAPANESE_SONG_MAP[engLow]) {
-                return engCandidate;
+                return saveCache(engCandidate);
             }
         }
     }
 
-    // 영어 곡 원문 보존 (한국어 번역/괄호 미적용)
     const tCleanAlnum = t.replace(/[^a-zA-Z0-9\s\?!\.●]/g, '').trim().toLowerCase();
     if (ENGLISH_TITLES_SET.has(tCleanAlnum)) {
-        return t.trim();
+        return saveCache(t.trim());
     }
 
-    // 아이돌 예외 (긍지높은 아이돌 등과 구분)
     if (['아이돌', 'アイドル', '아이돌 (YOASOBI)', 'アイドル (YOASOBI)'].includes(t.trim())) {
-        return 'アイドル (아이돌)';
+        return saveCache('アイドル (아이돌)');
     }
 
-    // 일본어 곡 원곡명 (번역명) 매핑 검사
+    // 일본어 곡 원곡명 (번역명) 매핑 검사 (O(1) Map + 사전 컴파일 RegExp)
     const tLow = t.toLowerCase();
-    for (const [key, val] of Object.entries(JAPANESE_SONG_MAP)) {
-        if (key === '아이돌' || key === 'アイドル') continue;
-        if (key.toLowerCase() === tLow) {
-            return `${val[0]} (${val[1]})`;
+    const exactMatch = JAPANESE_SONG_EXACT_MAP.get(tLow);
+    if (exactMatch) {
+        return saveCache(exactMatch);
+    }
+
+    for (let i = 0; i < JAPANESE_SONG_REGEX_LIST.length; i++) {
+        const entry = JAPANESE_SONG_REGEX_LIST[i];
+        if (entry.re.test(t)) {
+            return saveCache(entry.formatted);
         }
     }
 
-    for (const [key, val] of Object.entries(JAPANESE_SONG_MAP)) {
-        if (key === '아이돌' || key === 'アイドル') continue;
-        const re = new RegExp(`(^|[\\s\\[\\(『【])${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[\\s\\]\\)』】])`, 'i');
-        if (re.test(t)) {
-            return `${val[0]} (${val[1]})`;
-        }
-    }
-
-    // '한글 (일본어)' 형태인 경우 -> '일본어 (한글)'로 역전 정규화!
     const mRev = t.match(/^([가-힣\s0-9]+)\s*[\(\[『【]([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s0-9\.\-!]+)[\)\]』】]$/);
     if (mRev) {
-        return `${mRev[2].trim()} (${mRev[1].trim()})`;
+        return saveCache(`${mRev[2].trim()} (${mRev[1].trim()})`);
     }
 
-    // 이미 '일본어 (한글)' 형태인 경우 정규화 유지
     const mStd = t.match(/^([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF\s0-9\.\-!]+)\s*\(([가-힣\s0-9]+)\)$/);
     if (mStd) {
-        return `${mStd[1].trim()} (${mStd[2].trim()})`;
+        return saveCache(`${mStd[1].trim()} (${mStd[2].trim()})`);
     }
 
-    // 한국어 곡 뒤에 영어 부제가 붙어 있는 경우: '한국어 (English)' -> 순수 한국어만 보존
     const mKorEng = t.match(/^([가-힣\s0-9]+)\s*\([a-zA-Z\s0-9\.\-!]+\)$/);
     if (mKorEng) {
-        return mKorEng[1].trim();
+        return saveCache(mKorEng[1].trim());
     }
 
-    // 트레일링 아티스트 태그 '제목 - 아티스트' 분리 처리
     if (t.includes(' - ')) {
         const parts = t.split(' - ');
         if (parts.length === 2) {
             const rightLow = parts[1].trim().toLowerCase();
             if (['yoasobi', 'bump of chicken', 'olivia rodrigo', 'mrs. green apple', 'vaundy', 'ado', 'tokotoko', 'hump back', 'kenshi yonezu', 'biz', 'wonpil', 'day6', 'fuwari', 'halcali'].some(k => rightLow.includes(k))) {
-                return cleanAndKoreanizeTitle(parts[0].trim(), rawTitle);
+                return saveCache(cleanAndKoreanizeTitle(parts[0].trim(), rawTitle));
             }
         }
     }
 
-    return t;
+    return saveCache(t);
 }
 window.cleanAndKoreanizeTitle = cleanAndKoreanizeTitle;
 
 function getSongById(id) {
     if (!id) return null;
-    const all = getAllSongs();
-    let found = all.find(s => s.id === id);
-    if (!found) {
-        const pureId = id.replace(/^(auto|stel)-/, '');
-        found = all.find(s => s.youtubeId === id || s.youtubeId === pureId || s.id === `stel-${pureId}` || s.id === `auto-${pureId}`);
+    getAllSongs();
+    if (_cachedSongByIdMap) {
+        const direct = _cachedSongByIdMap.get(id);
+        if (direct) return direct;
+        const pureId = String(id).replace(/^(auto|stel)-/, '');
+        return _cachedSongByIdMap.get(pureId) || _cachedSongByIdMap.get(`stel-${pureId}`) || _cachedSongByIdMap.get(`auto-${pureId}`) || null;
     }
-    return found || null;
+    return null;
 }
 
 function getSongsByMember(memberId) {
@@ -8233,6 +8267,7 @@ function addCustomSong(songData) {
     if (window.StorageManager) {
         window.StorageManager.addCustomSong(newSong);
     }
+    invalidateSongsCache();
     return newSong;
 }
 

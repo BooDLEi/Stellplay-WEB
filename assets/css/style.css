@@ -55,7 +55,8 @@ button,
     --bg-card: rgba(18, 20, 32, 0.75);
     --bg-card-hover: rgba(28, 32, 50, 0.85);
     --bg-glass: rgba(15, 17, 28, 0.65);
-    --bg-elevated: rgba(25, 29, 46, 0.95);
+    --bg-surface: #141726;
+    --bg-elevated: #181c2e;
     --border-subtle: rgba(255, 255, 255, 0.08);
     --border-active: rgba(255, 255, 255, 0.2);
 
@@ -94,6 +95,7 @@ button,
     --bg-card: rgba(255, 255, 255, 0.88);
     --bg-card-hover: rgba(241, 245, 249, 0.96);
     --bg-glass: rgba(255, 255, 255, 0.85);
+    --bg-surface: #f1f5f9;
     --bg-elevated: #ffffff;
     --border-subtle: rgba(0, 0, 0, 0.08);
     --border-active: rgba(0, 0, 0, 0.16);
@@ -688,6 +690,8 @@ body::after {
     height: calc(100vh - var(--mini-player-height));
     overflow-y: auto;
     overflow-x: hidden;
+    transform: translateZ(0);
+    backface-visibility: hidden;
     z-index: 50;
 }
 
@@ -986,6 +990,8 @@ body::after {
     left: var(--sidebar-width);
     right: 0;
     z-index: 45;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .topbar.topbar-search-only .search-box-wrapper {
@@ -3622,7 +3628,8 @@ body::after {
     pointer-events: auto;
 }
 
-.modal-card {
+.modal-card,
+.modal-box {
     background: var(--bg-elevated);
     border: 1px solid var(--border-active);
     border-radius: var(--radius-lg);
@@ -3636,6 +3643,7 @@ body::after {
     gap: 16px;
     overflow: hidden;
     box-sizing: border-box;
+    color: var(--text-primary);
 }
 
 .modal-card form {
@@ -5524,8 +5532,8 @@ body.multiselect-active .track-number {
 }
 
 .pc-member-logo-box {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 11px;
     display: flex;
     align-items: center;
@@ -5535,9 +5543,13 @@ body.multiselect-active .track-number {
 }
 
 .pc-member-logo-box.is-unit-logo {
-    background: rgba(12, 14, 24, 0.72);
-    padding: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    width: 100%;
+    max-width: 116px;
+    height: 48px;
+    background: rgba(12, 14, 24, 0.86);
+    padding: 5px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
 }
 
 .pc-member-logo-img {
@@ -6044,6 +6056,249 @@ body.multiselect-active .track-number {
 [data-theme="light"] .pc-ctx-item.danger:hover {
     background: rgba(239, 68, 68, 0.1);
     color: #b91c1c;
+}
+
+/* ===================================================================
+   v1.13.1 확장: 분류·필터 칩 행, 통합 멤버/그룹 피커, 모달 대비, 50곡 무한 스크롤
+=================================================================== */
+
+/* 홈 필터 툴바 하단 활성 필터 칩 행 */
+.pc-active-filters-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 4px 0 8px 0;
+    padding: 0 2px;
+}
+
+.pc-active-filter-clear-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+    padding: 0 11px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px dashed rgba(255, 255, 255, 0.22);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.pc-active-filter-clear-all:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #fca5a5;
+}
+
+[data-theme="light"] .pc-active-filter-clear-all {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.2);
+    color: #475569;
+}
+
+[data-theme="light"] .pc-active-filter-clear-all:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #dc2626;
+}
+
+/* 모달 불투명 표면 및 라이트모드 패치노트/롤백 가독성 보강 */
+[data-theme="light"] .modal-card,
+[data-theme="light"] .modal-box {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.14);
+    box-shadow: 0 22px 54px rgba(15, 23, 42, 0.2);
+    color: #0f172a;
+}
+
+[data-theme="light"] #pc-patchnotes-content {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] #pc-ota-quick-rollback-box {
+    background: rgba(245, 158, 11, 0.12) !important;
+    border-color: rgba(217, 119, 6, 0.4) !important;
+}
+
+[data-theme="light"] #pc-ota-quick-rollback-box > div:first-child {
+    color: #b45309 !important;
+}
+
+[data-theme="light"] .pc-ota-version-card,
+[data-theme="light"] #pc-ota-versions-list > div {
+    border-color: rgba(15, 23, 42, 0.12);
+}
+
+/* 곡 추가 / 곡 수정 통합 멤버·분류 피커 */
+#modal-add-song .modal-card,
+#modal-edit-song .modal-card {
+    max-width: 660px;
+    max-height: min(92vh, 820px);
+}
+
+.pc-unified-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pc-unified-picker-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.pc-unified-picker .btn-detect-chips {
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgba(124, 92, 252, 0.15);
+    color: #c4b5fd;
+    border: 1px solid rgba(124, 92, 252, 0.35);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.pc-unified-picker .btn-detect-chips:hover {
+    background: rgba(124, 92, 252, 0.28);
+    color: #ffffff;
+}
+
+[data-theme="light"] .pc-unified-picker .btn-detect-chips {
+    background: rgba(124, 92, 252, 0.1);
+    color: #6d28d9;
+}
+
+.pc-unified-picker-body {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--border-subtle);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+[data-theme="light"] .pc-unified-picker-body {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+.pc-unified-member-grid .pc-member-logo-card {
+    padding: 8px 5px;
+}
+
+.pc-unified-member-grid .pc-member-logo-box {
+    width: 42px;
+    height: 42px;
+}
+
+.pc-unified-member-grid .pc-member-logo-box.is-unit-logo {
+    width: 100%;
+    max-width: 106px;
+    height: 44px;
+    padding: 4px 7px;
+}
+
+.pc-unified-unclassified-note {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding: 6px 2px;
+}
+
+.pc-unified-selected-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 30px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}
+
+[data-theme="light"] .pc-unified-selected-bar {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+.pc-unified-selected-label {
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-right: 2px;
+}
+
+.pc-unified-selected-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: rgba(124, 92, 252, 0.18);
+    border: 1px solid rgba(124, 92, 252, 0.42);
+    color: #ddd6fe;
+    font-family: inherit;
+    font-size: 0.73rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+[data-theme="light"] .pc-unified-selected-chip {
+    background: rgba(124, 92, 252, 0.12);
+    border-color: rgba(124, 92, 252, 0.35);
+    color: #5b21b6;
+}
+
+/* 50곡 무한 스크롤 센티넬 & 푸터 */
+.tracks-load-sentinel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 12px 24px 12px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.tracks-load-more-btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tracks-load-more-btn:hover {
+    background: rgba(124, 92, 252, 0.16);
+    border-color: var(--theme-color);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .tracks-load-more-btn {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.14);
+    color: #334155;
 }
 
 

@@ -130,8 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 홈 미니멀 툴바 & 분류/필터 모달 & 커스텀 드롭다운 & 우클릭 메뉴
         btnOpenPcFilter: document.getElementById('btn-open-pc-filter'),
         pcFilterActiveBadge: document.getElementById('pc-filter-active-badge'),
-        pcActiveFilterSummary: document.getElementById('pc-active-filter-summary'),
-        pcActiveFilterSummaryText: document.getElementById('pc-active-filter-summary-text'),
+        pcActiveFiltersRow: document.getElementById('pc-active-filters-row'),
         pcSortDropdownWrap: document.getElementById('pc-sort-dropdown-wrap'),
         pcSortDropdownBtn: document.getElementById('pc-sort-dropdown-btn'),
         pcSortDropdownLabel: document.getElementById('pc-sort-dropdown-label'),
@@ -153,13 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formPcCustomGroup: document.getElementById('form-pc-custom-group'),
         pcContextMenu: document.getElementById('pc-track-context-menu'),
 
-        // 멤버 필터 바 및 라디오
-        memberMajorRow: document.getElementById('member-major-row'),
-        memberSubDivider: document.getElementById('member-sub-divider'),
-        memberSubRow: document.getElementById('member-sub-row'),
-        majorBtns: document.querySelectorAll('.member-major-btn'),
-        btnMemberRadio: document.getElementById('btn-member-radio'),
-        memberRadioText: document.getElementById('member-radio-text'),
+        // 툴바 컨트롤
         typeFilterBtns: document.querySelectorAll('.type-filter-btn'),
         trackCountText: document.getElementById('track-count-text'),
         sortOrderSelect: document.getElementById('sort-order-select'),
@@ -182,9 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         homeTopScrollbarInner: document.getElementById('home-top-scrollbar-inner'),
         plDetailTopScrollbarWrap: document.getElementById('pl-detail-top-scrollbar-wrap'),
         plDetailTopScrollbarInner: document.getElementById('pl-detail-top-scrollbar-inner'),
-        heroBanner: document.getElementById('hero-banner'),
-        heroPlayAllBtn: document.getElementById('btn-hero-play-all'),
-        heroSabiBtn: document.getElementById('btn-hero-sabi-mode'),
 
         // 미니 플레이어
         miniPlayerBar: document.getElementById('mini-player-bar'),
@@ -457,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const initialSettings = window.StorageManager ? window.StorageManager.getSettings() : {};
         applyThemeMode(initialSettings.theme || 'dark');
-        initMemberButtons();
         initMoodShelf();
         initPcFilterModal();
         initPcCustomGroupModal();
@@ -477,104 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             triggerBackgroundSync(false);
         }, 4000);
-    }
-
-    function initMemberButtons() {
-        const majorBtns = dom.majorBtns && dom.majorBtns.length > 0 ? dom.majorBtns : document.querySelectorAll('.member-major-btn');
-        if (majorBtns && majorBtns.length > 0) {
-            majorBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const majorKey = btn.dataset.major;
-                    selectMajorFilter(majorKey);
-                });
-            });
-        }
-        renderSubFilterRow();
-    }
-
-    function selectMajorFilter(majorKey) {
-        state.selectedMajor = majorKey;
-        state.selectedSub = null;
-        state.currentFilterMember = majorKey;
-
-        const majorBtns = dom.majorBtns && dom.majorBtns.length > 0 ? dom.majorBtns : document.querySelectorAll('.member-major-btn');
-        if (majorBtns) {
-            majorBtns.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.major === majorKey);
-            });
-        }
-
-        selectMajorTheme(majorKey);
-
-        // 라디오 버튼 텍스트 업데이트
-        if (dom.memberRadioText) {
-            let label = '스텔 라디오 믹스';
-            if (majorKey === 'group') label = '스텔라이브 라디오';
-            else if (majorKey === 'g1') label = '1기 컬렉션 라디오';
-            else if (majorKey === 'g2') label = '2기 유니버스 라디오';
-            else if (majorKey === 'g3') label = '3기 클리셰 라디오';
-            else if (majorKey === 'g4') label = '4기 어비스 라디오';
-            dom.memberRadioText.textContent = label;
-        }
-
-        renderSubFilterRow();
-        requestAnimationFrame(() => {
-            refreshTrackList();
-        });
-    }
-
-    function renderSubFilterRow() {
-        if (!dom.memberSubRow) return;
-        const items = SUB_FILTER_CONFIG[state.selectedMajor] || [];
-        dom.memberSubRow.innerHTML = '';
-
-        if (items.length === 0) {
-            if (dom.memberSubDivider) dom.memberSubDivider.style.display = 'none';
-            dom.memberSubRow.style.display = 'none';
-            return;
-        }
-
-        if (dom.memberSubDivider) dom.memberSubDivider.style.display = 'block';
-        dom.memberSubRow.style.display = 'flex';
-
-        items.forEach(item => {
-            const btn = document.createElement('button');
-            btn.className = `member-text-btn member-sub-btn ${item.btnClass || 'btn-white'} ${state.selectedSub === item.id ? 'active' : ''}`;
-            btn.dataset.sub = item.id;
-            btn.textContent = item.name;
-
-            btn.addEventListener('click', () => {
-                if (state.selectedSub === item.id) {
-                    state.selectedSub = null;
-                    btn.classList.remove('active');
-                    selectMajorTheme(state.selectedMajor);
-                } else {
-                    state.selectedSub = item.id;
-                    dom.memberSubRow.querySelectorAll('.member-sub-btn').forEach(b => {
-                        b.classList.toggle('active', b.dataset.sub === item.id);
-                    });
-                    if (window.MEMBERS && window.MEMBERS[item.id]) {
-                        applyMemberTheme(item.id);
-                    }
-                }
-
-                if (dom.memberRadioText) {
-                    if (state.selectedSub && window.MEMBERS && window.MEMBERS[state.selectedSub]) {
-                        dom.memberRadioText.textContent = `${window.MEMBERS[state.selectedSub].name} 라디오`;
-                    } else if (state.selectedSub === 'unit') {
-                        dom.memberRadioText.textContent = '유닛 & 듀엣 라디오';
-                    } else if (state.selectedSub === 'full-group') {
-                        dom.memberRadioText.textContent = '스텔라이브 단체 라디오';
-                    }
-                }
-
-                requestAnimationFrame(() => {
-                    refreshTrackList();
-                });
-            });
-
-            dom.memberSubRow.appendChild(btn);
-        });
     }
 
     const MEMBER_BUTTON_COLORS = {
@@ -1242,34 +1133,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 4. 검색어 필터
+        // 4. 검색어 필터 (사전 계산된 _searchText 활용으로 O(N) 고속 매칭)
         if (state.searchQuery) {
             const q = state.searchQuery.toLowerCase();
-            songs = songs.filter(s =>
-                s.title.toLowerCase().includes(q) ||
-                s.artist.toLowerCase().includes(q) ||
-                (s.originalArtist && s.originalArtist.toLowerCase().includes(q)) ||
-                (s.streamTitle && s.streamTitle.toLowerCase().includes(q))
-            );
+            songs = songs.filter(s => {
+                if (s._searchText) return s._searchText.includes(q);
+                return (s.title && s.title.toLowerCase().includes(q)) ||
+                    (s.artist && s.artist.toLowerCase().includes(q)) ||
+                    (s.originalArtist && s.originalArtist.toLowerCase().includes(q)) ||
+                    (s.streamTitle && s.streamTitle.toLowerCase().includes(q));
+            });
         }
 
-        // 5. 정렬 (최신순 / 오래된순 / 곡명순)
+        // 5. 정렬 (최신순 / 오래된순 / 곡명순 - 사전 계산된 _time 활용)
         const sortOrder = state.sortOrder || 'latest';
         if (sortOrder === 'latest') {
             songs.sort((a, b) => {
-                const dateA = a.publishedAt || a.releaseDate || '';
-                const dateB = b.publishedAt || b.releaseDate || '';
-                const timeA = dateA ? new Date(dateA).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0));
-                const timeB = dateB ? new Date(dateB).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0));
+                const timeA = a._time !== undefined ? a._time : (a.addedAt || a._catalogIndex || 0);
+                const timeB = b._time !== undefined ? b._time : (b.addedAt || b._catalogIndex || 0);
                 if (timeA !== timeB) return timeB - timeA;
                 return (a._catalogIndex || 0) - (b._catalogIndex || 0);
             });
         } else if (sortOrder === 'oldest') {
             songs.sort((a, b) => {
-                const dateA = a.publishedAt || a.releaseDate || '';
-                const dateB = b.publishedAt || b.releaseDate || '';
-                const timeA = dateA ? new Date(dateA).getTime() : (a.addedAt || (a._catalogIndex !== undefined ? a._catalogIndex : 0));
-                const timeB = dateB ? new Date(dateB).getTime() : (b.addedAt || (b._catalogIndex !== undefined ? b._catalogIndex : 0));
+                const timeA = a._time !== undefined ? a._time : (a.addedAt || a._catalogIndex || 0);
+                const timeB = b._time !== undefined ? b._time : (b.addedAt || b._catalogIndex || 0);
                 if (timeA !== timeB) return timeA - timeB;
                 return (a._catalogIndex || 0) - (b._catalogIndex || 0);
             });
@@ -1558,6 +1446,164 @@ document.addEventListener('DOMContentLoaded', () => {
     window.startMusicStation = startMusicStation;
     window.buildMusicStationQueue = buildMusicStationQueue;
 
+    const PC_TRACK_PAGE_SIZE = 50;
+    let pcHomeRenderedCount = 0;
+    let pcHomeRenderToken = 0;
+    let pcHomeSentinelObserver = null;
+    let pcHomeScrollCheckBound = false;
+
+    function buildPcTrackRowHtml(song, index, customSabis) {
+        const isPlayingThis = player.currentSong?.id === song.id && player.isPlaying;
+        const isCurrent = player.currentSong?.id === song.id;
+        const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
+        const durationStr = formatTime(song.duration);
+
+        const isCustomSabi = !!customSabis[song.id];
+        const effectiveSabi = customSabis[song.id] || song.sabi;
+        const sabiStr = effectiveSabi ? `${formatTime(effectiveSabi.start)} ~ ${formatTime(effectiveSabi.end)}` : '전체';
+
+        let badgeClass = 'badge-cover';
+        let badgeText = '커버곡';
+        if (song.type === 'original') {
+            badgeClass = 'badge-original';
+            badgeText = '오리지널';
+        } else if (song.type === 'ost') {
+            badgeClass = 'badge-ost';
+            badgeText = '공식 OST';
+        } else if (song.type === 'featuring') {
+            badgeClass = 'badge-featuring';
+            badgeText = '피처링';
+        } else if (song.type === 'live') {
+            badgeClass = 'badge-live';
+            badgeText = '3D 라이브';
+        } else if (song.type === 'stream') {
+            badgeClass = 'badge-stream';
+            badgeText = '노래방송 Live';
+        }
+
+        const isSelected = selectedSongIds.has(song.id);
+
+        return `
+            <div class="track-row ${isCurrent ? 'active' : ''} ${isPlayingThis ? 'playing' : ''} ${isSelected ? 'selected' : ''}" data-song-id="${song.id}" data-index="${index}">
+                <div class="track-col-index">
+                    <input type="checkbox" class="track-select-chk" data-song-id="${song.id}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation();">
+                    <span class="track-number">${String(index + 1).padStart(2, '0')}</span>
+                    <div class="track-playing-equalizer">
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                    </div>
+                </div>
+                <div class="track-col-info">
+                    <div class="track-thumb-box">
+                        <img class="track-thumb-img" src="${thumbUrl}" alt="${song.title}" width="46" height="46" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'46\' height=\'46\' viewBox=\'0 0 24 24\' fill=\'%236c5ce7\'><rect width=\'24\' height=\'24\' fill=\'%231e202e\'/><polygon points=\'10,8 16,12 10,16\' fill=\'%238b5cf6\'/></svg>'">
+                        <div class="track-thumb-play-overlay">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        </div>
+                    </div>
+                    <div class="track-title-meta">
+                        <span class="track-title-text">${song.title}</span>
+                        <span class="track-artist-text">${song.artist}</span>
+                    </div>
+                </div>
+                <div>
+                    ${song.isAutoAdded ? '<span class="badge-tag badge-new" style="margin-right: 4px;">NEW</span>' : ''}
+                    <span class="badge-tag ${badgeClass}">
+                        ${badgeText}
+                    </span>
+                </div>
+                <div class="track-col-sabi" data-id="${song.id}" style="cursor: pointer;" title="클릭하여 사비(후렴구) 구간 편집">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    <span>${sabiStr}</span>
+                    ${isCustomSabi ? '<span class="track-sabi-custom-tag">MY</span>' : ''}
+                </div>
+                <div class="track-col-duration">${durationStr}</div>
+                <div class="track-col-actions">
+                    <button type="button" class="btn-track-more" data-id="${song.id}" title="곡 메뉴 열기 (우클릭 가능)" aria-label="곡 메뉴">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function updatePcTrackSentinelUI() {
+        const sentinel = document.getElementById('pc-tracks-sentinel');
+        if (!sentinel) return;
+        const total = currentRenderedSongs.length;
+        if (pcHomeRenderedCount >= total) {
+            sentinel.remove();
+            return;
+        }
+        sentinel.innerHTML = `
+            <span>${pcHomeRenderedCount} / ${total}곡 표시 중 · 스크롤 시 ${PC_TRACK_PAGE_SIZE}곡씩 자동 추가</span>
+            <button type="button" class="tracks-load-more-btn" id="pc-btn-load-more-tracks">50곡 더 보기</button>
+        `;
+        const moreBtn = document.getElementById('pc-btn-load-more-tracks');
+        if (moreBtn) {
+            moreBtn.addEventListener('click', () => appendNextPcTrackPage());
+        }
+    }
+
+    function appendNextPcTrackPage() {
+        if (!dom.tracksListContainer || pcHomeRenderedCount >= currentRenderedSongs.length) return;
+        const customSabis = window.StorageManager ? window.StorageManager.getCustomSabis() : {};
+        const nextEnd = Math.min(pcHomeRenderedCount + PC_TRACK_PAGE_SIZE, currentRenderedSongs.length);
+        let chunkHtml = '';
+        for (let i = pcHomeRenderedCount; i < nextEnd; i++) {
+            chunkHtml += buildPcTrackRowHtml(currentRenderedSongs[i], i, customSabis);
+        }
+        const sentinel = document.getElementById('pc-tracks-sentinel');
+        if (sentinel) {
+            sentinel.insertAdjacentHTML('beforebegin', chunkHtml);
+        } else {
+            dom.tracksListContainer.insertAdjacentHTML('beforeend', chunkHtml);
+        }
+        pcHomeRenderedCount = nextEnd;
+        updatePcTrackSentinelUI();
+        if (window.syncHomeTopScrollbar) {
+            setTimeout(window.syncHomeTopScrollbar, 20);
+        }
+    }
+
+    function setupPcTrackPaginationObserver() {
+        if (pcHomeSentinelObserver) {
+            pcHomeSentinelObserver.disconnect();
+            pcHomeSentinelObserver = null;
+        }
+        const sentinel = document.getElementById('pc-tracks-sentinel');
+        if (!sentinel || pcHomeRenderedCount >= currentRenderedSongs.length) return;
+
+        if ('IntersectionObserver' in window) {
+            pcHomeSentinelObserver = new IntersectionObserver((entries) => {
+                if (entries.some(e => e.isIntersecting)) {
+                    appendNextPcTrackPage();
+                }
+            }, { rootMargin: '480px 0px' });
+            pcHomeSentinelObserver.observe(sentinel);
+        }
+
+        if (!pcHomeScrollCheckBound) {
+            pcHomeScrollCheckBound = true;
+            const checkNearBottom = () => {
+                if (state.activeView !== 'home' || pcHomeRenderedCount >= currentRenderedSongs.length) return;
+                const s = document.getElementById('pc-tracks-sentinel');
+                if (!s) return;
+                const rect = s.getBoundingClientRect();
+                if (rect.top <= window.innerHeight + 480) {
+                    appendNextPcTrackPage();
+                }
+            };
+            window.addEventListener('scroll', checkNearBottom, { passive: true });
+            const contentViews = document.querySelector('.content-views');
+            if (contentViews) contentViews.addEventListener('scroll', checkNearBottom, { passive: true });
+        }
+    }
+
     function refreshTrackList() {
         const songs = getFilteredSongs();
         if (dom.trackCountText) {
@@ -1567,7 +1613,15 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePcFilterSummaryAndCount(songs.length);
         }
 
+        if (pcHomeSentinelObserver) {
+            pcHomeSentinelObserver.disconnect();
+            pcHomeSentinelObserver = null;
+        }
+        pcHomeRenderToken++;
+
         if (songs.length === 0) {
+            currentRenderedSongs = [];
+            pcHomeRenderedCount = 0;
             dom.tracksListContainer.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon">
@@ -1595,88 +1649,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        songs.forEach((song, index) => {
-            const isPlayingThis = player.currentSong?.id === song.id && player.isPlaying;
-            const isCurrent = player.currentSong?.id === song.id;
-            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
-            const durationStr = formatTime(song.duration);
-
-            const isCustomSabi = !!customSabis[song.id];
-            const effectiveSabi = customSabis[song.id] || song.sabi;
-            const sabiStr = effectiveSabi ? `${formatTime(effectiveSabi.start)} ~ ${formatTime(effectiveSabi.end)}` : '전체';
-
-            let badgeClass = 'badge-cover';
-            let badgeText = '커버곡';
-            if (song.type === 'original') {
-                badgeClass = 'badge-original';
-                badgeText = '오리지널';
-            } else if (song.type === 'ost') {
-                badgeClass = 'badge-ost';
-                badgeText = '공식 OST';
-            } else if (song.type === 'featuring') {
-                badgeClass = 'badge-featuring';
-                badgeText = '피처링';
-            } else if (song.type === 'live') {
-                badgeClass = 'badge-live';
-                badgeText = '3D 라이브';
-            } else if (song.type === 'stream') {
-                badgeClass = 'badge-stream';
-                badgeText = '노래방송 Live';
-            }
-
-            const isSelected = selectedSongIds.has(song.id);
-
-            html += `
-                <div class="track-row ${isCurrent ? 'active' : ''} ${isPlayingThis ? 'playing' : ''} ${isSelected ? 'selected' : ''}" data-song-id="${song.id}" data-index="${index}">
-                    <div class="track-col-index">
-                        <input type="checkbox" class="track-select-chk" data-song-id="${song.id}" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation();">
-                        <span class="track-number">${String(index + 1).padStart(2, '0')}</span>
-                        <div class="track-playing-equalizer">
-                            <span class="eq-bar"></span>
-                            <span class="eq-bar"></span>
-                            <span class="eq-bar"></span>
-                        </div>
-                    </div>
-                    <div class="track-col-info">
-                        <div class="track-thumb-box">
-                            <img class="track-thumb-img" src="${thumbUrl}" alt="${song.title}" width="46" height="46" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'46\' height=\'46\' viewBox=\'0 0 24 24\' fill=\'%236c5ce7\'><rect width=\'24\' height=\'24\' fill=\'%231e202e\'/><polygon points=\'10,8 16,12 10,16\' fill=\'%238b5cf6\'/></svg>'">
-                            <div class="track-thumb-play-overlay">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-                            </div>
-                        </div>
-                        <div class="track-title-meta">
-                            <span class="track-title-text">${song.title}</span>
-                            <span class="track-artist-text">${song.artist}</span>
-                        </div>
-                    </div>
-                    <div>
-                        ${song.isAutoAdded ? '<span class="badge-tag badge-new" style="margin-right: 4px;">NEW</span>' : ''}
-                        <span class="badge-tag ${badgeClass}">
-                            ${badgeText}
-                        </span>
-                    </div>
-                    <div class="track-col-sabi" data-id="${song.id}" style="cursor: pointer;" title="클릭하여 사비(후렴구) 구간 편집">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                        </svg>
-                        <span>${sabiStr}</span>
-                        ${isCustomSabi ? '<span class="track-sabi-custom-tag">MY</span>' : ''}
-                    </div>
-                    <div class="track-col-duration">${durationStr}</div>
-                    <div class="track-col-actions">
-                        <button type="button" class="btn-track-more" data-id="${song.id}" title="곡 메뉴 열기 (우클릭 가능)" aria-label="곡 메뉴">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
+        const initialEnd = Math.min(PC_TRACK_PAGE_SIZE, songs.length);
+        for (let i = 0; i < initialEnd; i++) {
+            html += buildPcTrackRowHtml(songs[i], i, customSabis);
+        }
+        if (songs.length > initialEnd) {
+            html += `<div class="tracks-load-sentinel" id="pc-tracks-sentinel"></div>`;
+        }
 
         currentRenderedSongs = songs;
+        pcHomeRenderedCount = initialEnd;
         dom.tracksListContainer.innerHTML = html;
         initTracksListDelegation();
+        updatePcTrackSentinelUI();
+        setupPcTrackPaginationObserver();
 
         if (window.syncHomeTopScrollbar) {
             setTimeout(window.syncHomeTopScrollbar, 20);
@@ -1865,6 +1851,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     // 현재 재생목록 (대기열 / Queue) 렌더링 및 조작
     // ===================================================================
+    let pcQueueDomDirty = false;
+
+    function isPcQueueVisible() {
+        const drawerOpen = !!(dom.queueDrawer && dom.queueDrawer.classList.contains('open'));
+        const fullOpen = !!(dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && !dom.fullPlayerModal.classList.contains('hide-queue'));
+        return drawerOpen || fullOpen;
+    }
+
     function renderQueue(autoScroll = true) {
         const queue = player.queue || [];
         const curIdx = player.currentIndex;
@@ -1872,6 +1866,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.fullQueueCount) dom.fullQueueCount.textContent = `총 ${queue.length}곡`;
         if (dom.drawerQueueCount) dom.drawerQueueCount.textContent = `${queue.length}곡`;
         if (dom.queueBadgeCount) dom.queueBadgeCount.textContent = `${queue.length}`;
+
+        if (!isPcQueueVisible()) {
+            pcQueueDomDirty = true;
+            return;
+        }
+        pcQueueDomDirty = false;
 
         if (queue.length === 0) {
             const emptyHtml = '<div class="empty-state" style="padding: 36px 12px;"><div class="empty-state-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><p>대기열이 비어있습니다.</p></div>';
@@ -1924,9 +1924,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }).join('');
         };
-
-        if (dom.fullQueueList) dom.fullQueueList.innerHTML = buildQueueHtml(true);
-        if (dom.drawerQueueList) dom.drawerQueueList.innerHTML = buildQueueHtml(false);
 
         const attachQueueListeners = (container) => {
             if (!container) return;
@@ -2053,8 +2050,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        attachQueueListeners(dom.fullQueueList);
-        attachQueueListeners(dom.drawerQueueList);
+        if (dom.fullPlayerModal && dom.fullPlayerModal.classList.contains('open') && !dom.fullPlayerModal.classList.contains('hide-queue')) {
+            if (dom.fullQueueList) dom.fullQueueList.innerHTML = buildQueueHtml(true);
+            attachQueueListeners(dom.fullQueueList);
+        }
+        if (dom.queueDrawer && dom.queueDrawer.classList.contains('open')) {
+            if (dom.drawerQueueList) dom.drawerQueueList.innerHTML = buildQueueHtml(false);
+            attachQueueListeners(dom.drawerQueueList);
+        }
 
         // 재생 중인 트랙으로 스크롤 (열려있는 서랍 및 전체화면 패널)
         if (autoScroll) {
@@ -2449,6 +2452,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateFullPlayerQueueToggleBtn();
                 syncDockTransition();
                 if (!dom.fullPlayerModal.classList.contains('hide-queue')) {
+                    if (pcQueueDomDirty) renderQueue(false);
                     requestAnimationFrame(() => scrollPcQueueToActiveTrack('full', false));
                     setTimeout(() => scrollPcQueueToActiveTrack('full', true), 120);
                     setTimeout(() => scrollPcQueueToActiveTrack('full', true), 360);
@@ -2775,21 +2779,28 @@ document.addEventListener('DOMContentLoaded', () => {
             btnAutoDetect.addEventListener('click', () => {
                 const title = document.getElementById('input-song-title')?.value || '';
                 const artist = document.getElementById('input-song-artist')?.value || '';
-                const detected = detectMembersFromText(`${title} ${artist}`);
                 const artistInput = document.getElementById('input-song-artist');
+                const detected = detectMembersFromText(`${title} ${artist}`);
                 if (detected && detected.length > 0) {
-                    const isGroup = detected.includes('group') || detected.length >= 6;
-                    const validMembers = detected.filter(m => m !== 'group');
-                    if (isGroup) {
-                        setMemberPickerState('add', { isStellive: true, units: [], members: [] }, artistInput);
-                        if (artistInput) artistInput.value = '스텔라이브 (STELLIVE)';
-                    } else {
-                        setMemberPickerState('add', { isStellive: false, units: [], members: validMembers }, artistInput);
-                        syncArtistFromCheckboxes('add', artistInput);
-                    }
+                    applyDetectedToPcPicker('add', detected, artistInput);
                     showToast(`멤버 ${detected.length}명이 자동 감지되었습니다.`);
                 } else {
-                    showToast('감지된 멤버가 없습니다. 직접 체크해주세요.');
+                    showToast('감지된 멤버가 없습니다. 직접 선택해주세요.');
+                }
+            });
+        }
+
+        const btnEditDetect = document.getElementById('btn-edit-detect-members');
+        if (btnEditDetect) {
+            btnEditDetect.addEventListener('click', () => {
+                const title = dom.editSongTitle ? dom.editSongTitle.value : '';
+                const artist = dom.editSongArtist ? dom.editSongArtist.value : '';
+                const detected = detectMembersFromText(`${title} ${artist}`);
+                if (detected && detected.length > 0) {
+                    applyDetectedToPcPicker('edit', detected, dom.editSongArtist);
+                    showToast(`멤버 ${detected.length}명이 자동 감지되었습니다.`);
+                } else {
+                    showToast('감지된 멤버가 없습니다. 직접 선택해주세요.');
                 }
             });
         }
@@ -2889,6 +2900,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const isOriginalSong = /(?:오리지널|original)/i.test(rawTitle) && !/(?:cover|커버)/i.test(rawTitle);
                         if (isOriginalSong) {
                             if (typeSelect) typeSelect.value = 'original';
+                            setPillSelectValue('add-type-pills', 'select-song-type', 'original');
                             origInput.value = '스텔라이브 (STELLIVE)';
                         } else if (extractedOriginal) {
                             origInput.value = extractedOriginal;
@@ -2908,17 +2920,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const detected = detectMembersFromText(textToAnalyze);
                     const artistInput = document.getElementById('input-song-artist');
 
-                    const isGroup = detected.includes('group') || detected.length >= 6;
-                    const validMembers = detected.filter(m => m !== 'group');
-
-                    if (isGroup) {
-                        setMemberPickerState('add', { isStellive: true, units: [], members: [] }, artistInput);
-                        if (artistInput) artistInput.value = '스텔라이브 (STELLIVE)';
-                    } else if (validMembers.length > 0) {
-                        setMemberPickerState('add', { isStellive: false, units: [], members: validMembers }, artistInput);
-                        syncArtistFromCheckboxes('add', artistInput);
+                    if (detected && detected.length > 0) {
+                        applyDetectedToPcPicker('add', detected, artistInput);
                     } else if (data.artist) {
-                        if (artistInput && !artistInput.value) {
+                        setPcUnifiedPickerState('add', { isUnclassified: true }, artistInput);
+                        if (artistInput) {
                             artistInput.value = cleanAndKoreanizeTitle(data.artist);
                         }
                     }
@@ -3003,9 +3009,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.btnResetSongEdit) dom.btnResetSongEdit.addEventListener('click', handleResetSongEdit);
         if (dom.btnDeleteSong) dom.btnDeleteSong.addEventListener('click', handleDeleteSong);
 
-        // 참여 멤버 2단계 선택 및 아티스트명 자동 동기화 초기화
-        setupMemberPicker('add', document.getElementById('input-song-artist'));
-        setupMemberPicker('edit', dom.editSongArtist);
+        // 통합 참여 멤버 / 분류 피커 초기화
+        initPcUnifiedPicker('add', document.getElementById('input-song-artist'));
+        initPcUnifiedPicker('edit', dom.editSongArtist);
 
         // 모달 배경 클릭 시 닫기
         if (dom.modalEditSong) {
@@ -3455,6 +3461,9 @@ document.addEventListener('DOMContentLoaded', () => {
         closeQueueDrawer();
         dom.fullPlayerModal.classList.add('open');
         document.body.style.overflow = 'hidden';
+        if (pcQueueDomDirty && !dom.fullPlayerModal.classList.contains('hide-queue')) {
+            renderQueue(false);
+        }
         if (dom.openFullPlayerBtn) {
             dom.openFullPlayerBtn.innerHTML = `
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3613,124 +3622,461 @@ document.addEventListener('DOMContentLoaded', () => {
         toa: '시즈키 토아',
         rang: '코가네 랑',
         hiyori: '하나요 히요리',
-        mary: '토키노 메리'
+        mary: '토키노 메리',
+        kangji: '강지'
     };
 
-    function setupMemberPicker(prefix, artistInput) {
-        const scopeSelector = document.getElementById(`${prefix}-member-scope-selector`);
-        const subSection = document.getElementById(`${prefix}-member-selection-sub`);
-        if (!scopeSelector || !subSection) return;
+    const PC_PICKER_UNIT_MAP = {
+        everlys: ['yuni', 'huya'],
+        mystic: ['kanna', 'yuni'],
+        universe: ['hina', 'mashiro', 'lize', 'tabi'],
+        cliche: ['shibuki', 'rin', 'nana', 'riko'],
+        abyss: ['toa', 'rang', 'hiyori', 'mary']
+    };
 
-        // 1분류 토글
-        const scopeBtns = scopeSelector.querySelectorAll('.member-scope-btn');
-        scopeBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                scopeBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const radio = btn.querySelector('input[type="radio"]');
-                if (radio) radio.checked = true;
+    const PC_PICKER_STELLIVE_SUBS = [
+        { key: 'group', label: '유닛 · 단체' },
+        { key: 'g1', label: '1기생' },
+        { key: 'g2', label: '2기생' },
+        { key: 'g3', label: '3기생' },
+        { key: 'g4', label: '4기생' },
+        { key: 'kangji', label: '강지' }
+    ];
 
-                const scopeVal = radio ? radio.value : 'individual';
-                if (scopeVal === 'stellive') {
-                    subSection.style.display = 'none';
-                    if (artistInput) artistInput.value = '스텔라이브 (STELLIVE)';
-                } else {
-                    subSection.style.display = 'flex';
-                    syncArtistFromCheckboxes(prefix, artistInput);
-                }
-            });
-        });
+    const pcPickerStates = {};
 
-        // 2분류 체크박스 변경 시 아티스트 자동 반영
-        subSection.addEventListener('change', (e) => {
-            if (e.target.matches('input[type="checkbox"]')) {
-                syncArtistFromCheckboxes(prefix, artistInput);
-            }
-        });
+    function getPcPickerState(prefix) {
+        if (!pcPickerStates[prefix]) {
+            pcPickerStates[prefix] = {
+                activeTab: 'stellive',
+                activeSubCat: 'g1',
+                isStelliveGroup: false,
+                isUnclassified: false,
+                units: new Set(),
+                members: new Set(),
+                customGroupId: null,
+                customSubId: null,
+                artistInput: null
+            };
+        }
+        return pcPickerStates[prefix];
     }
 
-    function syncArtistFromCheckboxes(prefix, artistInput) {
-        if (!artistInput) return;
-        const scopeRadio = document.querySelector(`input[name="${prefix}-member-scope"]:checked`);
-        if (scopeRadio && scopeRadio.value === 'stellive') {
-            artistInput.value = '스텔라이브 (STELLIVE)';
+    function syncPcUnifiedArtist(prefix, artistInput) {
+        const st = getPcPickerState(prefix);
+        const input = artistInput || st.artistInput;
+        if (!input) return;
+
+        if (st.customGroupId) {
+            const cg = (state.customGroups || []).find(g => g.id === st.customGroupId);
+            if (cg) {
+                const sub = st.customSubId ? (cg.subItems || []).find(s => s.id === st.customSubId) : null;
+                input.value = sub ? sub.name : cg.name;
+            }
             return;
         }
-
-        const checkedUnits = Array.from(document.querySelectorAll(`input[name="${prefix}-member-unit"]:checked`));
-        const checkedMembers = Array.from(document.querySelectorAll(`input[name="${prefix}-member-item"]:checked`));
-
+        if (st.isStelliveGroup && st.members.size === 0 && st.units.size === 0) {
+            input.value = '스텔라이브 (STELLIVE)';
+            return;
+        }
         const names = [];
-        // 유닛명 추가
-        checkedUnits.forEach(u => {
-            const name = u.dataset.name || UNIT_NAMES_MAP[u.value];
-            if (name && !names.includes(name)) names.push(name);
+        st.units.forEach(u => {
+            const n = UNIT_NAMES_MAP[u] || PC_MEMBER_SHORT_NAMES[u];
+            if (n && !names.includes(n)) names.push(n);
         });
-        // 멤버명 추가
-        checkedMembers.forEach(m => {
-            const name = m.dataset.name || MEMBER_NAMES_MAP[m.value];
-            if (name && !names.includes(name)) names.push(name);
+        st.members.forEach(m => {
+            const n = MEMBER_NAMES_MAP[m];
+            if (n && !names.includes(n)) names.push(n);
         });
-
         if (names.length > 0) {
-            artistInput.value = names.join(', ');
+            input.value = names.join(', ');
         }
     }
 
-    function setMemberPickerState(prefix, { isStellive, units = [], members = [] }, artistInput) {
-        const scopeSelector = document.getElementById(`${prefix}-member-scope-selector`);
-        const subSection = document.getElementById(`${prefix}-member-selection-sub`);
-        if (!scopeSelector || !subSection) return;
+    function renderPcUnifiedPicker(prefix) {
+        const st = getPcPickerState(prefix);
+        const tabsEl = document.getElementById(`${prefix}-picker-tabs`);
+        const subPillsEl = document.getElementById(`${prefix}-picker-sub-pills`);
+        const gridEl = document.getElementById(`${prefix}-picker-grid`);
+        const summaryEl = document.getElementById(`${prefix}-picker-selected-summary`);
+        if (!tabsEl || !subPillsEl || !gridEl) return;
 
-        const scopeRadios = scopeSelector.querySelectorAll(`input[name="${prefix}-member-scope"]`);
-        const scopeBtns = scopeSelector.querySelectorAll('.member-scope-btn');
+        // 1. 크롬 탭 렌더링 (스텔라이브 / 미분류 / 커스텀 그룹)
+        tabsEl.innerHTML = '';
+        const builtIns = [
+            { id: 'stellive', name: '스텔라이브', color: getEffectiveTabColor('stellive') },
+            { id: 'unclassified', name: '미분류 (외부)', color: getEffectiveTabColor('unclassified') }
+        ];
+        const customs = (state.customGroups || []).map(g => ({ id: g.id, name: g.name, color: g.color || '#7c5cfc' }));
 
-        scopeRadios.forEach(radio => {
-            radio.checked = isStellive ? (radio.value === 'stellive') : (radio.value === 'individual');
+        [...builtIns, ...customs].forEach(tab => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `pc-filter-group-tab ${st.activeTab === tab.id ? 'active' : ''}`;
+            btn.style.setProperty('--tab-accent', tab.color);
+            btn.innerHTML = `<span class="pc-tab-color-dot" style="background:${tab.color};"></span><span>${tab.name}</span>`;
+            btn.addEventListener('click', () => {
+                st.activeTab = tab.id;
+                if (tab.id === 'stellive') {
+                    st.isUnclassified = false;
+                    st.customGroupId = null;
+                    st.customSubId = null;
+                } else if (tab.id === 'unclassified') {
+                    st.isUnclassified = true;
+                    st.isStelliveGroup = false;
+                    st.units.clear();
+                    st.members.clear();
+                    st.customGroupId = null;
+                    st.customSubId = null;
+                } else {
+                    st.isUnclassified = false;
+                    st.isStelliveGroup = false;
+                    st.units.clear();
+                    st.members.clear();
+                    st.customGroupId = tab.id;
+                    st.customSubId = null;
+                    syncPcUnifiedArtist(prefix);
+                }
+                renderPcUnifiedPicker(prefix);
+            });
+            tabsEl.appendChild(btn);
         });
-        scopeBtns.forEach(btn => {
-            const radio = btn.querySelector('input[type="radio"]');
-            btn.classList.toggle('active', radio && radio.checked);
-        });
 
-        if (isStellive) {
-            subSection.style.display = 'none';
+        // 2. 하위 기수 / 커스텀 세부 항목 렌더링
+        subPillsEl.innerHTML = '';
+        gridEl.innerHTML = '';
+
+        if (st.activeTab === 'stellive') {
+            subPillsEl.style.display = 'flex';
+            PC_PICKER_STELLIVE_SUBS.forEach(sc => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                const c = getEffectiveTabColor(sc.key);
+                pill.className = `pc-filter-sub-pill ${st.activeSubCat === sc.key ? 'active' : ''}`;
+                pill.style.setProperty('--pill-accent', c);
+                pill.textContent = sc.label;
+                pill.addEventListener('click', () => {
+                    st.activeSubCat = sc.key;
+                    renderPcUnifiedPicker(prefix);
+                });
+                subPillsEl.appendChild(pill);
+            });
+
+            gridEl.style.display = 'grid';
+            gridEl.classList.toggle('cols-2', st.activeSubCat === 'kangji');
+
+            if (st.activeSubCat === 'group') {
+                // 스텔라이브 전체 단체 + 유닛 로고 카드
+                const groupCards = [
+                    { id: '__stellive_group__', name: '스텔라이브 단체', isGroup: true, logo: './assets/icons/logo_circle.png', isUnit: false, color: getEffectiveTabColor('stellive') },
+                    { id: 'mystic', name: '미스틱', isUnitCard: true, logo: './assets/icons/members/mystic.png', isUnit: true, color: MEMBER_BUTTON_COLORS.kanna.color },
+                    { id: 'everlys', name: '에버리스', isUnitCard: true, logo: './assets/icons/members/everlys.png', isUnit: true, color: MEMBER_BUTTON_COLORS.yuni.color },
+                    { id: 'universe', name: '유니버스', isUnitCard: true, logo: './assets/icons/members/universe.png', isUnit: true, color: MEMBER_BUTTON_COLORS.g2.color },
+                    { id: 'cliche', name: '클리셰', isUnitCard: true, logo: './assets/icons/members/cliche.png', isUnit: true, color: MEMBER_BUTTON_COLORS.g3.color },
+                    { id: 'abyss', name: '어비스', isUnitCard: true, logo: './assets/icons/members/abyss.png', isUnit: true, color: MEMBER_BUTTON_COLORS.g4.color }
+                ];
+                groupCards.forEach(item => {
+                    const isAct = item.isGroup ? st.isStelliveGroup : st.units.has(item.id);
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = `pc-member-logo-card ${isAct ? 'active' : ''}`;
+                    card.style.setProperty('--member-accent', item.color);
+                    card.innerHTML = `
+                        <div class="pc-member-logo-box ${item.isUnit ? 'is-unit-logo' : ''}">
+                            <img class="pc-member-logo-img" src="${item.logo}" alt="${item.name}" loading="lazy">
+                        </div>
+                        <span class="pc-member-logo-name">${item.name}</span>
+                    `;
+                    card.addEventListener('click', () => {
+                        st.isUnclassified = false;
+                        st.customGroupId = null;
+                        st.customSubId = null;
+                        if (item.isGroup) {
+                            st.isStelliveGroup = !st.isStelliveGroup;
+                            if (st.isStelliveGroup) {
+                                st.units.clear();
+                                st.members.clear();
+                            }
+                        } else {
+                            st.isStelliveGroup = false;
+                            if (st.units.has(item.id)) {
+                                st.units.delete(item.id);
+                                (PC_PICKER_UNIT_MAP[item.id] || []).forEach(m => st.members.delete(m));
+                            } else {
+                                st.units.add(item.id);
+                                (PC_PICKER_UNIT_MAP[item.id] || []).forEach(m => st.members.add(m));
+                            }
+                        }
+                        syncPcUnifiedArtist(prefix);
+                        renderPcUnifiedPicker(prefix);
+                    });
+                    gridEl.appendChild(card);
+                });
+            } else if (st.activeSubCat === 'kangji') {
+                const card = document.createElement('button');
+                card.type = 'button';
+                const isAct = st.members.has('kangji');
+                card.className = `pc-member-logo-card ${isAct ? 'active' : ''}`;
+                card.style.setProperty('--member-accent', getEffectiveTabColor('kangji'));
+                card.innerHTML = `<span class="pc-member-logo-name" style="padding:6px 0; font-size:0.86rem;">강지 (KANGJI)</span>`;
+                card.addEventListener('click', () => {
+                    st.isUnclassified = false;
+                    st.isStelliveGroup = false;
+                    st.customGroupId = null;
+                    st.customSubId = null;
+                    if (st.members.has('kangji')) st.members.delete('kangji');
+                    else st.members.add('kangji');
+                    syncPcUnifiedArtist(prefix);
+                    renderPcUnifiedPicker(prefix);
+                });
+                gridEl.appendChild(card);
+            } else {
+                const items = SUB_FILTER_CONFIG[st.activeSubCat] || [];
+                items.forEach(item => {
+                    const isUnit = UNIT_LOGO_IDS.has(item.id);
+                    const isAct = isUnit ? st.units.has(item.id) : st.members.has(item.id);
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = `pc-member-logo-card ${isAct ? 'active' : ''}`;
+                    const themeInfo = MEMBER_BUTTON_COLORS[item.id] || MEMBER_BUTTON_COLORS[st.activeSubCat] || MEMBER_BUTTON_COLORS.all;
+                    card.style.setProperty('--member-accent', themeInfo.color);
+                    const shortName = PC_MEMBER_SHORT_NAMES[item.id] || item.name;
+                    card.innerHTML = `
+                        <div class="pc-member-logo-box ${isUnit ? 'is-unit-logo' : ''}">
+                            <img class="pc-member-logo-img" src="./assets/icons/members/${item.id}.png" alt="${shortName}" loading="lazy">
+                        </div>
+                        <span class="pc-member-logo-name">${shortName}</span>
+                    `;
+                    card.addEventListener('click', () => {
+                        st.isUnclassified = false;
+                        st.isStelliveGroup = false;
+                        st.customGroupId = null;
+                        st.customSubId = null;
+                        if (isUnit) {
+                            if (st.units.has(item.id)) {
+                                st.units.delete(item.id);
+                                (PC_PICKER_UNIT_MAP[item.id] || []).forEach(m => st.members.delete(m));
+                            } else {
+                                st.units.add(item.id);
+                                (PC_PICKER_UNIT_MAP[item.id] || []).forEach(m => st.members.add(m));
+                            }
+                        } else {
+                            if (st.members.has(item.id)) st.members.delete(item.id);
+                            else st.members.add(item.id);
+                        }
+                        syncPcUnifiedArtist(prefix);
+                        renderPcUnifiedPicker(prefix);
+                    });
+                    gridEl.appendChild(card);
+                });
+            }
+        } else if (st.activeTab === 'unclassified') {
+            subPillsEl.style.display = 'none';
+            gridEl.style.display = 'block';
+            gridEl.classList.remove('cols-2');
+            gridEl.innerHTML = `<div class="pc-unified-unclassified-note">외부 아티스트 또는 미분류 곡으로 저장됩니다. 상단 아티스트 입력란에 가수명을 입력해주세요.</div>`;
         } else {
-            subSection.style.display = 'flex';
+            const cg = (state.customGroups || []).find(g => g.id === st.activeTab);
+            subPillsEl.style.display = 'flex';
+            gridEl.style.display = 'none';
+            gridEl.classList.remove('cols-2');
+
+            if (cg) {
+                const subItems = Array.isArray(cg.subItems) ? cg.subItems : [];
+                const nonePill = document.createElement('button');
+                nonePill.type = 'button';
+                nonePill.className = `pc-filter-sub-pill ${!st.customSubId ? 'active' : ''}`;
+                nonePill.style.setProperty('--pill-accent', cg.color || '#7c5cfc');
+                nonePill.textContent = `${cg.name} (전체)`;
+                nonePill.addEventListener('click', () => {
+                    st.customSubId = null;
+                    syncPcUnifiedArtist(prefix);
+                    renderPcUnifiedPicker(prefix);
+                });
+                subPillsEl.appendChild(nonePill);
+
+                subItems.forEach(sub => {
+                    const isAct = st.customSubId === sub.id;
+                    const pill = document.createElement('button');
+                    pill.type = 'button';
+                    const subColor = sub.color || cg.color || '#7c5cfc';
+                    pill.className = `pc-filter-sub-pill ${isAct ? 'active' : ''}`;
+                    pill.style.setProperty('--pill-accent', subColor);
+                    pill.innerHTML = `<span class="pc-tab-color-dot" style="background:${isAct ? '#ffffff' : subColor};"></span><span>${sub.name}</span>`;
+                    pill.addEventListener('click', () => {
+                        st.customSubId = isAct ? null : sub.id;
+                        syncPcUnifiedArtist(prefix);
+                        renderPcUnifiedPicker(prefix);
+                    });
+                    subPillsEl.appendChild(pill);
+                });
+            }
         }
 
-        // 유닛 체크박스
-        document.querySelectorAll(`input[name="${prefix}-member-unit"]`).forEach(cb => {
-            cb.checked = units.includes(cb.value);
-        });
-        // 멤버 체크박스
-        document.querySelectorAll(`input[name="${prefix}-member-item"]`).forEach(cb => {
-            cb.checked = members.includes(cb.value);
-        });
+        // 3. 선택된 멤버/분류 요약 칩 바
+        if (summaryEl) {
+            summaryEl.innerHTML = '';
+            const label = document.createElement('span');
+            label.className = 'pc-unified-selected-label';
+            label.textContent = '선택됨:';
+            summaryEl.appendChild(label);
+
+            let hasChip = false;
+            const appendChip = (text, onRemove) => {
+                hasChip = true;
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = 'pc-unified-selected-chip';
+                chip.innerHTML = `<span>${text}</span><span>×</span>`;
+                chip.addEventListener('click', () => {
+                    onRemove();
+                    syncPcUnifiedArtist(prefix);
+                    renderPcUnifiedPicker(prefix);
+                });
+                summaryEl.appendChild(chip);
+            };
+
+            if (st.customGroupId) {
+                const cg = (state.customGroups || []).find(g => g.id === st.customGroupId);
+                if (cg) {
+                    const sub = st.customSubId ? (cg.subItems || []).find(s => s.id === st.customSubId) : null;
+                    appendChip(sub ? `${cg.name} · ${sub.name}` : cg.name, () => {
+                        st.customGroupId = null;
+                        st.customSubId = null;
+                        st.activeTab = 'stellive';
+                    });
+                }
+            } else if (st.isUnclassified) {
+                appendChip('미분류 (외부 가수)', () => {
+                    st.isUnclassified = false;
+                    st.activeTab = 'stellive';
+                });
+            } else {
+                if (st.isStelliveGroup) {
+                    appendChip('스텔라이브 단체', () => { st.isStelliveGroup = false; });
+                }
+                st.units.forEach(u => {
+                    appendChip(UNIT_NAMES_MAP[u] || PC_MEMBER_SHORT_NAMES[u] || u, () => {
+                        st.units.delete(u);
+                        (PC_PICKER_UNIT_MAP[u] || []).forEach(m => st.members.delete(m));
+                    });
+                });
+                st.members.forEach(m => {
+                    appendChip(PC_MEMBER_SHORT_NAMES[m] || MEMBER_NAMES_MAP[m] || m, () => {
+                        st.members.delete(m);
+                    });
+                });
+            }
+
+            if (!hasChip) {
+                const emptySpan = document.createElement('span');
+                emptySpan.textContent = '선택된 멤버 없음 (상단 탭/카드를 클릭해 지정)';
+                summaryEl.appendChild(emptySpan);
+            }
+        }
     }
 
-    function getSelectedMemberData(prefix) {
-        const scopeRadio = document.querySelector(`input[name="${prefix}-member-scope"]:checked`);
-        const isStellive = scopeRadio && scopeRadio.value === 'stellive';
+    function initPcUnifiedPicker(prefix, artistInput) {
+        const st = getPcPickerState(prefix);
+        st.artistInput = artistInput || null;
+        renderPcUnifiedPicker(prefix);
+    }
 
-        if (isStellive) {
+    function refreshAllPcUnifiedPickers() {
+        if (document.getElementById('add-picker-tabs')) renderPcUnifiedPicker('add');
+        if (document.getElementById('edit-picker-tabs')) renderPcUnifiedPicker('edit');
+    }
+
+    function setPcUnifiedPickerState(prefix, { isStellive = false, isUnclassified = false, units = [], members = [], customGroupId = null, customSubId = null }, artistInput) {
+        const st = getPcPickerState(prefix);
+        if (artistInput) st.artistInput = artistInput;
+        st.isStelliveGroup = !!isStellive;
+        st.isUnclassified = !!isUnclassified;
+        st.units = new Set(Array.isArray(units) ? units : []);
+        st.members = new Set(Array.isArray(members) ? members : []);
+        st.customGroupId = customGroupId || null;
+        st.customSubId = customSubId || null;
+
+        if (st.customGroupId && (state.customGroups || []).some(g => g.id === st.customGroupId)) {
+            st.activeTab = st.customGroupId;
+        } else if (st.isUnclassified) {
+            st.activeTab = 'unclassified';
+        } else {
+            st.activeTab = 'stellive';
+            if (st.isStelliveGroup || st.units.size > 0) {
+                st.activeSubCat = 'group';
+            } else if (st.members.has('kangji')) {
+                st.activeSubCat = 'kangji';
+            } else {
+                const firstM = Array.from(st.members)[0];
+                if (['yuni', 'huya', 'kanna'].includes(firstM)) st.activeSubCat = 'g1';
+                else if (['hina', 'mashiro', 'lize', 'tabi'].includes(firstM)) st.activeSubCat = 'g2';
+                else if (['shibuki', 'rin', 'nana', 'riko'].includes(firstM)) st.activeSubCat = 'g3';
+                else if (['toa', 'rang', 'hiyori', 'mary'].includes(firstM)) st.activeSubCat = 'g4';
+                else st.activeSubCat = 'g1';
+            }
+        }
+        renderPcUnifiedPicker(prefix);
+    }
+
+    function applyDetectedToPcPicker(prefix, detected, artistInput) {
+        const valid = (detected || []).filter(Boolean);
+        const isGroup = valid.includes('group') || valid.length >= 6;
+        const memberOnly = valid.filter(m => m !== 'group');
+        if (isGroup) {
+            setPcUnifiedPickerState(prefix, { isStellive: true, units: [], members: [] }, artistInput);
+            if (artistInput) artistInput.value = '스텔라이브 (STELLIVE)';
+        } else if (memberOnly.length > 0) {
+            setPcUnifiedPickerState(prefix, { isStellive: false, units: [], members: memberOnly }, artistInput);
+            syncPcUnifiedArtist(prefix, artistInput);
+        }
+    }
+
+    function getPcUnifiedPickerData(prefix) {
+        const st = getPcPickerState(prefix);
+        if (st.customGroupId) {
+            return {
+                isStellive: false,
+                isUnclassified: false,
+                members: [],
+                gen: 'custom',
+                units: [],
+                customGroupId: st.customGroupId,
+                customSubId: st.customSubId || null
+            };
+        }
+        if (st.isUnclassified) {
+            return {
+                isStellive: false,
+                isUnclassified: true,
+                members: [],
+                gen: 'unclassified',
+                units: [],
+                customGroupId: null,
+                customSubId: null
+            };
+        }
+        if (st.isStelliveGroup && st.members.size === 0 && st.units.size === 0) {
             return {
                 isStellive: true,
+                isUnclassified: false,
                 members: ['group'],
-                gen: 'group'
+                gen: 'group',
+                units: [],
+                customGroupId: null,
+                customSubId: null
             };
         }
 
-        const checkedUnits = Array.from(document.querySelectorAll(`input[name="${prefix}-member-unit"]:checked`)).map(cb => cb.value);
-        const checkedMembers = Array.from(document.querySelectorAll(`input[name="${prefix}-member-item"]:checked`)).map(cb => cb.value);
-
-        let finalMembers = [...checkedMembers];
+        const checkedUnits = Array.from(st.units);
+        const memberSet = new Set(st.members);
+        checkedUnits.forEach(u => (PC_PICKER_UNIT_MAP[u] || []).forEach(m => memberSet.add(m)));
+        let finalMembers = Array.from(memberSet);
         let gen = 'group';
 
         if (checkedUnits.length === 1 && finalMembers.length === 0) {
             const unit = checkedUnits[0];
-            if (unit === 'everlys') gen = 'g1';
+            if (unit === 'everlys' || unit === 'mystic') gen = 'g1';
             else if (unit === 'universe') gen = 'g2';
             else if (unit === 'cliche') gen = 'g3';
             else if (unit === 'abyss') gen = 'g4';
@@ -3741,35 +4087,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const g3 = ['shibuki', 'rin', 'nana', 'riko'];
             const g4 = ['toa', 'rang', 'hiyori', 'mary'];
 
-            const allG1 = finalMembers.every(m => g1.includes(m));
-            const allG2 = finalMembers.every(m => g2.includes(m));
-            const allG3 = finalMembers.every(m => g3.includes(m));
-            const allG4 = finalMembers.every(m => g4.includes(m));
-
-            if (allG1) gen = 'g1';
-            else if (allG2) gen = 'g2';
-            else if (allG3) gen = 'g3';
-            else if (allG4) gen = 'g4';
+            if (finalMembers.every(m => g1.includes(m))) gen = 'g1';
+            else if (finalMembers.every(m => g2.includes(m))) gen = 'g2';
+            else if (finalMembers.every(m => g3.includes(m))) gen = 'g3';
+            else if (finalMembers.every(m => g4.includes(m))) gen = 'g4';
+            else if (finalMembers.length === 1 && finalMembers[0] === 'kangji') gen = 'kangji';
             else gen = 'group';
-        }
-
-        if (finalMembers.length === 0) {
+        } else {
             finalMembers = ['group'];
             gen = 'group';
         }
 
         return {
             isStellive: false,
+            isUnclassified: false,
             members: finalMembers,
             gen: gen,
-            units: checkedUnits
+            units: checkedUnits,
+            customGroupId: null,
+            customSubId: null
         };
     }
 
     // 신곡 추가 모달
     function openAddSongModal() {
         dom.modalAddSong.classList.add('open');
-        setMemberPickerState('add', { isStellive: false, units: [], members: [] }, document.getElementById('input-song-artist'));
+        setPcUnifiedPickerState('add', { isStellive: false, units: [], members: [] }, document.getElementById('input-song-artist'));
         setPillSelectValue('add-type-pills', 'select-song-type', 'cover');
         setPillSelectValue('add-mood-pills', 'select-song-mood', 'none');
         if (dom.selectSongType) {
@@ -3784,7 +4127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modalAddSong.classList.remove('open');
         dom.formAddSong.reset();
         if (dom.rowStreamTimestamps) dom.rowStreamTimestamps.style.display = 'none';
-        setMemberPickerState('add', { isStellive: false, units: [], members: [] }, document.getElementById('input-song-artist'));
+        setPcUnifiedPickerState('add', { isStellive: false, units: [], members: [] }, document.getElementById('input-song-artist'));
     }
     function handleAddSongSubmit(e) {
         e.preventDefault();
@@ -3800,8 +4143,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const streamStart = dom.inputStreamStart ? parseInt(dom.inputStreamStart.value, 10) || 0 : 0;
         const streamEnd = dom.inputStreamEnd ? parseInt(dom.inputStreamEnd.value, 10) || 0 : 0;
 
-        // 2단계 참여 멤버 선택 데이터 수집
-        const memberData = getSelectedMemberData('add');
+        // 참여 멤버 / 분류 선택 데이터 수집
+        const memberData = getPcUnifiedPickerData('add');
 
         try {
             const newSong = window.addCustomSong({
@@ -3814,6 +4157,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 mood: mood,
                 members: memberData.members,
                 gen: memberData.gen,
+                customGroupId: memberData.customGroupId || undefined,
+                customSubId: memberData.customSubId || undefined,
                 streamStart: streamStart,
                 streamEnd: streamEnd,
                 sabiStart: parseInt(sabiStart, 10) || (type === 'stream' ? streamStart + 30 : 45),
@@ -4329,20 +4674,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const PL_ADD_PAGE_SIZE = 50;
+    let plAddFilteredCache = [];
+    let plAddRenderedCount = 0;
+    let plAddAlreadySet = new Set();
+    let plAddSentinelObserver = null;
+    let plAddDelegationBound = false;
+
+    function buildPlAddTrackItemHtml(song, alreadySongIds) {
+        const isAlready = alreadySongIds.has(song.id);
+        const isChecked = plAddSelectedSongIds.has(song.id);
+        const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
+        const durationStr = formatTime(song.duration);
+
+        return `
+            <div class="pl-add-track-item ${isChecked ? 'selected' : ''} ${isAlready ? 'already-added' : ''}" data-song-id="${song.id}">
+                <input type="checkbox" class="pl-add-checkbox" ${isAlready ? 'disabled checked' : (isChecked ? 'checked' : '')} style="cursor: pointer;">
+                <img class="pl-add-thumb" src="${thumbUrl}" alt="${song.title}" loading="lazy">
+                <div class="pl-add-meta">
+                    <div class="pl-add-title">${song.title}</div>
+                    <div class="pl-add-artist">${song.artist}${song.originalArtist ? ' · ' + song.originalArtist : ''}</div>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-right: 8px;">${durationStr}</div>
+                ${isAlready ? '<span class="badge-already-in-pl">✓ 이미 수록됨</span>' : ''}
+            </div>
+        `;
+    }
+
+    function appendNextPlAddPage() {
+        const listEl = document.getElementById('pl-add-tracks-list');
+        if (!listEl || plAddRenderedCount >= plAddFilteredCache.length) return;
+        const nextEnd = Math.min(plAddRenderedCount + PL_ADD_PAGE_SIZE, plAddFilteredCache.length);
+        let chunk = '';
+        for (let i = plAddRenderedCount; i < nextEnd; i++) {
+            chunk += buildPlAddTrackItemHtml(plAddFilteredCache[i], plAddAlreadySet);
+        }
+        const sentinel = document.getElementById('pl-add-tracks-sentinel');
+        if (sentinel) sentinel.insertAdjacentHTML('beforebegin', chunk);
+        else listEl.insertAdjacentHTML('beforeend', chunk);
+        plAddRenderedCount = nextEnd;
+
+        if (sentinel) {
+            if (plAddRenderedCount >= plAddFilteredCache.length) {
+                sentinel.remove();
+            } else {
+                sentinel.textContent = `${plAddRenderedCount} / ${plAddFilteredCache.length}곡 표시 중 · 스크롤 시 더 불러옴`;
+            }
+        }
+    }
+
     function renderPlaylistAddTracksList() {
         const listEl = document.getElementById('pl-add-tracks-list');
         if (!listEl || !plAddModalTargetId) return;
 
+        if (plAddSentinelObserver) {
+            plAddSentinelObserver.disconnect();
+            plAddSentinelObserver = null;
+        }
+
         const playlists = window.StorageManager.getPlaylists(false);
         const targetPl = playlists.find(p => p.id === plAddModalTargetId);
-        const alreadySongIds = new Set(targetPl ? (targetPl.songIds || []) : []);
+        plAddAlreadySet = new Set(targetPl ? (targetPl.songIds || []) : []);
 
-        const filtered = getFilteredSongsForAddModal();
+        plAddFilteredCache = getFilteredSongsForAddModal();
 
         const filteredCountEl = document.getElementById('pl-add-filtered-count');
-        if (filteredCountEl) filteredCountEl.textContent = `(검색 결과 ${filtered.length}곡)`;
+        if (filteredCountEl) filteredCountEl.textContent = `(검색 결과 ${plAddFilteredCache.length}곡)`;
 
-        if (filtered.length === 0) {
+        if (plAddFilteredCache.length === 0) {
+            plAddRenderedCount = 0;
             listEl.innerHTML = `
                 <div style="padding: 40px; text-align: center; color: var(--text-muted);">
                     조건에 일치하는 곡이 없습니다.
@@ -4351,32 +4751,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const initialEnd = Math.min(PL_ADD_PAGE_SIZE, plAddFilteredCache.length);
         let html = '';
-        filtered.forEach(song => {
-            const isAlready = alreadySongIds.has(song.id);
-            const isChecked = plAddSelectedSongIds.has(song.id);
-            const thumbUrl = `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`;
-            const durationStr = formatTime(song.duration);
-
-            html += `
-                <div class="pl-add-track-item ${isChecked ? 'selected' : ''} ${isAlready ? 'already-added' : ''}" data-song-id="${song.id}">
-                    <input type="checkbox" class="pl-add-checkbox" ${isAlready ? 'disabled checked' : (isChecked ? 'checked' : '')} style="cursor: pointer;">
-                    <img class="pl-add-thumb" src="${thumbUrl}" alt="${song.title}" loading="lazy">
-                    <div class="pl-add-meta">
-                        <div class="pl-add-title">${song.title}</div>
-                        <div class="pl-add-artist">${song.artist}${song.originalArtist ? ' · ' + song.originalArtist : ''}</div>
-                    </div>
-                    <div style="font-size: 0.78rem; color: var(--text-muted); margin-right: 8px;">${durationStr}</div>
-                    ${isAlready ? '<span class="badge-already-in-pl">✓ 이미 수록됨</span>' : ''}
-                </div>
-            `;
-        });
+        for (let i = 0; i < initialEnd; i++) {
+            html += buildPlAddTrackItemHtml(plAddFilteredCache[i], plAddAlreadySet);
+        }
+        if (plAddFilteredCache.length > initialEnd) {
+            html += `<div class="tracks-load-sentinel" id="pl-add-tracks-sentinel">${initialEnd} / ${plAddFilteredCache.length}곡 표시 중 · 스크롤 시 더 불러옴</div>`;
+        }
+        plAddRenderedCount = initialEnd;
         listEl.innerHTML = html;
 
-        listEl.querySelectorAll('.pl-add-track-item').forEach(row => {
-            row.addEventListener('click', (e) => {
+        if (!plAddDelegationBound) {
+            plAddDelegationBound = true;
+            listEl.addEventListener('click', (e) => {
+                const row = e.target.closest('.pl-add-track-item');
+                if (!row) return;
                 const songId = row.dataset.songId;
-                if (alreadySongIds.has(songId)) return;
+                if (plAddAlreadySet.has(songId)) return;
 
                 const checkbox = row.querySelector('.pl-add-checkbox');
                 if (e.target !== checkbox) {
@@ -4392,7 +4784,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 updatePlaylistAddModalActions();
             });
-        });
+        }
+
+        const sentinel = document.getElementById('pl-add-tracks-sentinel');
+        if (sentinel && 'IntersectionObserver' in window) {
+            plAddSentinelObserver = new IntersectionObserver((entries) => {
+                if (entries.some(e => e.isIntersecting)) {
+                    appendNextPlAddPage();
+                }
+            }, { root: listEl, rootMargin: '240px 0px' });
+            plAddSentinelObserver.observe(sentinel);
+        }
     }
 
     function updatePlaylistAddModalActions() {
@@ -4798,10 +5200,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112504;
+                const verNum = v.otaVersion || 2026112505;
                 return {
                     success: true,
-                    versionName: v.webVersionName || '1.13.0',
+                    versionName: v.webVersionName || '1.13.1',
                     currentVersion: verNum,
                     bundledVersion: verNum,
                     otaReleaseDate: v.otaReleaseDate || '2026-11-25',
@@ -4818,14 +5220,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.13.0',
-            currentVersion: 2026112504,
-            bundledVersion: 2026112504,
+            versionName: '1.13.1',
+            currentVersion: 2026112505,
+            bundledVersion: 2026112505,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112504,
-                label: '현재 적용 버전 (#2026112504)',
+                version: 2026112505,
+                label: '현재 적용 버전 (#2026112505)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -4838,7 +5240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.0'} (패치 #${info.currentVersion || 2026112504})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.1'} (패치 #${info.currentVersion || 2026112505})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';
@@ -5256,22 +5658,30 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.editSongPublishedAt.value = song.publishedAt || song.releaseDate || '';
         }
 
-        // 1분류/2분류 상태 판별
+        // 참여 멤버 / 분류 상태 판별
         const isStelliveGroup = (song.members && song.members.length === 1 && song.members[0] === 'group' && (!song.gen || song.gen === 'group')) ||
                                (song.artist && song.artist.includes('스텔라이브') && (!song.members || song.members.length === 0 || (song.members.length === 1 && song.members[0] === 'group')));
 
         let detectedUnits = [];
-        if (song.gen === 'g1' || (song.artist && song.artist.includes('에버리스'))) detectedUnits.push('everlys');
-        if (song.gen === 'g2' || (song.artist && song.artist.includes('유니버스'))) detectedUnits.push('universe');
-        if (song.gen === 'g3' || (song.artist && song.artist.includes('클리셰'))) detectedUnits.push('cliche');
-        if (song.gen === 'g4' || (song.artist && song.artist.includes('어비스'))) detectedUnits.push('abyss');
+        if ((song.artist && song.artist.includes('미스틱')) || (song.members && song.members.includes('kanna') && song.members.includes('yuni') && song.members.length <= 3)) detectedUnits.push('mystic');
+        if ((song.artist && song.artist.includes('에버리스')) || (song.members && song.members.includes('yuni') && song.members.includes('huya') && song.members.length <= 3)) detectedUnits.push('everlys');
+        if (song.artist && song.artist.includes('유니버스')) detectedUnits.push('universe');
+        if (song.artist && song.artist.includes('클리셰')) detectedUnits.push('cliche');
+        if (song.artist && song.artist.includes('어비스')) detectedUnits.push('abyss');
 
         const activeMembers = (song.members || []).filter(m => m !== 'group');
+        const hasKangji = typeof isKangjiSong === 'function' ? isKangjiSong(song) : false;
+        if (hasKangji && !activeMembers.includes('kangji') && song.gen === 'kangji') activeMembers.push('kangji');
 
-        setMemberPickerState('edit', {
+        const isUnclassified = !song.customGroupId && song.gen === 'unclassified' && activeMembers.length === 0 && !isStelliveGroup;
+
+        setPcUnifiedPickerState('edit', {
             isStellive: isStelliveGroup && detectedUnits.length === 0 && activeMembers.length === 0,
+            isUnclassified: isUnclassified,
             units: detectedUnits,
-            members: activeMembers
+            members: activeMembers,
+            customGroupId: song.customGroupId || null,
+            customSubId: song.customSubId || null
         }, dom.editSongArtist);
 
         // 기존 저장된 아티스트명 텍스트 필드에 보존
@@ -5283,7 +5693,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeEditSongModal() {
         dom.modalEditSong.classList.remove('open');
         dom.formEditSong.reset();
-        setMemberPickerState('edit', { isStellive: false, units: [], members: [] }, dom.editSongArtist);
+        setPcUnifiedPickerState('edit', { isStellive: false, units: [], members: [] }, dom.editSongArtist);
     }
 
     function handleSaveSongEdit(e) {
@@ -5291,7 +5701,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const songId = dom.editSongId.value;
         if (!songId) return;
 
-        const memberData = getSelectedMemberData('edit');
+        const memberData = getPcUnifiedPickerData('edit');
         const updatedTitle = dom.editSongTitle.value.trim();
         const updatedArtist = dom.editSongArtist.value.trim();
         const updatedOriginal = dom.editSongOriginalArtist.value.trim();
@@ -5316,6 +5726,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mood: updatedMood,
             members: updatedMembers,
             gen: updatedGen,
+            customGroupId: memberData.customGroupId || null,
+            customSubId: memberData.customSubId || null,
             publishedAt: updatedPublishedAt,
             releaseDate: updatedPublishedAt,
             sabi: {
@@ -5480,7 +5892,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const isStelliveGroup = redetectedMembers.length === 1 && redetectedMembers[0] === 'group';
             const activeMembers = redetectedMembers.filter(m => m !== 'group');
-            setMemberPickerState('edit', {
+            setPcUnifiedPickerState('edit', {
                 isStellive: isStelliveGroup,
                 units: [],
                 members: activeMembers
@@ -5916,6 +6328,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderPcFilterGroupTabs();
                         syncPcFilterUI();
                         renderPcSettingsFilterManager();
+                        if (typeof refreshAllPcUnifiedPickers === 'function') refreshAllPcUnifiedPickers();
                         refreshTrackList();
                         showToast(`"${tab.name}" 탭이 삭제되었습니다.`);
                     }
@@ -6097,41 +6510,73 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.pcBtnFilterApply.textContent = `${totalCount}곡 보기`;
         }
 
-        const parts = [];
+        const chips = [];
         let activeCount = 0;
 
         if (state.selectedGroupTab && state.selectedGroupTab !== 'all') {
             activeCount++;
+            let groupLabel = '';
             if (state.selectedGroupTab === 'stellive') {
                 const genLabels = { group: '유닛/단체/듀엣', g1: '1기생', g2: '2기생', g3: '3기생', g4: '4기생', kangji: '강지' };
                 if (state.selectedSub) {
-                    parts.push(PC_MEMBER_SHORT_NAMES[state.selectedSub] || state.selectedSub);
+                    groupLabel = PC_MEMBER_SHORT_NAMES[state.selectedSub] || state.selectedSub;
                 } else if (state.selectedMajor && state.selectedMajor !== 'all') {
-                    parts.push(genLabels[state.selectedMajor] || state.selectedMajor);
+                    groupLabel = genLabels[state.selectedMajor] || state.selectedMajor;
                 } else {
-                    parts.push('스텔라이브');
+                    groupLabel = '스텔라이브';
                 }
             } else if (state.selectedGroupTab === 'unclassified') {
-                parts.push('미분류');
+                groupLabel = '미분류';
             } else {
                 const cg = (state.customGroups || []).find(g => g.id === state.selectedGroupTab);
                 if (cg) {
                     const sub = state.selectedCustomSub ? (cg.subItems || []).find(s => s.id === state.selectedCustomSub) : null;
-                    parts.push(sub ? `${cg.name} · ${sub.name}` : cg.name);
+                    groupLabel = sub ? `${cg.name} · ${sub.name}` : cg.name;
                 }
+            }
+            if (groupLabel) {
+                chips.push({
+                    label: groupLabel,
+                    onClear: () => {
+                        state.selectedGroupTab = 'all';
+                        state.selectedCustomSub = null;
+                        state.selectedMajor = 'all';
+                        state.selectedSub = null;
+                        applyMemberTheme('all');
+                        renderPcFilterGroupTabs();
+                        syncPcFilterUI();
+                        refreshTrackList();
+                    }
+                });
             }
         }
 
         if (state.selectedTypes && state.selectedTypes.size > 0) {
             activeCount++;
             const typeNames = { original: '오리지널', cover: '커버', featuring: 'OST·피처링', live: 'LIVE' };
-            parts.push(Array.from(state.selectedTypes).map(t => typeNames[t] || t).join(', '));
+            Array.from(state.selectedTypes).forEach(t => {
+                chips.push({
+                    label: typeNames[t] || t,
+                    onClear: () => {
+                        state.selectedTypes.delete(t);
+                        syncPcFilterUI();
+                        refreshTrackList();
+                    }
+                });
+            });
         }
 
         if (state.selectedMoods && state.selectedMoods.size > 0) {
             activeCount++;
             const moodKey = Array.from(state.selectedMoods)[0];
-            parts.push(MOOD_PRESETS[moodKey]?.title || moodKey);
+            chips.push({
+                label: MOOD_PRESETS[moodKey]?.title || moodKey,
+                onClear: () => {
+                    state.selectedMoods.clear();
+                    syncPcFilterUI();
+                    refreshTrackList();
+                }
+            });
         }
 
         if (dom.btnOpenPcFilter) {
@@ -6145,12 +6590,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 dom.pcFilterActiveBadge.style.display = 'none';
             }
         }
-        if (dom.pcActiveFilterSummary && dom.pcActiveFilterSummaryText) {
-            if (parts.length > 0) {
-                dom.pcActiveFilterSummaryText.textContent = parts.join(' · ');
-                dom.pcActiveFilterSummary.style.display = 'inline-flex';
+        if (dom.pcActiveFiltersRow) {
+            dom.pcActiveFiltersRow.innerHTML = '';
+            if (chips.length > 0) {
+                dom.pcActiveFiltersRow.style.display = 'flex';
+                chips.forEach(ch => {
+                    const chipBtn = document.createElement('button');
+                    chipBtn.type = 'button';
+                    chipBtn.className = 'pc-active-filter-chip';
+                    chipBtn.title = '클릭하여 해당 필터 해제';
+                    chipBtn.innerHTML = `<span>${ch.label}</span><span class="pc-chip-x">✕</span>`;
+                    chipBtn.addEventListener('click', ch.onClear);
+                    dom.pcActiveFiltersRow.appendChild(chipBtn);
+                });
+                if (chips.length >= 2) {
+                    const clearAllBtn = document.createElement('button');
+                    clearAllBtn.type = 'button';
+                    clearAllBtn.className = 'pc-active-filter-clear-all';
+                    clearAllBtn.textContent = '전체 해제';
+                    clearAllBtn.addEventListener('click', () => {
+                        resetPcFilters();
+                        showToast('분류 및 필터가 초기화되었습니다.');
+                    });
+                    dom.pcActiveFiltersRow.appendChild(clearAllBtn);
+                }
             } else {
-                dom.pcActiveFilterSummary.style.display = 'none';
+                dom.pcActiveFiltersRow.style.display = 'none';
             }
         }
     }
@@ -6167,12 +6632,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (dom.pcBtnFilterReset) {
             dom.pcBtnFilterReset.addEventListener('click', () => {
-                resetPcFilters();
-                showToast('분류 및 필터가 초기화되었습니다.');
-            });
-        }
-        if (dom.pcActiveFilterSummary) {
-            dom.pcActiveFilterSummary.addEventListener('click', () => {
                 resetPcFilters();
                 showToast('분류 및 필터가 초기화되었습니다.');
             });
@@ -6388,6 +6847,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderPcFilterGroupTabs();
                 syncPcFilterUI();
                 renderPcSettingsFilterManager();
+                if (typeof refreshAllPcUnifiedPickers === 'function') refreshAllPcUnifiedPickers();
                 refreshTrackList();
             });
         }

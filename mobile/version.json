@@ -1,5 +1,5 @@
 {
-  "otaVersion": 2026112504,
+  "otaVersion": 2026112505,
   "otaReleaseDate": "2026-11-25",
   "apkVersionName": "1.11.10",
   "files": [
@@ -79,15 +79,15 @@
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "2db5e7340149d743001f8ac4b9759ef68d73f494c27b20569dd029b5d126c905",
-    "assets/css/mobile.css": "3d6a46eedbb87f63810723b32f4b9ad7129dd85ca3569cca469c32f272c61b4e",
-    "assets/js/mobile-app.js": "cffca0d7723f52ec75bedc8c6fb34c8be0c4bacd6fc6dbb0fc9914680e73cace",
+    "index.html": "9c777f70bfde7dc4b62c440daa4d007db5a6d1edf5cd3db11980ce4fc0546981",
+    "assets/css/mobile.css": "5f24ea365d781a788b8f6a3d44ecb864ee0c436687f23c4d48a8df9701789892",
+    "assets/js/mobile-app.js": "29e0872163886fd4babf54303ca607b8446c2c970bfb1762d8fc223f6b928f37",
     "assets/js/mobile-player.js": "55f28221e5757d25eccc396e866722c048ae0da7fa1d45e35e766260a4dd05b3",
-    "assets/js/songs.js": "f6a00c1563ea8dd705e359f8b4d506da39812d125756fb9ccd53dc64e99158c9",
-    "assets/js/storage.js": "c25efef9e67c18119dce06c4597cb1d9bb0240026f11de36845548322a908650",
+    "assets/js/songs.js": "e8b0b9076fee2eac2dadc1851f479f8a76dbd43b7bfba3eab2f4d668cfa791fe",
+    "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_android.txt": "2387029889c964b531819f781f6e76fb0ee9c630c178589df1e6b25f0c1c1eeb",
+    "patchnotes_android.txt": "1cd26dcba796520817b45aa8a759f5151428b6f7babbde2ab5a74c438daa6ade",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
     "assets/icons/members/kanna.png": "84597dcdd8f2465714fc721423efddcce400fbb4b39d8091ea2921ed92f0048a",
@@ -113,15 +113,15 @@
     "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "3438116a69fc37a73ebc3e25dc43611a39f28b2c2a5ea92436b6f322b7d0f9bb",
-    "assets/css/style.css": "5d5305bdd80782bae9b2ca7253245ca678cf6fa95cb18d4cfce72f629ad05323",
-    "assets/js/songs.js": "5adc6cc242b28586b5ba07b1ea853afefd0b4d87e832e60343c6afae3b536ff4",
-    "assets/js/storage.js": "6f3f06727cb97bbb0691138b8cbd9bf67c0ca51b0ae8e08461f43cb28f6c2c88",
+    "index.html": "82fc9f7c1f9598e3bd8d845dbdfc1d6d10b7cd5471cd9fa4fdf611a94e47c594",
+    "assets/css/style.css": "48eb80583e6e70d1df38736fbfd470236369765f80542975069e99c67eb03233",
+    "assets/js/songs.js": "13fa118c3d5a715e56bb3d8aeffbc953415a11911be96541b68d7fbfd89a9615",
+    "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/player.js": "8fcc753e4dd1c611d9dddbdfef0323ad21c5bf2f20c36619e900d3b1d0f4e2b9",
-    "assets/js/app.js": "b5010c879deccecc02fa47a43f672b05a59ddcf5ae204628312a64676f2cfaf3",
+    "assets/js/app.js": "c7df28e1d8625df7e0b528a8ac422108eeaa20b54d51d3162f1b5c8efb834dad",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_pc.txt": "12c18e9f4e7d27e2b9f6286b94ebb1afbb779cd7ca3b813487763bea36077f96",
-    "patchnotes_web.txt": "c689a5a80a44ab9fae37e621578c27c7a3ec2f44df69b05c0fbbb8565b51a3dc",
+    "patchnotes_pc.txt": "3c780a0fb0faa57223f79516705bb6cf120dc05c776dd74afd3ce79ed2241df6",
+    "patchnotes_web.txt": "3e16e53adb725293dd72030979eeae40f0ee5a1c078299dd77a0ad28c13bcd00",
     "assets/icons/app-icon.png": "ec7aa8525711ecea7317091421dc813aeb0e0c0cd745b7fd518bef5df8589a6a",
     "assets/icons/logo-dark.png": "030e7360fa488d6873570fbe4492bcd35341b94b20837aeaaa144d98e36ce2f2",
     "assets/icons/logo-light.png": "d352c9a894cb66ec292a3f052f73a3ec0113fd30f9ce8b41e6d6e697d5360a50",
@@ -146,5 +146,5 @@
     "assets/icons/members/hiyori.png": "ddc8ad822f6b9ea45a9136265b594e46bac7f667f3725cb1c6cd10d7f3e362a7",
     "assets/icons/members/mary.png": "a11ad419e35df185f1a2573aa0af4bf2c39e1c6549064ef806b5b33ff04517c8"
   },
-  "webVersionName": "1.13.0"
+  "webVersionName": "1.13.1"
 }
