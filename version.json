@@ -1,7 +1,7 @@
 {
-  "otaVersion": 2026112702,
+  "otaVersion": 2026112703,
   "otaReleaseDate": "2026-11-27",
-  "apkVersionName": "1.13.4",
+  "apkVersionName": "1.13.5",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -71,23 +71,23 @@
     "assets/icons/members/mary.png"
   ],
   "apk": {
-    "versionCode": 18,
-    "versionName": "1.13.4",
+    "versionCode": 19,
+    "versionName": "1.13.5",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "v1.13.4 (OTA #2026112702): 가로모드 재생+대기열 동기화 닫기, 팝업 배경 스크롤/터치 잠금, 인앱 컬러 피커 적용, APK/PC 프리미엄 호스트 연동 제거, 오프라인 저장소 게이지 바, 사비 아이콘·하단 탭 바 시인성 개선, 재생목록 4종 다중 선택, 분위기 추천 버튼 테두리 수정",
+    "changelog": "v1.13.5 (OTA #2026112703): 히나 OST 별빛 걸음 추가, 재생창 깜빡임 제거, 시트 핸들 드래그 닫기, 기기 여유 공간 표기 개선, 라이트모드 가독성 전면 보강, 선택모드 하단 여백 확보, 스크롤 오터치 방지, 설정/패치노트 태그형 개편 및 분위기 추천 아이콘 변경",
     "minRequiredVersionCode": 10,
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "54974a8b63e22d62aeaff47ad3a292a2010d474ac5f358880ac4783ac07d50f5",
-    "assets/css/mobile.css": "8397cfdb18d938f9d3d80ffaa16ce1feb212a04031c9bae98b23d4e6f4375f50",
-    "assets/js/mobile-app.js": "7cbc26d9426edfe99805ae254a6a15b59dc3cc14090efb3b9014111bd85b4546",
+    "index.html": "be7c87a0fa1967b1bfa93173cc616cece3c7225e2b3d57dab9fdaed6838ed8dc",
+    "assets/css/mobile.css": "9bc32f8c39b20061fd90e72fbdaa80bec6fffd462118ca9f51fdcb1719a653bc",
+    "assets/js/mobile-app.js": "debc5b48a6bddb83b1861f9240e8fe3be5bda4a12d9cce8927b178dbd8718b08",
     "assets/js/mobile-player.js": "91c3d392344a9c5b6b2157564abb0c4f7b4f649cbcfbc5588ca3147691ba6044",
-    "assets/js/songs.js": "df3dc3072cdef2da4231f2cd82714278e62aab3abd57097ea7fa98f90b1a54b8",
+    "assets/js/songs.js": "a100e60bafb086a7eb826ca4522dddc8b5e26bb734d1b0f4902608411d1fbf77",
     "assets/js/storage.js": "4e992ec21d05cf9993943badf28d967de7b46de578552576a146316f59cdfff4",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
-    "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_android.txt": "977dd2c211807544c914e77df7328cb026e938c2eaa71fde747e77b8eed54913",
+    "songs-latest.json": "9d3f3c8e85146afedbe7fd7169b78d8dded8a52212e771c0a96d8f851c16fe0d",
+    "patchnotes_android.txt": "d21eddf56ad3c2aca6a242b78c51120ec56a28c63eb32a8187b98cbd9a70d22d",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
     "assets/icons/members/kanna.png": "84597dcdd8f2465714fc721423efddcce400fbb4b39d8091ea2921ed92f0048a",
@@ -113,15 +113,15 @@
     "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "9bc7a57c5974cd139f6eec18841be2bab1911f0f6a4ff80eefac6e1a3c7a900d",
-    "assets/css/style.css": "9f291a2509f8e80c9d4ef8cb784a0990fc4038fe4994c400619848c830339621",
-    "assets/js/songs.js": "df3dc3072cdef2da4231f2cd82714278e62aab3abd57097ea7fa98f90b1a54b8",
+    "index.html": "5cbb7c8bbf57a67d57a34c1e509c1a09a8f66ea6bf3da5edfbff6e0c8cab1d22",
+    "assets/css/style.css": "46bcae2479e367af1f97b0e55f92f67b9349a255e86598ce1ca991cbe190e2a7",
+    "assets/js/songs.js": "a100e60bafb086a7eb826ca4522dddc8b5e26bb734d1b0f4902608411d1fbf77",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/player.js": "47e768526690b313ef3c5ef4bdcbf2b193b5c17151f0cf48cfcf914fbaa349f2",
-    "assets/js/app.js": "9dac46a05612596023790b48e44b19b22bc25fa941466ea56feda5f32955a347",
-    "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_pc.txt": "9097446b6063bfda7b4e4e016f8913e75eddea094372fde4319a505b5e56eb95",
-    "patchnotes_web.txt": "ef63aeb98abcfd9f76328b20855747846f7163829fb816664eed28b959095f67",
+    "assets/js/app.js": "cb1dc2beed1f1d8c925cdb21542867ffb4bf6c97accebbe67b0e4b1162343a33",
+    "songs-latest.json": "9d3f3c8e85146afedbe7fd7169b78d8dded8a52212e771c0a96d8f851c16fe0d",
+    "patchnotes_pc.txt": "67921a263556950a4d10b0ff391a8d4378410d10cc11b15353ed14693a099970",
+    "patchnotes_web.txt": "b3206bdbdf805fc0b4dd44570e65f13d75f8390876596d71d87001f3a52dbb70",
     "assets/icons/app-icon.png": "ec7aa8525711ecea7317091421dc813aeb0e0c0cd745b7fd518bef5df8589a6a",
     "assets/icons/logo-dark.png": "030e7360fa488d6873570fbe4492bcd35341b94b20837aeaaa144d98e36ce2f2",
     "assets/icons/logo-light.png": "d352c9a894cb66ec292a3f052f73a3ec0113fd30f9ce8b41e6d6e697d5360a50",
@@ -146,7 +146,7 @@
     "assets/icons/members/hiyori.png": "ddc8ad822f6b9ea45a9136265b594e46bac7f667f3725cb1c6cd10d7f3e362a7",
     "assets/icons/members/mary.png": "a11ad419e35df185f1a2573aa0af4bf2c39e1c6549064ef806b5b33ff04517c8"
   },
-  "webVersionName": "1.13.4",
+  "webVersionName": "1.13.5",
   "nativeRequired": false,
   "nativeUpdateRequired": false
 }

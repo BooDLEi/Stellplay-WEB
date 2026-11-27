@@ -10,13 +10,18 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.13.4';
-    const CURRENT_OTA_BUILD = 2026112702;
+    const CURRENT_APP_VERSION = '1.13.5';
+    const CURRENT_OTA_BUILD = 2026112703;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
     let lastFastInteractionY = 0;
     let lastTrackActionsOpenTime = 0;
+    let lastGlobalScrollTime = 0;
+
+    window.addEventListener('scroll', () => {
+        lastGlobalScrollTime = Date.now();
+    }, { passive: true, capture: true });
 
     function markFastInteraction(x, y) {
         lastFastInteractionTime = Date.now();
@@ -827,14 +832,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             function renderNotes(txt) {
                 if (!dom.patchnotesBody) return;
-                const escaped = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                const formatted = escaped
-                    .replace(/(\[v\s*[0-9.]+\][^\n]*)/g, '<div style="display:inline-block; font-weight:800; color:#818cf8; background:rgba(99,102,241,0.15); padding:3px 8px; border-radius:6px; margin-top:14px; margin-bottom:4px; font-size:0.85rem;">$1</div>')
-                    .replace(/(\d+\.\s+[^\n]+)/g, '<div style="font-weight:700; color:var(--text-primary); margin-top:8px; margin-bottom:2px;">$1</div>')
-                    .replace(/(\s*-\s+[^\n]+)/g, '<div style="padding-left:8px; color:var(--text-secondary); margin-bottom:2px;">$1</div>')
-                    .replace(/={10,}/g, '<div style="border-bottom:1px solid var(--border-glass); margin:10px 0;"></div>')
-                    .replace(/-{10,}/g, '<div style="border-bottom:1px dashed var(--border-glass); margin:8px 0;"></div>');
-                dom.patchnotesBody.innerHTML = formatted;
+                const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const lines = String(txt || '').replace(/\r\n/g, '\n').split('\n');
+                const sections = [];
+                let cur = null;
+
+                for (const rawLine of lines) {
+                    const trimmed = rawLine.trim();
+                    if (!trimmed || /^[=-]{6,}$/.test(trimmed) || trimmed.startsWith('StellPlay ') && trimmed.includes('패치노트')) {
+                        continue;
+                    }
+                    const verMatch = trimmed.match(/^\[(v\s*[^\]]+)\]\s*(?:-\s*(.+))?$/i);
+                    if (verMatch) {
+                        cur = { version: verMatch[1].trim(), date: (verMatch[2] || '').trim(), items: [] };
+                        sections.push(cur);
+                        continue;
+                    }
+                    if (!cur) continue;
+                    const itemMatch = trimmed.match(/^(?:[-•*]|\d+\.)\s*(?:\[([^\]]+)\]\s*)?(.*)$/);
+                    if (itemMatch) {
+                        cur.items.push({ tag: (itemMatch[1] || '').trim(), text: (itemMatch[2] || '').trim() });
+                    } else if (cur.items.length > 0) {
+                        cur.items[cur.items.length - 1].text += ' ' + trimmed;
+                    }
+                }
+
+                if (sections.length === 0) {
+                    dom.patchnotesBody.textContent = txt;
+                    return;
+                }
+
+                const tagClass = (tag) => {
+                    if (/신곡/.test(tag)) return 'pn-tag-song';
+                    if (/신규|추가/.test(tag)) return 'pn-tag-new';
+                    if (/수정|버그|보안/.test(tag)) return 'pn-tag-fix';
+                    return 'pn-tag-improve';
+                };
+
+                dom.patchnotesBody.innerHTML = sections.map((sec, idx) => {
+                    const itemsHtml = sec.items.map(it => {
+                        const badge = it.tag ? `<span class="pn-tag ${tagClass(it.tag)}">${esc(it.tag)}</span>` : '<span class="pn-tag pn-tag-improve">변경</span>';
+                        const colonIdx = it.text.indexOf(':');
+                        let bodyHtml = esc(it.text);
+                        if (colonIdx > 0 && colonIdx <= 26) {
+                            bodyHtml = `<strong>${esc(it.text.slice(0, colonIdx))}</strong>:${esc(it.text.slice(colonIdx + 1))}`;
+                        }
+                        return `<li class="pn-item">${badge}<span class="pn-text">${bodyHtml}</span></li>`;
+                    }).join('');
+                    return `
+                        <div class="pn-version-card${idx === 0 ? ' is-latest' : ''}">
+                            <div class="pn-version-head">
+                                <span class="pn-version-badge">${esc(sec.version)}</span>
+                                ${sec.date ? `<span class="pn-version-date">${esc(sec.date)}</span>` : ''}
+                            </div>
+                            <ul class="pn-list">${itemsHtml}</ul>
+                        </div>
+                    `;
+                }).join('');
             }
 
             if (isNative && typeof window.AndroidBridge.getPatchNotes === 'function') {
@@ -1390,20 +1444,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             let appBytes = Number(stats.totalSize) || 0;
             let totalBytes = 0;
             let usedBytes = 0;
+            let availableBytes = 0;
+            let storageScope = 'app';
 
-            if (window.AndroidBridge && typeof window.AndroidBridge.getDeviceStorageInfoJson === 'function') {
-                try {
-                    const info = JSON.parse(window.AndroidBridge.getDeviceStorageInfoJson() || '{}');
-                    if (info.totalBytes > 0) totalBytes = Number(info.totalBytes);
-                    if (info.usedBytes >= 0) usedBytes = Number(info.usedBytes);
-                    if (info.offlineBytes >= 0) appBytes = Number(info.offlineBytes);
-                } catch (_) {}
+            if (window.AndroidBridge) {
+                if (typeof window.AndroidBridge.getDeviceStorageInfoJson === 'function') {
+                    try {
+                        const info = JSON.parse(window.AndroidBridge.getDeviceStorageInfoJson() || '{}');
+                        if (info.totalBytes > 0) {
+                            totalBytes = Number(info.totalBytes);
+                            usedBytes = Number(info.usedBytes || 0);
+                            availableBytes = info.availableBytes >= 0
+                                ? Number(info.availableBytes)
+                                : Math.max(0, totalBytes - usedBytes);
+                            storageScope = info.scope || 'device';
+                        }
+                        if (info.offlineBytes >= 0) appBytes = Number(info.offlineBytes);
+                    } catch (_) {}
+                }
             } else if (navigator.storage && typeof navigator.storage.estimate === 'function') {
                 try {
                     const est = await navigator.storage.estimate();
                     if (est && est.quota > 0) {
                         totalBytes = Number(est.quota);
                         usedBytes = Number(est.usage || appBytes);
+                        availableBytes = Math.max(0, totalBytes - usedBytes);
+                        storageScope = 'web';
                     }
                 } catch (_) {}
             }
@@ -1412,14 +1478,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             let devicePct = 0;
             let appPct = 0;
 
-            if (totalBytes > 0) {
+            if (totalBytes > 0 && storageScope === 'device') {
                 devicePct = Math.min(100, Math.max(0, (usedBytes / totalBytes) * 100));
                 appPct = Math.min(100, Math.max(appBytes > 0 ? 2 : 0, (appBytes / totalBytes) * 100));
                 if (dom.offlineStatsSize) {
-                    dom.offlineStatsSize.textContent = `${formatStorageBytes(usedBytes)} / ${formatStorageBytes(totalBytes)}`;
+                    dom.offlineStatsSize.textContent = `여유 ${formatStorageBytes(availableBytes)} / ${formatStorageBytes(totalBytes)}`;
                 }
                 if (dom.offlineStorageSub) {
-                    dom.offlineStorageSub.textContent = `오프라인 ${appFormatted} (${appPct < 0.1 && appBytes > 0 ? '<0.1' : appPct.toFixed(1)}%) · ${stats.count || 0}곡`;
+                    dom.offlineStorageSub.textContent = `사용 ${formatStorageBytes(usedBytes)} · 오프라인 ${appFormatted} (${stats.count || 0}곡)`;
+                }
+            } else if (totalBytes > 0 && storageScope === 'web') {
+                devicePct = Math.min(100, Math.max(0, (usedBytes / totalBytes) * 100));
+                appPct = Math.min(100, Math.max(appBytes > 0 ? 2 : 0, (appBytes / totalBytes) * 100));
+                if (dom.offlineStatsSize) {
+                    dom.offlineStatsSize.textContent = `${appFormatted} 사용 중`;
+                }
+                if (dom.offlineStorageSub) {
+                    dom.offlineStorageSub.textContent = `웹 여유 ${formatStorageBytes(availableBytes)} · ${stats.count || 0}곡`;
                 }
             } else {
                 const softCap = 2 * 1024 * 1024 * 1024;
@@ -1428,7 +1503,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     dom.offlineStatsSize.textContent = `${appFormatted} 사용 중`;
                 }
                 if (dom.offlineStorageSub) {
-                    dom.offlineStorageSub.textContent = `오프라인 음원 ${stats.count || 0}곡 저장됨`;
+                    dom.offlineStorageSub.textContent = window.AndroidBridge
+                        ? `APK 업데이트 시 기기 여유 공간 표시 · ${stats.count || 0}곡`
+                        : `오프라인 음원 ${stats.count || 0}곡 저장됨`;
                 }
             }
 
@@ -4214,11 +4291,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (state.isQueueSelectMode) {
                 item.addEventListener('click', () => {
+                    if (Date.now() - lastGlobalScrollTime < 150) return;
                     toggleQueueItemSelection(idx);
                 });
             } else {
-                // 탭하여 즉시 해당 곡 재생
+                // 탭하여 즉시 해당 곡 재생 (스크롤 직후 오인 클릭 방지)
                 item.querySelector('.m-queue-left').addEventListener('click', () => {
+                    if (Date.now() - lastGlobalScrollTime < 150) return;
                     player.playQueueIndex(idx);
                 });
 
@@ -5899,26 +5978,68 @@ document.addEventListener('DOMContentLoaded', async () => {
         function bindFastTrackList(container, getSongsFn) {
             if (!container) return;
             let startX = 0, startY = 0, startTime = 0;
+            let startWinScrollY = 0, startContainerScrollTop = 0, scrollHost = null;
+            let hasMoved = false, isCanceled = false, wasScrollingAtStart = false;
             let targetRow = null;
             let lastFastTapTime = 0;
 
+            const findScrollParent = (el) => {
+                let cur = el;
+                while (cur && cur !== document.documentElement) {
+                    if (cur.scrollHeight > cur.clientHeight + 2) return cur;
+                    cur = cur.parentElement;
+                }
+                return document.scrollingElement || document.body;
+            };
+
             container.addEventListener('touchstart', (e) => {
-                if (e.touches.length !== 1) return;
+                if (e.touches.length !== 1) {
+                    isCanceled = true;
+                    targetRow = null;
+                    return;
+                }
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
                 startTime = Date.now();
+                startWinScrollY = window.scrollY;
+                scrollHost = findScrollParent(container);
+                startContainerScrollTop = scrollHost ? scrollHost.scrollTop : 0;
+                hasMoved = false;
+                isCanceled = false;
+                wasScrollingAtStart = (Date.now() - lastGlobalScrollTime < 150);
                 targetRow = e.target.closest('.m-track-row');
             }, { passive: true });
 
+            container.addEventListener('touchmove', (e) => {
+                if (!targetRow || e.touches.length !== 1) return;
+                const dx = Math.abs(e.touches[0].clientX - startX);
+                const dy = Math.abs(e.touches[0].clientY - startY);
+                if (dx > 8 || dy > 8) {
+                    hasMoved = true;
+                    targetRow = null;
+                }
+            }, { passive: true });
+
+            container.addEventListener('touchcancel', () => {
+                isCanceled = true;
+                targetRow = null;
+            }, { passive: true });
+
             container.addEventListener('touchend', (e) => {
-                if (!targetRow || e.changedTouches.length === 0) return;
+                if (!targetRow || isCanceled || hasMoved || e.changedTouches.length === 0) {
+                    targetRow = null;
+                    return;
+                }
                 const touch = e.changedTouches[0];
                 const dx = Math.abs(touch.clientX - startX);
                 const dy = Math.abs(touch.clientY - startY);
                 const elapsed = Date.now() - startTime;
+                const winMoved = Math.abs(window.scrollY - startWinScrollY);
+                const boxMoved = scrollHost ? Math.abs(scrollHost.scrollTop - startContainerScrollTop) : 0;
+                const recentlyScrolled = (Date.now() - lastGlobalScrollTime < 150);
 
-                // 순수 탭 판정 시 지연된 합성 클릭(Ghost Click)이 새로 열린 바텀시트 백드롭(#m-actions-backdrop)을 눌러 닫아버리는 현상 원천 방지
-                if (dx < 14 && dy < 14 && elapsed < 450) {
+                // 오인 터치 방지: 스크롤 중이거나 8px 초과 이동 시 탭 판정 무시
+                if (!wasScrollingAtStart && !recentlyScrolled && winMoved < 3 && boxMoved < 3 && dx < 8 && dy < 8 && elapsed < 380) {
                     lastFastTapTime = Date.now();
                     if (e.cancelable) e.preventDefault();
                     markFastInteraction(touch.clientX, touch.clientY);
@@ -5928,6 +6049,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, { passive: false });
 
             container.addEventListener('click', (e) => {
+                if (hasMoved || (Date.now() - lastGlobalScrollTime < 120)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 if (Date.now() - lastFastTapTime < 450) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -7595,11 +7721,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (typeof toggleVideoFullscreen === 'function') {
                 toggleVideoFullscreen(false);
             }
+            const splitActive = isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet;
+            if (!fromDragEnd && dom.fullscreenSheet.classList.contains('closing-split')) {
+                return;
+            }
             if (splitCloseTimer) {
                 clearTimeout(splitCloseTimer);
                 splitCloseTimer = null;
             }
-            const splitActive = isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet;
+            const finalizeCloseImmediate = () => {
+                dom.fullscreenSheet.style.transition = 'none';
+                if (dom.queueSheet) dom.queueSheet.style.transition = 'none';
+                dom.fullscreenSheet.classList.remove('open', 'closing-split');
+                void dom.fullscreenSheet.offsetHeight;
+                requestAnimationFrame(() => {
+                    dom.fullscreenSheet.style.transform = '';
+                    dom.fullscreenSheet.style.transition = '';
+                    if (dom.queueSheet) {
+                        dom.queueSheet.style.transform = '';
+                        dom.queueSheet.style.transition = '';
+                    }
+                });
+            };
             if (!fromDragEnd && splitActive && dom.fullscreenSheet.classList.contains('open')) {
                 dom.fullscreenSheet.classList.add('closing-split');
                 dom.fullscreenSheet.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
@@ -7609,22 +7752,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 dockYouTubePlayer(false);
                 splitCloseTimer = setTimeout(() => {
                     splitCloseTimer = null;
-                    dom.fullscreenSheet.classList.remove('open', 'closing-split');
-                    dom.fullscreenSheet.style.transition = '';
-                    dom.fullscreenSheet.style.transform = '';
-                    if (dom.queueSheet) {
-                        dom.queueSheet.style.transition = '';
-                        dom.queueSheet.style.transform = '';
-                    }
+                    finalizeCloseImmediate();
                 }, 290);
                 return;
             }
-            dom.fullscreenSheet.classList.remove('open', 'closing-split');
-            dom.fullscreenSheet.style.transition = '';
+            if (fromDragEnd) {
+                finalizeCloseImmediate();
+                dockYouTubePlayer(false);
+                return;
+            }
+            // 세로(단일) 모드 버튼 닫기: CSS transition으로 부드럽게 닫되 잔여 인라인 스타일 즉시 정리
             dom.fullscreenSheet.style.transform = '';
+            dom.fullscreenSheet.style.transition = '';
+            dom.fullscreenSheet.classList.remove('open', 'closing-split');
             if (dom.queueSheet) {
-                dom.queueSheet.style.transition = '';
+                dom.queueSheet.style.transition = 'none';
                 dom.queueSheet.style.transform = '';
+                requestAnimationFrame(() => {
+                    if (dom.queueSheet) dom.queueSheet.style.transition = '';
+                });
             }
             dockYouTubePlayer(false);
         }
@@ -7933,79 +8079,170 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 재생목록 상단 전체 영역 드래그 다운 제스처 (핸들, 타이틀, 힌트 포함 / 버튼 영역 클릭 제외)
-        const qTopZone = dom.queueTopZone || dom.queueSheetHandle?.parentElement;
-        if (qTopZone) {
-            let qStartY = 0;
-            let isDraggingQTop = false;
+        // 핸들(상단 바) 드래그 다운으로 바텀시트 닫기 공용 헬퍼 (필터 · 대기열 · 곡 액션 시트)
+        function bindSheetHandlePullToClose({ sheetEl, contentEl, handleEls, backdropEl, onClose, allowWhen }) {
+            if (!sheetEl || !contentEl) return;
+            const handles = (handleEls || []).filter(Boolean);
+            if (handles.length === 0) return;
 
-            const isButton = (el) => !!(el && el.closest('button'));
+            let startY = 0;
+            let startX = 0;
+            let startTime = 0;
+            let dragging = false;
+            let pullingDown = false;
+            let curY = 0;
+            let rafHandle = null;
 
-            qTopZone.addEventListener('touchstart', (e) => {
-                if (isButton(e.target)) return;
-                qStartY = e.touches[0].clientY;
-                isDraggingQTop = true;
-            }, { passive: true });
+            const isBlockedCtrl = (el) => !!(el && el.closest('button, input, select, textarea, a'));
 
-            qTopZone.addEventListener('touchmove', (e) => {
-                if (!isDraggingQTop) return;
-                const deltaY = e.touches[0].clientY - qStartY;
-                if (deltaY > 0) {
-                    const contentEl = dom.queueSheet?.querySelector('.queue-sheet-content');
-                    if (contentEl) {
-                        contentEl.style.transform = `translateY(${Math.min(deltaY, 250)}px)`;
+            const applyY = () => {
+                contentEl.style.transform = `translateY(${curY}px)`;
+                if (backdropEl) {
+                    const ratio = Math.max(0.15, 1 - curY / 360);
+                    backdropEl.style.opacity = String(ratio);
+                }
+                rafHandle = null;
+            };
+
+            const onStart = (cx, cy, target) => {
+                if (typeof allowWhen === 'function' && !allowWhen()) return;
+                if (!sheetEl.classList.contains('open')) return;
+                if (isBlockedCtrl(target)) return;
+                startX = cx;
+                startY = cy;
+                startTime = Date.now();
+                dragging = true;
+                pullingDown = false;
+                curY = 0;
+            };
+
+            const onMove = (cx, cy, ev) => {
+                if (!dragging) return;
+                const dy = cy - startY;
+                const dx = cx - startX;
+                if (!pullingDown) {
+                    if (dy > 4 && Math.abs(dy) >= Math.abs(dx)) {
+                        pullingDown = true;
                         contentEl.style.transition = 'none';
+                        if (backdropEl) backdropEl.style.transition = 'none';
+                        if (ev && ev.cancelable) ev.preventDefault();
+                    } else if (Math.abs(dx) > 12) {
+                        dragging = false;
+                        return;
                     }
                 }
-            }, { passive: true });
-
-            const finishQSwipe = (deltaY) => {
-                if (!isDraggingQTop) return;
-                isDraggingQTop = false;
-                const contentEl = dom.queueSheet?.querySelector('.queue-sheet-content');
-                if (contentEl) {
-                    contentEl.style.transition = '';
-                    contentEl.style.transform = '';
-                }
-                if (deltaY > 30) {
-                    closeQueueSheet();
+                if (pullingDown) {
+                    if (ev && ev.cancelable) ev.preventDefault();
+                    curY = Math.max(0, dy);
+                    if (!rafHandle) {
+                        rafHandle = requestAnimationFrame(applyY);
+                    }
                 }
             };
 
-            qTopZone.addEventListener('touchend', (e) => {
-                if (!isDraggingQTop) return;
-                const deltaY = e.changedTouches[0].clientY - qStartY;
-                finishQSwipe(deltaY);
-            }, { passive: true });
+            const onEnd = () => {
+                if (!dragging) return;
+                dragging = false;
+                if (rafHandle) {
+                    cancelAnimationFrame(rafHandle);
+                    rafHandle = null;
+                }
+                if (!pullingDown) return;
+                pullingDown = false;
 
-            // PC 마우스 드래그 다운 지원
-            qTopZone.addEventListener('mousedown', (e) => {
-                if (isButton(e.target)) return;
-                qStartY = e.clientY;
-                isDraggingQTop = true;
+                const elapsed = Math.max(1, Date.now() - startTime);
+                const vel = curY / elapsed;
+                contentEl.style.transition = 'transform 0.19s cubic-bezier(0.16, 1, 0.3, 1)';
+                if (backdropEl) backdropEl.style.transition = 'opacity 0.19s ease';
 
-                const onMouseMove = (moveEv) => {
-                    if (!isDraggingQTop) return;
-                    const deltaY = moveEv.clientY - qStartY;
-                    if (deltaY > 0) {
-                        const contentEl = dom.queueSheet?.querySelector('.queue-sheet-content');
-                        if (contentEl) {
-                            contentEl.style.transform = `translateY(${Math.min(deltaY, 250)}px)`;
-                            contentEl.style.transition = 'none';
-                        }
+                if (curY > 75 || (curY > 28 && vel > 0.32)) {
+                    contentEl.style.transform = 'translateY(100%)';
+                    if (backdropEl) backdropEl.style.opacity = '0';
+                    setTimeout(() => {
+                        contentEl.style.transition = 'none';
+                        if (typeof onClose === 'function') onClose();
+                        void contentEl.offsetHeight;
+                        requestAnimationFrame(() => {
+                            contentEl.style.transform = '';
+                            contentEl.style.transition = '';
+                            if (backdropEl) {
+                                backdropEl.style.opacity = '';
+                                backdropEl.style.transition = '';
+                            }
+                        });
+                    }, 190);
+                } else {
+                    contentEl.style.transform = 'translateY(0)';
+                    if (backdropEl) backdropEl.style.opacity = '';
+                    setTimeout(() => {
+                        contentEl.style.transform = '';
+                        contentEl.style.transition = '';
+                        if (backdropEl) backdropEl.style.transition = '';
+                    }, 190);
+                }
+            };
+
+            handles.forEach(h => {
+                h.addEventListener('touchstart', (e) => {
+                    if (e.touches && e.touches.length === 1) {
+                        onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
                     }
-                };
+                }, { passive: true });
+                h.addEventListener('touchmove', (e) => {
+                    if (e.touches && e.touches.length === 1) {
+                        onMove(e.touches[0].clientX, e.touches[0].clientY, e);
+                    }
+                }, { passive: false });
+                h.addEventListener('touchend', onEnd, { passive: true });
+                h.addEventListener('touchcancel', onEnd, { passive: true });
 
-                const onMouseUp = (upEv) => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onMouseUp);
-                    const deltaY = upEv.clientY - qStartY;
-                    finishQSwipe(deltaY);
-                };
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
+                h.addEventListener('mousedown', (e) => {
+                    onStart(e.clientX, e.clientY, e.target);
+                });
             });
+
+            window.addEventListener('mousemove', (e) => {
+                if (dragging) onMove(e.clientX, e.clientY, e);
+            });
+            window.addEventListener('mouseup', onEnd);
         }
+
+        // 1) 필터 시트 핸들/헤더 드래그 닫기
+        bindSheetHandlePullToClose({
+            sheetEl: dom.filterSheet,
+            contentEl: dom.filterSheet?.querySelector('.filter-sheet-content'),
+            handleEls: [
+                dom.filterSheet?.querySelector('.filter-sheet-handle'),
+                dom.filterSheet?.querySelector('.filter-sheet-header')
+            ],
+            backdropEl: dom.filterBackdrop,
+            onClose: closeFilterSheet
+        });
+
+        // 2) 대기열 시트 상단 핸들/헤더 드래그 닫기 (모바일 모드)
+        bindSheetHandlePullToClose({
+            sheetEl: dom.queueSheet,
+            contentEl: dom.queueSheet?.querySelector('.queue-sheet-content'),
+            handleEls: [
+                dom.queueSheetHandle,
+                dom.queueTopZone || dom.queueSheetHandle?.parentElement
+            ],
+            backdropEl: dom.queueBackdrop,
+            onClose: closeQueueSheet,
+            allowWhen: () => !isTabletLayout()
+        });
+
+        // 3) 트랙 액션 바텀시트 핸들/상단 프리뷰 드래그 닫기
+        bindSheetHandlePullToClose({
+            sheetEl: dom.sheetTrackActions,
+            contentEl: dom.sheetTrackActions?.querySelector('.actions-sheet-content'),
+            handleEls: [
+                dom.sheetTrackActions?.querySelector('.actions-handle'),
+                dom.sheetTrackActions?.querySelector('.actions-track-preview')
+            ],
+            backdropEl: dom.actionsBackdrop,
+            onClose: closeTrackActions
+        });
 
         if (dom.btnClearQueue) {
             dom.btnClearQueue.addEventListener('click', () => {

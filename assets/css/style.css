@@ -6408,5 +6408,85 @@ body.multiselect-active .track-number {
     transform: translateY(-1px);
 }
 
+/* v1.13.5: PC 패치노트 구조화 카드/태그 스타일 */
+.pc-patchnotes-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.pc-patchnotes-body .pn-version-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+.pc-patchnotes-body .pn-version-card.is-latest {
+    border-color: rgba(124, 92, 252, 0.45);
+    background: rgba(124, 92, 252, 0.08);
+}
+.pc-patchnotes-body .pn-version-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.pc-patchnotes-body .pn-version-badge {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #a5b4fc;
+}
+.pc-patchnotes-body .pn-version-date {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.pc-patchnotes-body .pn-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pc-patchnotes-body .pn-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+.pc-patchnotes-body .pn-tag {
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 5px;
+}
+.pc-patchnotes-body .pn-tag-song { background: rgba(236, 72, 153, 0.18); color: #f472b6; }
+.pc-patchnotes-body .pn-tag-new { background: rgba(124, 92, 252, 0.22); color: #c4b5fd; }
+.pc-patchnotes-body .pn-tag-improve { background: rgba(56, 189, 248, 0.18); color: #38bdf8; }
+.pc-patchnotes-body .pn-tag-fix { background: rgba(16, 185, 129, 0.18); color: #34d399; }
+.pc-patchnotes-body .pn-text strong { color: var(--text-primary); font-weight: 700; }
+
+[data-theme="light"] .pc-patchnotes-body .pn-version-card {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+[data-theme="light"] .pc-patchnotes-body .pn-version-card.is-latest {
+    background: rgba(79, 70, 229, 0.05);
+    border-color: rgba(79, 70, 229, 0.34);
+}
+[data-theme="light"] .pc-patchnotes-body .pn-version-badge { color: #4338ca; }
+[data-theme="light"] .pc-patchnotes-body .pn-item { color: #334155; }
+[data-theme="light"] .pc-patchnotes-body .pn-tag-song { background: rgba(219, 39, 119, 0.12); color: #be185d; }
+[data-theme="light"] .pc-patchnotes-body .pn-tag-new { background: rgba(79, 70, 229, 0.12); color: #4338ca; }
+[data-theme="light"] .pc-patchnotes-body .pn-tag-improve { background: rgba(2, 132, 199, 0.12); color: #0369a1; }
+[data-theme="light"] .pc-patchnotes-body .pn-tag-fix { background: rgba(5, 150, 105, 0.12); color: #047857; }
+
 
 

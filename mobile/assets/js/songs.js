@@ -211,6 +211,26 @@ const GENERATIONS = [
 
 const DEFAULT_SONGS = [
     {
+        "id": "stel-BWNQ5n8ONBk",
+        "title": "별빛 걸음 (Starlight Step)",
+        "artist": "시라유키 히나",
+        "originalArtist": "아주르 프로밀리아 OST",
+        "type": "ost",
+        "gen": "g2",
+        "members": [
+            "hina"
+        ],
+        "youtubeId": "BWNQ5n8ONBk",
+        "duration": 210,
+        "sabi": {
+            "start": 56,
+            "end": 92,
+            "title": "후렴구: 별빛 걸음 (Starlight Step)"
+        },
+        "publishedAt": "2026-11-27",
+        "mood": "bright"
+    },
+    {
         "id": "stel-QuPmTX-GcAU",
         "title": "HELP!!",
         "artist": "시즈키 토아",
@@ -8342,7 +8362,7 @@ const CURATED_MOOD_BY_YTID = {
     'DzSb5b8ehdg': 'chill', '-a6y64hn4DA': 'chill',
 
     // bright (청량·상쾌)
-    'EKEts5IShas': 'bright', 'Qngf5HNfl6Q': 'bright', '9S3if_u5n_Q': 'bright',
+    'BWNQ5n8ONBk': 'bright', 'EKEts5IShas': 'bright', 'Qngf5HNfl6Q': 'bright', '9S3if_u5n_Q': 'bright',
     'F7kdEX0VRss': 'bright', 'yuxa6o1_scc': 'bright', 'ekINzN4PQmo': 'bright',
     'SiBzI2htX2o': 'bright', 'nwqIoe_3zbE': 'bright', '8shKFjkHabo': 'bright',
     'vM_XT3MeLrc': 'bright', 'Akx45HCYgf0': 'bright', 'dhudKbeIMJg': 'bright',

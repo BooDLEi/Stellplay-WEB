@@ -5133,10 +5133,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112702;
+                const verNum = v.otaVersion || 2026112703;
                 return {
                     success: true,
-                    versionName: v.webVersionName || '1.13.4',
+                    versionName: v.webVersionName || '1.13.5',
                     currentVersion: verNum,
                     bundledVersion: verNum,
                     otaReleaseDate: v.otaReleaseDate || '2026-11-27',
@@ -5153,14 +5153,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.13.4',
-            currentVersion: 2026112702,
-            bundledVersion: 2026112702,
+            versionName: '1.13.5',
+            currentVersion: 2026112703,
+            bundledVersion: 2026112703,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112702,
-                label: '현재 적용 버전 (#2026112702)',
+                version: 2026112703,
+                label: '현재 적용 버전 (#2026112703)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5173,7 +5173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.4'} (패치 #${info.currentVersion || 2026112702})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.5'} (패치 #${info.currentVersion || 2026112703})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';
@@ -5235,11 +5235,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnClosePcPatchnotes = document.getElementById('btn-close-pc-patchnotes');
     const btnCopyPcPatchnotes = document.getElementById('btn-copy-pc-patchnotes');
     const pcPatchnotesContent = document.getElementById('pc-patchnotes-content');
+    let lastPcPatchnotesRaw = '';
+
+    function formatPcPatchnotesHtml(txt) {
+        const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const lines = String(txt || '').replace(/\r\n/g, '\n').split('\n');
+        const sections = [];
+        let cur = null;
+        for (const rawLine of lines) {
+            const trimmed = rawLine.trim();
+            if (!trimmed || /^[=-]{6,}$/.test(trimmed) || (trimmed.startsWith('StellPlay ') && trimmed.includes('패치노트'))) {
+                continue;
+            }
+            const verMatch = trimmed.match(/^\[(v\s*[^\]]+)\]\s*(?:-\s*(.+))?$/i);
+            if (verMatch) {
+                cur = { version: verMatch[1].trim(), date: (verMatch[2] || '').trim(), items: [] };
+                sections.push(cur);
+                continue;
+            }
+            if (!cur) continue;
+            const itemMatch = trimmed.match(/^(?:[-•*]|\d+\.)\s*(?:\[([^\]]+)\]\s*)?(.*)$/);
+            if (itemMatch) {
+                cur.items.push({ tag: (itemMatch[1] || '').trim(), text: (itemMatch[2] || '').trim() });
+            } else if (cur.items.length > 0) {
+                cur.items[cur.items.length - 1].text += ' ' + trimmed;
+            }
+        }
+        if (sections.length === 0) return esc(txt);
+        const tagClass = (tag) => {
+            if (/신곡/.test(tag)) return 'pn-tag-song';
+            if (/신규|추가/.test(tag)) return 'pn-tag-new';
+            if (/수정|버그|보안/.test(tag)) return 'pn-tag-fix';
+            return 'pn-tag-improve';
+        };
+        return sections.map((sec, idx) => {
+            const itemsHtml = sec.items.map(it => {
+                const badge = it.tag ? `<span class="pn-tag ${tagClass(it.tag)}">${esc(it.tag)}</span>` : '<span class="pn-tag pn-tag-improve">변경</span>';
+                const colonIdx = it.text.indexOf(':');
+                let bodyHtml = esc(it.text);
+                if (colonIdx > 0 && colonIdx <= 26) {
+                    bodyHtml = `<strong>${esc(it.text.slice(0, colonIdx))}</strong>:${esc(it.text.slice(colonIdx + 1))}`;
+                }
+                return `<li class="pn-item">${badge}<span class="pn-text">${bodyHtml}</span></li>`;
+            }).join('');
+            return `
+                <div class="pn-version-card${idx === 0 ? ' is-latest' : ''}">
+                    <div class="pn-version-head">
+                        <span class="pn-version-badge">${esc(sec.version)}</span>
+                        ${sec.date ? `<span class="pn-version-date">${esc(sec.date)}</span>` : ''}
+                    </div>
+                    <ul class="pn-list">${itemsHtml}</ul>
+                </div>
+            `;
+        }).join('');
+    }
 
     async function openPcPatchnotesModal() {
         if (!modalPcPatchnotes) return;
         modalPcPatchnotes.classList.add('open');
-        if (pcPatchnotesContent) pcPatchnotesContent.textContent = '패치노트를 불러오는 중...';
+        if (pcPatchnotesContent) pcPatchnotesContent.innerHTML = '<div style="color:var(--text-muted); padding:12px 0;">패치노트를 불러오는 중...</div>';
 
         let notesText = '';
         const isLocal = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
@@ -5263,8 +5317,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (_) {}
             }
         }
+        lastPcPatchnotesRaw = notesText || '';
         if (pcPatchnotesContent) {
-            pcPatchnotesContent.textContent = notesText || '패치노트 내역을 불러올 수 없습니다.';
+            pcPatchnotesContent.innerHTML = notesText
+                ? formatPcPatchnotesHtml(notesText)
+                : '<div style="color:var(--text-muted);">패치노트 내역을 불러올 수 없습니다.</div>';
         }
     }
 
@@ -5277,7 +5334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (btnCopyPcPatchnotes) {
         btnCopyPcPatchnotes.addEventListener('click', async () => {
-            const txt = pcPatchnotesContent ? pcPatchnotesContent.textContent : '';
+            const txt = lastPcPatchnotesRaw || (pcPatchnotesContent ? pcPatchnotesContent.innerText : '');
             if (!txt) return;
             try {
                 await navigator.clipboard.writeText(txt);
