@@ -5133,7 +5133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112704;
+                const verNum = v.otaVersion || 2026112705;
                 return {
                     success: true,
                     versionName: v.webVersionName || '1.13.6',
@@ -5154,13 +5154,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return {
             success: true,
             versionName: '1.13.6',
-            currentVersion: 2026112704,
-            bundledVersion: 2026112704,
+            currentVersion: 2026112705,
+            bundledVersion: 2026112705,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112704,
-                label: '현재 적용 버전 (#2026112704)',
+                version: 2026112705,
+                label: '현재 적용 버전 (#2026112705)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5173,7 +5173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.6'} (패치 #${info.currentVersion || 2026112704})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.6'} (패치 #${info.currentVersion || 2026112705})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';
@@ -5371,6 +5371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // PC 문제(버그) 제보 모달 제어
+    const PC_BUG_REPORT_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfey5k8roc2GMCDbsX_pXd5yNFjE8FuDF8gIX9f146kLscxxQ/formResponse';
     const modalPcBugReport = document.getElementById('modal-pc-bug-report');
     const btnPcBugReport = document.getElementById('btn-pc-bug-report');
     const btnClosePcBugReport = document.getElementById('btn-close-pc-bug-report');
@@ -5381,7 +5382,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPcCopyBug = document.getElementById('btn-pc-copy-bug-report');
     const btnPcSubmitBug = document.getElementById('btn-pc-submit-bug-report');
     let pcBugType = '버그/오류';
-    let pcBugGhLabel = 'bug';
+    let isSubmittingPcBugReport = false;
 
     function buildPcBugDiagText() {
         const isDesktop = !!(window.pywebview || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:');
@@ -5389,7 +5390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const songTitle = (window.player && window.player.currentSong) ? `${window.player.currentSong.title} (${window.player.currentSong.artist})` : '없음';
         return [
             `- 환경: ${isDesktop ? 'PC Client' : 'PC Web'} (${window.innerWidth}×${window.innerHeight} · ${themeLabel})`,
-            `- 버전: v1.13.6 (OTA #2026112704)`,
+            `- 버전: v1.13.6 (OTA #2026112705)`,
             `- 재생 곡: ${songTitle}`
         ].join('\n');
     }
@@ -5414,7 +5415,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 pcBugChipsWrap.querySelectorAll('.pc-bug-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
                 pcBugType = chip.dataset.bugType || '버그/오류';
-                pcBugGhLabel = chip.dataset.ghLabel || 'bug';
             });
         });
     }
@@ -5431,15 +5431,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     if (btnPcSubmitBug) {
-        btnPcSubmitBug.addEventListener('click', () => {
+        btnPcSubmitBug.addEventListener('click', async () => {
+            if (isSubmittingPcBugReport) return;
             const title = (inputPcBugTitle?.value || '').trim();
             const desc = (inputPcBugDesc?.value || '').trim();
             if (!title) { showToast('제목을 입력해주세요.'); if (inputPcBugTitle) inputPcBugTitle.focus(); return; }
             if (!desc) { showToast('발생 상황 및 내용을 입력해주세요.'); if (inputPcBugDesc) inputPcBugDesc.focus(); return; }
-            const issueUrl = `https://github.com/BooDLEi/Stellplay-WEB/issues/new?title=${encodeURIComponent(`[${pcBugType}] ${title}`)}&body=${encodeURIComponent(`${desc}\n\n---\n### 환경 정보 (자동 첨부)\n${buildPcBugDiagText()}`)}&labels=${encodeURIComponent(pcBugGhLabel)}`;
-            window.open(issueUrl, '_blank', 'noopener,noreferrer');
-            if (modalPcBugReport) modalPcBugReport.classList.remove('open');
-            showToast('GitHub 제보 페이지가 열렸습니다.');
+            if (navigator.onLine === false) {
+                showToast('오프라인 상태에서는 제보를 전송할 수 없습니다. 네트워크 연결 후 다시 시도해주세요.');
+                return;
+            }
+
+            isSubmittingPcBugReport = true;
+            btnPcSubmitBug.disabled = true;
+            btnPcSubmitBug.textContent = '전송 중...';
+            try {
+                const params = new URLSearchParams();
+                params.append('entry.911112140', pcBugType);
+                params.append('entry.2060842052', title);
+                params.append('entry.489259588', `${desc}\n\n[자동 환경 정보]\n${buildPcBugDiagText()}`);
+                params.append('fvv', '1');
+                params.append('pageHistory', '0');
+
+                await fetch(PC_BUG_REPORT_FORM_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                    body: params.toString()
+                });
+
+                if (inputPcBugTitle) inputPcBugTitle.value = '';
+                if (inputPcBugDesc) inputPcBugDesc.value = '';
+                if (modalPcBugReport) modalPcBugReport.classList.remove('open');
+                showToast('문제 제보가 접수되었습니다. 소중한 의견 감사합니다!');
+            } catch (_) {
+                showToast('제보 전송에 실패했습니다. 네트워크 상태를 확인하거나 내용 복사 후 다시 시도해주세요.');
+            } finally {
+                isSubmittingPcBugReport = false;
+                btnPcSubmitBug.disabled = false;
+                btnPcSubmitBug.textContent = '제보 제출';
+            }
         });
     }
 

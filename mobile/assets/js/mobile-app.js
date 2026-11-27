@@ -11,7 +11,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     const CURRENT_APP_VERSION = '1.13.6';
-    const CURRENT_OTA_BUILD = 2026112704;
+    const CURRENT_OTA_BUILD = 2026112705;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -954,6 +954,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.backdropPatchnotes) dom.backdropPatchnotes.addEventListener('click', closePatchNotesModal);
 
         // 문제(버그) 제보 모달 제어
+        const BUG_REPORT_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfey5k8roc2GMCDbsX_pXd5yNFjE8FuDF8gIX9f146kLscxxQ/formResponse';
         const modalBugReport = document.getElementById('m-modal-bug-report');
         const backdropBugReport = document.getElementById('m-backdrop-bug-report');
         const btnOpenBugReport = document.getElementById('btn-open-bug-report');
@@ -965,7 +966,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const btnCopyBugReport = document.getElementById('m-btn-copy-bug-report');
         const btnSubmitBugReport = document.getElementById('m-btn-submit-bug-report');
         let selectedBugType = '버그/오류';
-        let selectedBugGhLabel = 'bug';
+        let isSubmittingBugReport = false;
 
         function buildBugDiagnosticsText() {
             const envLabel = isNative ? 'Android APK' : 'Mobile Web';
@@ -998,7 +999,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     bugTypeChipsWrap.querySelectorAll('.m-bug-chip').forEach(c => c.classList.remove('active'));
                     chip.classList.add('active');
                     selectedBugType = chip.dataset.bugType || '버그/오류';
-                    selectedBugGhLabel = chip.dataset.ghLabel || 'bug';
                 });
             });
         }
@@ -1016,7 +1016,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
         if (btnSubmitBugReport) {
-            btnSubmitBugReport.addEventListener('click', () => {
+            btnSubmitBugReport.addEventListener('click', async () => {
+                if (isSubmittingBugReport) return;
                 const title = (inputBugTitle?.value || '').trim();
                 const desc = (inputBugDesc?.value || '').trim();
                 if (!title) {
@@ -1029,16 +1030,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (inputBugDesc) inputBugDesc.focus();
                     return;
                 }
-                const fullTitle = `[${selectedBugType}] ${title}`;
-                const fullBody = `${desc}\n\n---\n### 환경 정보 (자동 첨부)\n${buildBugDiagnosticsText()}`;
-                const issueUrl = `https://github.com/BooDLEi/Stellplay-WEB/issues/new?title=${encodeURIComponent(fullTitle)}&body=${encodeURIComponent(fullBody)}&labels=${encodeURIComponent(selectedBugGhLabel)}`;
-                if (window.AndroidBridge && typeof window.AndroidBridge.openExternalUrl === 'function') {
-                    window.AndroidBridge.openExternalUrl(issueUrl);
-                } else {
-                    window.open(issueUrl, '_blank', 'noopener,noreferrer');
+                if (navigator.onLine === false) {
+                    showToast('오프라인 상태에서는 제보를 전송할 수 없습니다. 네트워크 연결 후 다시 시도해주세요.');
+                    return;
                 }
-                closeBugReportModal();
-                showToast('제보 페이지가 열렸습니다. 내용을 확인하고 제출해 주세요!');
+
+                isSubmittingBugReport = true;
+                btnSubmitBugReport.disabled = true;
+                btnSubmitBugReport.textContent = '전송 중...';
+                try {
+                    const params = new URLSearchParams();
+                    params.append('entry.911112140', selectedBugType);
+                    params.append('entry.2060842052', title);
+                    params.append('entry.489259588', `${desc}\n\n[자동 환경 정보]\n${buildBugDiagnosticsText()}`);
+                    params.append('fvv', '1');
+                    params.append('pageHistory', '0');
+
+                    await fetch(BUG_REPORT_FORM_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                        body: params.toString()
+                    });
+
+                    if (inputBugTitle) inputBugTitle.value = '';
+                    if (inputBugDesc) inputBugDesc.value = '';
+                    closeBugReportModal();
+                    showToast('문제 제보가 접수되었습니다. 소중한 의견 감사합니다!');
+                } catch (_) {
+                    showToast('제보 전송에 실패했습니다. 네트워크 상태를 확인하거나 내용 복사 후 다시 시도해주세요.');
+                } finally {
+                    isSubmittingBugReport = false;
+                    btnSubmitBugReport.disabled = false;
+                    btnSubmitBugReport.textContent = '제보 제출';
+                }
             });
         }
 
