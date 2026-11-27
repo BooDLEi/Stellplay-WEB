@@ -5097,6 +5097,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectEngine = document.getElementById('setting-engine-select');
         if (selectEngine) selectEngine.value = engineVal;
 
+        const isPcDesktopClient = !!window.pywebview ||
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.protocol === 'file:';
+        const ytHostRow = document.getElementById('pc-yt-host-settings-row');
+        if (ytHostRow) {
+            ytHostRow.style.display = isPcDesktopClient ? 'none' : '';
+        }
+
         const ytStdCheck = document.getElementById('setting-yt-standard-host');
         if (ytStdCheck) ytStdCheck.checked = !!settings.ytStandardHost;
 
@@ -5124,10 +5133,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112701;
+                const verNum = v.otaVersion || 2026112702;
                 return {
                     success: true,
-                    versionName: v.webVersionName || '1.13.3',
+                    versionName: v.webVersionName || '1.13.4',
                     currentVersion: verNum,
                     bundledVersion: verNum,
                     otaReleaseDate: v.otaReleaseDate || '2026-11-27',
@@ -5144,14 +5153,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.13.3',
-            currentVersion: 2026112701,
-            bundledVersion: 2026112701,
+            versionName: '1.13.4',
+            currentVersion: 2026112702,
+            bundledVersion: 2026112702,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112701,
-                label: '현재 적용 버전 (#2026112701)',
+                version: 2026112702,
+                label: '현재 적용 버전 (#2026112702)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5164,7 +5173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.3'} (패치 #${info.currentVersion || 2026112701})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.4'} (패치 #${info.currentVersion || 2026112702})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';

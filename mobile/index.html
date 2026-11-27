@@ -19,7 +19,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
-    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112701">
+    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112702">
 </head>
 <body>
     <div id="app-container">
@@ -48,7 +48,7 @@
                         </svg>
                     </button>
                     <button class="header-sabi-btn" id="m-header-sabi-btn" type="button" title="사비 메들리 모드 온/오프">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
                         </svg>
                         <span id="m-header-sabi-text">사비</span>
@@ -216,21 +216,26 @@
                     </div>
                 </div>
 
-                <!-- 2열: 컴팩트 오프라인 보관함 컨트롤 바 -->
+                <!-- 2열: 저장소 게이지 바 & 컴팩트 액션 버튼 -->
                 <div class="offline-hero-card">
-                    <div class="offline-stats-row">
-                        <div class="offline-title-group">
-                            <span class="offline-header-title">오프라인 보관함</span>
+                    <div class="offline-storage-gauge-wrap">
+                        <div class="offline-storage-meta">
+                            <span class="offline-header-title">저장공간</span>
                             <span class="offline-count-num" id="offline-stats-count" style="display:none;"></span>
+                            <span class="offline-size-text" id="offline-stats-size">0.0 MB</span>
                         </div>
-                        <div class="offline-size-text" id="offline-stats-size">0.0 MB 사용 중</div>
+                        <div class="offline-gauge-track" aria-hidden="true">
+                            <div class="offline-gauge-fill-device" id="offline-gauge-device" style="width:0%;"></div>
+                            <div class="offline-gauge-fill-app" id="offline-gauge-app" style="width:0%;"></div>
+                        </div>
+                        <div class="offline-storage-sub" id="offline-storage-sub">오프라인 음원 0.0 MB</div>
                     </div>
                     <div class="offline-actions-row">
-                        <button class="btn-offline-play-all" id="btn-offline-play-all">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        <button type="button" class="btn-offline-play-all" id="btn-offline-play-all">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                             <span>전곡 재생</span>
                         </button>
-                        <button class="btn-offline-clear-all" id="btn-offline-clear-all">전체 삭제</button>
+                        <button type="button" class="btn-offline-clear-all" id="btn-offline-clear-all">전체 삭제</button>
                     </div>
                 </div>
 
@@ -330,20 +335,25 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             <span>곡 추가</span>
                         </button>
-                        <button class="btn-playlist-download" id="btn-playlist-detail-download" title="재생목록 선택 다운로드">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            <span>다운로드</span>
+                        <button class="btn-playlist-download" id="btn-playlist-detail-download" title="곡 복수 선택">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            <span>선택</span>
                         </button>
                     </div>
 
-                    <div class="m-multiselect-floating-bar playlist-select-bar" id="m-playlist-select-bar" style="display:none;">
+                    <div class="m-multiselect-floating-bar playlist-select-bar m-multiselect-4col" id="m-playlist-select-bar" style="display:none;">
                         <div class="multiselect-bar-info">
                             <span id="m-playlist-select-count">0곡 선택됨</span>
-                            <button class="btn-select-all-toggle" id="btn-playlist-select-all">전체 선택</button>
+                            <div class="multiselect-bar-top-btns">
+                                <button type="button" class="btn-select-all-toggle" id="btn-playlist-select-all">전체 선택</button>
+                                <button type="button" class="btn-select-all-toggle btn-ms-top-cancel" id="btn-playlist-select-cancel">취소</button>
+                            </div>
                         </div>
-                        <div class="multiselect-bar-actions">
-                            <button class="btn-ms-action btn-ms-download" id="btn-playlist-select-download">선택 다운로드</button>
-                            <button class="btn-ms-action btn-ms-cancel" id="btn-playlist-select-cancel">취소</button>
+                        <div class="multiselect-bar-actions multiselect-grid-4">
+                            <button type="button" class="btn-ms-action btn-ms-danger" id="btn-playlist-select-remove">목록 제거</button>
+                            <button type="button" class="btn-ms-action btn-ms-queue" id="btn-playlist-select-add-queue">대기열 추가</button>
+                            <button type="button" class="btn-ms-action btn-ms-download" id="btn-playlist-select-download">다운로드</button>
+                            <button type="button" class="btn-ms-action btn-ms-create-pl" id="btn-playlist-select-create-playlist">새 목록 저장</button>
                         </div>
                     </div>
 
@@ -560,7 +570,7 @@
                         </div>
                     </div>
 
-                    <hr class="m-settings-divider">
+                    <hr class="m-settings-divider" id="m-yt-host-settings-divider">
 
                     <!-- 재생 옵션 (크로스페이드 설정) -->
                     <div class="m-settings-card">
@@ -1192,10 +1202,11 @@
                         <label>탭 색상</label>
                         <div class="m-color-picker-row">
                             <div class="m-color-swatches" id="m-custom-group-swatches"></div>
-                            <label class="m-color-custom-pill" title="직접 색상 선택">
-                                <input type="color" id="m-custom-group-color" value="#7c5cfc">
+                            <button type="button" class="m-color-custom-pill" id="m-custom-group-color-btn" title="인앱 색상 설정">
+                                <span class="m-color-pill-dot" id="m-custom-group-color-dot" style="background:#7c5cfc;"></span>
                                 <span id="m-custom-group-color-hex">#7C5CFC</span>
-                            </label>
+                            </button>
+                            <input type="hidden" id="m-custom-group-color" value="#7c5cfc">
                         </div>
                     </div>
                     <div class="form-group">
@@ -1210,7 +1221,8 @@
                         <label>하위 메뉴 · 세부 탭 (멤버·유닛 등, 선택)</label>
                         <div class="m-custom-sub-list" id="m-custom-sub-list"></div>
                         <div class="m-custom-sub-add-row">
-                            <input type="color" id="m-custom-sub-color" class="m-sub-color-input" value="#38bdf8" title="하위 메뉴 색상">
+                            <button type="button" class="m-sub-color-btn" id="m-custom-sub-color-btn" title="하위 메뉴 색상 선택" style="background:#38bdf8;"></button>
+                            <input type="hidden" id="m-custom-sub-color" value="#38bdf8">
                             <input type="text" id="m-custom-sub-name" class="form-input" placeholder="하위 메뉴 이름 (예: 아이네)" maxlength="18" style="flex:1; min-width:0;">
                             <button type="button" class="btn-fetch-info" id="m-btn-add-custom-sub">추가</button>
                         </div>
@@ -1624,16 +1636,55 @@
             </div>
         </div>
 
+        <!-- 인앱 색상 설정 모달 (시스템 컬러피커 대체) -->
+        <div class="mobile-modal inapp-color-modal" id="m-modal-inapp-color-picker">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content m-cp-modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="m-color-picker-title">색상 설정</span>
+                    <button type="button" class="modal-close-btn" id="m-btn-close-color-picker" aria-label="닫기">✕</button>
+                </div>
+                <div class="m-cp-body">
+                    <div class="m-cp-preview-row">
+                        <span class="m-cp-preview-swatch" id="m-cp-preview-swatch"></span>
+                        <input type="text" class="form-input m-cp-hex-input" id="m-cp-hex-input" maxlength="7" placeholder="#7C5CFC" spellcheck="false" autocomplete="off">
+                        <button type="button" class="m-cp-default-btn" id="m-cp-btn-default" style="display:none;">기본색</button>
+                    </div>
+                    <div class="m-cp-section-label">추천 컬러</div>
+                    <div class="m-cp-presets" id="m-cp-presets"></div>
+                    <div class="m-cp-section-label">세부 조정</div>
+                    <div class="m-cp-sliders">
+                        <div class="m-cp-slider-row">
+                            <span>색조</span>
+                            <input type="range" id="m-cp-hue" class="m-cp-range m-cp-range-hue" min="0" max="360" value="252">
+                        </div>
+                        <div class="m-cp-slider-row">
+                            <span>채도</span>
+                            <input type="range" id="m-cp-sat" class="m-cp-range m-cp-range-sat" min="15" max="100" value="75">
+                        </div>
+                        <div class="m-cp-slider-row">
+                            <span>밝기</span>
+                            <input type="range" id="m-cp-lit" class="m-cp-range m-cp-range-lit" min="25" max="85" value="60">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-btn-row">
+                    <button type="button" class="btn-cancel" id="m-cp-btn-cancel">취소</button>
+                    <button type="button" class="btn-submit" id="m-cp-btn-apply">적용</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 토스트 컨테이너 -->
         <div id="toast-container"></div>
     </div>
 
     <!-- 스크립트 로드 순서 -->
-    <script src="./assets/js/storage.js?v=2026112701"></script>
-    <script src="./assets/js/songs.js?v=2026112701"></script>
-    <script src="./assets/js/offline-db.js?v=2026112701"></script>
-    <script src="./assets/js/mobile-player.js?v=2026112701"></script>
-    <script src="./assets/js/mobile-app.js?v=2026112701"></script>
+    <script src="./assets/js/storage.js?v=2026112702"></script>
+    <script src="./assets/js/songs.js?v=2026112702"></script>
+    <script src="./assets/js/offline-db.js?v=2026112702"></script>
+    <script src="./assets/js/mobile-player.js?v=2026112702"></script>
+    <script src="./assets/js/mobile-app.js?v=2026112702"></script>
 
     <!-- [핵심] PWA Service Worker 등록 스크립트 (네이티브 앱 내장 WebView에서는 OTA 최신 파일 우선 반영을 위해 SW 비활성화) -->
     <script>

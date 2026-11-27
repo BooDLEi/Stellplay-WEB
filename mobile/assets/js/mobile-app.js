@@ -10,8 +10,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const CURRENT_APP_VERSION = '1.13.3';
-    const CURRENT_OTA_BUILD = 2026112701;
+    const CURRENT_APP_VERSION = '1.13.4';
+    const CURRENT_OTA_BUILD = 2026112702;
 
     let lastFastInteractionTime = 0;
     let lastFastInteractionX = 0;
@@ -216,11 +216,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         inputCustomGroupName: document.getElementById('m-custom-group-name'),
         customGroupSwatches: document.getElementById('m-custom-group-swatches'),
         inputCustomGroupColor: document.getElementById('m-custom-group-color'),
+        btnCustomGroupColor: document.getElementById('m-custom-group-color-btn'),
+        customGroupColorDot: document.getElementById('m-custom-group-color-dot'),
         customGroupColorHex: document.getElementById('m-custom-group-color-hex'),
         inputCustomGroupKeywords: document.getElementById('m-custom-group-keywords'),
         customSubList: document.getElementById('m-custom-sub-list'),
         inputCustomSubName: document.getElementById('m-custom-sub-name'),
         inputCustomSubColor: document.getElementById('m-custom-sub-color'),
+        btnCustomSubColor: document.getElementById('m-custom-sub-color-btn'),
         btnAddCustomSub: document.getElementById('m-btn-add-custom-sub'),
         btnSubmitCustomGroup: document.getElementById('m-btn-submit-custom-group'),
         btnCloseCustomGroup: document.getElementById('m-btn-close-custom-group'),
@@ -250,6 +253,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 오프라인
         offlineStatsCount: document.getElementById('offline-stats-count'),
         offlineStatsSize: document.getElementById('offline-stats-size'),
+        offlineGaugeDevice: document.getElementById('offline-gauge-device'),
+        offlineGaugeApp: document.getElementById('offline-gauge-app'),
+        offlineStorageSub: document.getElementById('offline-storage-sub'),
         offlineTrackCount: document.getElementById('offline-track-count'),
         trackListOffline: document.getElementById('m-track-list-offline'),
         btnOfflinePlayAll: document.getElementById('btn-offline-play-all'),
@@ -279,7 +285,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         playlistSelectBar: document.getElementById('m-playlist-select-bar'),
         playlistSelectCount: document.getElementById('m-playlist-select-count'),
         btnPlaylistSelectAll: document.getElementById('btn-playlist-select-all'),
+        btnPlaylistSelectRemove: document.getElementById('btn-playlist-select-remove'),
+        btnPlaylistSelectAddQueue: document.getElementById('btn-playlist-select-add-queue'),
         btnPlaylistSelectDownload: document.getElementById('btn-playlist-select-download'),
+        btnPlaylistSelectCreatePlaylist: document.getElementById('btn-playlist-select-create-playlist'),
         btnPlaylistSelectCancel: document.getElementById('btn-playlist-select-cancel'),
         detailPlaylistTitle: document.getElementById('detail-playlist-title'),
         detailPlaylistCount: document.getElementById('detail-playlist-count'),
@@ -1358,15 +1367,74 @@ document.addEventListener('DOMContentLoaded', async () => {
             const stats = await window.OfflineDB.getStorageStats();
 
             if (dom.offlineStatsCount) dom.offlineStatsCount.textContent = '';
-            if (dom.offlineStatsSize) dom.offlineStatsSize.textContent = `${stats.formattedSize} 사용 중`;
             if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '';
             if (dom.settingsStorageInfo) dom.settingsStorageInfo.textContent = stats.formattedSize;
+            await updateOfflineStorageGauge(stats);
             updateSettingsCacheInfo();
 
             if (dom.tabBadgeOffline) {
                 dom.tabBadgeOffline.style.display = 'none';
             }
         } catch (e) {}
+    }
+
+    function formatStorageBytes(bytes) {
+        const b = Number(bytes) || 0;
+        if (b >= 1024 * 1024 * 1024) return `${(b / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+        return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    async function updateOfflineStorageGauge(statsObj) {
+        try {
+            const stats = statsObj || (window.OfflineDB ? await window.OfflineDB.getStorageStats() : { totalSize: 0, formattedSize: '0.0 MB', count: 0 });
+            let appBytes = Number(stats.totalSize) || 0;
+            let totalBytes = 0;
+            let usedBytes = 0;
+
+            if (window.AndroidBridge && typeof window.AndroidBridge.getDeviceStorageInfoJson === 'function') {
+                try {
+                    const info = JSON.parse(window.AndroidBridge.getDeviceStorageInfoJson() || '{}');
+                    if (info.totalBytes > 0) totalBytes = Number(info.totalBytes);
+                    if (info.usedBytes >= 0) usedBytes = Number(info.usedBytes);
+                    if (info.offlineBytes >= 0) appBytes = Number(info.offlineBytes);
+                } catch (_) {}
+            } else if (navigator.storage && typeof navigator.storage.estimate === 'function') {
+                try {
+                    const est = await navigator.storage.estimate();
+                    if (est && est.quota > 0) {
+                        totalBytes = Number(est.quota);
+                        usedBytes = Number(est.usage || appBytes);
+                    }
+                } catch (_) {}
+            }
+
+            const appFormatted = formatStorageBytes(appBytes);
+            let devicePct = 0;
+            let appPct = 0;
+
+            if (totalBytes > 0) {
+                devicePct = Math.min(100, Math.max(0, (usedBytes / totalBytes) * 100));
+                appPct = Math.min(100, Math.max(appBytes > 0 ? 2 : 0, (appBytes / totalBytes) * 100));
+                if (dom.offlineStatsSize) {
+                    dom.offlineStatsSize.textContent = `${formatStorageBytes(usedBytes)} / ${formatStorageBytes(totalBytes)}`;
+                }
+                if (dom.offlineStorageSub) {
+                    dom.offlineStorageSub.textContent = `오프라인 ${appFormatted} (${appPct < 0.1 && appBytes > 0 ? '<0.1' : appPct.toFixed(1)}%) · ${stats.count || 0}곡`;
+                }
+            } else {
+                const softCap = 2 * 1024 * 1024 * 1024;
+                appPct = Math.min(100, Math.max(appBytes > 0 ? 2 : 0, (appBytes / softCap) * 100));
+                if (dom.offlineStatsSize) {
+                    dom.offlineStatsSize.textContent = `${appFormatted} 사용 중`;
+                }
+                if (dom.offlineStorageSub) {
+                    dom.offlineStorageSub.textContent = `오프라인 음원 ${stats.count || 0}곡 저장됨`;
+                }
+            }
+
+            if (dom.offlineGaugeDevice) dom.offlineGaugeDevice.style.width = `${devicePct.toFixed(1)}%`;
+            if (dom.offlineGaugeApp) dom.offlineGaugeApp.style.width = `${appPct.toFixed(1)}%`;
+        } catch (_) {}
     }
 
     function updateNetworkStatus() {
@@ -1496,7 +1564,175 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (dom.filterSheet) dom.filterSheet.classList.remove('open');
     }
 
+    const CP_PRESETS = [
+        '#7c5cfc', '#968ee6', '#7467cf', '#8e76c9', '#8b5bb5',
+        '#4a67a8', '#5c85c9', '#68a8cc', '#38aba8', '#89b55c',
+        '#ccb056', '#d9c87a', '#a6744c', '#cf6666', '#cc5c94',
+        '#cf6d9c', '#d98bb2', '#dfa8c6', '#94a3b8', '#64748b'
+    ];
+
+    let activeColorPickerOpts = null;
+    let activeColorPickerHex = '#7c5cfc';
+    let colorPickerBound = false;
+
+    function hexToHsl(hex) {
+        const clean = /^#?[0-9a-f]{6}$/i.test(hex || '') ? hex.replace('#', '') : '7c5cfc';
+        const r = parseInt(clean.slice(0, 2), 16) / 255;
+        const g = parseInt(clean.slice(2, 4), 16) / 255;
+        const b = parseInt(clean.slice(4, 6), 16) / 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h = 0, s = 0, l = (max + min) / 2;
+        if (max !== min) {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+    }
+
+    function hslToHex(h, s, l) {
+        const hh = ((Number(h) % 360) + 360) % 360;
+        const ss = Math.max(0, Math.min(100, Number(s))) / 100;
+        const ll = Math.max(0, Math.min(100, Number(l))) / 100;
+        const a = ss * Math.min(ll, 1 - ll);
+        const f = (n) => {
+            const k = (n + hh / 30) % 12;
+            const c = ll - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            return Math.round(255 * c).toString(16).padStart(2, '0');
+        };
+        return `#${f(0)}${f(8)}${f(4)}`;
+    }
+
+    function closeInAppColorPicker() {
+        const modal = document.getElementById('m-modal-inapp-color-picker');
+        if (modal) modal.classList.remove('open');
+        activeColorPickerOpts = null;
+    }
+
+    function updateInAppColorPickerUI(hex, syncSliders = true) {
+        const norm = /^#[0-9a-f]{6}$/i.test(hex || '') ? hex.toLowerCase() : '#7c5cfc';
+        activeColorPickerHex = norm;
+        const preview = document.getElementById('m-cp-preview-swatch');
+        const hexInput = document.getElementById('m-cp-hex-input');
+        const presetsEl = document.getElementById('m-cp-presets');
+        const hueEl = document.getElementById('m-cp-hue');
+        const satEl = document.getElementById('m-cp-sat');
+        const litEl = document.getElementById('m-cp-lit');
+        if (preview) preview.style.background = norm;
+        if (hexInput && document.activeElement !== hexInput) hexInput.value = norm.toUpperCase();
+        if (presetsEl) {
+            presetsEl.querySelectorAll('.m-cp-swatch-btn').forEach(b => {
+                b.classList.toggle('active', (b.dataset.hex || '').toLowerCase() === norm);
+            });
+        }
+        const hsl = hexToHsl(norm);
+        const curH = syncSliders ? hsl.h : (hueEl ? Number(hueEl.value) : hsl.h);
+        const curS = syncSliders ? Math.max(15, Math.min(100, hsl.s)) : (satEl ? Number(satEl.value) : hsl.s);
+        const curL = syncSliders ? Math.max(25, Math.min(85, hsl.l)) : (litEl ? Number(litEl.value) : hsl.l);
+        if (syncSliders) {
+            if (hueEl) hueEl.value = String(curH);
+            if (satEl) satEl.value = String(curS);
+            if (litEl) litEl.value = String(curL);
+        }
+        if (satEl) {
+            satEl.style.background = `linear-gradient(90deg, ${hslToHex(curH, 15, curL)}, ${hslToHex(curH, 100, curL)})`;
+        }
+        if (litEl) {
+            litEl.style.background = `linear-gradient(90deg, ${hslToHex(curH, curS, 25)}, ${hslToHex(curH, curS, 55)}, ${hslToHex(curH, curS, 85)})`;
+        }
+    }
+
+    function ensureInAppColorPickerBound() {
+        if (colorPickerBound) return;
+        colorPickerBound = true;
+        const modal = document.getElementById('m-modal-inapp-color-picker');
+        const presetsEl = document.getElementById('m-cp-presets');
+        const hueEl = document.getElementById('m-cp-hue');
+        const satEl = document.getElementById('m-cp-sat');
+        const litEl = document.getElementById('m-cp-lit');
+        const hexInput = document.getElementById('m-cp-hex-input');
+        const btnDefault = document.getElementById('m-cp-btn-default');
+        const btnClose = document.getElementById('m-btn-close-color-picker');
+        const btnCancel = document.getElementById('m-cp-btn-cancel');
+        const btnApply = document.getElementById('m-cp-btn-apply');
+
+        if (presetsEl) {
+            presetsEl.innerHTML = '';
+            CP_PRESETS.forEach(pHex => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'm-cp-swatch-btn';
+                b.dataset.hex = pHex;
+                b.style.background = pHex;
+                b.title = pHex.toUpperCase();
+                b.addEventListener('click', () => updateInAppColorPickerUI(pHex, true));
+                presetsEl.appendChild(b);
+            });
+        }
+        const onSliderChange = () => {
+            if (!hueEl || !satEl || !litEl) return;
+            const nextHex = hslToHex(hueEl.value, satEl.value, litEl.value);
+            updateInAppColorPickerUI(nextHex, false);
+        };
+        if (hueEl) hueEl.addEventListener('input', onSliderChange);
+        if (satEl) satEl.addEventListener('input', onSliderChange);
+        if (litEl) litEl.addEventListener('input', onSliderChange);
+        if (hexInput) {
+            hexInput.addEventListener('input', (e) => {
+                let v = (e.target.value || '').trim();
+                if (!v.startsWith('#')) v = '#' + v;
+                if (/^#[0-9a-f]{6}$/i.test(v)) {
+                    updateInAppColorPickerUI(v, true);
+                }
+            });
+        }
+        if (btnDefault) {
+            btnDefault.addEventListener('click', () => {
+                if (activeColorPickerOpts && activeColorPickerOpts.defaultHex) {
+                    updateInAppColorPickerUI(activeColorPickerOpts.defaultHex, true);
+                }
+            });
+        }
+        if (btnClose) btnClose.addEventListener('click', closeInAppColorPicker);
+        if (btnCancel) btnCancel.addEventListener('click', closeInAppColorPicker);
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal || e.target.classList.contains('modal-backdrop')) {
+                    closeInAppColorPicker();
+                }
+            });
+        }
+        if (btnApply) {
+            btnApply.addEventListener('click', () => {
+                const cb = activeColorPickerOpts && activeColorPickerOpts.onSelect;
+                const chosen = activeColorPickerHex;
+                closeInAppColorPicker();
+                if (typeof cb === 'function') cb(chosen);
+            });
+        }
+    }
+
+    function openInAppColorPicker(opts = {}) {
+        ensureInAppColorPickerBound();
+        activeColorPickerOpts = opts;
+        const modal = document.getElementById('m-modal-inapp-color-picker');
+        const titleEl = document.getElementById('m-color-picker-title');
+        const btnDefault = document.getElementById('m-cp-btn-default');
+        if (titleEl) titleEl.textContent = opts.title || '색상 설정';
+        if (btnDefault) btnDefault.style.display = opts.defaultHex ? 'inline-flex' : 'none';
+        updateInAppColorPickerUI(opts.initialHex || opts.defaultHex || '#7c5cfc', true);
+        if (modal) modal.classList.add('open');
+    }
+
     function renderCustomGroupSwatches(selectedHex) {
+        if (dom.customGroupColorDot) {
+            dom.customGroupColorDot.style.background = selectedHex || '#7c5cfc';
+        }
         if (!dom.customGroupSwatches) return;
         const norm = (selectedHex || '#7c5cfc').toLowerCase();
         dom.customGroupSwatches.innerHTML = '';
@@ -1523,13 +1759,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         customGroupDraftSubs.forEach((sub, idx) => {
             const row = document.createElement('div');
             row.className = 'm-custom-sub-item';
+            const subHex = sub.color || '#38bdf8';
             row.innerHTML = `
-                <input type="color" class="m-sub-color-input" value="${escapeHtml(sub.color || '#38bdf8')}" title="하위 메뉴 색상 변경" style="width:24px; height:24px; border-radius:6px;">
+                <button type="button" class="m-sub-color-item-btn" title="하위 메뉴 색상 변경" style="background:${escapeHtml(subHex)};"></button>
                 <span class="m-custom-sub-item-name">${escapeHtml(sub.name)}</span>
                 <button type="button" class="m-custom-sub-del" aria-label="${escapeHtml(sub.name)} 삭제">✕</button>
             `;
-            row.querySelector('input[type="color"]').addEventListener('input', (e) => {
-                customGroupDraftSubs[idx].color = e.target.value;
+            row.querySelector('.m-sub-color-item-btn').addEventListener('click', () => {
+                openInAppColorPicker({
+                    title: `'${sub.name}' 색상 설정`,
+                    initialHex: customGroupDraftSubs[idx].color || '#38bdf8',
+                    defaultHex: '#38bdf8',
+                    onSelect: (hex) => {
+                        customGroupDraftSubs[idx].color = hex;
+                        renderCustomGroupDraftSubs();
+                    }
+                });
             });
             row.querySelector('.m-custom-sub-del').addEventListener('click', () => {
                 customGroupDraftSubs.splice(idx, 1);
@@ -1592,7 +1837,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             ? existing.subItems.map(s => ({ ...s, keywords: [...(s.keywords || [s.name])] }))
             : [];
         if (dom.inputCustomSubName) dom.inputCustomSubName.value = '';
-        if (dom.inputCustomSubColor) dom.inputCustomSubColor.value = TAB_COLOR_PRESETS[(customGroupDraftSubs.length + 5) % TAB_COLOR_PRESETS.length];
+        const initSubColor = TAB_COLOR_PRESETS[(customGroupDraftSubs.length + 5) % TAB_COLOR_PRESETS.length];
+        if (dom.inputCustomSubColor) dom.inputCustomSubColor.value = initSubColor;
+        if (dom.btnCustomSubColor) dom.btnCustomSubColor.style.background = initSubColor;
         renderCustomGroupDraftSubs();
 
         if (dom.modalCustomGroup) dom.modalCustomGroup.classList.add('open');
@@ -1670,20 +1917,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             dom.settingsBuiltinColors.innerHTML = '';
             BUILTIN_COLOR_ITEMS.forEach(item => {
                 const curColor = (state.tabColorOverrides && state.tabColorOverrides[item.id]) || item.defaultColor;
-                const label = document.createElement('label');
-                label.className = 'm-builtin-color-chip';
-                label.innerHTML = `<input type="color" value="${escapeHtml(curColor)}" data-builtin-key="${item.id}"><span>${escapeHtml(item.label)}</span>`;
-                label.querySelector('input').addEventListener('input', (e) => {
-                    const hex = e.target.value;
-                    state.tabColorOverrides = { ...(state.tabColorOverrides || {}), [item.id]: hex };
-                    saveTabColorOverrides(state.tabColorOverrides);
-                    renderFilterGroupTabs();
-                    syncFilterSheetUI();
-                    if (state.selectedGroupTab === item.id || (state.selectedGroupTab === 'stellive' && state.selectedMajor === item.id)) {
-                        applyCustomAccentTheme(hex);
-                    }
+                const chipBtn = document.createElement('button');
+                chipBtn.type = 'button';
+                chipBtn.className = 'm-builtin-color-chip';
+                chipBtn.dataset.builtinKey = item.id;
+                chipBtn.innerHTML = `<span class="m-builtin-color-dot" style="background:${escapeHtml(curColor)};"></span><span>${escapeHtml(item.label)}</span>`;
+                chipBtn.addEventListener('click', () => {
+                    const currentHex = (state.tabColorOverrides && state.tabColorOverrides[item.id]) || item.defaultColor;
+                    openInAppColorPicker({
+                        title: `${item.label} 탭 색상 설정`,
+                        initialHex: currentHex,
+                        defaultHex: item.defaultColor,
+                        onSelect: (hex) => {
+                            state.tabColorOverrides = { ...(state.tabColorOverrides || {}), [item.id]: hex };
+                            saveTabColorOverrides(state.tabColorOverrides);
+                            renderFilterGroupTabs();
+                            syncFilterSheetUI();
+                            renderSettingsFilterManager();
+                            if (state.selectedGroupTab === item.id || (state.selectedGroupTab === 'stellive' && state.selectedMajor === item.id)) {
+                                applyCustomAccentTheme(hex);
+                            }
+                            showToast(`'${item.label}' 색상이 적용되었습니다.`);
+                        }
+                    });
                 });
-                dom.settingsBuiltinColors.appendChild(label);
+                dom.settingsBuiltinColors.appendChild(chipBtn);
             });
         }
     }
@@ -2848,6 +3106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         state.currentOfflineSongs = filteredSongs;
         if (dom.offlineTrackCount) dom.offlineTrackCount.textContent = '';
         updateFilterSummaryAndCount();
+        updateOfflineStorageGauge();
         dom.trackListOffline.innerHTML = '';
 
         if (allOfflineSongs.length === 0) {
@@ -3078,27 +3337,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             tracks.forEach((song, idx) => {
                 const row = createTrackRowElement(song, tracks, idx);
                 const actionsDiv = row.querySelector('.m-track-actions');
-                if (actionsDiv) {
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'm-btn-action btn-remove-from-playlist';
-                    removeBtn.title = isHistory ? '기록에서 삭제' : '목록에서 제거';
-                    removeBtn.style.color = 'var(--text-muted)';
-                    removeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-                    removeBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        StorageManager.removeSongFromPlaylist(playlistId, song.id);
-                        showToast(isHistory ? '감상 기록에서 곡이 제거되었습니다.' : '재생목록에서 곡이 제거되었습니다.');
-                        openPlaylistDetail(playlistId);
-                    });
-                    actionsDiv.appendChild(removeBtn);
-
-                    if (!isHistory) {
-                        const dragHandle = document.createElement('div');
-                        dragHandle.className = 'm-queue-handle m-playlist-handle';
-                        dragHandle.setAttribute('draggable', 'true');
-                        dragHandle.title = '핸들을 눌러 드래그하여 순서 변경';
-                        dragHandle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>';
-                        actionsDiv.appendChild(dragHandle);
+                if (actionsDiv && !isHistory) {
+                    const dragHandle = document.createElement('div');
+                    dragHandle.className = 'm-queue-handle m-playlist-handle';
+                    dragHandle.setAttribute('draggable', 'true');
+                    dragHandle.title = '핸들을 눌러 드래그하여 순서 변경';
+                    dragHandle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>';
+                    actionsDiv.appendChild(dragHandle);
 
                         // 마우스 드래그 (HTML5)
                         dragHandle.addEventListener('dragstart', (e) => {
@@ -3240,7 +3485,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                         dragHandle.addEventListener('touchend', finishDrag);
                         dragHandle.addEventListener('touchcancel', finishDrag);
-                    }
                 }
                 frag.appendChild(row);
             });
@@ -3743,6 +3987,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (dom.btnPlaylistDetailDownload) {
             dom.btnPlaylistDetailDownload.classList.toggle('active', state.isPlaylistSelectMode);
+            const lbl = dom.btnPlaylistDetailDownload.querySelector('span');
+            if (lbl) lbl.textContent = state.isPlaylistSelectMode ? '취소' : '선택';
         }
         updatePlaylistSelectUI();
         if (state.activePlaylistDetailId) {
@@ -6078,11 +6324,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showToast('기본 탭 및 기수 색상이 초기값으로 복원되었습니다.');
             });
         }
-        if (dom.inputCustomGroupColor) {
-            dom.inputCustomGroupColor.addEventListener('input', (e) => {
-                const hex = e.target.value;
-                if (dom.customGroupColorHex) dom.customGroupColorHex.textContent = hex.toUpperCase();
-                renderCustomGroupSwatches(hex);
+        if (dom.btnCustomGroupColor) {
+            dom.btnCustomGroupColor.addEventListener('click', () => {
+                const curHex = (dom.inputCustomGroupColor?.value || '#7c5cfc');
+                openInAppColorPicker({
+                    title: '분류 탭 색상 설정',
+                    initialHex: curHex,
+                    defaultHex: '#7c5cfc',
+                    onSelect: (hex) => {
+                        if (dom.inputCustomGroupColor) dom.inputCustomGroupColor.value = hex;
+                        if (dom.customGroupColorHex) dom.customGroupColorHex.textContent = hex.toUpperCase();
+                        renderCustomGroupSwatches(hex);
+                    }
+                });
+            });
+        }
+        if (dom.btnCustomSubColor) {
+            dom.btnCustomSubColor.addEventListener('click', () => {
+                const curHex = (dom.inputCustomSubColor?.value || '#38bdf8');
+                openInAppColorPicker({
+                    title: '하위 메뉴 색상 설정',
+                    initialHex: curHex,
+                    defaultHex: '#38bdf8',
+                    onSelect: (hex) => {
+                        if (dom.inputCustomSubColor) dom.inputCustomSubColor.value = hex;
+                        if (dom.btnCustomSubColor) dom.btnCustomSubColor.style.background = hex;
+                    }
+                });
             });
         }
         if (dom.btnAddCustomSub) {
@@ -6100,9 +6368,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     keywords: [subName]
                 });
                 if (dom.inputCustomSubName) dom.inputCustomSubName.value = '';
-                if (dom.inputCustomSubColor) {
-                    dom.inputCustomSubColor.value = TAB_COLOR_PRESETS[(customGroupDraftSubs.length + 5) % TAB_COLOR_PRESETS.length];
-                }
+                const nextSubHex = TAB_COLOR_PRESETS[(customGroupDraftSubs.length + 5) % TAB_COLOR_PRESETS.length];
+                if (dom.inputCustomSubColor) dom.inputCustomSubColor.value = nextSubHex;
+                if (dom.btnCustomSubColor) dom.btnCustomSubColor.style.background = nextSubHex;
                 renderCustomGroupDraftSubs();
             });
         }
@@ -6382,13 +6650,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // 재생목록 상세 오프라인 다운로드 다중 선택 버튼
+        // 재생목록 상세 다중 선택 (목록 제거 / 대기열 추가 / 다운로드 / 새 목록 저장)
         if (dom.btnPlaylistDetailDownload) {
             dom.btnPlaylistDetailDownload.addEventListener('click', () => {
                 if (!state.activePlaylistDetailId) return;
                 const tracks = state.currentPlaylistTracks || [];
                 if (tracks.length === 0) {
-                    showToast('재생목록에 다운로드할 곡이 없습니다.');
+                    showToast('재생목록에 선택할 곡이 없습니다.');
                     return;
                 }
                 togglePlaylistSelectMode();
@@ -6406,6 +6674,60 @@ document.addEventListener('DOMContentLoaded', async () => {
                 updatePlaylistSelectUI();
             });
         }
+        if (dom.btnPlaylistSelectRemove) {
+            dom.btnPlaylistSelectRemove.addEventListener('click', () => {
+                if (!state.activePlaylistDetailId) return;
+                if (state.playlistSelectedSongIds.size === 0) {
+                    showToast('제거할 곡을 선택해주세요.');
+                    return;
+                }
+                const targetPlId = state.activePlaylistDetailId;
+                const ids = Array.from(state.playlistSelectedSongIds);
+                showAppConfirmModal({
+                    title: '선택한 곡 제거',
+                    message: `선택한 ${ids.length}곡을 이 재생목록에서 제거하시겠습니까?`,
+                    confirmText: '제거',
+                    isDestructive: true,
+                    onConfirm: () => {
+                        ids.forEach(id => window.StorageManager?.removeSongFromPlaylist?.(targetPlId, id));
+                        togglePlaylistSelectMode(false);
+                        renderPlaylists();
+                        openPlaylistDetail(targetPlId);
+                        showToast(`${ids.length}곡을 재생목록에서 제거했습니다.`);
+                    }
+                });
+            });
+        }
+        if (dom.btnPlaylistSelectAddQueue) {
+            dom.btnPlaylistSelectAddQueue.addEventListener('click', () => {
+                if (state.playlistSelectedSongIds.size === 0) {
+                    showToast('현재 재생목록에 추가할 곡을 선택해주세요.');
+                    return;
+                }
+                const tracks = state.currentPlaylistTracks || [];
+                const selectedSongs = tracks.filter(s => state.playlistSelectedSongIds.has(s.id));
+                if (selectedSongs.length === 0) return;
+
+                if (!player.queue || player.queue.length === 0) {
+                    player.setQueue(selectedSongs, 0, true);
+                } else {
+                    selectedSongs.forEach(s => player.queue.push(s));
+                    if (typeof player._saveState === 'function') {
+                        try { player._saveState(); } catch (_) {}
+                    }
+                    player._lastSyncedQueueSig = (typeof player._computeQueueSig === 'function')
+                        ? player._computeQueueSig(player.queue, player.queueIndex)
+                        : null;
+                    if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
+                        try { window.AndroidBridge.syncQueue(JSON.stringify(player.queue), player.queueIndex); } catch (_) {}
+                    }
+                    updateQueueBadge();
+                    renderMobileQueue(false);
+                }
+                togglePlaylistSelectMode(false);
+                showToast(`선택한 ${selectedSongs.length}곡을 현재 재생목록에 추가했습니다.`);
+            });
+        }
         if (dom.btnPlaylistSelectDownload) {
             dom.btnPlaylistSelectDownload.addEventListener('click', async () => {
                 if (state.playlistSelectedSongIds.size === 0) {
@@ -6416,6 +6738,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const toDownload = tracks.filter(s => state.playlistSelectedSongIds.has(s.id));
                 togglePlaylistSelectMode(false);
                 await downloadSongsBatch(toDownload);
+            });
+        }
+        if (dom.btnPlaylistSelectCreatePlaylist) {
+            dom.btnPlaylistSelectCreatePlaylist.addEventListener('click', () => {
+                if (state.playlistSelectedSongIds.size === 0) {
+                    showToast('새 재생목록으로 저장할 곡을 선택해주세요.');
+                    return;
+                }
+                const tracks = state.currentPlaylistTracks || [];
+                const ids = tracks.filter(s => state.playlistSelectedSongIds.has(s.id)).map(s => s.id);
+                togglePlaylistSelectMode(false);
+                openCreatePlaylistModal(ids);
             });
         }
         if (dom.btnPlaylistSelectCancel) {
@@ -6634,8 +6968,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (dom.btnSyncSongsSettings) dom.btnSyncSongsSettings.addEventListener('click', () => syncNewSongs(true));
 
+        const mYtHostCard = document.getElementById('m-yt-host-settings-card');
+        const mYtHostDivider = document.getElementById('m-yt-host-settings-divider');
         const mYtStdHostToggle = document.getElementById('m-yt-standard-host-toggle');
-        if (mYtStdHostToggle) {
+        if (window.AndroidBridge) {
+            if (mYtHostCard) mYtHostCard.style.display = 'none';
+            if (mYtHostDivider) mYtHostDivider.style.display = 'none';
+        } else if (mYtStdHostToggle) {
             try {
                 const s = window.StorageManager?.getSettings?.();
                 mYtStdHostToggle.checked = !!(s && s.ytStandardHost);
@@ -7163,6 +7502,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let miniTouchStartX = 0;
         let miniTouchStartY = 0;
         let miniIsSwiped = false;
+        let splitCloseTimer = null;
 
         if (dom.miniLeftContent) {
             dom.miniLeftContent.addEventListener('touchstart', (e) => {
@@ -7174,6 +7514,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, { passive: true });
 
             let lastMiniOpenTime = 0;
+            function isTabletSplitQueueVisible() {
+                return !!(isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet);
+            }
+
+            function syncSplitQueueStyles(transitionStr, transformStr) {
+                if (!dom.queueSheet || !isTabletSplitQueueVisible()) return;
+                dom.queueSheet.style.transition = transitionStr;
+                dom.queueSheet.style.transform = transformStr;
+            }
+
             function triggerOpenFullscreenSheet(e) {
                 if (miniIsSwiped) {
                     if (e && e.preventDefault) {
@@ -7182,9 +7532,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     return;
                 }
+                if (splitCloseTimer) {
+                    clearTimeout(splitCloseTimer);
+                    splitCloseTimer = null;
+                }
                 document.body.classList.remove('tablet-queue-collapsed');
+                dom.fullscreenSheet.classList.remove('closing-split');
                 dom.fullscreenSheet.style.transition = '';
                 dom.fullscreenSheet.style.transform = '';
+                if (dom.queueSheet) {
+                    dom.queueSheet.style.transition = '';
+                    dom.queueSheet.style.transform = '';
+                }
                 dom.fullscreenSheet.classList.add('open');
                 if (mobilePlayerViewMode === 'video') {
                     dockYouTubePlayer(true);
@@ -7232,13 +7591,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                 triggerOpenFullscreenSheet(e);
             });
         }
-        function closeMobilePlayerSheet() {
+        function closeMobilePlayerSheet(fromDragEnd = false) {
             if (typeof toggleVideoFullscreen === 'function') {
                 toggleVideoFullscreen(false);
             }
-            dom.fullscreenSheet.classList.remove('open');
+            if (splitCloseTimer) {
+                clearTimeout(splitCloseTimer);
+                splitCloseTimer = null;
+            }
+            const splitActive = isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet;
+            if (!fromDragEnd && splitActive && dom.fullscreenSheet.classList.contains('open')) {
+                dom.fullscreenSheet.classList.add('closing-split');
+                dom.fullscreenSheet.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+                dom.fullscreenSheet.style.transform = 'translateY(100%)';
+                dom.queueSheet.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+                dom.queueSheet.style.transform = 'translateY(100%)';
+                dockYouTubePlayer(false);
+                splitCloseTimer = setTimeout(() => {
+                    splitCloseTimer = null;
+                    dom.fullscreenSheet.classList.remove('open', 'closing-split');
+                    dom.fullscreenSheet.style.transition = '';
+                    dom.fullscreenSheet.style.transform = '';
+                    if (dom.queueSheet) {
+                        dom.queueSheet.style.transition = '';
+                        dom.queueSheet.style.transform = '';
+                    }
+                }, 290);
+                return;
+            }
+            dom.fullscreenSheet.classList.remove('open', 'closing-split');
             dom.fullscreenSheet.style.transition = '';
             dom.fullscreenSheet.style.transform = '';
+            if (dom.queueSheet) {
+                dom.queueSheet.style.transition = '';
+                dom.queueSheet.style.transform = '';
+            }
             dockYouTubePlayer(false);
         }
 
@@ -7301,7 +7688,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const updateSheetTransform = () => {
                 if (dom.fullscreenSheet) {
-                    dom.fullscreenSheet.style.transform = `translateY(${currentTranslateY}px)`;
+                    const tr = `translateY(${currentTranslateY}px)`;
+                    dom.fullscreenSheet.style.transform = tr;
+                    if (isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet) {
+                        dom.queueSheet.style.transform = tr;
+                    }
                 }
                 rafId = null;
             };
@@ -7330,6 +7721,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (deltaY > 3 && Math.abs(deltaY) > Math.abs(deltaX)) {
                         isPullingDown = true;
                         dom.fullscreenSheet.style.transition = 'none';
+                        if (isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet) {
+                            dom.queueSheet.style.transition = 'none';
+                        }
                         if (e && e.cancelable) e.preventDefault();
                     } else if (deltaY < -15 && Math.abs(deltaY) > Math.abs(deltaX)) {
                         // 손가락을 위로 15px 올리는 즉시 대기열(재생목록) 시트 열기 (손가락을 뗄 때까지 기다리지 않고 제스처 중에 즉시 반응!)
@@ -7371,21 +7765,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (isPullingDown) {
                     isPullingDown = false;
+                    const splitActive = isTablet && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet;
                     dom.fullscreenSheet.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+                    if (splitActive) {
+                        dom.queueSheet.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+                    }
 
                     // 60px 이상 내렸거나 빠른 플링(튕기기) 제스처인 경우 메인화면으로 즉시 복귀
                     if (deltaY > 60 || (deltaY > 25 && velocityY > 0.32)) {
+                        if (splitActive) dom.fullscreenSheet.classList.add('closing-split');
                         dom.fullscreenSheet.style.transform = 'translateY(100%)';
+                        if (splitActive) dom.queueSheet.style.transform = 'translateY(100%)';
                         setTimeout(() => {
-                            closeMobilePlayerSheet();
+                            closeMobilePlayerSheet(true);
                         }, 220);
                         return;
                     } else {
                         // 탄성 복귀
                         dom.fullscreenSheet.style.transform = 'translateY(0)';
+                        if (splitActive) dom.queueSheet.style.transform = 'translateY(0)';
                         setTimeout(() => {
                             dom.fullscreenSheet.style.transform = '';
                             dom.fullscreenSheet.style.transition = '';
+                            if (splitActive && dom.queueSheet) {
+                                dom.queueSheet.style.transform = '';
+                                dom.queueSheet.style.transition = '';
+                            }
                         }, 220);
                         return;
                     }
@@ -7428,11 +7833,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 if (isPullingDown) {
                     isPullingDown = false;
+                    const splitActive = isTabletLayout() && !document.body.classList.contains('tablet-queue-collapsed') && dom.queueSheet;
                     dom.fullscreenSheet.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
                     dom.fullscreenSheet.style.transform = 'translateY(0)';
+                    if (splitActive) {
+                        dom.queueSheet.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+                        dom.queueSheet.style.transform = 'translateY(0)';
+                    }
                     setTimeout(() => {
                         dom.fullscreenSheet.style.transform = '';
                         dom.fullscreenSheet.style.transition = '';
+                        if (splitActive && dom.queueSheet) {
+                            dom.queueSheet.style.transform = '';
+                            dom.queueSheet.style.transition = '';
+                        }
                     }, 220);
                 }
             };
@@ -8560,7 +8974,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ===================================================================
-    // 13. 안드로이드 하드웨어 뒤로가기 버튼 처리 (onBackPressed)
+    // 13. 모달/시트 오버레이 오픈 시 배경 스크롤·터치 잠금 동기화
+    // ===================================================================
+    function syncModalScrollLock() {
+        const hasOpenOverlay = !!document.querySelector(
+            '.mobile-modal.open, .modal.open, .fullscreen-sheet.open, .queue-sheet.open, .filter-sheet.open, .actions-sheet.open'
+        );
+        document.documentElement.classList.toggle('m-overlay-open', hasOpenOverlay);
+        document.body.classList.toggle('m-overlay-open', hasOpenOverlay);
+    }
+
+    function setupOverlayScrollLock() {
+        const rootTarget = document.body || document.getElementById('app-container');
+        if (rootTarget && typeof MutationObserver !== 'undefined') {
+            const observer = new MutationObserver(() => {
+                syncModalScrollLock();
+            });
+            observer.observe(rootTarget, {
+                subtree: true,
+                childList: true,
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        }
+        // 모달/시트 배경(backdrop) 터치 드래그로 뒤 화면이 스크롤되지 않도록 차단
+        document.addEventListener('touchmove', (e) => {
+            if (!document.body.classList.contains('m-overlay-open')) return;
+            const target = e.target;
+            if (!target || typeof target.closest !== 'function') return;
+            if (
+                target.classList.contains('mobile-modal') ||
+                target.classList.contains('modal') ||
+                target.classList.contains('modal-backdrop') ||
+                target.classList.contains('filter-sheet-backdrop') ||
+                target.classList.contains('queue-sheet-backdrop') ||
+                target.classList.contains('actions-backdrop')
+            ) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        syncModalScrollLock();
+    }
+
+    // ===================================================================
+    // 14. 안드로이드 하드웨어 뒤로가기 버튼 처리 (onBackPressed)
     // ===================================================================
     let lastBackPressTime = 0;
 
@@ -8577,6 +9034,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 1. 모달이 열려있는 경우
+        const inAppColorModal = document.getElementById('m-modal-inapp-color-picker');
+        if (inAppColorModal && inAppColorModal.classList.contains('open')) {
+            closeInAppColorPicker();
+            return true;
+        }
         const confirmModal = document.getElementById('m-modal-confirm');
         if (confirmModal && confirmModal.classList.contains('open')) {
             confirmModal.classList.remove('open');
@@ -8708,6 +9170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // 시작
+    setupOverlayScrollLock();
     init();
 });
 

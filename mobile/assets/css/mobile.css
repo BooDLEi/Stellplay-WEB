@@ -677,6 +677,8 @@ body::before {
 }
 
 .header-sabi-btn svg {
+    width: 18px;
+    height: 18px;
     color: var(--text-muted);
     transition: all 0.2s ease;
     flex-shrink: 0;
@@ -1621,25 +1623,40 @@ body::before {
 /* 분위기 추천 1단계 장르 선택 팝업 스타일 */
 .mood-picker-modal-content {
     max-width: 400px;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 .mood-picker-grid {
     display: flex;
     flex-direction: column;
     gap: 9px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2px 0;
 }
 .mood-picker-btn {
     width: 100%;
+    box-sizing: border-box;
     padding: 12px 14px;
     border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 0;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    position: relative;
+    isolation: isolate;
     background: var(--mood-grad, linear-gradient(135deg, #7c5cfc, #3b82f6));
+    background-origin: border-box;
+    background-clip: border-box;
     display: flex;
     align-items: center;
     gap: 12px;
     cursor: pointer;
     text-align: left;
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.24);
     transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 .mood-picker-btn:active {
@@ -2347,11 +2364,11 @@ body::before {
     right: 0;
     height: calc(var(--tab-height) + var(--safe-bottom));
     padding-bottom: var(--safe-bottom);
-    background: linear-gradient(180deg, rgba(24, 28, 46, 0.90) 0%, rgba(18, 22, 36, 0.94) 100%);
+    background: linear-gradient(180deg, rgba(38, 44, 70, 0.94) 0%, rgba(33, 39, 63, 0.97) 100%);
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
-    border-top: 1px solid rgba(255, 255, 255, 0.11);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.16);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -2364,7 +2381,7 @@ body::before {
     max-height: var(--tab-height);
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: #cbd5e1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2381,12 +2398,14 @@ body::before {
 }
 
 .tab-btn.active {
-    color: var(--theme-color);
+    color: color-mix(in srgb, var(--theme-color) 76%, #ffffff);
 }
 
 .tab-label {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 600;
+    color: inherit;
+    opacity: 0.96;
 }
 
 .tab-badge {
@@ -2639,65 +2658,117 @@ body::before {
 
 
 /* ===================================================================
-   오프라인 보관함 뷰 (Offline View - 컴팩트 규격)
+   오프라인 보관함 뷰 (Offline View - 저장소 게이지 바 + 컴팩트 액션)
 =================================================================== */
 .offline-hero-card {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.11), rgba(124, 92, 252, 0.10));
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    border-radius: 11px;
-    padding: 8px 11px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(124, 92, 252, 0.09));
+    border: 1px solid rgba(16, 185, 129, 0.24);
+    border-radius: 12px;
+    padding: 9px 11px;
     margin-bottom: 8px;
-}
-
-.offline-stats-row {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
+    gap: 10px;
 }
 
-.offline-title-group {
+.offline-storage-gauge-wrap {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.offline-storage-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
     gap: 6px;
 }
 
 .offline-header-title {
-    font-size: 0.84rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: var(--text-primary);
+    white-space: nowrap;
 }
 
 .offline-count-num {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: #fff;
 }
 
 .offline-size-text {
-    font-size: 0.74rem;
+    font-size: 0.7rem;
     color: var(--color-green);
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
+}
+
+.offline-gauge-track {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.offline-gauge-fill-device {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.36);
+    transition: width 0.3s ease;
+}
+
+.offline-gauge-fill-app {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #10b981, var(--theme-color, #7c5cfc));
+    transition: width 0.3s ease;
+}
+
+.offline-storage-sub {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .offline-actions-row {
     display: flex;
+    align-items: center;
     gap: 6px;
+    flex-shrink: 0;
 }
 
 .btn-offline-play-all {
-    flex: 1;
-    height: 28px;
-    border-radius: 8px;
+    flex: 0 0 auto;
+    height: 31px;
+    padding: 0 11px;
+    border-radius: 9px;
     background: var(--color-green);
-    color: #000;
-    font-weight: 700;
-    font-size: 0.74rem;
+    color: #06281e;
+    font-weight: 800;
+    font-size: 0.73rem;
     border: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
+    white-space: nowrap;
     cursor: pointer;
 }
 .btn-offline-play-all:active {
@@ -2705,19 +2776,48 @@ body::before {
 }
 
 .btn-offline-clear-all {
-    height: 28px;
+    flex: 0 0 auto;
+    height: 31px;
     padding: 0 10px;
-    border-radius: 8px;
+    border-radius: 9px;
     background: rgba(239, 68, 68, 0.15);
     color: var(--color-danger);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(239, 68, 68, 0.32);
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
 }
 .btn-offline-clear-all:active {
     transform: scale(0.97);
+}
+
+@media (max-width: 360px) {
+    .offline-hero-card {
+        gap: 7px;
+        padding: 8px 9px;
+    }
+    .btn-offline-play-all {
+        height: 29px;
+        padding: 0 8px;
+        font-size: 0.69rem;
+    }
+    .btn-offline-clear-all {
+        height: 29px;
+        padding: 0 8px;
+        font-size: 0.69rem;
+    }
+}
+
+[data-theme="light"] .offline-hero-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(124, 92, 252, 0.06));
+    border-color: rgba(16, 185, 129, 0.28);
+}
+[data-theme="light"] .offline-gauge-track {
+    background: rgba(15, 23, 42, 0.1);
+}
+[data-theme="light"] .offline-gauge-fill-device {
+    background: rgba(100, 116, 139, 0.3);
 }
 
 /* 토스트 알림 */
@@ -3803,8 +3903,9 @@ body::before {
         border-top-right-radius: 0 !important;
     }
 
-    /* 기본 분할 모드: 재생 창이 열렸을 때 재생목록(대기열) 시트를 우측 50%에 상시 표시 */
-    body:not(.tablet-queue-collapsed) .fullscreen-sheet.open ~ .queue-sheet {
+    /* 기본 분할 모드: 재생 창이 열렸을 때 재생목록(대기열) 시트를 우측 50%에 상시 표시 (재생창과 동일 트랜지션으로 동기 이동) */
+    body:not(.tablet-queue-collapsed) .fullscreen-sheet.open ~ .queue-sheet,
+    body:not(.tablet-queue-collapsed) .fullscreen-sheet.closing-split ~ .queue-sheet {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -3816,6 +3917,8 @@ body::before {
         bottom: 0 !important;
         background: transparent !important;
         z-index: 100 !important;
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: transform;
     }
 
     /* 태블릿 모드에서 대기열 접힘(전체화면) 상태: 재생화면이 100% 꽉 차게 확장 */
@@ -3832,12 +3935,14 @@ body::before {
     }
 
     /* 태블릿 모드에서 대기열 배경 딤 제거 */
-    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-backdrop {
+    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-backdrop,
+    .fullscreen-sheet.closing-split ~ .queue-sheet .queue-sheet-backdrop {
         display: none !important;
     }
 
     /* 대기열 컨텐츠를 우측 전체 높이 패널로 확장 */
-    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-content {
+    .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-content,
+    .fullscreen-sheet.closing-split ~ .queue-sheet .queue-sheet-content {
         transform: translateY(0) !important;
         height: 100vh !important;
         max-height: none !important;
@@ -7508,4 +7613,236 @@ html, body, button, input, select, textarea, optgroup, pre {
     font-size: 0.66rem;
     font-weight: 700;
     cursor: pointer;
+}
+
+/* ===================================================================
+   v1.13.4: 오버레이 뒷배경 스크롤/조작 차단, 인앱 컬러피커, 4열 선택바
+=================================================================== */
+html.m-overlay-open,
+body.m-overlay-open {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+}
+
+body.m-overlay-open main,
+body.m-overlay-open .view-section,
+body.m-overlay-open .mobile-header,
+body.m-overlay-open .mobile-bottom-tabs,
+body.m-overlay-open .mobile-mini-player {
+    pointer-events: none !important;
+    overflow: hidden !important;
+    touch-action: none !important;
+}
+
+.modal-backdrop,
+.filter-sheet-backdrop,
+.queue-sheet-backdrop,
+.actions-backdrop {
+    touch-action: none;
+}
+
+.mobile-modal .modal-content,
+.filter-sheet-body,
+.queue-sheet-list,
+.actions-sheet-content {
+    overscroll-behavior: contain;
+}
+
+/* 재생목록 4열 다중 선택 바 */
+.multiselect-grid-4 {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    width: 100%;
+}
+.multiselect-grid-4 .btn-ms-action {
+    width: 100% !important;
+    padding: 7px 2px !important;
+    font-size: 0.69rem !important;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* 인앱 색상 선택 버튼 (시스템 <input type="color"> 대체) */
+.m-color-pill-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+}
+
+.m-sub-color-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    border: 2px solid rgba(255, 255, 255, 0.24);
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.m-sub-color-item-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.m-builtin-color-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+}
+
+[data-theme="light"] .m-color-pill-dot,
+[data-theme="light"] .m-sub-color-btn,
+[data-theme="light"] .m-sub-color-item-btn,
+[data-theme="light"] .m-builtin-color-dot {
+    border-color: rgba(15, 23, 42, 0.22);
+}
+
+/* 인앱 색상 설정 모달 */
+.inapp-color-modal {
+    z-index: 1450 !important;
+}
+
+.m-cp-modal-content {
+    max-width: 360px !important;
+    padding: 18px !important;
+}
+
+.m-cp-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 4px 0 12px;
+}
+
+.m-cp-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.m-cp-preview-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.22);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.m-cp-hex-input {
+    flex: 1;
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.m-cp-default-btn {
+    height: 36px;
+    padding: 0 11px;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.m-cp-section-label {
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.m-cp-presets {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.m-cp-swatch-btn {
+    width: 100%;
+    height: 32px;
+    border-radius: 9px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.m-cp-swatch-btn.active {
+    border-color: #ffffff;
+    transform: scale(1.06);
+    box-shadow: 0 0 0 2px rgba(124, 92, 252, 0.5);
+}
+
+.m-cp-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.m-cp-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.m-cp-slider-row span {
+    width: 30px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.m-cp-range {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.m-cp-range-hue {
+    background: linear-gradient(90deg, #ef4444, #eab308, #22c55e, #06b6d4, #3b82f6, #a855f7, #ec4899, #ef4444);
+}
+
+.m-cp-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #0f172a;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+}
+
+[data-theme="light"] .m-cp-default-btn {
+    background: #f1f5f9;
+    border-color: rgba(15, 23, 42, 0.12);
+    color: #334155;
+}
+[data-theme="light"] .m-cp-preview-swatch {
+    border-color: rgba(15, 23, 42, 0.2);
+}
+[data-theme="light"] .m-cp-swatch-btn.active {
+    border-color: #0f172a;
 }

@@ -214,6 +214,13 @@ const StorageManager = {
         if (playlistId === 'pl-history') {
             return this.removeFromHistory(songId);
         }
+        if (playlistId === 'pl-favorites' || playlistId === 'card-playlist-favorites') {
+            if (this.isFavorite(songId)) {
+                this.toggleFavorite(songId);
+                return true;
+            }
+            return false;
+        }
         const playlists = this.getPlaylists(false);
         const pl = playlists.find(p => p.id === playlistId);
         if (pl) {
