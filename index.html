@@ -31,7 +31,7 @@
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="assets/css/style.css?v=2026112703">
+    <link rel="stylesheet" href="assets/css/style.css?v=2026112704">
 </head>
 <body>
 
@@ -547,10 +547,11 @@
                                         <div class="settings-label">앱 버전 및 실시간 업데이트 (OTA)</div>
                                         <span class="settings-badge" id="pc-update-status-badge" style="background: rgba(124,92,252,0.2); color:#a78bfa;">최신 상태</span>
                                     </div>
-                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.13.5 (패치 #2026112703)</div>
+                                    <div class="settings-desc" id="pc-version-info-text" style="margin-top:4px;">StellPlay Desktop v1.13.6 (패치 #2026112704)</div>
                                 </div>
                                 <div class="settings-row-ctrl" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
                                     <button type="button" class="btn-primary" id="btn-pc-check-update" style="padding:7px 14px; font-size:0.82rem;">업데이트 확인</button>
+                                    <button type="button" class="btn-secondary" id="btn-pc-bug-report" style="padding:7px 12px; font-size:0.82rem; color:#fbbf24; border-color:rgba(245,158,11,0.4);">문제 제보</button>
                                     <button type="button" class="btn-secondary" id="btn-pc-open-patchnotes" style="padding:7px 12px; font-size:0.82rem;">패치노트</button>
                                     <button type="button" class="btn-secondary" id="btn-pc-open-restore" style="padding:7px 12px; font-size:0.82rem; color:#38bdf8; border-color:rgba(56,189,248,0.4);">복원</button>
                                 </div>
@@ -1320,6 +1321,37 @@
         </div>
     </div>
 
+    <!-- PC 문제(버그) 제보 모달 -->
+    <div class="modal-backdrop" id="modal-pc-bug-report">
+        <div class="modal-card modal-box" style="max-width: 540px; width: 92%; max-height: 85vh; display: flex; flex-direction: column; padding: 0;">
+            <div class="modal-header" style="padding: 18px 22px 14px 22px; border-bottom: 1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="modal-title">문제(버그) 제보</h3>
+                <button class="btn-close-full" id="btn-close-pc-bug-report">✕</button>
+            </div>
+            <div style="padding: 16px 22px 20px 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                <div class="pc-bug-chips" id="pc-bug-type-chips">
+                    <button type="button" class="pc-bug-chip active" data-bug-type="버그/오류" data-gh-label="bug">버그/오류</button>
+                    <button type="button" class="pc-bug-chip" data-bug-type="곡 누락/정보 오류" data-gh-label="song">곡 누락/오류</button>
+                    <button type="button" class="pc-bug-chip" data-bug-type="UI/개선 건의" data-gh-label="enhancement">UI/개선 건의</button>
+                    <button type="button" class="pc-bug-chip" data-bug-type="기타" data-gh-label="question">기타</button>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label class="form-label" style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:5px;">제목</label>
+                    <input type="text" class="form-input" id="pc-bug-title" maxlength="80" placeholder="예: 특정 곡 재생 시 오류가 발생합니다">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label class="form-label" style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:5px;">발생 상황 및 내용</label>
+                    <textarea class="form-input" id="pc-bug-desc" rows="4" style="resize:vertical; min-height:96px; line-height:1.45;" placeholder="재현 방법이나 불편했던 점을 적어주세요."></textarea>
+                </div>
+                <div class="pc-bug-diag-box" id="pc-bug-diag-preview">환경 정보를 불러오는 중...</div>
+                <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:4px;">
+                    <button type="button" class="btn-secondary" id="btn-pc-copy-bug-report" style="padding:8px 14px; font-size:0.82rem;">내용 복사</button>
+                    <button type="button" class="btn-primary" id="btn-pc-submit-bug-report" style="padding:8px 16px; font-size:0.82rem;">GitHub로 제보 제출</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- PC 버전 선택 복원 / 롤백 모달 -->
     <div class="modal-backdrop" id="modal-pc-ota-restore">
         <div class="modal-card modal-box" style="max-width: 520px; width: 92%; max-height: 82vh; display: flex; flex-direction: column; padding: 0;">
@@ -1528,9 +1560,9 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- JavaScript Scripts -->
-    <script src="assets/js/songs.js?v=2026112703"></script>
-    <script src="assets/js/storage.js?v=2026112703"></script>
-    <script src="assets/js/player.js?v=2026112703"></script>
-    <script src="assets/js/app.js?v=2026112703"></script>
+    <script src="assets/js/songs.js?v=2026112704"></script>
+    <script src="assets/js/storage.js?v=2026112704"></script>
+    <script src="assets/js/player.js?v=2026112704"></script>
+    <script src="assets/js/app.js?v=2026112704"></script>
 </body>
 </html>

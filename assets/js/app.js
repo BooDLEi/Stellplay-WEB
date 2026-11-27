@@ -5133,10 +5133,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112703;
+                const verNum = v.otaVersion || 2026112704;
                 return {
                     success: true,
-                    versionName: v.webVersionName || '1.13.5',
+                    versionName: v.webVersionName || '1.13.6',
                     currentVersion: verNum,
                     bundledVersion: verNum,
                     otaReleaseDate: v.otaReleaseDate || '2026-11-27',
@@ -5153,14 +5153,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.13.5',
-            currentVersion: 2026112703,
-            bundledVersion: 2026112703,
+            versionName: '1.13.6',
+            currentVersion: 2026112704,
+            bundledVersion: 2026112704,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112703,
-                label: '현재 적용 버전 (#2026112703)',
+                version: 2026112704,
+                label: '현재 적용 버전 (#2026112704)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5173,7 +5173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.5'} (패치 #${info.currentVersion || 2026112703})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.6'} (패치 #${info.currentVersion || 2026112704})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';
@@ -5242,6 +5242,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const lines = String(txt || '').replace(/\r\n/g, '\n').split('\n');
         const sections = [];
         let cur = null;
+        let curGroup = null;
+        const normalizeCat = (raw) => {
+            const t = (raw || '').trim();
+            if (/신규|추가/.test(t)) return '신규';
+            if (/신곡|수정|버그|보안/.test(t)) return '수정';
+            if (/개선|변경/.test(t)) return '개선';
+            return null;
+        };
         for (const rawLine of lines) {
             const trimmed = rawLine.trim();
             if (!trimmed || /^[=-]{6,}$/.test(trimmed) || (trimmed.startsWith('StellPlay ') && trimmed.includes('패치노트'))) {
@@ -5249,34 +5257,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const verMatch = trimmed.match(/^\[(v\s*[^\]]+)\]\s*(?:-\s*(.+))?$/i);
             if (verMatch) {
-                cur = { version: verMatch[1].trim(), date: (verMatch[2] || '').trim(), items: [] };
+                cur = { version: verMatch[1].trim(), date: (verMatch[2] || '').trim(), groups: { '신규': [], '개선': [], '수정': [] } };
+                curGroup = null;
                 sections.push(cur);
                 continue;
             }
             if (!cur) continue;
+            const catHeadMatch = trimmed.match(/^#\s*(.+)$/);
+            if (catHeadMatch) {
+                curGroup = normalizeCat(catHeadMatch[1]) || '개선';
+                continue;
+            }
             const itemMatch = trimmed.match(/^(?:[-•*]|\d+\.)\s*(?:\[([^\]]+)\]\s*)?(.*)$/);
             if (itemMatch) {
-                cur.items.push({ tag: (itemMatch[1] || '').trim(), text: (itemMatch[2] || '').trim() });
-            } else if (cur.items.length > 0) {
-                cur.items[cur.items.length - 1].text += ' ' + trimmed;
+                const cat = curGroup || normalizeCat(itemMatch[1]) || '개선';
+                const body = (itemMatch[2] || '').trim();
+                if (body) cur.groups[cat].push(body);
+            } else if (curGroup && cur.groups[curGroup].length > 0) {
+                const arr = cur.groups[curGroup];
+                arr[arr.length - 1] += ' ' + trimmed;
             }
         }
         if (sections.length === 0) return esc(txt);
-        const tagClass = (tag) => {
-            if (/신곡/.test(tag)) return 'pn-tag-song';
-            if (/신규|추가/.test(tag)) return 'pn-tag-new';
-            if (/수정|버그|보안/.test(tag)) return 'pn-tag-fix';
-            return 'pn-tag-improve';
-        };
+        const catMeta = [
+            { key: '신규', cls: 'pn-cat-new' },
+            { key: '개선', cls: 'pn-cat-improve' },
+            { key: '수정', cls: 'pn-cat-fix' }
+        ];
         return sections.map((sec, idx) => {
-            const itemsHtml = sec.items.map(it => {
-                const badge = it.tag ? `<span class="pn-tag ${tagClass(it.tag)}">${esc(it.tag)}</span>` : '<span class="pn-tag pn-tag-improve">변경</span>';
-                const colonIdx = it.text.indexOf(':');
-                let bodyHtml = esc(it.text);
-                if (colonIdx > 0 && colonIdx <= 26) {
-                    bodyHtml = `<strong>${esc(it.text.slice(0, colonIdx))}</strong>:${esc(it.text.slice(colonIdx + 1))}`;
-                }
-                return `<li class="pn-item">${badge}<span class="pn-text">${bodyHtml}</span></li>`;
+            const groupsHtml = catMeta.map(cm => {
+                const list = sec.groups[cm.key];
+                if (!list || list.length === 0) return '';
+                const itemsHtml = list.map(text => {
+                    const colonIdx = text.indexOf(':');
+                    let bodyHtml = esc(text);
+                    if (colonIdx > 0 && colonIdx <= 28) {
+                        bodyHtml = `<strong>${esc(text.slice(0, colonIdx))}</strong>:${esc(text.slice(colonIdx + 1))}`;
+                    }
+                    return `<li class="pn-group-item">${bodyHtml}</li>`;
+                }).join('');
+                return `
+                    <div class="pn-group">
+                        <div class="pn-group-head"><span class="pn-group-pill ${cm.cls}">${cm.key}</span></div>
+                        <ul class="pn-group-list">${itemsHtml}</ul>
+                    </div>
+                `;
             }).join('');
             return `
                 <div class="pn-version-card${idx === 0 ? ' is-latest' : ''}">
@@ -5284,7 +5309,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="pn-version-badge">${esc(sec.version)}</span>
                         ${sec.date ? `<span class="pn-version-date">${esc(sec.date)}</span>` : ''}
                     </div>
-                    <ul class="pn-list">${itemsHtml}</ul>
+                    ${groupsHtml}
                 </div>
             `;
         }).join('');
@@ -5342,6 +5367,79 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (_) {
                 showToast('복사에 실패했습니다.');
             }
+        });
+    }
+
+    // PC 문제(버그) 제보 모달 제어
+    const modalPcBugReport = document.getElementById('modal-pc-bug-report');
+    const btnPcBugReport = document.getElementById('btn-pc-bug-report');
+    const btnClosePcBugReport = document.getElementById('btn-close-pc-bug-report');
+    const pcBugChipsWrap = document.getElementById('pc-bug-type-chips');
+    const inputPcBugTitle = document.getElementById('pc-bug-title');
+    const inputPcBugDesc = document.getElementById('pc-bug-desc');
+    const pcBugDiagPreview = document.getElementById('pc-bug-diag-preview');
+    const btnPcCopyBug = document.getElementById('btn-pc-copy-bug-report');
+    const btnPcSubmitBug = document.getElementById('btn-pc-submit-bug-report');
+    let pcBugType = '버그/오류';
+    let pcBugGhLabel = 'bug';
+
+    function buildPcBugDiagText() {
+        const isDesktop = !!(window.pywebview || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:');
+        const themeLabel = document.documentElement.getAttribute('data-theme') === 'light' ? '라이트' : '다크';
+        const songTitle = (window.player && window.player.currentSong) ? `${window.player.currentSong.title} (${window.player.currentSong.artist})` : '없음';
+        return [
+            `- 환경: ${isDesktop ? 'PC Client' : 'PC Web'} (${window.innerWidth}×${window.innerHeight} · ${themeLabel})`,
+            `- 버전: v1.13.6 (OTA #2026112704)`,
+            `- 재생 곡: ${songTitle}`
+        ].join('\n');
+    }
+
+    if (btnPcBugReport && modalPcBugReport) {
+        btnPcBugReport.addEventListener('click', () => {
+            if (pcBugDiagPreview) pcBugDiagPreview.textContent = buildPcBugDiagText();
+            modalPcBugReport.classList.add('open');
+        });
+    }
+    if (btnClosePcBugReport && modalPcBugReport) {
+        btnClosePcBugReport.addEventListener('click', () => modalPcBugReport.classList.remove('open'));
+    }
+    if (modalPcBugReport) {
+        modalPcBugReport.addEventListener('click', (e) => {
+            if (e.target === modalPcBugReport) modalPcBugReport.classList.remove('open');
+        });
+    }
+    if (pcBugChipsWrap) {
+        pcBugChipsWrap.querySelectorAll('.pc-bug-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                pcBugChipsWrap.querySelectorAll('.pc-bug-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                pcBugType = chip.dataset.bugType || '버그/오류';
+                pcBugGhLabel = chip.dataset.ghLabel || 'bug';
+            });
+        });
+    }
+    if (btnPcCopyBug) {
+        btnPcCopyBug.addEventListener('click', async () => {
+            const title = (inputPcBugTitle?.value || '').trim() || '(제목 없음)';
+            const desc = (inputPcBugDesc?.value || '').trim() || '(내용 없음)';
+            try {
+                await navigator.clipboard.writeText(`[${pcBugType}] ${title}\n\n${desc}\n\n[환경 정보]\n${buildPcBugDiagText()}`);
+                showToast('제보 내용이 클립보드에 복사되었습니다.');
+            } catch (_) {
+                showToast('복사에 실패했습니다.');
+            }
+        });
+    }
+    if (btnPcSubmitBug) {
+        btnPcSubmitBug.addEventListener('click', () => {
+            const title = (inputPcBugTitle?.value || '').trim();
+            const desc = (inputPcBugDesc?.value || '').trim();
+            if (!title) { showToast('제목을 입력해주세요.'); if (inputPcBugTitle) inputPcBugTitle.focus(); return; }
+            if (!desc) { showToast('발생 상황 및 내용을 입력해주세요.'); if (inputPcBugDesc) inputPcBugDesc.focus(); return; }
+            const issueUrl = `https://github.com/BooDLEi/Stellplay-WEB/issues/new?title=${encodeURIComponent(`[${pcBugType}] ${title}`)}&body=${encodeURIComponent(`${desc}\n\n---\n### 환경 정보 (자동 첨부)\n${buildPcBugDiagText()}`)}&labels=${encodeURIComponent(pcBugGhLabel)}`;
+            window.open(issueUrl, '_blank', 'noopener,noreferrer');
+            if (modalPcBugReport) modalPcBugReport.classList.remove('open');
+            showToast('GitHub 제보 페이지가 열렸습니다.');
         });
     }
 

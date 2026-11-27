@@ -8280,3 +8280,148 @@ body.playlist-select-active #m-playlist-detail-tracks {
 [data-theme="light"] .pn-tag-new { background: rgba(79, 70, 229, 0.12); color: #4338ca; }
 [data-theme="light"] .pn-tag-improve { background: rgba(2, 132, 199, 0.12); color: #0369a1; }
 [data-theme="light"] .pn-tag-fix { background: rgba(5, 150, 105, 0.12); color: #047857; }
+
+/* ===================================================================
+   v1.13.6: 꾹 눌러 선택모드 · 3분류 그룹 패치노트 · 문제 제보 모달
+   =================================================================== */
+.m-track-row.long-pressing {
+    transform: scale(0.982);
+    transition: transform 0.14s ease;
+    background: color-mix(in srgb, var(--theme-color) 14%, transparent);
+}
+
+.m-settings-update-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    width: 100%;
+}
+
+.m-set-btn-warn {
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.36);
+    color: #fbbf24;
+}
+[data-theme="light"] .m-set-btn-warn {
+    background: rgba(217, 119, 6, 0.12);
+    border-color: rgba(180, 83, 9, 0.34);
+    color: #b45309;
+}
+
+/* 3분류 그룹형 패치노트 */
+.pn-group {
+    margin-top: 8px;
+}
+.pn-group:first-of-type {
+    margin-top: 2px;
+}
+.pn-group-head {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.pn-group-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.67rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.2px;
+}
+.pn-cat-new { background: rgba(124, 92, 252, 0.22); color: #c4b5fd; }
+.pn-cat-improve { background: rgba(56, 189, 248, 0.18); color: #38bdf8; }
+.pn-cat-fix { background: rgba(16, 185, 129, 0.18); color: #34d399; }
+
+[data-theme="light"] .pn-cat-new { background: rgba(79, 70, 229, 0.12); color: #4338ca; }
+[data-theme="light"] .pn-cat-improve { background: rgba(2, 132, 199, 0.12); color: #0369a1; }
+[data-theme="light"] .pn-cat-fix { background: rgba(5, 150, 105, 0.12); color: #047857; }
+
+.pn-group-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pn-group-item {
+    position: relative;
+    padding-left: 11px;
+    font-size: 0.75rem;
+    line-height: 1.44;
+    color: var(--text-secondary);
+}
+.pn-group-item::before {
+    content: '•';
+    position: absolute;
+    left: 1px;
+    top: 0;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+.pn-group-item strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+[data-theme="light"] .pn-group-item {
+    color: #334155;
+}
+[data-theme="light"] .pn-group-item strong {
+    color: #0f172a;
+}
+
+/* 문제 제보 모달 */
+.m-bug-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.m-bug-chip {
+    border-radius: 999px;
+    padding: 6px 11px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+.m-bug-chip.active {
+    background: var(--theme-color);
+    border-color: var(--theme-color);
+    color: #ffffff;
+}
+.m-bug-diag-box {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    padding: 9px 11px;
+    white-space: pre-line;
+}
+[data-theme="light"] .m-bug-chip {
+    background: #f1f5f9;
+    border-color: rgba(15, 23, 42, 0.14);
+    color: #334155;
+}
+[data-theme="light"] .m-bug-chip.active {
+    background: var(--theme-color);
+    border-color: var(--theme-color);
+    color: #ffffff;
+}
+[data-theme="light"] .m-bug-diag-box {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.12);
+    color: #475569;
+}

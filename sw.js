@@ -1,5 +1,5 @@
-// StellPlay PC Web - Service Worker (v19 Network-First No-Cache)
-const CACHE_NAME = 'stellplay-pc-web-v19';
+// StellPlay PC Web - Service Worker (v20 Network-First No-Cache)
+const CACHE_NAME = 'stellplay-pc-web-v20';
 const SHELL_ASSETS = [
   './',
   './index.html',

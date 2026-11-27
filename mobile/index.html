@@ -19,7 +19,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
-    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112703">
+    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112704">
 </head>
 <body>
     <div id="app-container">
@@ -377,7 +377,7 @@
                                 </div>
                             </div>
                             <span id="m-app-version-badge" class="m-set-badge-accent">
-                                v1.13.5
+                                v1.13.6
                             </span>
                         </div>
                         <div id="m-ota-info-text" class="m-set-box">
@@ -410,7 +410,7 @@
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <div style="display:flex; align-items:center; gap:6px;">
                                     <span style="font-size:0.8rem; font-weight:700; color:var(--text-primary);">최신 정식 APK 패키지</span>
-                                    <span id="m-apk-manual-badge" class="m-set-badge-accent" style="font-size:0.7rem; padding:1px 6px; border-radius:6px;">v1.13.5</span>
+                                    <span id="m-apk-manual-badge" class="m-set-badge-accent" style="font-size:0.7rem; padding:1px 6px; border-radius:6px;">v1.13.6</span>
                                 </div>
                                 <span style="font-size:0.7rem; color:var(--text-muted);">수동 설치</span>
                             </div>
@@ -423,18 +423,24 @@
                             </button>
                         </div>
 
-                        <div style="display:flex; gap:8px;">
-                            <button id="btn-check-app-update" class="m-set-btn-accent" style="flex:1; height:38px;">
+                        <div class="m-settings-update-grid">
+                            <button id="btn-check-app-update" class="m-set-btn-accent" style="height:38px;">
                                 <svg id="icon-update-refresh" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
                                 </svg>
                                 <span>업데이트 확인</span>
                             </button>
-                            <button id="btn-open-patchnotes" title="패치노트 확인" class="m-set-btn-ghost" style="height:38px; padding:0 12px;">
+                            <button id="btn-open-bug-report" title="오류 및 개선사항 제보" class="m-set-btn-warn" style="height:38px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span>문제 제보</span>
+                            </button>
+                            <button id="btn-open-patchnotes" title="패치노트 확인" class="m-set-btn-ghost" style="height:38px;">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                                 <span>패치노트</span>
                             </button>
-                            <button id="btn-reset-app-update" title="버전 선택 복원 및 이전 롤백" class="m-set-btn-ghost" style="height:38px; padding:0 12px;">
+                            <button id="btn-reset-app-update" title="버전 선택 복원 및 이전 롤백" class="m-set-btn-ghost" style="height:38px;">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                                 <span>복원</span>
                             </button>
@@ -1579,6 +1585,38 @@
             </div>
         </div>
 
+        <!-- 문제(버그) 제보 모달 -->
+        <div class="mobile-modal" id="m-modal-bug-report">
+            <div class="modal-backdrop" id="m-backdrop-bug-report"></div>
+            <div class="modal-content" style="max-height:86vh; width:92%; max-width:480px; display:flex; flex-direction:column; border-radius:18px; padding:0; overflow:hidden;">
+                <div class="modal-header" style="padding:16px 20px; border-bottom:1px solid var(--border-glass); display:flex; justify-content:space-between; align-items:center;">
+                    <span class="modal-title" style="font-weight:700; font-size:0.95rem;">문제(버그) 제보</span>
+                    <button type="button" class="modal-close-btn" id="m-btn-close-bug-report" style="background:transparent; border:none; font-size:1.2rem; cursor:pointer; padding:4px 8px;">✕</button>
+                </div>
+                <div style="padding:14px 18px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px;">
+                    <div class="m-bug-chips" id="m-bug-type-chips">
+                        <button type="button" class="m-bug-chip active" data-bug-type="버그/오류" data-gh-label="bug">버그/오류</button>
+                        <button type="button" class="m-bug-chip" data-bug-type="곡 누락/정보 오류" data-gh-label="song">곡 누락/오류</button>
+                        <button type="button" class="m-bug-chip" data-bug-type="UI/개선 건의" data-gh-label="enhancement">UI/개선 건의</button>
+                        <button type="button" class="m-bug-chip" data-bug-type="기타" data-gh-label="question">기타</button>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label style="font-size:0.78rem; font-weight:700; margin-bottom:4px; display:block;">제목</label>
+                        <input type="text" class="form-input" id="m-bug-title" maxlength="80" placeholder="예: 오프라인 재생 시 화면이 멈춥니다">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label style="font-size:0.78rem; font-weight:700; margin-bottom:4px; display:block;">발생 상황 및 내용</label>
+                        <textarea class="form-input" id="m-bug-desc" rows="4" style="resize:vertical; min-height:92px; line-height:1.45;" placeholder="어떤 화면/동작에서 문제가 발생했는지 적어주세요."></textarea>
+                    </div>
+                    <div class="m-bug-diag-box" id="m-bug-diag-preview">환경 정보를 불러오는 중...</div>
+                </div>
+                <div style="padding:12px 18px; border-top:1px solid var(--border-glass); display:flex; gap:8px; justify-content:flex-end;">
+                    <button type="button" id="m-btn-copy-bug-report" class="m-set-btn-ghost" style="height:38px; padding:0 14px;">내용 복사</button>
+                    <button type="button" id="m-btn-submit-bug-report" class="btn-submit" style="flex:1; height:38px; margin:0;">GitHub로 제보 제출</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 버전 선택 복원 및 롤백 모달 -->
         <div class="mobile-modal" id="m-modal-ota-restore">
             <div class="modal-backdrop" id="m-backdrop-ota-restore"></div>
@@ -1674,11 +1712,11 @@
     </div>
 
     <!-- 스크립트 로드 순서 -->
-    <script src="./assets/js/storage.js?v=2026112703"></script>
-    <script src="./assets/js/songs.js?v=2026112703"></script>
-    <script src="./assets/js/offline-db.js?v=2026112703"></script>
-    <script src="./assets/js/mobile-player.js?v=2026112703"></script>
-    <script src="./assets/js/mobile-app.js?v=2026112703"></script>
+    <script src="./assets/js/storage.js?v=2026112704"></script>
+    <script src="./assets/js/songs.js?v=2026112704"></script>
+    <script src="./assets/js/offline-db.js?v=2026112704"></script>
+    <script src="./assets/js/mobile-player.js?v=2026112704"></script>
+    <script src="./assets/js/mobile-app.js?v=2026112704"></script>
 
     <!-- [핵심] PWA Service Worker 등록 스크립트 (네이티브 앱 내장 WebView에서는 OTA 최신 파일 우선 반영을 위해 SW 비활성화) -->
     <script>
