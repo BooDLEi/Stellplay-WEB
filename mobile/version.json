@@ -1,7 +1,7 @@
 {
-  "otaVersion": 2026112602,
-  "otaReleaseDate": "2026-11-26",
-  "apkVersionName": "1.13.2",
+  "otaVersion": 2026112701,
+  "otaReleaseDate": "2026-11-27",
+  "apkVersionName": "1.13.3",
   "files": [
     "index.html",
     "assets/css/mobile.css",
@@ -71,23 +71,23 @@
     "assets/icons/members/mary.png"
   ],
   "apk": {
-    "versionCode": 15,
-    "versionName": "1.11.10",
+    "versionCode": 17,
+    "versionName": "1.13.3",
     "url": "https://github.com/BooDLEi/Stellplay-WEB/releases/latest/download/StellPlay-Mobile.apk",
-    "changelog": "신규 스텔플레이 원형 앱 아이콘 및 위젯 아이콘 전면 교체, 5열 세로형 멤버·유닛 로고 카드 및 크롬 탭 UI 기본 탑재",
+    "changelog": "백그라운드/위젯/알림 컨트롤 안정화, 앱 재실행 곡 유지, 앨범 모드 랜덤 재생 일치, Z 폴드 화면 전환/전체화면 재실행 방지, 상단 바·오프라인 보관함·필터·대기열·키컬러 전면 개편",
     "minRequiredVersionCode": 10,
     "nativeRequired": false
   },
   "fileHashes": {
-    "index.html": "cd9ef8cce7d77003fa0941b3b0edcd9c8c0dbea50ae14cd1685269280ca8e235",
-    "assets/css/mobile.css": "7449292781fce21b921e0b046a39314f7e948d81ac22931a645be4a3de336a41",
-    "assets/js/mobile-app.js": "8c8a9f127a36a7fd193146b816832df16f747fefbb611a6227fcbf8e9073c6c6",
-    "assets/js/mobile-player.js": "754a12387c0d574bf85a5b053f363fcaf94424614b2ac187567f04f126c3ae0d",
-    "assets/js/songs.js": "858a67f0fbd8c2ded1b90954ff51787846336d21becb6f0183fceb9e38c627d3",
+    "index.html": "6965060d16fb576376dd372a2577ec1f21a71b4d289b89fe41d114c2d7b0a48e",
+    "assets/css/mobile.css": "2ab1eb1662b0e7445205082534797b6ea9a5ae0a343cd075c959ea052964349a",
+    "assets/js/mobile-app.js": "7b29309a05db6aa3ca5494a494182ed62db716aa96571a9326f58607aaff4b08",
+    "assets/js/mobile-player.js": "91c3d392344a9c5b6b2157564abb0c4f7b4f649cbcfbc5588ca3147691ba6044",
+    "assets/js/songs.js": "df3dc3072cdef2da4231f2cd82714278e62aab3abd57097ea7fa98f90b1a54b8",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/offline-db.js": "eac52870524c2160e79a46ccdf1bdb73eb492e74354be88289e47f1292499dcd",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_android.txt": "779fa94fa987fdab240a4231171b51c4659fe309105d09921255db2c2f1a32bf",
+    "patchnotes_android.txt": "256bcfec0c982c7d911f491807a945761dd26d5efcd69bfd3b2c64aa88a02c51",
     "assets/icons/members/yuni.png": "c3fd8ecba844a98a65828d3ba9b460d5d3cd07c380cc440c5d0c8df54cbb1044",
     "assets/icons/members/huya.png": "42b06797ea3fd4fb8b5e823d7156c53f38b161c1f8aeb82f21f62d7e93f19192",
     "assets/icons/members/kanna.png": "84597dcdd8f2465714fc721423efddcce400fbb4b39d8091ea2921ed92f0048a",
@@ -113,15 +113,15 @@
     "assets/icons/members/abyss.png": "e42df7de59d546a36010a106b5b6a2446876ff576486e15fa896e0eee39b3dfd"
   },
   "pcFileHashes": {
-    "index.html": "728e0435a6d9d45a6be2c45eba2af7054f31e3c9d19f2cdb8978c2e644e2445f",
-    "assets/css/style.css": "b6dc894244e4f751d02cd4c818d1aae0a8e973e664028566c4e33ad21d064137",
-    "assets/js/songs.js": "858a67f0fbd8c2ded1b90954ff51787846336d21becb6f0183fceb9e38c627d3",
+    "index.html": "9197bcb68c306f4c7fc2090fd67cb776999dd5dcf39040ff9d69d39245700fd2",
+    "assets/css/style.css": "9f291a2509f8e80c9d4ef8cb784a0990fc4038fe4994c400619848c830339621",
+    "assets/js/songs.js": "df3dc3072cdef2da4231f2cd82714278e62aab3abd57097ea7fa98f90b1a54b8",
     "assets/js/storage.js": "dd260dc5402f336948b4ef9ce587fb71bae68c0b0b721774d57b79090e821361",
     "assets/js/player.js": "47e768526690b313ef3c5ef4bdcbf2b193b5c17151f0cf48cfcf914fbaa349f2",
-    "assets/js/app.js": "211f5e0d4be57869e794952c40e5686458bb4b14a6f53277d64ae2ee290f292c",
+    "assets/js/app.js": "54fa9741d1202e4070131aef83cf9ff5a154130a9a5cfa9d743cc293db817629",
     "songs-latest.json": "15dc87deb09250730403bba0937f2fe9c5bb6db29227a7dca9f075399aa4531e",
-    "patchnotes_pc.txt": "c983d64397212e75b642ae73e63f36c90d106ef65f9b2bc0c561183657311b50",
-    "patchnotes_web.txt": "f1e72fc952bf8a0baf8c40f284020567675daf0d327730ac9b83523314814e09",
+    "patchnotes_pc.txt": "2114774872650172e3d108d948357c22d673b536e0e8946cb16385efaa3b3643",
+    "patchnotes_web.txt": "3e2530e490bf0337558a284bacd9d233351fd9d1f9f8fabdc6fb84f9c73abb12",
     "assets/icons/app-icon.png": "ec7aa8525711ecea7317091421dc813aeb0e0c0cd745b7fd518bef5df8589a6a",
     "assets/icons/logo-dark.png": "030e7360fa488d6873570fbe4492bcd35341b94b20837aeaaa144d98e36ce2f2",
     "assets/icons/logo-light.png": "d352c9a894cb66ec292a3f052f73a3ec0113fd30f9ce8b41e6d6e697d5360a50",
@@ -146,7 +146,7 @@
     "assets/icons/members/hiyori.png": "ddc8ad822f6b9ea45a9136265b594e46bac7f667f3725cb1c6cd10d7f3e362a7",
     "assets/icons/members/mary.png": "a11ad419e35df185f1a2573aa0af4bf2c39e1c6549064ef806b5b33ff04517c8"
   },
-  "webVersionName": "1.13.2",
+  "webVersionName": "1.13.3",
   "nativeRequired": false,
   "nativeUpdateRequired": false
 }

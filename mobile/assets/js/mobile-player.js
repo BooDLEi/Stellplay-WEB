@@ -944,7 +944,16 @@ class MobilePlayer {
         }
     }
 
-    async playSong(song, isUserInitiated = true) {
+    _computeQueueSig(queue, queueIndex) {
+        const q = queue || [];
+        const idx = queueIndex || 0;
+        const curId = q[idx]?.id || '';
+        const head = q.slice(0, 3).map(s => s?.id || '').join(',');
+        const tail = q.slice(-2).map(s => s?.id || '').join(',');
+        return `${q.length}_${idx}_${curId}_${head}_${tail}`;
+    }
+
+    async playSong(song, isUserInitiated = true, options = {}) {
         if (!song) return;
         this._hasStartedPlayback = true;
         this.currentSong = song;
@@ -972,19 +981,15 @@ class MobilePlayer {
         this.isUserPaused = false;
         this._saveState();
 
-        // 안드로이드 네이티브 서비스 큐 동기화 (직전 동기화와 동일한 경우 중복 전송 방지)
-        const currentQueueSig = `${this.queue.length}_${this.queueIndex}_${song.id}`;
-        if (this._lastSyncedQueueSig !== currentQueueSig) {
-            this._lastSyncedQueueSig = currentQueueSig;
-            if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
-                try {
-                    window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
-                } catch (e) {}
-            }
-        }
+        const currentQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
+        const needsSync = !!options.forceSync || (this._lastSyncedQueueSig !== currentQueueSig);
 
         // 영상 모드일 경우: 네이티브 오디오를 즉시 정지하고 유튜브 영상 엔진으로만 단독 재생
         if (this.playerViewMode === 'video') {
+            if (needsSync && window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
+                this._lastSyncedQueueSig = currentQueueSig;
+                try { window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex); } catch (e) {}
+            }
             if (window.AndroidBridge && typeof window.AndroidBridge.stopNativePlayback === 'function') {
                 try { window.AndroidBridge.stopNativePlayback(); } catch (e) {}
             }
@@ -999,13 +1004,15 @@ class MobilePlayer {
                 try { window.AndroidBridge.setVideoModeNative(false); } catch (e) {}
             }
         }
-        // 1. 안드로이드 APK 네이티브 환경인 경우: DB 조회 대기 없이 즉시 네이티브 ExoPlayer로 0초 재생 위임
+        // 1. 안드로이드 APK 네이티브 환경인 경우: 큐 동기화+재생을 원자적으로 위임하여 곡 불일치 경합 차단
         if (window.AndroidBridge && typeof window.AndroidBridge.playIndexNative === 'function') {
             this.activeEngine = 'native';
             const isNativeOffline = (window.state && window.state.offlineSongIds)
                 ? (window.state.offlineSongIds.has(song.id) || (song.youtubeId && window.state.offlineSongIds.has(song.youtubeId)))
                 : false;
             this.isOfflinePlayback = isNativeOffline;
+            this.nativeCurrentTime = 0;
+            this.nativeDuration = song.duration || 0;
             try { this.audio.pause(); } catch (e) {}
             try { this.silentAudio.pause(); } catch (e) {}
             if (this.ytPlayer && this.ytPlayer.stopVideo) {
@@ -1013,7 +1020,19 @@ class MobilePlayer {
             }
             this._stopYtTimer();
 
-            window.AndroidBridge.playIndexNative(this.queueIndex);
+            if (needsSync) {
+                this._lastSyncedQueueSig = currentQueueSig;
+                if (typeof window.AndroidBridge.syncQueueAndPlay === 'function') {
+                    window.AndroidBridge.syncQueueAndPlay(JSON.stringify(this.queue), this.queueIndex);
+                } else {
+                    if (typeof window.AndroidBridge.syncQueue === 'function') {
+                        window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
+                    }
+                    window.AndroidBridge.playIndexNative(this.queueIndex);
+                }
+            } else {
+                window.AndroidBridge.playIndexNative(this.queueIndex);
+            }
 
             window.dispatchEvent(new CustomEvent('mobileplayer:trackChanged', {
                 detail: { song: this.currentSong, isOffline: isNativeOffline }
@@ -1530,17 +1549,15 @@ class MobilePlayer {
             detail: { queue: this.queue, index: this.queueIndex }
         }));
 
-        this._lastSyncedQueueSig = `${this.queue.length}_${this.queueIndex}_${this.queue[this.queueIndex]?.id || ''}`;
-        if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
-            window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
-            if (autoPlay) {
-                this.playSong(this.queue[this.queueIndex]);
-            }
+        if (autoPlay) {
+            this.playSong(this.queue[this.queueIndex], true, { forceSync: true });
             return;
         }
 
-        if (autoPlay) {
-            this.playSong(this.queue[this.queueIndex]);
+        this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
+        this._saveState();
+        if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
+            try { window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex); } catch (e) {}
         }
     }
 
@@ -1552,6 +1569,7 @@ class MobilePlayer {
         }
         const insertIndex = Math.min(this.queue.length, this.queueIndex + 1);
         this.queue.splice(insertIndex, 0, song);
+        this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             try { window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex); } catch (e) {}
         }
@@ -1569,6 +1587,7 @@ class MobilePlayer {
         if (currentPlaying) {
             this.queueIndex = this.queue.indexOf(currentPlaying);
         }
+        this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
         }
@@ -1589,6 +1608,7 @@ class MobilePlayer {
             if (this.ytPlayer && this.ytPlayer.stopVideo) {
                 try { this.ytPlayer.stopVideo(); } catch (e) {}
             }
+            this._lastSyncedQueueSig = this._computeQueueSig(this.queue, 0);
             if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
                 window.AndroidBridge.syncQueue(JSON.stringify(this.queue), 0);
             }
@@ -1605,8 +1625,10 @@ class MobilePlayer {
             this.queueIndex--;
         } else if (isCurrent) {
             if (this.queueIndex >= this.queue.length) this.queueIndex = 0;
-            this.playSong(this.queue[this.queueIndex]);
+            this.playSong(this.queue[this.queueIndex], true, { forceSync: true });
+            return;
         }
+        this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
         }
@@ -1624,6 +1646,7 @@ class MobilePlayer {
             this.queue = [];
             this.queueIndex = 0;
         }
+        this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
             window.AndroidBridge.syncQueue(JSON.stringify(this.queue), this.queueIndex);
         }
@@ -1659,6 +1682,7 @@ class MobilePlayer {
         // 현재 곡을 맨 앞에 배치하고 셔플된 나머지 곡들을 후속 대기열로 설정
         this.queue = [currentSong, ...remaining];
         this.queueIndex = 0;
+        this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
         this._saveState();
 
         if (window.AndroidBridge && typeof window.AndroidBridge.syncQueue === 'function') {
@@ -1762,35 +1786,64 @@ class MobilePlayer {
         }));
     }
 
-    syncFromNative() {
-        if (this.playerViewMode === 'video' || this.activeEngine === 'youtube') return;
-        if (!window.AndroidBridge || typeof window.AndroidBridge.getCurrentPlaybackState !== 'function') return;
+    syncFromNative(forceAdoptQueue = false) {
+        if ((this.playerViewMode === 'video' || this.activeEngine === 'youtube') && this.isPlaying) return false;
+        if (!window.AndroidBridge || typeof window.AndroidBridge.getCurrentPlaybackState !== 'function') return false;
         try {
-            if ((!this.queue || this.queue.length === 0) && typeof window.AndroidBridge.getQueueJsonNative === 'function') {
-                const qJson = window.AndroidBridge.getQueueJsonNative();
-                if (qJson && qJson !== '[]') {
-                    this.queue = JSON.parse(qJson);
-                    window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
-                        detail: { queue: this.queue }
-                    }));
-                }
-            }
             const stateStr = window.AndroidBridge.getCurrentPlaybackState();
             const state = JSON.parse(stateStr);
-            if (state && state.queueIndex >= 0 && state.queueIndex < this.queue.length) {
+            if (!state) return false;
+
+            const nativeTrackId = state.trackId || state.currentTrackId || '';
+            const curSongAtIdx = (this.queue && state.queueIndex >= 0 && state.queueIndex < this.queue.length)
+                ? this.queue[state.queueIndex]
+                : null;
+            const trackMismatch = !!(nativeTrackId && (!curSongAtIdx || curSongAtIdx.id !== nativeTrackId));
+            const shouldAdoptNativeQueue = !!(forceAdoptQueue || !this.queue || this.queue.length === 0 || trackMismatch);
+
+            if (shouldAdoptNativeQueue && typeof window.AndroidBridge.getQueueJsonNative === 'function') {
+                const qJson = window.AndroidBridge.getQueueJsonNative();
+                if (qJson && qJson !== '[]') {
+                    const parsedNativeQueue = JSON.parse(qJson);
+                    if (Array.isArray(parsedNativeQueue) && parsedNativeQueue.length > 0) {
+                        const allCatalog = (typeof window.getAllSongs === 'function') ? window.getAllSongs() : [];
+                        const byId = new Map(allCatalog.map(s => [s.id, s]));
+                        const byYt = new Map(allCatalog.map(s => [s.youtubeId, s]));
+                        this.queue = parsedNativeQueue.map(nt => byId.get(nt.id) || (nt.youtubeId && byYt.get(nt.youtubeId)) || nt);
+                    }
+                }
+            }
+
+            let targetIdx = (typeof state.queueIndex === 'number') ? state.queueIndex : -1;
+            if (nativeTrackId && this.queue && this.queue.length > 0) {
+                if (targetIdx < 0 || targetIdx >= this.queue.length || this.queue[targetIdx]?.id !== nativeTrackId) {
+                    const foundIdx = this.queue.findIndex(s => s && (s.id === nativeTrackId || s.youtubeId === nativeTrackId));
+                    if (foundIdx >= 0) targetIdx = foundIdx;
+                }
+            }
+
+            if (this.queue && targetIdx >= 0 && targetIdx < this.queue.length) {
                 this.activeEngine = 'native';
-                this.queueIndex = state.queueIndex;
-                this.currentSong = this.queue[this.queueIndex];
-                this.isPlaying = state.isPlaying;
+                this.queueIndex = targetIdx;
+                this.currentSong = this.queue[targetIdx];
+                this.isPlaying = !!state.isPlaying;
+                this.isUserPaused = !this.isPlaying;
                 if (state.isPlaying || (state.position && state.position > 0)) {
                     this._hasStartedPlayback = true;
                 }
+                this._lastSyncedQueueSig = this._computeQueueSig(this.queue, this.queueIndex);
+                this._saveState();
 
                 if (state.isPlaying && window.StorageManager && this.currentSong && this.currentSong.id) {
                     window.StorageManager.addToHistory(this.currentSong.id);
                 }
 
+                window.dispatchEvent(new CustomEvent('mobileplayer:queueUpdated', {
+                    detail: { queue: this.queue, index: this.queueIndex }
+                }));
+
                 const isOffline = window.AndroidBridge.hasOfflineTrack ? window.AndroidBridge.hasOfflineTrack(this.currentSong.id, this.currentSong.youtubeId || '') : false;
+                this.isOfflinePlayback = !!isOffline;
                 window.dispatchEvent(new CustomEvent('mobileplayer:trackChanged', {
                     detail: { song: this.currentSong, isOffline }
                 }));
@@ -1805,10 +1858,12 @@ class MobilePlayer {
                 window.dispatchEvent(new CustomEvent('mobileplayer:timeUpdate', {
                     detail: { currentTime: cur, duration: dur, progress }
                 }));
+                return true;
             }
         } catch (e) {
             console.warn('[MobilePlayer] syncFromNative error:', e);
         }
+        return false;
     }
 
     // 오디오 디스크 캐시 및 설정 연동

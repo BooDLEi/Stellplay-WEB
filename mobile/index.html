@@ -19,7 +19,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
-    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112602">
+    <link rel="stylesheet" href="./assets/css/mobile.css?v=2026112701">
 </head>
 <body>
     <div id="app-container">
@@ -35,7 +35,7 @@
                 <!-- 우측: PC전환(웹) · 검색 · 사비 · 곡 추가(+) -->
                 <div class="header-actions">
                     <button class="m-header-pc-btn" id="m-btn-switch-pc" type="button" title="PC 웹 버전으로 전환" style="display: none !important;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
                             <line x1="8" y1="21" x2="16" y2="21"/>
                             <line x1="12" y1="17" x2="12" y2="21"/>
@@ -43,18 +43,18 @@
                         <span>PC</span>
                     </button>
                     <button class="header-icon-btn" id="btn-toggle-search-home" type="button" title="곡 검색" aria-label="곡 검색">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
                     </button>
                     <button class="header-sabi-btn" id="m-header-sabi-btn" type="button" title="사비 메들리 모드 온/오프">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/>
                         </svg>
                         <span id="m-header-sabi-text">사비</span>
                     </button>
                     <button class="header-icon-btn" id="btn-open-add-song-home" type="button" title="곡 추가 및 신곡 탐색" aria-label="곡 추가 및 신곡 탐색">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
                     </button>
@@ -80,60 +80,63 @@
         <main>
             <!-- 1. 홈 뷰 (미니멀 컨트롤 바 & 트랙 리스트) -->
             <section class="view-section active" id="view-home">
-                <!-- 1열: 분류·필터 / 정렬 / 랜덤 재생 -->
+                <!-- 1열: 좌측(필터 · 정렬) / 우측(랜덤 재생 · 선택) 고정 크기 배치 -->
                 <div class="m-home-control-bar">
-                    <button type="button" class="m-filter-trigger-btn" id="btn-open-filter-modal">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="currentColor"/>
-                            <line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="currentColor"/>
-                            <line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.2" fill="currentColor"/>
-                        </svg>
-                        <span>분류 · 필터</span>
-                        <span class="m-filter-badge" id="m-filter-active-badge" style="display:none;">0</span>
-                    </button>
-                    <div class="m-sort-dropdown-wrap" id="m-sort-dropdown-wrap">
-                        <button type="button" class="m-home-sort-pill m-sort-trigger-btn" id="m-sort-dropdown-btn" aria-haspopup="listbox" aria-expanded="false" title="곡 정렬">
-                            <span id="m-sort-dropdown-label">최신순</span>
-                            <svg class="m-sort-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    <div class="m-control-group-left">
+                        <button type="button" class="m-filter-trigger-btn" id="btn-open-filter-modal">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="currentColor"/>
+                                <line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="currentColor"/>
+                                <line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.2" fill="currentColor"/>
+                            </svg>
+                            <span>필터</span>
+                            <span class="m-filter-badge" id="m-filter-active-badge" style="display:none;">0</span>
                         </button>
-                        <div class="m-sort-dropdown-menu" id="m-sort-dropdown-menu" role="listbox">
-                            <button type="button" class="m-sort-option active" data-sort="latest" role="option" aria-selected="true">
-                                <span>최신순</span>
-                                <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                        <div class="m-sort-dropdown-wrap" id="m-sort-dropdown-wrap">
+                            <button type="button" class="m-home-sort-pill m-sort-trigger-btn" id="m-sort-dropdown-btn" aria-haspopup="listbox" aria-expanded="false" title="곡 정렬">
+                                <span id="m-sort-dropdown-label">최신순</span>
+                                <svg class="m-sort-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                             </button>
-                            <button type="button" class="m-sort-option" data-sort="oldest" role="option" aria-selected="false">
-                                <span>오래된순</span>
-                                <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
-                            </button>
-                            <button type="button" class="m-sort-option" data-sort="title" role="option" aria-selected="false">
-                                <span>가나다순</span>
-                                <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
-                            </button>
+                            <div class="m-sort-dropdown-menu" id="m-sort-dropdown-menu" role="listbox">
+                                <button type="button" class="m-sort-option active" data-sort="latest" role="option" aria-selected="true">
+                                    <span>최신순</span>
+                                    <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                                <button type="button" class="m-sort-option" data-sort="oldest" role="option" aria-selected="false">
+                                    <span>오래된순</span>
+                                    <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                                <button type="button" class="m-sort-option" data-sort="title" role="option" aria-selected="false">
+                                    <span>가나다순</span>
+                                    <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                            </div>
+                            <select id="m-sort-select" class="sort-select" style="display:none;" aria-hidden="true" tabindex="-1">
+                                <option value="latest" selected>최신순</option>
+                                <option value="oldest">오래된순</option>
+                                <option value="title">가나다순</option>
+                            </select>
                         </div>
-                        <select id="m-sort-select" class="sort-select" style="display:none;" aria-hidden="true" tabindex="-1">
-                            <option value="latest" selected>최신순</option>
-                            <option value="oldest">오래된순</option>
-                            <option value="title">가나다순</option>
-                        </select>
                     </div>
-                    <button type="button" class="btn-random-play-home m-home-random-pill" id="btn-random-play-filtered" title="현재 필터링된 곡 랜덤 재생">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
-                        <span>랜덤 재생</span>
-                    </button>
+                    <div class="m-control-group-right">
+                        <button type="button" class="btn-random-play-home m-home-random-pill" id="btn-random-play-filtered" title="현재 필터링된 곡 랜덤 재생">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                            <span>랜덤 재생</span>
+                        </button>
+                        <button type="button" class="m-home-select-pill" id="btn-toggle-multiselect-home" title="곡 복수 선택">
+                            <span>선택</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- 2열: 총 곡수 (+ 활성 필터 요약) & 선택 버튼 -->
-                <div class="m-home-meta-row">
+                <!-- 활성 필터 요약 칩 라인 (필터 활성 시에만 노출) -->
+                <div class="m-home-meta-row" id="m-home-meta-row" style="display:none;">
                     <div class="m-home-meta-left">
-                        <span class="m-home-total-count" id="m-track-count">총 0곡</span>
                         <button type="button" class="m-active-filter-chip" id="m-active-filter-summary" style="display:none;" title="필터 초기화">
                             <span id="m-active-filter-summary-text"></span>
                             <span class="m-chip-x">✕</span>
                         </button>
                     </div>
-                    <button type="button" class="m-home-select-pill" id="btn-toggle-multiselect-home" title="곡 복수 선택">
-                        <span>선택</span>
-                    </button>
                 </div>
 
                 <!-- 곡 복수 선택 플로팅 바 (5가지 기능: 재생목록 추가 / 새 목록 만들기 / 현재 대기열 추가 / 숨기기 / 다운로드) -->
@@ -159,13 +162,58 @@
 
             <!-- 2. 오프라인 저장소 뷰 (다운로드된 곡 전용) -->
             <section class="view-section" id="view-offline">
-                <!-- 1열: 곡 분류 필터 칩 (홈 화면과 동일한 상단 위치 & 컴팩트 규격) -->
-                <div class="type-pills-row" id="m-offline-type-pills">
-                    <button class="type-pill active" data-type="all">전체</button>
-                    <button class="type-pill" data-type="original">오리지널</button>
-                    <button class="type-pill" data-type="cover">커버곡</button>
-                    <button class="type-pill" data-type="live">라이브</button>
-                    <button class="type-pill" data-type="featuring">피처링/OST</button>
+                <!-- 1열: 홈 화면과 동일한 통일 상단 컨트롤 바 -->
+                <div class="m-home-control-bar">
+                    <div class="m-control-group-left">
+                        <button type="button" class="m-filter-trigger-btn" id="btn-open-filter-modal-offline">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2.2" fill="currentColor"/>
+                                <line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2.2" fill="currentColor"/>
+                                <line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2.2" fill="currentColor"/>
+                            </svg>
+                            <span>필터</span>
+                            <span class="m-filter-badge" id="m-filter-active-badge-offline" style="display:none;">0</span>
+                        </button>
+                        <div class="m-sort-dropdown-wrap" id="m-offline-sort-dropdown-wrap">
+                            <button type="button" class="m-home-sort-pill m-sort-trigger-btn" id="m-offline-sort-dropdown-btn" aria-haspopup="listbox" aria-expanded="false" title="곡 정렬">
+                                <span id="m-offline-sort-dropdown-label">최신순</span>
+                                <svg class="m-sort-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                            </button>
+                            <div class="m-sort-dropdown-menu" id="m-offline-sort-dropdown-menu" role="listbox">
+                                <button type="button" class="m-sort-option active" data-sort="latest" role="option" aria-selected="true">
+                                    <span>최신순</span>
+                                    <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                                <button type="button" class="m-sort-option" data-sort="oldest" role="option" aria-selected="false">
+                                    <span>오래된순</span>
+                                    <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                                <button type="button" class="m-sort-option" data-sort="title" role="option" aria-selected="false">
+                                    <span>가나다순</span>
+                                    <svg class="m-sort-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-control-group-right">
+                        <button type="button" class="btn-random-play-home m-home-random-pill" id="btn-random-play-offline" title="다운로드된 곡 랜덤 재생">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                            <span>랜덤 재생</span>
+                        </button>
+                        <button type="button" class="m-home-select-pill" id="btn-offline-select-mode" title="오프라인 곡 선택 삭제">
+                            <span>선택</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 활성 필터 요약 칩 라인 (필터 활성 시에만 노출) -->
+                <div class="m-home-meta-row" id="m-offline-meta-row" style="display:none;">
+                    <div class="m-home-meta-left">
+                        <button type="button" class="m-active-filter-chip" id="m-active-filter-summary-offline" style="display:none;" title="필터 초기화">
+                            <span id="m-active-filter-summary-text-offline"></span>
+                            <span class="m-chip-x">✕</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 2열: 컴팩트 오프라인 보관함 컨트롤 바 -->
@@ -181,10 +229,6 @@
                         <button class="btn-offline-play-all" id="btn-offline-play-all">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                             <span>전곡 재생</span>
-                        </button>
-                        <button class="btn-offline-action-btn" id="btn-offline-select-mode">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                            <span>선택 삭제</span>
                         </button>
                         <button class="btn-offline-clear-all" id="btn-offline-clear-all">전체 삭제</button>
                     </div>
@@ -725,7 +769,7 @@
         <div class="queue-sheet" id="m-queue-sheet">
             <div class="queue-sheet-backdrop" id="m-queue-backdrop"></div>
             <div class="queue-sheet-content">
-                <!-- 상단 드래그 다운 영역 (헤더/핸들/힌트 어디서나 아래로 드래그 시 닫힘) -->
+                <!-- 상단 드래그 다운 영역 (헤더/핸들 어디서나 아래로 드래그 시 닫힘) -->
                 <div class="queue-sheet-top-zone" id="m-queue-top-zone" title="아래로 드래그하여 닫기">
                     <div class="queue-sheet-handle" id="m-queue-sheet-handle"></div>
                     <div class="queue-sheet-header">
@@ -733,50 +777,22 @@
                             <div class="queue-sheet-title-row">
                                 <span class="queue-sheet-title">현재 재생목록</span>
                                 <span class="queue-sheet-badge" id="m-queue-count">0곡</span>
-                                <button class="queue-sheet-pos-btn" id="m-queue-pos-btn" title="현재 재생 중인 곡 위치로 이동" style="display:none;">
-                                    <span class="queue-pos-dot"></span>
-                                    <span id="m-queue-pos-text">현재 1번째</span>
-                                </button>
                             </div>
                             <button class="queue-sheet-close-btn" id="m-btn-close-queue" aria-label="재생목록 닫기">✕</button>
                         </div>
                         <div class="queue-sheet-actions">
-                            <button class="queue-sheet-action-btn" id="m-btn-station-queue" title="현재 곡 기반 뮤직 스테이션 생성">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                    <path d="M4.93 19.07A10 10 0 0 1 19.07 4.93"/>
-                                    <path d="M7.76 16.24a6 6 0 0 1 8.48-8.48"/>
-                                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                                </svg>
-                                <span>스테이션</span>
+                            <button class="queue-sheet-action-btn" id="m-btn-save-queue-playlist" title="현재 대기열을 새 재생목록으로 저장">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                <span>목록 저장</span>
                             </button>
                             <button class="queue-sheet-action-btn" id="m-btn-shuffle-queue" title="대기열 순서 무작위 섞기">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
                                 <span>순서 섞기</span>
                             </button>
-                            <button class="queue-sheet-action-btn" id="m-btn-save-queue-playlist" title="현재 대기열을 새 재생목록으로 저장">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                                <span>목록 저장</span>
+                            <button class="queue-sheet-action-btn" id="m-btn-clear-queue" title="대기열 비우기">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>비우기</span>
                             </button>
-                            <button class="queue-sheet-action-btn" id="m-btn-download-queue" title="대기열 곡 선택 오프라인 다운로드">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                <span>다운로드</span>
-                            </button>
-                            <button class="queue-sheet-action-btn" id="m-btn-clear-queue" title="대기열 비우기">비우기</button>
-                        </div>
-                    </div>
-                    <div class="queue-drag-hint">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"/><polyline points="7 14 12 9 17 14"/></svg>
-                        <span>목록 우측 핸들(☰)을 드래그하여 순서를 재배치할 수 있습니다.</span>
-                    </div>
-
-                    <div class="m-multiselect-floating-bar queue-select-bar" id="m-queue-select-bar" style="display:none;">
-                        <div class="multiselect-bar-info">
-                            <span id="m-queue-select-count">0곡 선택됨</span>
-                            <button class="btn-select-all-toggle" id="btn-queue-select-all">전체 선택</button>
-                        </div>
-                        <div class="multiselect-bar-actions">
-                            <button class="btn-ms-action btn-ms-download" id="btn-queue-select-download">선택 다운로드</button>
-                            <button class="btn-ms-action btn-ms-cancel" id="btn-queue-select-cancel">취소</button>
                         </div>
                     </div>
                 </div>
@@ -1084,7 +1100,10 @@
             <div class="filter-sheet-content">
                 <div class="filter-sheet-handle"></div>
                 <div class="filter-sheet-header">
-                    <span class="filter-sheet-title">분류 및 필터</span>
+                    <div class="filter-sheet-title-wrap">
+                        <span class="filter-sheet-title">필터</span>
+                        <span class="filter-sheet-total-count" id="m-filter-sheet-total-count">총 0곡</span>
+                    </div>
                     <button type="button" class="filter-sheet-close" id="m-btn-close-filter-sheet" aria-label="닫기">✕</button>
                 </div>
 
@@ -1610,11 +1629,11 @@
     </div>
 
     <!-- 스크립트 로드 순서 -->
-    <script src="./assets/js/storage.js?v=2026112602"></script>
-    <script src="./assets/js/songs.js?v=2026112602"></script>
-    <script src="./assets/js/offline-db.js?v=2026112602"></script>
-    <script src="./assets/js/mobile-player.js?v=2026112602"></script>
-    <script src="./assets/js/mobile-app.js?v=2026112602"></script>
+    <script src="./assets/js/storage.js?v=2026112701"></script>
+    <script src="./assets/js/songs.js?v=2026112701"></script>
+    <script src="./assets/js/offline-db.js?v=2026112701"></script>
+    <script src="./assets/js/mobile-player.js?v=2026112701"></script>
+    <script src="./assets/js/mobile-app.js?v=2026112701"></script>
 
     <!-- [핵심] PWA Service Worker 등록 스크립트 (네이티브 앱 내장 WebView에서는 OTA 최신 파일 우선 반영을 위해 SW 비활성화) -->
     <script>

@@ -25,11 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
         stellive: '#7c5cfc',
         unclassified: '#64748b',
         group: '#7c5cfc',
-        g1: '#a29bfe',
-        g2: '#6c5ce7',
-        g3: '#00cec9',
-        g4: '#ff1493',
-        kangji: '#8b5cf6'
+        g1: '#968ee6',
+        g2: '#7467cf',
+        g3: '#38aba8',
+        g4: '#cc5c94',
+        kangji: '#8e76c9'
     };
     const BUILTIN_COLOR_LABELS = [
         { key: 'all', label: '전체 탭' },
@@ -469,27 +469,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const MEMBER_BUTTON_COLORS = {
-        all: { color: '#7c5cfc', glow: 'rgba(124, 92, 252, 0.45)' },
-        group: { color: '#7c5cfc', glow: 'rgba(124, 92, 252, 0.45)' },
-        g1: { color: '#a29bfe', glow: 'rgba(162, 155, 254, 0.45)' },
-        g2: { color: '#6c5ce7', glow: 'rgba(108, 92, 231, 0.45)' },
-        g3: { color: '#00cec9', glow: 'rgba(0, 206, 201, 0.45)' },
-        g4: { color: '#ff1493', glow: 'rgba(255, 20, 147, 0.45)' },
-        yuni: { color: '#fbcfe8', glow: 'rgba(251, 207, 232, 0.55)' },
-        huya: { color: '#7e22ce', glow: 'rgba(126, 34, 206, 0.55)' },
-        kanna: { color: '#1e40af', glow: 'rgba(30, 64, 175, 0.6)' },
-        hina: { color: '#fef08a', glow: 'rgba(254, 240, 138, 0.5)' },
-        mashiro: { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.45)' },
-        lize: { color: '#ef4444', glow: 'rgba(239, 68, 68, 0.55)' },
-        tabi: { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.55)' },
-        shibuki: { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.5)' },
-        rin: { color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.55)' },
-        nana: { color: '#ec4899', glow: 'rgba(236, 72, 153, 0.5)' },
-        riko: { color: '#84cc16', glow: 'rgba(132, 204, 22, 0.55)' },
-        toa: { color: '#ff1493', glow: 'rgba(255, 20, 147, 0.5)' },
-        rang: { color: '#92400e', glow: 'rgba(146, 64, 14, 0.5)' },
-        hiyori: { color: '#f472b6', glow: 'rgba(244, 114, 182, 0.5)' },
-        mary: { color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' }
+        all: { color: '#7c5cfc', glow: 'rgba(124, 92, 252, 0.4)' },
+        group: { color: '#7c5cfc', glow: 'rgba(124, 92, 252, 0.4)' },
+        g1: { color: '#968ee6', glow: 'rgba(150, 142, 230, 0.38)' },
+        g2: { color: '#7467cf', glow: 'rgba(116, 103, 207, 0.38)' },
+        g3: { color: '#38aba8', glow: 'rgba(56, 171, 168, 0.38)' },
+        g4: { color: '#cc5c94', glow: 'rgba(204, 92, 148, 0.38)' },
+        kangji: { color: '#8e76c9', glow: 'rgba(142, 118, 201, 0.38)' },
+        yuni: { color: '#dfa8c6', glow: 'rgba(223, 168, 198, 0.38)' },
+        huya: { color: '#8b5bb5', glow: 'rgba(139, 91, 181, 0.38)' },
+        kanna: { color: '#4a67a8', glow: 'rgba(74, 103, 168, 0.38)' },
+        hina: { color: '#d9c87a', glow: 'rgba(217, 200, 122, 0.36)' },
+        mashiro: { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.38)' },
+        lize: { color: '#cf6666', glow: 'rgba(207, 102, 102, 0.38)' },
+        tabi: { color: '#68a8cc', glow: 'rgba(104, 168, 204, 0.38)' },
+        shibuki: { color: '#aa84d6', glow: 'rgba(170, 132, 214, 0.38)' },
+        rin: { color: '#5c85c9', glow: 'rgba(92, 133, 201, 0.38)' },
+        nana: { color: '#cf6d9c', glow: 'rgba(207, 109, 156, 0.38)' },
+        riko: { color: '#89b55c', glow: 'rgba(137, 181, 92, 0.38)' },
+        toa: { color: '#cc5c94', glow: 'rgba(204, 92, 148, 0.4)' },
+        rang: { color: '#a6744c', glow: 'rgba(166, 116, 76, 0.38)' },
+        hiyori: { color: '#d98bb2', glow: 'rgba(217, 139, 178, 0.38)' },
+        mary: { color: '#ccb056', glow: 'rgba(204, 176, 86, 0.38)' }
     };
 
     function applyThemeMode(theme) {
@@ -5123,13 +5124,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
             if (r.ok) {
                 const v = await r.json();
-                const verNum = v.otaVersion || 2026112602;
+                const verNum = v.otaVersion || 2026112701;
                 return {
                     success: true,
-                    versionName: v.webVersionName || '1.13.2',
+                    versionName: v.webVersionName || '1.13.3',
                     currentVersion: verNum,
                     bundledVersion: verNum,
-                    otaReleaseDate: v.otaReleaseDate || '2026-11-26',
+                    otaReleaseDate: v.otaReleaseDate || '2026-11-27',
                     hasPrevious: false,
                     previousVersion: -1,
                     history: [{
@@ -5143,14 +5144,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
         return {
             success: true,
-            versionName: '1.13.2',
-            currentVersion: 2026112602,
-            bundledVersion: 2026112602,
+            versionName: '1.13.3',
+            currentVersion: 2026112701,
+            bundledVersion: 2026112701,
             hasPrevious: false,
             previousVersion: -1,
             history: [{
-                version: 2026112602,
-                label: '현재 적용 버전 (#2026112602)',
+                version: 2026112701,
+                label: '현재 적용 버전 (#2026112701)',
                 isCurrent: true,
                 type: 'bundled'
             }]
@@ -5163,7 +5164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const info = await fetchPcUpdateInfoData();
         if (verTextEl && info) {
             const modeLabel = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'StellPlay Desktop' : 'StellPlay Web';
-            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.2'} (패치 #${info.currentVersion || 2026112602})`;
+            verTextEl.textContent = `${modeLabel} v${info.versionName || '1.13.3'} (패치 #${info.currentVersion || 2026112701})`;
         }
         if (badgeEl) {
             badgeEl.textContent = '최신 상태';

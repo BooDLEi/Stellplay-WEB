@@ -33,8 +33,8 @@ const MEMBERS = {
         nameEn: 'Ayatsuno Yuni',
         gen: 'g1',
         genName: '1기 Everlys',
-        color: '#fbcfe8',
-        glow: 'rgba(251, 207, 232, 0.55)',
+        color: '#dfa8c6',
+        glow: 'rgba(223, 168, 198, 0.38)',
         desc: '유니콘 요정, 통통 튀는 독보적 음색'
     },
     huya: {
@@ -44,8 +44,8 @@ const MEMBERS = {
         nameEn: 'Sakihane Huya',
         gen: 'g1',
         genName: '1기 Everlys',
-        color: '#7e22ce',
-        glow: 'rgba(126, 34, 206, 0.5)',
+        color: '#8b5bb5',
+        glow: 'rgba(139, 91, 181, 0.38)',
         desc: '에버리스의 새로운 목소리, 청아하고 다채로운 보컬'
     },
     kanna: {
@@ -55,8 +55,8 @@ const MEMBERS = {
         nameEn: 'Airi Kanna',
         gen: 'g1',
         genName: '1기 Everlys (명예)',
-        color: '#1e40af',
-        glow: 'rgba(30, 64, 175, 0.5)',
+        color: '#4a67a8',
+        glow: 'rgba(74, 103, 168, 0.38)',
         desc: '용족의 후예, 파워풀한 감성 보컬'
     },
     // 2기 유니버스 (Universe)
@@ -67,8 +67,8 @@ const MEMBERS = {
         nameEn: 'Shirayuki Hina',
         gen: 'g2',
         genName: '2기 Universe',
-        color: '#fef08a',
-        glow: 'rgba(254, 240, 138, 0.5)',
+        color: '#d9c87a',
+        glow: 'rgba(217, 200, 122, 0.36)',
         desc: '천상의 목소리, 따스하고 맑은 감성 보컬'
     },
     mashiro: {
@@ -79,7 +79,7 @@ const MEMBERS = {
         gen: 'g2',
         genName: '2기 Universe',
         color: '#94a3b8',
-        glow: 'rgba(148, 163, 184, 0.5)',
+        glow: 'rgba(148, 163, 184, 0.38)',
         desc: '투명하고 순수한 음색, 포근한 힐링 보이스'
     },
     lize: {
@@ -89,8 +89,8 @@ const MEMBERS = {
         nameEn: 'Akane Lize',
         gen: 'g2',
         genName: '2기 Universe',
-        color: '#ef4444',
-        glow: 'rgba(239, 68, 68, 0.5)',
+        color: '#cf6666',
+        glow: 'rgba(207, 102, 102, 0.38)',
         desc: '시원한 사이다 고음, 폭발적인 락 스피릿'
     },
     tabi: {
@@ -100,8 +100,8 @@ const MEMBERS = {
         nameEn: 'Arahashi Tabi',
         gen: 'g2',
         genName: '2기 Universe',
-        color: '#38bdf8',
-        glow: 'rgba(56, 189, 248, 0.5)',
+        color: '#68a8cc',
+        glow: 'rgba(104, 168, 204, 0.38)',
         desc: '감미로운 미성, 편안하고 서정적인 보컬'
     },
     // 3기 클리셰 (Cliché)
@@ -112,8 +112,8 @@ const MEMBERS = {
         nameEn: 'Tenko Shibuki',
         gen: 'g3',
         genName: '3기 Cliché',
-        color: '#c084fc',
-        glow: 'rgba(192, 132, 252, 0.5)',
+        color: '#aa84d6',
+        glow: 'rgba(170, 132, 214, 0.38)',
         desc: '활기찬 에너지, 직진하는 청춘 락 보컬'
     },
     rin: {
@@ -123,8 +123,8 @@ const MEMBERS = {
         nameEn: 'Aokumo Rin',
         gen: 'g3',
         genName: '3기 Cliché',
-        color: '#3b82f6',
-        glow: 'rgba(59, 130, 246, 0.5)',
+        color: '#5c85c9',
+        glow: 'rgba(92, 133, 201, 0.38)',
         desc: '탁월한 리듬감, 힙합과 락을 넘나드는 음색'
     },
     nana: {
@@ -134,8 +134,8 @@ const MEMBERS = {
         nameEn: 'Hanako Nana',
         gen: 'g3',
         genName: '3기 Cliché',
-        color: '#ec4899',
-        glow: 'rgba(236, 72, 153, 0.5)',
+        color: '#cf6d9c',
+        glow: 'rgba(207, 109, 156, 0.38)',
         desc: '부드러운 하모니와 파워풀 R&B 보컬'
     },
     riko: {
@@ -145,8 +145,8 @@ const MEMBERS = {
         nameEn: 'Yuzuha Riko',
         gen: 'g3',
         genName: '3기 Cliché',
-        color: '#84cc16',
-        glow: 'rgba(132, 204, 22, 0.5)',
+        color: '#89b55c',
+        glow: 'rgba(137, 181, 92, 0.38)',
         desc: '싱그럽고 매력적인 팝 보이스'
     },
     // 4기 어비스 (Abyss)
@@ -157,8 +157,8 @@ const MEMBERS = {
         nameEn: 'Shizuki Toa',
         gen: 'g4',
         genName: '4기 Abyss',
-        color: '#ff1493',
-        glow: 'rgba(255, 20, 147, 0.5)',
+        color: '#cc5c94',
+        glow: 'rgba(204, 92, 148, 0.4)',
         desc: '어비스의 핫핑크 보컬, 강렬하고 매혹적인 음색',
         youtubeUrl: 'https://www.youtube.com/@ShizukiToa'
     },
@@ -169,8 +169,8 @@ const MEMBERS = {
         nameEn: 'Cogane Rang',
         gen: 'g4',
         genName: '4기 Abyss',
-        color: '#92400e',
-        glow: 'rgba(146, 64, 14, 0.5)',
+        color: '#a6744c',
+        glow: 'rgba(166, 116, 76, 0.38)',
         desc: '어비스의 브라운 보컬, 깊이 있고 따뜻한 음색',
         youtubeUrl: 'https://www.youtube.com/@coganerang'
     },
@@ -181,8 +181,8 @@ const MEMBERS = {
         nameEn: 'Hanayo Hiyori',
         gen: 'g4',
         genName: '4기 Abyss',
-        color: '#f472b6',
-        glow: 'rgba(244, 114, 182, 0.5)',
+        color: '#d98bb2',
+        glow: 'rgba(217, 139, 178, 0.38)',
         desc: '어비스의 파스텔 핑크 보컬, 사랑스럽고 화사한 음색',
         youtubeUrl: 'https://www.youtube.com/@HanayoHiyori'
     },
@@ -193,8 +193,8 @@ const MEMBERS = {
         nameEn: 'Tokino Mary',
         gen: 'g4',
         genName: '4기 Abyss',
-        color: '#eab308',
-        glow: 'rgba(234, 179, 8, 0.5)',
+        color: '#ccb056',
+        glow: 'rgba(204, 176, 86, 0.38)',
         desc: '어비스의 옐로우 보컬, 밝고 빛나는 에너지',
         youtubeUrl: 'https://www.youtube.com/@TokinoMaryChannel'
     }

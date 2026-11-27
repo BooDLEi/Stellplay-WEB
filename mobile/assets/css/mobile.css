@@ -25,7 +25,10 @@
     --border-active: rgba(124, 92, 252, 0.5);
 
     --theme-color: #7c5cfc;
-    --theme-glow: rgba(124, 92, 252, 0.4);
+    --theme-glow: rgba(124, 92, 252, 0.35);
+    --theme-ink: #ffffff;
+    --theme-tint: rgba(124, 92, 252, 0.16);
+    --theme-border: rgba(124, 92, 252, 0.45);
 
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
@@ -450,7 +453,7 @@ body::before {
     width: 140%;
     height: 140%;
     background: radial-gradient(circle at 50% 20%, var(--theme-glow) 0%, transparent 60%);
-    opacity: 0.35;
+    opacity: 0.24;
     pointer-events: none;
     z-index: 0;
     transform: translateZ(0);
@@ -502,17 +505,17 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 7px;
+    gap: 8px;
     flex-shrink: 0;
 }
 
 /* 헤더 원형 아이콘 버튼 (검색 / 곡 추가 +) */
 .header-icon-btn {
-    width: 31px;
-    height: 31px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid color-mix(in srgb, var(--theme-color) 24%, rgba(255, 255, 255, 0.14));
+    background: color-mix(in srgb, var(--theme-color) 8%, rgba(255, 255, 255, 0.06));
     color: #e2e8f0;
     display: inline-flex;
     align-items: center;
@@ -527,19 +530,19 @@ body::before {
     background: rgba(255, 255, 255, 0.14);
 }
 .header-icon-btn.search-open {
-    background: rgba(124, 92, 252, 0.22);
-    border-color: rgba(124, 92, 252, 0.6);
-    color: #c4b5fd;
+    background: color-mix(in srgb, var(--theme-color) 24%, transparent);
+    border-color: color-mix(in srgb, var(--theme-color) 60%, transparent);
+    color: var(--theme-color);
 }
 [data-theme="light"] .header-icon-btn {
-    background: rgba(15, 23, 42, 0.05);
-    border-color: rgba(15, 23, 42, 0.11);
+    background: color-mix(in srgb, var(--theme-color) 7%, rgba(15, 23, 42, 0.04));
+    border-color: color-mix(in srgb, var(--theme-color) 24%, rgba(15, 23, 42, 0.11));
     color: #1e293b;
 }
 [data-theme="light"] .header-icon-btn.search-open {
-    background: rgba(124, 92, 252, 0.14);
-    border-color: rgba(124, 92, 252, 0.45);
-    color: #6d28d9;
+    background: color-mix(in srgb, var(--theme-color) 16%, #ffffff);
+    border-color: color-mix(in srgb, var(--theme-color) 52%, transparent);
+    color: var(--theme-color);
 }
 
 .logo-icon {
@@ -648,15 +651,15 @@ body::before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 31px;
+    gap: 5px;
+    height: 36px;
     box-sizing: border-box;
-    padding: 0 11px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
+    padding: 0 13px;
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--theme-color) 24%, rgba(255, 255, 255, 0.14));
+    background: color-mix(in srgb, var(--theme-color) 8%, rgba(255, 255, 255, 0.06));
     color: #e2e8f0;
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -767,17 +770,28 @@ body::before {
         font-size: 0.92rem;
     }
     .header-actions {
-        gap: 3px;
+        gap: 6px;
     }
     .m-header-pc-btn {
-        padding: 0 5px;
-        font-size: 0.61rem;
+        padding: 0 7px;
+        font-size: 0.66rem;
+        height: 30px;
+        border-radius: 15px;
     }
-    .header-sabi-btn,
+    .header-icon-btn {
+        width: 35px;
+        height: 35px;
+    }
+    .header-sabi-btn {
+        height: 35px;
+        padding: 0 12px;
+        font-size: 0.76rem;
+        gap: 4px;
+    }
     .header-sync-btn {
-        padding: 0 6px;
-        font-size: 0.65rem;
-        gap: 2px;
+        padding: 0 8px;
+        font-size: 0.68rem;
+        gap: 3px;
     }
     .theme-switch-track {
         width: 38px;
@@ -787,6 +801,18 @@ body::before {
         width: 16px;
         height: 16px;
         transform: translateX(16px);
+    }
+}
+
+@media (max-width: 355px) {
+    .header-icon-btn {
+        width: 32px;
+        height: 32px;
+    }
+    .header-sabi-btn {
+        height: 32px;
+        padding: 0 10px;
+        font-size: 0.72rem;
     }
 }
 
@@ -1026,9 +1052,18 @@ body::before {
     z-index: 2;
     animation: fadeInSubRow 0.16s ease-out;
 }
+.member-sub-row.sub-grid-1 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+}
 .member-sub-row.sub-grid-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
+}
+.member-sub-row.sub-grid-1 .member-sub-btn {
+    width: 100%;
+    height: 35px;
+    border-radius: 10px;
 }
 
 .member-sub-btn,
@@ -1196,218 +1231,232 @@ body::before {
     box-shadow: 0 0 14px rgba(124, 92, 252, 0.55);
 }
 
-/* 3. 1기 멤버들: 칸나(남색), 유니(보라색), 후야(자주색/진한 보라색) */
+/* 3. 1기 멤버들: 눈이 편안한 부드러운 톤 (칸나/유니/후야) */
 .member-text-btn.btn-kanna,
 .member-sub-btn.btn-kanna {
-    color: #ffffff;
-    border-color: rgba(30, 58, 138, 0.5);
-    background: rgba(30, 58, 138, 0.28);
+    color: #e2e8f0;
+    border-color: rgba(74, 103, 168, 0.45);
+    background: rgba(74, 103, 168, 0.22);
 }
 .member-text-btn.btn-kanna.active,
 .member-sub-btn.btn-kanna.active {
-    background: #1e3a8a;
+    background: #4a67a8;
     color: #ffffff;
-    border-color: #3b82f6;
-    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+    border-color: #728ec9;
+    box-shadow: 0 0 10px rgba(74, 103, 168, 0.38);
 }
 
 .member-text-btn.btn-yuni,
 .member-sub-btn.btn-yuni {
-    color: #ffffff;
-    border-color: rgba(251, 207, 232, 0.45);
-    background: rgba(251, 207, 232, 0.15);
+    color: #f8fafc;
+    border-color: rgba(223, 168, 198, 0.4);
+    background: rgba(223, 168, 198, 0.14);
 }
 .member-text-btn.btn-yuni.active,
 .member-sub-btn.btn-yuni.active {
-    background: #fbcfe8;
+    background: #dfa8c6;
     color: #0f172a;
-    border-color: #fbcfe8;
-    box-shadow: 0 0 12px rgba(251, 207, 232, 0.55);
+    border-color: #ebc2d8;
+    box-shadow: 0 0 10px rgba(223, 168, 198, 0.38);
 }
 
 .member-text-btn.btn-huya,
 .member-sub-btn.btn-huya {
-    color: #ffffff;
-    border-color: rgba(126, 34, 206, 0.45);
-    background: rgba(126, 34, 206, 0.2);
+    color: #f8fafc;
+    border-color: rgba(139, 91, 181, 0.42);
+    background: rgba(139, 91, 181, 0.18);
 }
 .member-text-btn.btn-huya.active,
 .member-sub-btn.btn-huya.active {
-    background: #7e22ce;
+    background: #8b5bb5;
     color: #ffffff;
-    border-color: #a855f7;
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    border-color: #ac82d1;
+    box-shadow: 0 0 10px rgba(139, 91, 181, 0.38);
 }
 
-/* 4. 2기 멤버들: 히나(노란색), 마시로(회색), 리제(빨간색), 타비(하늘색) */
+/* 4. 2기 멤버들: 히나/마시로/리제/타비 */
 .member-text-btn.btn-hina,
 .member-sub-btn.btn-hina {
-    color: #ffffff;
-    border-color: rgba(254, 240, 138, 0.45);
-    background: rgba(254, 240, 138, 0.15);
+    color: #f8fafc;
+    border-color: rgba(217, 200, 122, 0.42);
+    background: rgba(217, 200, 122, 0.14);
 }
 .member-text-btn.btn-hina.active,
 .member-sub-btn.btn-hina.active {
-    background: #fef08a;
+    background: #d9c87a;
     color: #0f172a;
-    border-color: #fef08a;
-    box-shadow: 0 0 12px rgba(254, 240, 138, 0.5);
+    border-color: #e6d99a;
+    box-shadow: 0 0 10px rgba(217, 200, 122, 0.36);
 }
 
 .member-text-btn.btn-mashiro,
 .member-sub-btn.btn-mashiro {
-    color: #ffffff;
-    border-color: rgba(156, 163, 175, 0.4);
-    background: rgba(156, 163, 175, 0.14);
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.38);
+    background: rgba(148, 163, 184, 0.14);
 }
 .member-text-btn.btn-mashiro.active,
 .member-sub-btn.btn-mashiro.active {
-    background: #9ca3af;
-    color: #111827;
-    border-color: #d1d5db;
-    box-shadow: 0 0 12px rgba(156, 163, 175, 0.5);
+    background: #94a3b8;
+    color: #0f172a;
+    border-color: #cbd5e1;
+    box-shadow: 0 0 10px rgba(148, 163, 184, 0.38);
 }
 
 .member-text-btn.btn-lize,
 .member-sub-btn.btn-lize {
-    color: #ffffff;
-    border-color: rgba(239, 68, 68, 0.4);
-    background: rgba(239, 68, 68, 0.14);
+    color: #f8fafc;
+    border-color: rgba(207, 102, 102, 0.4);
+    background: rgba(207, 102, 102, 0.14);
 }
 .member-text-btn.btn-lize.active,
 .member-sub-btn.btn-lize.active {
-    background: #ef4444;
+    background: #cf6666;
     color: #ffffff;
-    border-color: #f87171;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+    border-color: #e08888;
+    box-shadow: 0 0 10px rgba(207, 102, 102, 0.38);
 }
 
 .member-text-btn.btn-tabi,
 .member-sub-btn.btn-tabi {
-    color: #ffffff;
-    border-color: rgba(56, 189, 248, 0.4);
-    background: rgba(56, 189, 248, 0.14);
+    color: #f8fafc;
+    border-color: rgba(104, 168, 204, 0.4);
+    background: rgba(104, 168, 204, 0.14);
 }
 .member-text-btn.btn-tabi.active,
 .member-sub-btn.btn-tabi.active {
-    background: #38bdf8;
+    background: #68a8cc;
     color: #0f172a;
-    border-color: #7dd3fc;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    border-color: #8cc0de;
+    box-shadow: 0 0 10px rgba(104, 168, 204, 0.38);
 }
 
-/* 5. 3기 멤버들: 시부키(연보라색), 린(파란색), 나나(분홍색), 리코(연두색) */
+/* 5. 3기 멤버들: 시부키/린/나나/리코 */
 .member-text-btn.btn-shibuki,
 .member-sub-btn.btn-shibuki {
-    color: #ffffff;
-    border-color: rgba(192, 132, 252, 0.4);
-    background: rgba(192, 132, 252, 0.14);
+    color: #f8fafc;
+    border-color: rgba(170, 132, 214, 0.4);
+    background: rgba(170, 132, 214, 0.14);
 }
 .member-text-btn.btn-shibuki.active,
 .member-sub-btn.btn-shibuki.active {
-    background: #c084fc;
-    color: #1e1b4b;
-    border-color: #d8b4fe;
-    box-shadow: 0 0 12px rgba(192, 132, 252, 0.5);
+    background: #aa84d6;
+    color: #0f172a;
+    border-color: #c3a5e6;
+    box-shadow: 0 0 10px rgba(170, 132, 214, 0.38);
 }
 
 .member-text-btn.btn-rin,
 .member-sub-btn.btn-rin {
-    color: #ffffff;
-    border-color: rgba(37, 99, 235, 0.45);
-    background: rgba(37, 99, 235, 0.16);
+    color: #f8fafc;
+    border-color: rgba(92, 133, 201, 0.42);
+    background: rgba(92, 133, 201, 0.15);
 }
 .member-text-btn.btn-rin.active,
 .member-sub-btn.btn-rin.active {
-    background: #2563eb;
+    background: #5c85c9;
     color: #ffffff;
-    border-color: #60a5fa;
-    box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+    border-color: #82a3d9;
+    box-shadow: 0 0 10px rgba(92, 133, 201, 0.38);
 }
 
 .member-text-btn.btn-nana,
 .member-sub-btn.btn-nana {
-    color: #ffffff;
-    border-color: rgba(236, 72, 153, 0.45);
-    background: rgba(236, 72, 153, 0.16);
+    color: #f8fafc;
+    border-color: rgba(207, 109, 156, 0.42);
+    background: rgba(207, 109, 156, 0.15);
 }
 .member-text-btn.btn-nana.active,
 .member-sub-btn.btn-nana.active {
-    background: #ec4899;
+    background: #cf6d9c;
     color: #ffffff;
-    border-color: #f472b6;
-    box-shadow: 0 0 14px rgba(236, 72, 153, 0.6);
+    border-color: #de8eb4;
+    box-shadow: 0 0 10px rgba(207, 109, 156, 0.38);
 }
 
 .member-text-btn.btn-riko,
 .member-sub-btn.btn-riko {
-    color: #ffffff;
-    border-color: rgba(132, 204, 22, 0.4);
-    background: rgba(132, 204, 22, 0.14);
+    color: #f8fafc;
+    border-color: rgba(137, 181, 92, 0.4);
+    background: rgba(137, 181, 92, 0.14);
 }
 .member-text-btn.btn-riko.active,
 .member-sub-btn.btn-riko.active {
-    background: #84cc16;
-    color: #14532d;
-    border-color: #a3e635;
-    box-shadow: 0 0 12px rgba(132, 204, 22, 0.5);
+    background: #89b55c;
+    color: #0f172a;
+    border-color: #a4c97d;
+    box-shadow: 0 0 10px rgba(137, 181, 92, 0.38);
 }
 
-/* 6. 4기 멤버들: 토아(진한 핫핑크), 랑(갈색), 히요리(파스텔 핑크), 메리(노란색) */
+/* 6. 4기 멤버들 + 강지: 토아/랑/히요리/메리/강지 */
 .member-text-btn.btn-toa,
 .member-sub-btn.btn-toa {
-    color: #ffffff;
-    border-color: rgba(255, 20, 147, 0.5);
-    background: rgba(255, 20, 147, 0.16);
+    color: #f8fafc;
+    border-color: rgba(204, 92, 148, 0.44);
+    background: rgba(204, 92, 148, 0.15);
 }
 .member-text-btn.btn-toa.active,
 .member-sub-btn.btn-toa.active {
-    background: #ff1493;
+    background: #cc5c94;
     color: #ffffff;
-    border-color: #ff69b4;
-    box-shadow: 0 0 14px rgba(255, 20, 147, 0.65);
+    border-color: #de81b0;
+    box-shadow: 0 0 10px rgba(204, 92, 148, 0.4);
 }
 
 .member-text-btn.btn-rang,
 .member-sub-btn.btn-rang {
-    color: #ffffff;
-    border-color: rgba(146, 64, 14, 0.5);
-    background: rgba(146, 64, 14, 0.18);
+    color: #f8fafc;
+    border-color: rgba(166, 116, 76, 0.44);
+    background: rgba(166, 116, 76, 0.16);
 }
 .member-text-btn.btn-rang.active,
 .member-sub-btn.btn-rang.active {
-    background: #92400e;
+    background: #a6744c;
     color: #ffffff;
-    border-color: #b45309;
-    box-shadow: 0 0 12px rgba(146, 64, 14, 0.6);
+    border-color: #bf906a;
+    box-shadow: 0 0 10px rgba(166, 116, 76, 0.38);
 }
 
 .member-text-btn.btn-hiyori,
 .member-sub-btn.btn-hiyori {
-    color: #ffffff;
-    border-color: rgba(244, 114, 182, 0.45);
-    background: rgba(244, 114, 182, 0.15);
+    color: #f8fafc;
+    border-color: rgba(217, 139, 178, 0.42);
+    background: rgba(217, 139, 178, 0.14);
 }
 .member-text-btn.btn-hiyori.active,
 .member-sub-btn.btn-hiyori.active {
-    background: #f472b6;
+    background: #d98bb2;
     color: #0f172a;
-    border-color: #f472b6;
-    box-shadow: 0 0 12px rgba(244, 114, 182, 0.55);
+    border-color: #e6a8c7;
+    box-shadow: 0 0 10px rgba(217, 139, 178, 0.38);
 }
 
 .member-text-btn.btn-mary,
 .member-sub-btn.btn-mary {
-    color: #ffffff;
-    border-color: rgba(234, 179, 8, 0.45);
-    background: rgba(234, 179, 8, 0.15);
+    color: #f8fafc;
+    border-color: rgba(204, 176, 86, 0.42);
+    background: rgba(204, 176, 86, 0.14);
 }
 .member-text-btn.btn-mary.active,
 .member-sub-btn.btn-mary.active {
-    background: #eab308;
+    background: #ccb056;
     color: #0f172a;
-    border-color: #facc15;
-    box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
+    border-color: #dcc57a;
+    box-shadow: 0 0 10px rgba(204, 176, 86, 0.38);
+}
+
+.member-text-btn.btn-kangji,
+.member-sub-btn.btn-kangji {
+    color: #f8fafc;
+    border-color: rgba(142, 118, 201, 0.42);
+    background: rgba(142, 118, 201, 0.16);
+}
+.member-text-btn.btn-kangji.active,
+.member-sub-btn.btn-kangji.active {
+    background: #8e76c9;
+    color: #ffffff;
+    border-color: #a995d9;
+    box-shadow: 0 0 10px rgba(142, 118, 201, 0.38);
 }
 
 /* ===================================================================
@@ -2186,17 +2235,17 @@ body::before {
     left: 10px;
     right: 10px;
     height: var(--mini-player-height);
-    background: rgba(20, 23, 38, 0.92);
+    background: rgba(25, 29, 48, 0.90);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
     z-index: 90;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.36);
 }
 
 .mini-progress-track {
@@ -2298,10 +2347,11 @@ body::before {
     right: 0;
     height: calc(var(--tab-height) + var(--safe-bottom));
     padding-bottom: var(--safe-bottom);
-    background: rgba(9, 10, 16, 0.96);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-top: 1px solid var(--border-glass);
+    background: linear-gradient(180deg, rgba(24, 28, 46, 0.90) 0%, rgba(18, 22, 36, 0.94) 100%);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-top: 1px solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -2889,12 +2939,11 @@ body::before {
 }
 
 .queue-sheet-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
     width: 100%;
-    overflow-x: auto;
-    scrollbar-width: none;
+    overflow: visible;
 }
 
 .queue-sheet-actions::-webkit-scrollbar {
@@ -2902,22 +2951,23 @@ body::before {
 }
 
 .queue-sheet-action-btn {
-    flex: 1 1 0;
+    width: 100%;
+    height: 34px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--border-glass);
     color: var(--text-secondary);
-    padding: 6px 4px;
-    border-radius: 8px;
-    font-size: 0.74rem;
-    font-weight: 600;
+    padding: 0 8px;
+    border-radius: 10px;
+    font-size: 0.76rem;
+    font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
     min-width: 0;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
 }
 
 .queue-sheet-action-btn:active {
@@ -3857,13 +3907,11 @@ body::before {
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-actions {
         width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 5px !important;
-        flex-wrap: nowrap !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
         box-sizing: border-box !important;
-        overflow-x: auto !important;
-        scrollbar-width: none !important;
+        overflow: visible !important;
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-actions::-webkit-scrollbar {
@@ -3871,18 +3919,19 @@ body::before {
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-action-btn {
-        flex: 1 1 0 !important;
+        width: 100% !important;
+        height: 34px !important;
         min-width: 0 !important;
-        padding: 6px 3px !important;
-        font-size: 0.72rem !important;
-        font-weight: 600 !important;
+        padding: 0 8px !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
         white-space: nowrap !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 3px !important;
+        gap: 5px !important;
         box-sizing: border-box !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
     }
 
     .fullscreen-sheet.open ~ .queue-sheet .queue-sheet-action-btn svg {
@@ -5574,106 +5623,125 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
    v1.12.0 미니멀 메인화면 시안 & 분류·필터 바텀시트 스타일
 =================================================================== */
 
-/* 1. 홈 상단 3버튼 컨트롤 바 (컴팩트 규격: 분류·필터 / 최신순 / 랜덤 재생) */
+/* 1. 홈/오프라인 상단 4버튼 컨트롤 바 (좌측: 필터·정렬 / 우측: 랜덤 재생·선택 — 기기 폭에 무관하게 고정 크기 유지) */
 .m-home-control-bar {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr 1.12fr;
-    gap: 6px;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
     margin: 0 0 8px;
+}
+
+.m-control-group-left,
+.m-control-group-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
 .m-filter-trigger-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 30px;
-    padding: 0 8px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.13);
+    gap: 5px;
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--theme-color) 9%, rgba(255, 255, 255, 0.05));
+    border: 1px solid color-mix(in srgb, var(--theme-color) 28%, rgba(255, 255, 255, 0.13));
     color: #f8fafc;
-    font-size: 0.73rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.25px;
     white-space: nowrap;
     cursor: pointer;
-    transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.12s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
     -webkit-tap-highlight-color: transparent;
 }
 .m-filter-trigger-btn svg {
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
+    color: color-mix(in srgb, var(--theme-color) 70%, #f8fafc);
     flex-shrink: 0;
 }
 .m-filter-trigger-btn:active {
     transform: scale(0.96);
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--theme-color) 18%, rgba(255, 255, 255, 0.1));
 }
 .m-filter-trigger-btn.has-active-filter {
-    background: rgba(124, 92, 252, 0.18);
-    border-color: rgba(124, 92, 252, 0.55);
-    color: #e9d5ff;
-    box-shadow: 0 0 10px rgba(124, 92, 252, 0.22);
+    background: color-mix(in srgb, var(--theme-color) 22%, rgba(255, 255, 255, 0.04));
+    border-color: color-mix(in srgb, var(--theme-color) 62%, transparent);
+    color: #ffffff;
+    box-shadow: 0 0 10px var(--theme-glow);
 }
 
 .m-filter-badge {
-    min-width: 15px;
-    height: 15px;
-    padding: 0 4px;
-    border-radius: 8px;
-    background: #7c5cfc;
-    color: #ffffff;
-    font-size: 0.61rem;
-    font-weight: 800;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 17px;
+    height: 17px;
+    padding: 0.5px 5px 0;
+    border-radius: 999px;
+    background: var(--theme-color, #7c5cfc);
+    color: var(--theme-ink, #ffffff);
+    font-size: 0.65rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .m-home-sort-pill {
-    width: 100%;
-    height: 30px !important;
-    border-radius: 15px !important;
-    padding: 0 20px 0 8px !important;
-    font-size: 0.73rem !important;
+    width: auto !important;
+    min-width: 80px;
+    height: 32px !important;
+    border-radius: 16px !important;
+    padding: 0 11px !important;
+    font-size: 0.74rem !important;
     font-weight: 700 !important;
-    background: rgba(255, 255, 255, 0.06) !important;
-    border: 1px solid rgba(255, 255, 255, 0.13) !important;
+    background: color-mix(in srgb, var(--theme-color) 9%, rgba(255, 255, 255, 0.05)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-color) 28%, rgba(255, 255, 255, 0.13)) !important;
     color: #e2e8f0 !important;
+    justify-content: center;
     text-align: center;
     text-align-last: center;
 }
 
 .m-home-random-pill {
-    width: 100%;
-    height: 30px !important;
-    border-radius: 15px !important;
-    padding: 0 8px !important;
-    font-size: 0.73rem !important;
+    flex: 0 0 auto;
+    width: auto !important;
+    height: 32px !important;
+    border-radius: 16px !important;
+    padding: 0 12px !important;
+    font-size: 0.74rem !important;
     font-weight: 800 !important;
-    background: linear-gradient(135deg, #7c5cfc, #4f46e5) !important;
-    border: none !important;
-    color: #ffffff !important;
-    box-shadow: 0 3px 12px rgba(124, 92, 252, 0.38) !important;
+    background: linear-gradient(135deg, var(--theme-color), color-mix(in srgb, var(--theme-color) 68%, #2b2754)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-color) 50%, rgba(255, 255, 255, 0.16)) !important;
+    color: var(--theme-ink, #ffffff) !important;
+    box-shadow: 0 3px 10px var(--theme-glow) !important;
     justify-content: center;
 }
 .m-home-random-pill svg {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
 }
 .m-home-random-pill:active {
     transform: scale(0.96);
 }
 
-/* 2. 홈 곡수 & 선택 라인 */
+/* 2. 활성 필터 요약 칩 라인 (필터 적용 시에만 표시) */
 .m-home-meta-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 8px;
     margin: 0 2px 8px;
-    min-height: 24px;
+    min-height: 22px;
 }
 
 .m-home-meta-left {
@@ -5684,25 +5752,18 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     flex: 1;
 }
 
-.m-home-total-count {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    white-space: nowrap;
-}
-
 .m-active-filter-chip {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     max-width: 100%;
-    height: 21px;
-    padding: 0 7px;
+    height: 22px;
+    padding: 0 9px;
     border-radius: 11px;
-    background: rgba(124, 92, 252, 0.16);
-    border: 1px solid rgba(124, 92, 252, 0.4);
-    color: #c4b5fd;
-    font-size: 0.66rem;
+    background: color-mix(in srgb, var(--theme-color) 16%, rgba(255, 255, 255, 0.04));
+    border: 1px solid color-mix(in srgb, var(--theme-color) 42%, transparent);
+    color: #e2e8f0;
+    font-size: 0.68rem;
     font-weight: 700;
     cursor: pointer;
     overflow: hidden;
@@ -5713,7 +5774,7 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     text-overflow: ellipsis;
 }
 .m-active-filter-chip .m-chip-x {
-    font-size: 0.62rem;
+    font-size: 0.64rem;
     opacity: 0.8;
     flex-shrink: 0;
 }
@@ -5722,25 +5783,62 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 24px;
-    padding: 0 11px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: var(--text-secondary);
-    font-size: 0.71rem;
+    flex: 0 0 auto;
+    min-width: 56px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--theme-color) 9%, rgba(255, 255, 255, 0.05));
+    border: 1px solid color-mix(in srgb, var(--theme-color) 28%, rgba(255, 255, 255, 0.13));
+    color: #f8fafc;
+    font-size: 0.74rem;
     font-weight: 700;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
     cursor: pointer;
-    flex-shrink: 0;
     transition: all 0.16s ease;
 }
 .m-home-select-pill.active {
-    background: rgba(124, 92, 252, 0.22);
-    border-color: #7c5cfc;
+    background: color-mix(in srgb, var(--theme-color) 24%, transparent);
+    border-color: var(--theme-color);
     color: #ffffff;
+    box-shadow: 0 0 10px var(--theme-glow);
 }
 .m-home-select-pill:active {
     transform: scale(0.95);
+}
+
+/* 초협소 폭(폴드 접힘 커버 등 358px 이하)에서도 4버튼이 한 줄에 여유롭게 맞도록 미세 축소 */
+@media (max-width: 358px) {
+    .m-home-control-bar {
+        gap: 4px;
+    }
+    .m-control-group-left,
+    .m-control-group-right {
+        gap: 4px;
+    }
+    .m-filter-trigger-btn,
+    .m-home-sort-pill,
+    .m-home-random-pill,
+    .m-home-select-pill {
+        height: 30px !important;
+        border-radius: 15px !important;
+        font-size: 0.7rem !important;
+    }
+    .m-filter-trigger-btn {
+        padding: 0 9px !important;
+    }
+    .m-home-sort-pill {
+        min-width: 68px;
+        padding: 0 8px !important;
+    }
+    .m-home-random-pill {
+        padding: 0 9px !important;
+    }
+    .m-home-select-pill {
+        min-width: 48px;
+        padding: 0 9px !important;
+    }
 }
 
 /* 3. 홈 복수 선택 5기능 플로팅 바 */
@@ -5932,11 +6030,32 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     flex-shrink: 0;
 }
+.filter-sheet-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
 .filter-sheet-title {
     font-size: 1.02rem;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: -0.3px;
+}
+.filter-sheet-total-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    padding: 0 9px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--theme-color) 18%, rgba(255, 255, 255, 0.06));
+    border: 1px solid color-mix(in srgb, var(--theme-color) 42%, transparent);
+    color: #f8fafc;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
 .filter-sheet-close {
     width: 30px;
@@ -6206,12 +6325,12 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
     height: 44px;
     border-radius: 12px;
     border: none;
-    background: linear-gradient(135deg, #7c5cfc, #5b4cf5);
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--theme-color), color-mix(in srgb, var(--theme-color) 68%, #2b2754));
+    color: var(--theme-ink, #ffffff);
     font-size: 0.9rem;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(124, 92, 252, 0.38);
+    box-shadow: 0 6px 18px var(--theme-glow);
 }
 .filter-btn-reset:active,
 .filter-btn-apply:active {
@@ -6222,25 +6341,38 @@ body.playlist-select-active #m-playlist-detail-tracks .btn-remove-from-playlist 
 [data-theme="light"] .m-filter-trigger-btn,
 [data-theme="light"] .m-home-sort-pill,
 [data-theme="light"] .m-home-select-pill {
-    background: #ffffff !important;
-    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    background: color-mix(in srgb, var(--theme-color) 7%, #ffffff) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-color) 32%, rgba(15, 23, 42, 0.12)) !important;
     color: #0f172a !important;
     box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
 }
+[data-theme="light"] .m-filter-trigger-btn svg {
+    color: color-mix(in srgb, var(--theme-color) 72%, #0f172a);
+}
 [data-theme="light"] .m-filter-trigger-btn.has-active-filter {
-    background: rgba(124, 92, 252, 0.1) !important;
-    border-color: rgba(124, 92, 252, 0.45) !important;
-    color: #5b21b6 !important;
+    background: color-mix(in srgb, var(--theme-color) 16%, #ffffff) !important;
+    border-color: color-mix(in srgb, var(--theme-color) 55%, transparent) !important;
+    color: #0f172a !important;
 }
 [data-theme="light"] .m-home-select-pill.active {
-    background: #6d28d9 !important;
-    border-color: #6d28d9 !important;
-    color: #ffffff !important;
+    background: var(--theme-color) !important;
+    border-color: var(--theme-color) !important;
+    color: var(--theme-ink, #ffffff) !important;
+}
+[data-theme="light"] .m-home-random-pill {
+    background: linear-gradient(135deg, var(--theme-color), color-mix(in srgb, var(--theme-color) 78%, #1e293b)) !important;
+    border-color: transparent !important;
+    color: var(--theme-ink, #ffffff) !important;
 }
 [data-theme="light"] .m-active-filter-chip {
-    background: rgba(124, 92, 252, 0.1);
-    border-color: rgba(124, 92, 252, 0.35);
-    color: #5b21b6;
+    background: color-mix(in srgb, var(--theme-color) 14%, #ffffff);
+    border-color: color-mix(in srgb, var(--theme-color) 42%, transparent);
+    color: #0f172a;
+}
+[data-theme="light"] .filter-sheet-total-count {
+    background: color-mix(in srgb, var(--theme-color) 14%, #f1f5f9);
+    border-color: color-mix(in srgb, var(--theme-color) 40%, transparent);
+    color: #0f172a;
 }
 [data-theme="light"] .btn-mood-playlist-top {
     background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(124, 92, 252, 0.14));
@@ -6594,9 +6726,9 @@ html, body, button, input, select, textarea, optgroup, pre {
     flex-shrink: 0;
 }
 .m-sort-dropdown-wrap.open .m-sort-trigger-btn {
-    border-color: rgba(124, 92, 252, 0.55);
-    background: rgba(124, 92, 252, 0.16);
-    color: #ede9fe;
+    border-color: color-mix(in srgb, var(--theme-color) 62%, transparent);
+    background: color-mix(in srgb, var(--theme-color) 20%, rgba(255, 255, 255, 0.04));
+    color: #ffffff;
 }
 .m-sort-dropdown-wrap.open .m-sort-chevron {
     transform: rotate(180deg);
@@ -7183,9 +7315,9 @@ html, body, button, input, select, textarea, optgroup, pre {
     color: #0f172a;
 }
 [data-theme="light"] .m-sort-dropdown-wrap.open .m-sort-trigger-btn {
-    border-color: rgba(124, 92, 252, 0.5);
-    background: rgba(124, 92, 252, 0.08);
-    color: #5b21b6;
+    border-color: color-mix(in srgb, var(--theme-color) 55%, transparent) !important;
+    background: color-mix(in srgb, var(--theme-color) 16%, #ffffff) !important;
+    color: #0f172a !important;
 }
 [data-theme="light"] .m-sort-dropdown-menu {
     background: #ffffff;
